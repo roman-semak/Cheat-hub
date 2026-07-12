@@ -178,6 +178,29 @@ export const aiContent: TopicContent = {
       ]
     },
     {
+      "id": "loops-recurring-tasks",
+      "title": "🔁 Loops — Повторювані завдання",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": "<p><code>/loop</code> запускає промпт або слеш-команду <strong>повторювано на інтервалі</strong> прямо в поточній сесії. Ідеально для <em>polling</em>: моніторинг деплою, стеження за CI, PR-babysitting, періодичні статус-чеки — все, що треба «перевіряти раз за разом», поки не зміниться стан.</p><h3 class=\"topic\">Два режими <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n            <div class=\"card\">\n              <h4>⏱️ Фіксований інтервал</h4>\n              <p><code>/loop 5m /foo</code> — виконує команду кожні N часу. Одиниці: <code>s</code> (секунди), <code>m</code> (хвилини), <code>h</code> (години).</p>\n            </div>\n            <div class=\"card\">\n              <h4>🧠 Dynamic (self-paced)</h4>\n              <p><code>/loop /foo</code> без інтервалу — модель <strong>сама обирає темп</strong> і вирішує, коли прокинутись для наступної ітерації.</p>\n            </div>\n          </div><h3 class=\"topic\">Синтаксис</h3>"
+        },
+        {
+          "kind": "code",
+          "language": "bash",
+          "code": "# Фіксований інтервал: слеш-команда кожні 5 хв\n/loop 5m /babysit-prs\n\n# Промпт кожні 30 секунд\n/loop 30s перевір статус деплою, скажи коли білд зелений\n\n# Dynamic mode (без інтервалу) — модель сама обирає темп\n/loop /code-review"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Коли використовувати</h3><div class=\"table-wrap\">\n            <table>\n              <tr><th>Сценарій</th><th>Приклад</th></tr>\n              <tr><td>Моніторинг деплою</td><td><code>/loop 1m перевір деплой, пінгуй коли live</code></td></tr>\n              <tr><td>Polling CI</td><td><code>/loop 2m перевір статус GitHub Actions</code></td></tr>\n              <tr><td>Стеження за PR</td><td><code>/loop 10m /babysit-prs</code></td></tr>\n              <tr><td>Періодичні статус-чеки</td><td><code>/loop 5m онови summary відкритих задач</code></td></tr>\n              <tr><td>Чекання на зовнішню подію</td><td><code>/loop дочекайся поки черга спорожніє</code></td></tr>\n            </table>\n          </div><h3 class=\"topic\">Як зупинити</h3><ul class=\"list\">\n            <li><strong>Escape</strong> — перервати активну ітерацію</li>\n            <li>Сказати <strong>«stop the loop»</strong> — завершити цикл повністю</li>\n            <li>Луп живе лише <strong>поки сесія відкрита</strong> — закриєш термінал, і він зупиниться</li>\n          </ul>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"alert info\">\n            💡 <strong>Loop vs Schedule:</strong> <code>/loop</code> — локальний, працює в поточній сесії, поки термінал відкрито. <code>/schedule</code> — це cloud cron-agent, що виконується у хмарі <strong>без тебе</strong>. Обирай <code>/loop</code> для інтерактивного polling тут-і-зараз, а <code>/schedule</code> — для фонових повторюваних задач за розкладом.\n          </div>"
+        }
+      ]
+    },
+    {
       "id": "code-review-with-ai",
       "title": "🔍 Code Review with AI",
       "blocks": [
@@ -348,6 +371,25 @@ export const aiCheat: TopicContent = {
           "kind": "code",
           "language": "bash",
           "code": "\"notification\": {\n  \"webhookUrl\": \"https://hooks.slack.com/...\",\n  \"message\": \"Claude finished work\"\n}"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"page-break\"></div>"
+        }
+      ]
+    },
+    {
+      "id": "loops-scheduling",
+      "title": "🔁 Loops & Scheduling",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"grid2\">\n        <div class=\"card\">\n          <h4>Syntax</h4>\n          <pre><span class=\"kw\">/loop</span> &lt;interval&gt; &lt;cmd|prompt&gt;\n\n<span class=\"str\">5m /babysit-prs</span>   → кожні 5 хв\n<span class=\"str\">30s check deploy</span>  → кожні 30 сек\n<span class=\"str\">/code-review</span>      → dynamic (self-paced)</pre>\n          <p><strong>interval</strong> = <code>s</code>/<code>m</code>/<code>h</code>. Без нього — модель сама обирає темп.</p>\n        </div>\n        <div class=\"card\">\n          <h4>Use cases</h4>\n          <ul class=\"list\">\n            <li>Моніторинг деплою</li>\n            <li>Polling CI / GitHub Actions</li>\n            <li>PR babysit (<code>/babysit-prs</code>)</li>\n            <li>Періодичні статус-чеки</li>\n          </ul>\n          <p><strong>Loop</strong> = локальний, у сесії. <strong>/schedule</strong> = cloud cron без тебе.</p>\n        </div>\n      </div><h3 class=\"topic\">Приклади</h3>"
+        },
+        {
+          "kind": "code",
+          "language": "bash",
+          "code": "# Слеш-команда кожні 5 хв\n/loop 5m /babysit-prs\n\n# Промпт кожні 30 секунд\n/loop 30s перевір статус деплою\n\n# Dynamic mode — без інтервалу\n/loop /code-review\n\n# Зупинити: Escape або «stop the loop»"
         },
         {
           "kind": "paragraph",
