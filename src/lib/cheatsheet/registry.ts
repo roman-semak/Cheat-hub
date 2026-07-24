@@ -15,12 +15,13 @@ export const TOPICS: TopicMeta[] = [
   },
   {
     slug: 'leetcode',
-    title: 'LeetCode',
+    title: 'Практика',
     icon: '🧩',
-    blurb: 'Практика задач у редакторі коду + шпаргалка JS/TS лайфхаків.',
+    blurb:
+      'Практика коду: LeetCode-редактор, шпаргалка JS/TS та інтерв’ю-завдання рівня Middle/Senior.',
     accent: 'orange',
-    formats: ['practice', 'cheatsheet'],
-    badges: ['Практика', 'Лайфхаки'],
+    formats: ['practice', 'cheatsheet', 'tasks'],
+    badges: ['LeetCode', 'Шпаргалка', 'Інтерв’ю'],
   },
   {
     slug: 'architecture',
@@ -109,7 +110,8 @@ export const FORMAT_LABELS: Record<string, string> = {
   extended: 'Розширена',
   cheatsheet: 'Шпаргалка',
   quiz: 'Квіз',
-  practice: 'Практика',
+  practice: 'LeetCode',
+  tasks: 'Практичні завдання',
 }
 
 // Path for a topic format. practice -> /problems (shared editor), extended ->

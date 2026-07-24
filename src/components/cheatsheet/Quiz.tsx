@@ -1,14 +1,26 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { useMemo, useRef } from 'react'
+import { Check, X, ChevronDown, RotateCcw } from 'lucide-react'
 import type { QuizData } from '@/lib/cheatsheet/types'
+import { useUserStore } from '@/lib/userStore'
+import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { cn } from '@/lib/utils'
 
-export function Quiz({ data }: { data: QuizData }) {
-  // answers[i] = chosen option index, or undefined if unanswered.
-  const [answers, setAnswers] = useState<Record<number, number>>({})
+const RESULT_ID = 'quiz-result'
 
+export function Quiz({ data, quizId }: { data: QuizData; quizId: string }) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const { data: user, hydrated, setQuizAnswer, resetQuiz } = useUserStore()
+
+  // answers[i] = chosen option index, or undefined if unanswered.
+  // Only trust persisted answers after hydration to avoid an SSR mismatch.
+  const answers = useMemo(
+    () => (hydrated ? user.quizzes[quizId]?.answers ?? {} : {}),
+    [hydrated, user.quizzes, quizId],
+  )
+
+  const total = data.questions.length
   const answeredCount = Object.keys(answers).length
   const score = useMemo(
     () =>
@@ -17,50 +29,90 @@ export function Quiz({ data }: { data: QuizData }) {
       ).length,
     [answers, data.questions],
   )
+  const incorrect = answeredCount - score
 
-  const choose = (qi: number, oi: number) => {
-    setAnswers((prev) => (prev[qi] !== undefined ? prev : { ...prev, [qi]: oi }))
+  // Track which question is currently in view → current step in the HUD.
+  const ids = useMemo(
+    () => [...data.questions.map((q) => q.id), RESULT_ID],
+    [data.questions],
+  )
+  const activeId = useScrollSpy(ids, scrollRef)
+  const step = activeId === RESULT_ID ? total : Math.max(1, ids.indexOf(activeId) + 1)
+  const progress = total > 0 ? (step / total) * 100 : 0
+
+  const choose = (qi: number, oi: number) => setQuizAnswer(quizId, qi, oi)
+
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+
+  const reset = () => {
+    resetQuiz(quizId)
+    scrollTo(data.questions[0]?.id ?? RESULT_ID)
   }
 
-  const reset = () => setAnswers({})
-
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <header className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-100">{data.title}</h1>
-          <p className="mt-1 text-sm text-slate-400">{data.questions.length} питань</p>
+    <div
+      ref={scrollRef}
+      className="h-[100dvh] snap-y snap-mandatory overflow-y-auto scroll-smooth"
+    >
+      {/* Always-visible "calculator" HUD */}
+      <aside className="glass-subtle fixed right-4 top-4 z-40 w-[190px] rounded-2xl border border-white/10 p-3 shadow-lg sm:w-[220px]">
+        <div className="mb-2 flex items-baseline justify-between">
+          <span className="text-xs font-medium text-slate-400">Питання</span>
+          <span className="text-sm font-semibold text-slate-100">
+            {step} <span className="text-slate-500">/ {total}</span>
+          </span>
         </div>
-        <div className="glass-subtle rounded-xl px-4 py-2 text-right">
-          <div className="text-2xl font-bold text-slate-100">
-            <span className="text-emerald-400">{score}</span>
-            <span className="text-slate-500"> / </span>
-            {answeredCount}
-          </div>
-          <div className="text-xs text-slate-500">правильних</div>
+
+        <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-indigo-400 to-cyan-400 transition-[width] duration-300"
+            style={{ width: `${progress}%` }}
+          />
         </div>
-      </header>
 
-      {answeredCount > 0 && (
-        <button
-          onClick={reset}
-          className="mb-6 text-sm text-slate-400 underline hover:text-slate-200"
-        >
-          Почати спочатку
-        </button>
-      )}
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <span className="flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-1 text-emerald-300">
+            <Check size={14} /> {score}
+          </span>
+          <span className="flex items-center gap-1 rounded-md bg-red-500/10 px-2 py-1 text-red-300">
+            <X size={14} /> {incorrect}
+          </span>
+          <span className="ml-auto text-xs font-normal text-slate-500">
+            ще {Math.max(0, total - answeredCount)}
+          </span>
+        </div>
 
-      <ol className="flex flex-col gap-6">
-        {data.questions.map((q, qi) => {
-          const chosen = answers[qi]
-          const answered = chosen !== undefined
-          return (
-            <li key={q.id} className="glass-subtle rounded-2xl border border-white/10 p-5">
+        {answeredCount > 0 && (
+          <button
+            onClick={reset}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-white/10 py-1.5 text-xs text-slate-400 hover:border-white/30 hover:text-slate-200"
+          >
+            <RotateCcw size={13} /> Почати спочатку
+          </button>
+        )}
+      </aside>
+
+      {/* One question per screen (scroll-snap) */}
+      {data.questions.map((q, qi) => {
+        const chosen = answers[qi]
+        const answered = chosen !== undefined
+        const nextId = qi + 1 < total ? data.questions[qi + 1].id : RESULT_ID
+        return (
+          <section
+            key={q.id}
+            id={q.id}
+            className="flex min-h-[100dvh] snap-start flex-col items-center justify-center px-6 py-20"
+          >
+            <div className="w-full max-w-3xl">
+              <div className="mb-3 text-sm font-medium text-indigo-300">
+                Питання {qi + 1} з {total}
+              </div>
               <h3
-                className="mb-4 font-semibold text-slate-100"
-                dangerouslySetInnerHTML={{ __html: `${qi + 1}. ${q.question}` }}
+                className="mb-6 text-xl font-semibold text-slate-100"
+                dangerouslySetInnerHTML={{ __html: q.question }}
               />
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 {q.options.map((opt, oi) => {
                   const isCorrect = oi === q.correct
                   const isChosen = oi === chosen
@@ -70,10 +122,16 @@ export function Quiz({ data }: { data: QuizData }) {
                       onClick={() => choose(qi, oi)}
                       disabled={answered}
                       className={cn(
-                        'flex items-center justify-between gap-3 rounded-lg border px-4 py-2.5 text-left text-sm transition-colors',
-                        !answered && 'border-white/10 text-slate-300 hover:border-white/30 hover:bg-white/5',
-                        answered && isCorrect && 'border-emerald-500/50 bg-emerald-500/10 text-emerald-200',
-                        answered && isChosen && !isCorrect && 'border-red-500/50 bg-red-500/10 text-red-200',
+                        'flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-colors',
+                        !answered &&
+                          'border-white/10 text-slate-300 hover:border-white/30 hover:bg-white/5',
+                        answered &&
+                          isCorrect &&
+                          'border-emerald-500/50 bg-emerald-500/10 text-emerald-200',
+                        answered &&
+                          isChosen &&
+                          !isCorrect &&
+                          'border-red-500/50 bg-red-500/10 text-red-200',
                         answered && !isChosen && !isCorrect && 'border-white/5 text-slate-500',
                       )}
                     >
@@ -91,10 +149,48 @@ export function Quiz({ data }: { data: QuizData }) {
                   dangerouslySetInnerHTML={{ __html: q.explanation }}
                 />
               )}
-            </li>
-          )
-        })}
-      </ol>
+
+              {answered && (
+                <button
+                  onClick={() => scrollTo(nextId)}
+                  className="mt-6 flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                >
+                  {qi + 1 < total ? 'Далі' : 'До результатів'} <ChevronDown size={16} />
+                </button>
+              )}
+            </div>
+          </section>
+        )
+      })}
+
+      {/* Final results slide */}
+      <section
+        id={RESULT_ID}
+        className="flex min-h-[100dvh] snap-start flex-col items-center justify-center px-6 py-20 text-center"
+      >
+        <div className="w-full max-w-md">
+          <h2 className="mb-2 text-lg font-semibold text-slate-300">{data.title}</h2>
+          <div className="mb-1 text-5xl font-bold text-slate-100">
+            <span className="text-emerald-400">{score}</span>
+            <span className="text-slate-500"> / </span>
+            {total}
+          </div>
+          <p className="mb-6 text-sm text-slate-400">
+            правильних відповідей
+            {answeredCount < total && (
+              <>
+                {' '}· відповіли на {answeredCount} з {total}
+              </>
+            )}
+          </p>
+          <button
+            onClick={reset}
+            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            <RotateCcw size={16} /> Почати спочатку
+          </button>
+        </div>
+      </section>
     </div>
   )
 }

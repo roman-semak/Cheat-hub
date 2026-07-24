@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <Quiz data={angularQuiz} />
+  return <Quiz data={angularQuiz} quizId="angular" />
 }

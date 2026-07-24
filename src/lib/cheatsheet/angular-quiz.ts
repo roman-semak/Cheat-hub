@@ -69,12 +69,12 @@ export const angularQuiz: QuizData = {
       "question": "Що робить <code>input()</code> (Angular 17.1+) на відміну від <code>@Input()</code>?",
       "options": [
         "Вони ідентичні, лише різний синтаксис",
-        "input() повертає Signal<T>, що дозволяє реактивно отримувати значення без підписки чи OnChanges",
+        "input() повертає Signal&lt;T&gt;, що дозволяє реактивно отримувати значення без підписки чи OnChanges",
         "input() підтримує тільки примітивні типи",
         "input() автоматично відписується від зовнішніх Observable"
       ],
       "correct": 1,
-      "explanation": "<code>input()</code> повертає <code>InputSignal<T></code> — тільки для читання сигнал. Значення можна використовувати в <code>computed()</code>, <code>effect()</code> або в шаблоні. Це усуває потребу в <code>ngOnChanges</code> та робить потік даних явним і реактивним."
+      "explanation": "<code>input()</code> повертає <code>InputSignal&lt;T&gt;</code> — тільки для читання сигнал. Значення можна використовувати в <code>computed()</code>, <code>effect()</code> або в шаблоні. Це усуває потребу в <code>ngOnChanges</code> та робить потік даних явним і реактивним."
     },
     {
       "id": "q7",
@@ -186,15 +186,15 @@ export const angularQuiz: QuizData = {
     },
     {
       "id": "q16",
-      "question": "Яка різниця між HttpClient та antiga Http?",
+      "question": "Яка різниця між HttpClient та старим Http?",
       "options": [
         "HttpClient новіший, підтримує RxJS 6+",
-        "HttpClient повертає Observable<T> замість Observable<Response>; не вимагає .json() виклику",
+        "HttpClient повертає Observable&lt;T&gt; замість Observable&lt;Response&gt;; не вимагає .json() виклику",
         "HttpClient більш потужний, Http застарілий",
         "Вони однакові, HttpClient просто тонка обгортка"
       ],
       "correct": 1,
-      "explanation": "<code>HttpClient</code> (з Angular 4.3+) автоматично парсить JSON у відповіді та типізує результат. Стара <code>Http</code> повертала <code>Response</code> об'єкт, вимагала явного <code>.json()</code> виклику. <code>HttpClient</code> — рекомендований, old <code>Http</code> — deprecated."
+      "explanation": "<code>HttpClient</code> (з Angular 4.3+) автоматично парсить JSON у відповіді та типізує результат. Стара <code>Http</code> повертала <code>Response</code> об'єкт, вимагала явного <code>.json()</code> виклику. <code>HttpClient</code> — рекомендований, старий <code>Http</code> — deprecated."
     },
     {
       "id": "q17",
@@ -206,7 +206,7 @@ export const angularQuiz: QuizData = {
         "Automatycallyoсет всі interceptors"
       ],
       "correct": 2,
-      "explanation": "Функціональний interceptor має сигнатуру <code>(req: HttpRequest<unknown>, next: HttpHandlerFn) => Observable<HttpEvent<unknown>></code>. <code>next</code> — це функція яка передає запит наступному interceptor'у в ланцюзі (або бекенду якщо це останній)."
+      "explanation": "Функціональний interceptor має сигнатуру <code>(req: HttpRequest&lt;unknown&gt;, next: HttpHandlerFn) => Observable&lt;HttpEvent&lt;unknown&gt;&gt;</code>. <code>next</code> — це функція яка передає запит наступному interceptor'у в ланцюзі (або бекенду якщо це останній)."
     },
     {
       "id": "q18",
@@ -290,7 +290,7 @@ export const angularQuiz: QuizData = {
         "Метод для примусової перевалідації"
       ],
       "correct": 1,
-      "explanation": "<code>form.statusChanges</code> — <code>Observable<string></code> яка емітує при кожній змінц статусу форми (VALID → INVALID, тощо). Корисна для відключення/включення кнопки Submit в залежності від стану форми."
+      "explanation": "<code>form.statusChanges</code> — <code>Observable&lt;string&gt;</code> яка емітує при кожній змінц статусу форми (VALID → INVALID, тощо). Корисна для відключення/включення кнопки Submit в залежності від стану форми."
     },
     {
       "id": "q25",
@@ -330,15 +330,15 @@ export const angularQuiz: QuizData = {
     },
     {
       "id": "q28",
-      "question": "Як отримати посилання на DOM елемент передане через <ng-content>?",
+      "question": "Як отримати посилання на DOM-елемент, спроєктований через <code>&lt;ng-content&gt;</code>?",
       "options": [
         "Через @Input параметр",
         "Через @ContentChild декоратор",
-        "Не можна, <ng-content> — тільки для шаблону",
+        "Не можна, <code>&lt;ng-content&gt;</code> — тільки для шаблону",
         "Через ElementRef інжекцію"
       ],
       "correct": 1,
-      "explanation": "<code>@ContentChild('myRef') myElement: ElementRef</code> дає доступ до елемента з template reference variable <code>#myRef</code> переданого через <ng-content>. <code>@ViewChild</code> — для дочірніх компонентів у шаблоні (не projected)."
+      "explanation": "<code>@ContentChild('myRef') myElement: ElementRef</code> дає доступ до елемента з template reference variable <code>#myRef</code>, спроєктованого через <code>&lt;ng-content&gt;</code>. <code>@ViewChild</code> — для дочірніх компонентів у шаблоні (не projected)."
     },
     {
       "id": "q29",
@@ -350,19 +350,19 @@ export const angularQuiz: QuizData = {
         "Тільки для Template-driven форм"
       ],
       "correct": 1,
-      "explanation": "Named slots дозволяють мати кілька <ng-content> в батька з різними селекторами. Приклад: <ng-content select=\"[header]\"> и <ng-content select=\"[body]\">. Батько використовує: <custom-component><div header>...</div><div body>...</div></custom-component>"
+      "explanation": "Named slots дозволяють мати кілька <code>&lt;ng-content&gt;</code> в батька з різними селекторами. Приклад: <code>&lt;ng-content select=\"[header]\"&gt;</code> і <code>&lt;ng-content select=\"[body]\"&gt;</code>. Батько використовує: <code>&lt;custom-component&gt;&lt;div header&gt;...&lt;/div&gt;&lt;div body&gt;...&lt;/div&gt;&lt;/custom-component&gt;</code>"
     },
     {
       "id": "q30",
       "question": "Яка різниця між ViewChild та ContentChild?",
       "options": [
-        "Одно те ж самое",
-        "@ViewChild ловить дочірні компоненти у шаблоні батька; @ContentChild ловить елементи передане через ng-content",
+        "Одне й те саме",
+        "@ViewChild ловить дочірні компоненти у шаблоні батька; @ContentChild ловить елементи, передані через <code>&lt;ng-content&gt;</code>",
         "@ViewChild для @Input, @ContentChild для @Output",
         "@ViewChild — лише для Elements, @ContentChild — для Components"
       ],
       "correct": 1,
-      "explanation": "<code>@ViewChild(ChildComponent)</code> — шукає у шаблоні батька. <code>@ContentChild(ChildComponent)</code> — шукає у projected content (<ng-content>). Важливо розрізняти View (template батька) і Content (те що батько отримує ззовні)."
+      "explanation": "<code>@ViewChild(ChildComponent)</code> — шукає у шаблоні батька. <code>@ContentChild(ChildComponent)</code> — шукає у projected content (<code>&lt;ng-content&gt;</code>). Важливо розрізняти View (template батька) і Content (те що батько отримує ззовні)."
     },
     {
       "id": "q31",
@@ -446,7 +446,7 @@ export const angularQuiz: QuizData = {
         "ComponentFixture для шаблону, TestBed для скрипту"
       ],
       "correct": 1,
-      "explanation": "<code>TestBed.createComponent(MyComponent)</code> повертає <code>ComponentFixture<MyComponent></code> — об'єкт з <code>.componentInstance</code>, <code>.nativeElement</code>, <code>.detectChanges()</code>, <code>.whenStable()</code> для тестування."
+      "explanation": "<code>TestBed.createComponent(MyComponent)</code> повертає <code>ComponentFixture&lt;MyComponent&gt;</code> — об'єкт з <code>.componentInstance</code>, <code>.nativeElement</code>, <code>.detectChanges()</code>, <code>.whenStable()</code> для тестування."
     },
     {
       "id": "q38",

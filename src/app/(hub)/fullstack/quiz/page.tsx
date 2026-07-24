@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <Quiz data={fullstackQuiz} />
+  return <Quiz data={fullstackQuiz} quizId="fullstack" />
 }

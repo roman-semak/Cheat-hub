@@ -393,12 +393,12 @@ export const javascriptQuiz: QuizData = {
       "question": "Що таке named groups у regex?",
       "options": [
         "Групи з назвами",
-        "/(?<year>\\d{4})-(?<month>\\d{2})/ — дозволяє доступ до groups.year замість groups[1]",
+        "/(?&lt;year&gt;\\d{4})-(?&lt;month&gt;\\d{2})/ — дозволяє доступ до groups.year замість groups[1]",
         "Тільки для коментарів",
         "Не існує"
       ],
       "correct": 1,
-      "explanation": "<code>/(?<name>\\w+)/.exec(\"Alice\").groups.name</code> → \"Alice\". Робить regex більш readable та відповідним до структури."
+      "explanation": "<code>/(?&lt;name&gt;\\w+)/.exec(\"Alice\").groups.name</code> → \"Alice\". Робить regex більш readable та відповідним до структури."
     },
     {
       "id": "q34",

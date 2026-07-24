@@ -16,7 +16,7 @@ export type TopicSlug =
   | 'algorithms'
   | 'fullstack'
 
-export type TopicFormat = 'extended' | 'cheatsheet' | 'quiz' | 'practice'
+export type TopicFormat = 'extended' | 'cheatsheet' | 'quiz' | 'practice' | 'tasks'
 
 export type Accent =
   | 'indigo'
@@ -70,6 +70,24 @@ export interface Section {
 
 export interface LeetcodeData {
   sections: Section[]
+}
+
+/* ---------- Practice tasks (interview-style exercises) ---------- */
+
+export type PracticeLevel = 'Middle' | 'Senior'
+export type PracticeTopic = 'RxJS' | 'JS/TS' | 'Async'
+
+export interface PracticeTask {
+  id: string // stable key, e.g. 'promise-to-observable'
+  title: string // 'Promise → Observable'
+  level: PracticeLevel
+  topic: PracticeTopic // used for grouping / filtering
+  tags?: string[] // ['switchMap', 'catchError'] — used for search
+  prompt: string // task description (HTML, rendered via .cheat-prose)
+  starterCode: string // code shown in the editor (contains // TODO)
+  solution: string // reference solution
+  explanation?: string // approach / why (HTML)
+  language?: string // defaults to 'typescript'
 }
 
 /* ---------- Lifehacks (LeetCode cheatsheet) ---------- */
