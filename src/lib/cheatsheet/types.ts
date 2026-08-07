@@ -126,6 +126,11 @@ export type ContentBlock =
       title: string
       rows: { version: string; text: string }[]
     }
+  | {
+      kind: 'links'
+      title?: string
+      items: { href: string; title: string; description: string }[]
+    }
 
 export interface TopicSection {
   id: string // anchor / scroll-spy target

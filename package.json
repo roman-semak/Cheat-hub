@@ -21,7 +21,6 @@
     "@prisma/adapter-libsql": "^5.22.0",
     "@prisma/client": "^5.20.0",
     "@radix-ui/react-dialog": "^1.1.17",
-    "@upstash/redis": "^1.38.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "highlight.js": "^11.11.1",

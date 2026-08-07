@@ -28,6 +28,19 @@ export const reactContent: TopicContent = {
           "kind": "code",
           "language": "tsx",
           "code": "// React 17: тільки event handlers\n// React 18: СКРІЗЬ (setTimeout, fetch, promises)\nsetTimeout(() => {\n  setCount(c => c + 1);      // React 18: один ре-рендер!\n  setName('Roman');           // React 17: два ре-рендери\n}, 0);\n\n// Вимкнути батчинг: flushSync()\nimport { flushSync } from 'react-dom';\nflushSync(() => setCount(c + 1));  // sync render"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">&lt;StrictMode&gt; — подвійний виклик лише в dev <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> <code>&lt;StrictMode&gt;</code> — це runtime-перемикач ЛИШЕ для development-збірки. Він навмисно ДВІЧІ викликає render-функцію компонента, тіло <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> initializer'и, і — з React 18 — mount-фазу effects (mount → unmount → mount знову) на кожному компоненті всередині себе. <strong>Навіщо:</strong> викрити нечисті (impure) компоненти й ефекти без cleanup ще під час розробки, поки їх легко пофіксити, а не коли вони вже зламали concurrent-рендеринг у проді.</p><div class=\"alert alert-good\">\n            <strong>У продакшн-білді (<code>next build</code> / <code>vite build --mode production</code>) StrictMode нічого не подвоює.</strong> Це <em>runtime</em>-поведінка, що існує ТІЛЬКИ в dev-режимі — на відміну від Angular <code>--strict</code>, який є суто compile-time перевіркою й ніяк не змінює runtime (див. Angular → Architecture &amp; Bootstrap → Strict Mode).</div>"
+        },
+        {
+          "kind": "code",
+          "language": "tsx",
+          "code": "function Counter() {\n  console.log('render');           // у dev під StrictMode виведе ДВІЧІ підряд\n\n  useEffect(() => {\n    console.log('mount');          // dev: mount → unmount → mount (двічі теж)\n    return () => console.log('unmount');\n  }, []);\n\n  const [state] = useState(() => {\n    console.log('init');           // lazy initializer також викликається двічі\n    return 0;\n  });\n\n  return <div>{state}</div>;\n}\n\n// ⚠️ Це виявляє ефекти БЕЗ cleanup — без StrictMode такий баг непомітний у dev,\n// але призводить до подвійних підписок/запитів у concurrent-режимі прод-рантайму:\nuseEffect(() => {\n  const id = setInterval(tick, 1000); // ❌ немає clearInterval → StrictMode покаже 2 інтервали\n}, []);\n\nuseEffect(() => {\n  const id = setInterval(tick, 1000);\n  return () => clearInterval(id);     // ✅ cleanup — StrictMode проходить чисто\n}, []);\n\n// Ввімкнення (App Router / Next.js): next.config.js → reactStrictMode: true (default)\n// Або вручну: <React.StrictMode><App /></React.StrictMode>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li>StrictMode впливає на прод-білд? → \"Ні — подвійні виклики лише в dev; прод-білд рендерить і викликає ефекти один раз.\"</li>\n              <li>Навіщо StrictMode подвоює рендер? → \"Виявити нечисті компоненти (side effects у тілі рендеру) заздалегідь, поки concurrent features (React 18+) на них не спіткнулись.\"</li>\n              <li>StrictMode в Angular є? → \"Немає прямого аналога. Angular --strict — compile-time TS/template перевірки, не runtime double-invoke.\"</li>\n            </ul>\n          </div>"
         }
       ]
     },

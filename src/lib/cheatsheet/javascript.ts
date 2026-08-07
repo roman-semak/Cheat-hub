@@ -85,6 +85,15 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Arrow function — чим саме відрізняється <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> arrow function — не просто коротший синтаксис, а функція БЕЗ власного <code>this</code>, <code>arguments</code>, <code>super</code> і <code>prototype</code>. Детальний розбір усіх правил визначення <code>this</code> — у розділі «Корисні посилання» нижче. <strong>Навіщо:</strong> знати, коли arrow function підходить (callback, де треба лексичний <code>this</code>), а коли ні (метод об'єкта, конструктор, обробник, де <code>this</code> має бути динамічним).</p><ul class=\"list\">\n            <li><strong>this:</strong> лексичний, береться із зовнішньої (батьківської) області як звичайна змінна — <code>.bind()/.call()/.apply()</code> на неї НЕ впливають.</li>\n            <li><strong>arguments:</strong> немає власного — читає <code>arguments</code> з батьківської функції (або кидає ReferenceError на верхньому рівні). Use <code>...rest</code> замість цього.</li>\n            <li><strong>new:</strong> не може бути конструктором — <code>new ArrowFn()</code> кидає <code>TypeError</code>.</li>\n            <li><strong>prototype:</strong> відсутній — <code>arrowFn.prototype === undefined</code>.</li>\n          </ul>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "const obj = {\n  name: 'Roman',\n  regular() { return this.name; },        // this = obj (метод-виклик)\n  arrow: () => this?.name,                 // this = зовнішній scope, НЕ obj!\n};\nobj.regular(); // 'Roman'\nobj.arrow();   // undefined (this лексичний, узятий ззовні обʼєкта)\n\nfunction RegularFn() { this.x = 1; }\nnew RegularFn(); // OK\n\nconst ArrowFn = () => { this.x = 1; };\nnew ArrowFn(); // ❌ TypeError: ArrowFn is not a constructor"
+        },
+        {
+          "kind": "paragraph",
           "html": "<h3 class=\"topic\">IIFE (Immediately Invoked Function Expression)</h3><p><strong>Що це:</strong> (function() { })() — функція яка викликається одразу після визначення. Створює новий scope. <strong>Навіщо:</strong> Legacy спосіб уникнути глобального scope. Сьогодні використовується рідко (modules замість).</p>"
         },
         {
@@ -805,6 +814,26 @@ export const javascriptContent: TopicContent = {
         {
           "kind": "paragraph",
           "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> debounce для search/input, throttle для scroll/resize. TaskQueue для послідовного виконання. Promise.allSettled для всіх результатів без fail.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>debounce vs throttle?</strong> — debounce: чекай кінця (search). throttle: максимум раз за N ms (scroll).</li>\n              <li><strong>TaskQueue для чого?</strong> — Послідовне виконання async. Уникай race conditions. Request limit (одночасно 1).</li>\n              <li><strong>Promise.withResolvers() преимущество?</strong> — Cleaner API. resolve/reject поза конструктором. Нижче callback hell.</li>\n              <li><strong>Promise.all vs allSettled?</strong> — all: fail на першій помилці. allSettled: чекай всіх (handle partial failures).</li>\n              <li><strong>Promise.race для чого?</strong> — Timeout реалізація. Перша завершена вигравань. Race умови контролю.</li>\n              <li><strong>Як запобігти callback hell в chains?</strong> — async/await замість .then chains. Более читаємо, лінійно.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Async context managers, better Promise pooling primitives</span></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "korysni-posylannya",
+      "title": "🔗 Корисні посилання",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": "<p>Статті та обговорення, які варто прочитати повністю за посиланням — тут лише короткий орієнтир, чому вони варті часу.</p>"
+        },
+        {
+          "kind": "links",
+          "items": [
+            {
+              "href": "https://dou.ua/forums/topic/59216/",
+              "title": "Раз і назавжди про this в JS людською мовою",
+              "description": "Розбір this через 4 послідовні критерії, які застосовує рушій JS: (1) arrow function? — this лексичний, береться із зовнішньої області, як звичайна змінна; (2) було explicit-прив'язування — .bind()/.call()/.apply()? — використовується задане значення; (3) спосіб виклику — new (this = новий об'єкт), метод об'єкта (this = об'єкт перед крапкою), чи самостійний виклик функції; (4) якщо самостійний виклик — strict mode (this = undefined) чи sloppy mode (this = глобальний об'єкт, window). Ключовий нюанс: arrow function ігнорує всі інші правила, тому bind/call/apply на неї не діють."
+            }
+          ]
         }
       ]
     }

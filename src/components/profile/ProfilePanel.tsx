@@ -1,46 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Download, Upload, RotateCcw, RefreshCw } from 'lucide-react'
+import { useRef } from 'react'
+import { Download, Upload, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useUserStore } from '@/lib/userStore'
 
-const SYNC_STATUS_TEXT: Record<string, string> = {
-  idle: 'Готово до синхронізації',
-  syncing: 'Синхронізація…',
-  synced: 'Синхронізовано',
-  disabled: 'Вимкнено — введи пароль і збережи (сервер має бути налаштований)',
-  error: 'Помилка — перевір пароль або налаштування сервера',
-}
-
 export function ProfilePanel() {
-  const {
-    data,
-    setUsername,
-    exportJson,
-    importJson,
-    resetData,
-    syncState,
-    lastSyncedAt,
-    getSyncKey,
-    setSyncKey,
-    syncNow,
-  } = useUserStore()
+  const { data, setUsername, exportJson, importJson, resetData } = useUserStore()
   const fileRef = useRef<HTMLInputElement>(null)
-
-  // Passphrase input — initialised from localStorage after mount to avoid a
-  // hydration mismatch, which legitimately requires setState in an effect (the
-  // cascading-render lint rule flags this as a false positive).
-  const [keyInput, setKeyInput] = useState('')
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setKeyInput(getSyncKey())
-  }, [getSyncKey])
-
-  const handleSync = () => {
-    setSyncKey(keyInput)
-    void syncNow()
-  }
 
   const solvedCount = Object.values(data.progress).filter((s) => s === 'solved').length
   const attemptedCount = Object.values(data.progress).filter(
@@ -137,43 +104,6 @@ export function ProfilePanel() {
             <RotateCcw size={16} /> Reset
           </Button>
         </div>
-      </div>
-
-      {/* Sync across devices / environments */}
-      <div className="glass-subtle rounded-xl p-6 space-y-3">
-        <h2 className="text-sm font-semibold text-slate-300">Синхронізація</h2>
-        <p className="text-xs text-slate-400">
-          Введи спільний пароль, щоб об&apos;єднати прогрес між localhost і
-          задеплоєною версією. Пароль зберігається лише в цьому браузері й має
-          збігатися з <code className="text-slate-300">SYNC_SECRET</code> на сервері.
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
-          <input
-            type="password"
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-            placeholder="Пароль синхронізації"
-            className="flex-1 min-w-[200px] px-3 py-2 rounded-lg bg-slate-900/50 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400"
-          />
-          <Button
-            onClick={handleSync}
-            variant="default"
-            disabled={!keyInput.trim() || syncState === 'syncing'}
-            className="inline-flex items-center gap-2"
-          >
-            <RefreshCw
-              size={16}
-              className={syncState === 'syncing' ? 'animate-spin' : undefined}
-            />
-            Sync now
-          </Button>
-        </div>
-        <p className="text-xs text-slate-500">
-          {SYNC_STATUS_TEXT[syncState] ?? SYNC_STATUS_TEXT.idle}
-          {syncState === 'synced' && lastSyncedAt
-            ? ` · ${new Date(lastSyncedAt).toLocaleTimeString()}`
-            : ''}
-        </p>
       </div>
     </div>
   )
