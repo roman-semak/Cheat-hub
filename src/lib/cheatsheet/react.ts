@@ -371,7 +371,7 @@ if (!user) return <Redirect to="/login" />;`,
         {
           kind: 'paragraph',
           html: `<h3 class="topic">Actions <span class="tag tag-new">React 19</span></h3>
-  <p><code>async</code>-функція, яку можна передати в <code>&lt;form action&gt;</code> або викликати в transition. React сам керує pending-станом, помилками й послідовністю (навіть кілька submit підряд не гонять один одного). Детально Server Actions у Next.js — див. Next.js → Server Actions і мутації.</p>`,
+  <p><code>async</code>-функція, яку можна передати в <code>&lt;form action&gt;</code> або викликати в transition. React сам керує pending-станом, помилками й послідовністю (навіть кілька submit підряд не гонять один одного). Детально Server Actions у Next.js — див. Next.js → Server Actions і мутації. Там же — Next.js 15 breaking changes: <code>params</code>/<code>searchParams</code>/<code>cookies()</code>/<code>headers()</code> стали <code>Promise</code>, і <code>fetch</code> більше не кешується за замовчуванням.</p>`,
         },
         {
           kind: 'code',

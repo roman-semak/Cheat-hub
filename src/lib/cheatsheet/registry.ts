@@ -47,7 +47,7 @@ export const TOPICS: TopicMeta[] = [
     icon: '⚛️',
     blurb: 'Хуки, рендеринг, стан і патерни сучасного React.',
     accent: 'cyan',
-    formats: ['extended', 'cheatsheet'],
+    formats: ['extended', 'cheatsheet', 'quiz'],
   },
   {
     slug: 'nextjs',
@@ -56,7 +56,7 @@ export const TOPICS: TopicMeta[] = [
     blurb:
       'App Router, Server Components, рендеринг, кешування та Server Actions поверх React.',
     accent: 'slate',
-    formats: ['extended', 'cheatsheet'],
+    formats: ['extended', 'cheatsheet', 'quiz'],
     badges: ['App Router', 'RSC', 'SSR/ISR'],
   },
   {

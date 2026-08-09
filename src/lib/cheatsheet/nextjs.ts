@@ -312,6 +312,43 @@ export function TodoForm() {
   <div class="alert warn">
     <span class="icon">⚠️</span>
     <span><strong>Безпека:</strong> Server Action — це публічний endpoint. <strong>Завжди</strong> перевіряй авторизацію та валідуй вхідні дані (zod) усередині дії — клієнтські перевірки можна обійти.</span>
+  </div>
+  <h3 class="topic">Next.js 15: async request APIs <span class="tag tag-new">Next 15</span></h3>
+  <p><code>params</code>, <code>searchParams</code>, <code>cookies()</code>, <code>headers()</code> та <code>draftMode()</code> стали <strong>асинхронними</strong> (повертають <code>Promise</code>) — у Next.js 14 вони були синхронними. Потрібен <code>await</code> у Server Component/Route Handler або <code>use()</code> у Client Component.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Next.js 14 — params синхронний
+export default function Page({ params }: { params: { slug: string } }) {
+  return <div>{params.slug}</div>;
+}
+
+// Next.js 15 — params/searchParams стали Promise
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;      // ⚠️ обов'язковий await
+  return <div>{slug}</div>;
+}
+
+// cookies() / headers() теж асинхронні з Next 15
+import { cookies } from 'next/headers';
+const cookieStore = await cookies();
+const theme = cookieStore.get('theme');`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Зміна дефолту кешування <span class="tag tag-new">Next 15</span></h3>
+  <div class="alert warn">
+    <span class="icon">⚠️</span>
+    <span><strong>fetch більше не кешується за замовчуванням:</strong> у Next 14 дефолт — <code>force-cache</code>; у Next 15 дефолт — <code>no-store</code>. <code>GET</code> Route Handlers теж більше не кешуються автоматично. Явний opt-in: <code>fetch(url, { cache: 'force-cache' })</code> або <code>export const dynamic = 'force-static'</code>.</span>
+  </div>
+  <div class="alert warn">
+    <span class="icon">⚠️</span>
+    <span><strong>Міграція легасі-коду:</strong> синхронний доступ до <code>params</code>/<code>cookies()</code> ще працює через сумісний шар з deprecation-попередженням, але код варто перевести на <code>await</code> — інакше зламається в майбутніх мажорних версіях.</span>
   </div>`,
         },
       ],
@@ -558,7 +595,16 @@ export async function create(formData: FormData) {
 }
 
 // <form action={create}> + useFormStatus() (pending) + useActionState()
-// useOptimistic() — миттєвий UI з відкатом`,
+// useOptimistic() — миттєвий UI з відкатом
+
+// Next.js 15: params/searchParams/cookies()/headers() → Promise
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;                   // await обов'язковий
+}
+const cookieStore = await cookies();                // теж await
+
+// fetch більше НЕ кешується за замовчуванням (Next 14: force-cache → Next 15: no-store)
+fetch(url, { cache: 'force-cache' });                // явний opt-in кешу`,
         },
       ],
     },
