@@ -287,5 +287,31 @@ export const fullstackQuiz: QuizData = {
       explanation:
         'Довгі/важкі або некритичні до миттєвого результату операції (надсилання email, генерація звітів, обробка відео) виносять у чергу: користувач отримує швидку відповідь, навантаження згладжується, сервіси розв\'язуються.',
     },
+    {
+      id: 'q23',
+      question: 'Які типові стадії (stages) описують у <code>.gitlab-ci.yml</code> для стандартного pipeline?',
+      options: [
+        'push, pull, merge, close',
+        'lint, test, build, deploy — виконуються послідовно, кожна наступна лише якщо попередня пройшла',
+        'Тільки одна стадія — deploy',
+        'develop, staging, production — це і є stages',
+      ],
+      correct: 1,
+      explanation:
+        'GitLab CI описує pipeline через список <code>stages</code> (напр. lint → test → build → deploy); джоби всередині однієї стадії йдуть паралельно, а наступна стадія стартує, лише якщо всі джоби попередньої завершились успішно.',
+    },
+    {
+      id: 'q24',
+      question: 'З яких компонентів складається ELK-стек і за що відповідає кожен?',
+      options: [
+        'Express, Loopback, Koa — три Node.js-фреймворки',
+        'Elasticsearch (зберігання/пошук логів), Logstash/Filebeat (збір і доставка), Kibana (візуалізація)',
+        'Це один інструмент, а не набір із трьох',
+        'Elasticsearch, Lambda, Kubernetes',
+      ],
+      correct: 1,
+      explanation:
+        '<strong>Elasticsearch</strong> індексує й дозволяє шукати по логах, <strong>Logstash</strong>/легший <strong>Filebeat</strong> збирають і пересилають логи (парсинг, збагачення), а <strong>Kibana</strong> будує дашборди та пошук поверх Elasticsearch.',
+    },
   ],
 }

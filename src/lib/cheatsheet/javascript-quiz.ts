@@ -579,6 +579,30 @@ export const javascriptQuiz: QuizData = {
       ],
       "correct": 1,
       "explanation": "<code>class TaskQueue { async run(fn) { await this.waitForCurrent; this.waitForCurrent = fn(); } }</code> — послідовне виконання. Альтернатива: reduce з promises."
+    },
+    {
+      "id": "q49",
+      "question": "У Webpack — у чому різниця між loader і plugin?",
+      "options": [
+        "Це синоніми",
+        "Loader трансформує окремий файл перед бандлингом (напр. TS → JS); plugin втручається у весь процес збірки (напр. генерація HTML, extract CSS)",
+        "Plugin працює тільки в dev-режимі",
+        "Loader налаштовується в package.json, а plugin — у webpack.config.js"
+      ],
+      "correct": 1,
+      "explanation": "<strong>Loader</strong> (напр. <code>ts-loader</code>, <code>css-loader</code>) — трансформує вміст одного файлу на етапі, коли Webpack його читає. <strong>Plugin</strong> (напр. <code>HtmlWebpackPlugin</code>) — підключається до ширшого життєвого циклу збірки: може генерувати нові файли, оптимізувати весь бандл, виносити частини в окремі файли."
+    },
+    {
+      "id": "q50",
+      "question": "У чому головна практична відмінність pnpm від npm/yarn при встановленні залежностей?",
+      "options": [
+        "pnpm працює лише з TypeScript-проєктами",
+        "pnpm зберігає пакети в єдиному content-addressable сховищі й лінкує їх symlinks замість копіювання в кожен node_modules",
+        "pnpm не підтримує package.json",
+        "Різниці немає, це лише інша команда для тих самих дій"
+      ],
+      "correct": 1,
+      "explanation": "npm/yarn копіюють кожен пакет у <code>node_modules</code> кожного проєкту (дублювання на диску). <strong>pnpm</strong> тримає один спільний store і лінкує файли symlinks/hardlinks — швидше, менше місця, і строгіша (non-flat) структура <code>node_modules</code> усуває phantom dependencies. Особливо виграшно у monorepo/workspaces."
     }
   ]
 }

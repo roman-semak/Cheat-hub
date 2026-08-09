@@ -13,6 +13,30 @@ export const reactContent: TopicContent = {
         {
           "kind": "paragraph",
           "html": "<h3 class=\"topic\">useEffect — правила <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// Lifecycle analogy:</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"cmt\">// componentDidMount + componentDidUpdate</span>\n  <span class=\"kw\">return</span> () => { <span class=\"cmt\">/* componentWillUnmount */</span> };\n}, [dep]);        <span class=\"cmt\">// [] = тільки mount/unmount</span>\n                  <span class=\"cmt\">// без [] = кожен рендер</span>\n                  <span class=\"cmt\">// [dep] = при зміні dep</span></pre>\n    <pre><span class=\"cmt\">// Stale closure bug!</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"kw\">const</span> id = <span class=\"fn\">setInterval</span>(() => {\n    <span class=\"fn\">setCount</span>(count + <span class=\"num\">1</span>);  <span class=\"cmt\">// ❌ stale count=0</span>\n  }, <span class=\"num\">1000</span>);\n  <span class=\"kw\">return</span> () => <span class=\"fn\">clearInterval</span>(id);\n}, []);\n\n<span class=\"cmt\">// ✅ Functional update</span>\n<span class=\"fn\">setCount</span>(c => c + <span class=\"num\">1</span>);</pre>\n  </div><h3 class=\"topic\">useMemo / useCallback — коли використовувати <span class=\"tag tag-pit\">PITFALL</span></h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Hook</th><th>✅ Має сенс</th><th>❌ Не потрібно</th></tr>\n      <tr><td><strong>useMemo</strong></td><td>Дороге обчислення (filter 10k items), посилання для memo-компонента</td><td>Прості concat, тривіальні обчислення</td></tr>\n      <tr><td><strong>useCallback</strong></td><td>Функція йде в memo-компонент як prop або в dep array іншого hook</td><td>Локальні обробники на простих елементах</td></tr>\n      <tr><td><strong>React.memo</strong></td><td>Компонент ре-рендериться часто, рендер дорогий, props стабільні</td><td>Простий компонент, рідкісні оновлення</td></tr>\n    </table>\n  </div><h3 class=\"topic\">useRef — 3 use cases</h3><div class=\"grid3\">\n    <div class=\"card\"><h4>1. DOM ref</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> inputRef = <span class=\"fn\">useRef</span>&lt;HTMLInputElement&gt;(<span class=\"kw\">null</span>);\n<span class=\"cmt\">// &lt;input ref={inputRef} /&gt;</span>\ninputRef.current?.<span class=\"fn\">focus</span>();</pre></div>\n    <div class=\"card blue\"><h4>2. Mutable без ре-рендеру</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> timerRef = <span class=\"fn\">useRef</span>&lt;NodeJS.Timeout&gt;();\ntimerRef.current = <span class=\"fn\">setTimeout</span>(fn, <span class=\"num\">1000</span>);\n<span class=\"cmt\">// зміна .current не тригерить рендер</span></pre></div>\n    <div class=\"card green\"><h4>3. \"Живе\" значення в effect</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> valueRef = <span class=\"fn\">useRef</span>(value);\nvalueRef.current = value;\n<span class=\"cmt\">// effect завжди читає актуальне</span></pre></div>\n  </div><h3 class=\"topic\">useLayoutEffect vs useEffect</h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>useEffect (async)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. Використовуй в 95% випадків.</p></div>\n    <div class=\"card yellow\"><h4>useLayoutEffect (sync)</h4><p>Виконується <strong>до</strong> paint, після DOM mutations. Для читання layout/dimensions, уникнення flash.</p></div>\n  </div><h3 class=\"topic\">useReducer vs useState</h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// useState — для незалежних простих значень</span>\n<span class=\"kw\">const</span> [name, setName] = <span class=\"fn\">useState</span>(<span class=\"str\">''</span>);\n<span class=\"kw\">const</span> [loading, setLoading] = <span class=\"fn\">useState</span>(<span class=\"kw\">false</span>);</pre>\n    <pre><span class=\"cmt\">// useReducer — пов'язаний складний state</span>\n<span class=\"kw\">const</span> [state, dispatch] = <span class=\"fn\">useReducer</span>(reducer, {\n  data: <span class=\"kw\">null</span>, loading: <span class=\"kw\">false</span>, error: <span class=\"kw\">null</span>\n});\ndispatch({ type: <span class=\"str\">'FETCH_START'</span> });\ndispatch({ type: <span class=\"str\">'FETCH_SUCCESS'</span>, payload: data });</pre>\n  </div>"
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Custom Hooks <span class="tag tag-key">KEY</span></h3>
+  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і відповідає тим самим правилам хуків (не в умовах/циклах). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — назад повертає дані/функції, компонент лишається "тупим".</p>
+  <div class="grid2">
+    <div class="card"><h4>useDebouncedValue</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(value: T, ms = <span class="num">300</span>) {
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value);
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> id = <span class="fn">setTimeout</span>(() => <span class="fn">setDebounced</span>(value), ms);
+    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(id);
+  }, [value, ms]);
+  <span class="kw">return</span> debounced;
+}</pre></div>
+    <div class="card blue"><h4>useObservable (RxJS у хуку) — Sigma-тема</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useObservable</span>&lt;T&gt;(source$: Observable&lt;T&gt;, initial: T) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(initial);
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> sub = source$.<span class="fn">subscribe</span>(setValue);
+    <span class="kw">return</span> () => sub.<span class="fn">unsubscribe</span>();  <span class="cmt">// cleanup — обов'язково!</span>
+  }, [source$]);
+  <span class="kw">return</span> value;
+}
+<span class="cmt">// presence$, debouncedSearch$ і т.п. стають звичайним React-значенням</span></pre></div>
+  </div>`
         }
       ]
     },
@@ -41,8 +65,163 @@ export const reactContent: TopicContent = {
         {
           "kind": "paragraph",
           "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li>StrictMode впливає на прод-білд? → \"Ні — подвійні виклики лише в dev; прод-білд рендерить і викликає ефекти один раз.\"</li>\n              <li>Навіщо StrictMode подвоює рендер? → \"Виявити нечисті компоненти (side effects у тілі рендеру) заздалегідь, поки concurrent features (React 18+) на них не спіткнулись.\"</li>\n              <li>StrictMode в Angular є? → \"Немає прямого аналога. Angular --strict — compile-time TS/template перевірки, не runtime double-invoke.\"</li>\n            </ul>\n          </div>"
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Чому компонент ре-рендериться <span class="tag tag-key">KEY</span></h3>
+  <p>Чотири тригери: (1) зміна власного <code>state</code>, (2) ре-рендер батька — <strong>дитина рендериться теж, навіть якщо її пропи не змінились</strong> (без <code>React.memo</code>), (3) зміна значення <code>Context</code>, яке вона споживає, (4) force update (<code>useReducer</code> dispatch того ж значення все одно триггерить рендер, на відміну від <code>useState</code> з тим самим значенням — React бейлить лише <code>useState</code>).</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ "Проп не змінився, а ре-рендер стався"</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;&gt;</span>
+      <span class="jsx">&lt;button</span> onClick={() =&gt; <span class="fn">setCount</span>(c =&gt; c+<span class="num">1</span>)}<span class="jsx">&gt;</span>{count}<span class="jsx">&lt;/button&gt;</span>
+      <span class="jsx">&lt;</span><span class="fn">Child</span> label=<span class="str">"static"</span> <span class="jsx">/&gt;</span>  <span class="cmt">// проп не змінюється,</span>
+    <span class="jsx">&lt;/&gt;</span>                                     <span class="cmt">// але Child теж рендериться!</span>
+  );
+}</pre></div>
+    <div class="card green"><h4>✅ React.memo рве ланцюжок</h4><pre style="font-size:10.5px"><span class="kw">const</span> Child = React.<span class="fn">memo</span>(<span class="kw">function</span> <span class="fn">Child</span>({ label }) {
+  <span class="kw">return</span> <span class="jsx">&lt;div&gt;</span>{label}<span class="jsx">&lt;/div&gt;</span>;
+});
+<span class="cmt">// Тепер Child ре-рендериться тільки якщо label реально змінився</span></pre></div>
+  </div>
+  <h3 class="topic">key={index} — конкретний баг <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Список інпутів з <code>key={index}</code>: видали/встав рядок посередині — React зіставляє елементи <strong>за позицією key</strong>, а не за змістом. Значення інпутів "перестрибують" на сусідні рядки, бо DOM-вузол переюзається для іншого айтема. Фікс — стабільний унікальний <code>key</code> (id даних, не індекс масиву).</p>`
         }
       ]
+    },
+    {
+      id: 'performance-deep-dive',
+      title: '🚀 Performance Deep Dive',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React.memo — коли працює, коли ні <span class="tag tag-key">KEY</span></h3>
+  <p><code>React.memo</code> порівнює пропи <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий об'єкт/масив/функція на кожен рендер батька (референс завжди інший). Можна передати власний компаратор — але це рідко потрібно і легко зламати непомітно.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const Row = React.memo(
+  function Row({ item, onSelect }: RowProps) {
+    return <li onClick={() => onSelect(item.id)}>{item.title}</li>;
+  },
+  (prev, next) => prev.item.id === next.item.id && prev.item.title === next.item.title,
+  // кастомний компаратор — true = "пропи рівні, скіпнути рендер"
+  // ⚠️ якщо забудеш порівняти якийсь проп — компонент застрягне зі старими даними
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Referential stability — головна причина, чому memo "не працює"</h3>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Новий референс щорендеру</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={{ color: <span class="str">'red'</span> }}  <span class="cmt">// новий {} щоразу</span>
+    onSelect={(id) =&gt; <span class="fn">doSomething</span>(id)} <span class="cmt">// нова функція щоразу</span>
+  <span class="jsx">/&gt;</span>;               <span class="cmt">// memo(Row) все одно ре-рендериться</span>
+}</pre></div>
+    <div class="card green"><h4>✅ Стабілізовано useMemo/useCallback</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">const</span> style = <span class="fn">useMemo</span>(() =&gt; ({ color: <span class="str">'red'</span> }), []);
+  <span class="kw">const</span> onSelect = <span class="fn">useCallback</span>((id) =&gt; <span class="fn">doSomething</span>(id), []);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={style} onSelect={onSelect} <span class="jsx">/&gt;</span>;
+}</pre></div>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Профілювання — React DevTools Profiler <span class="tag tag-key">KEY</span></h3>
+  <p>Вкладка <strong>Profiler</strong>: запиши взаємодію → <strong>Flamegraph</strong> показує, які компоненти рендерились і скільки це коштувало; <strong>Ranked</strong> сортує за тривалістю. Клік на компонент → секція <strong>"Why did this render?"</strong> (треба увімкнути в налаштуваннях) називає точну причину: hook changed, props changed, parent rendered.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Робочий процес на співбесіді/у реальності: спершу профілюй, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація, яка додає складність без гарантованого ефекту.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Code splitting — React.lazy + Suspense
+const Settings = React.lazy(() => import('./Settings'));
+
+function App() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      {showSettings && <Settings />}   {/* JS-чанк вантажиться лише тут */}
+    </Suspense>
+  );
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// List virtualization — react-window: рендеримо тільки видимі рядки
+import { FixedSizeList } from 'react-window';
+
+function BigList({ items }: { items: Item[] }) {
+  return (
+    <FixedSizeList height={600} width="100%" itemCount={items.length} itemSize={40}>
+      {({ index, style }) => <div style={style}>{items[index].title}</div>}
+    </FixedSizeList>
+  );
+}
+// 10 000 <div> у DOM vs ~20 видимих — критично для довгих списків/таблиць`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Core Web Vitals</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Метрика</th><th>Що міряє</th><th>Типовий винуватець</th><th>Що робить frontend</th></tr>
+      <tr><td><strong>LCP</strong></td><td>Час до відмальовки найбільшого елементу</td><td>Важке hero-зображення, повільний сервер, render-blocking JS</td><td><code>next/image</code> priority, преконект, code splitting, SSR/SSG замість CSR</td></tr>
+      <tr><td><strong>CLS</strong></td><td>Візуальна "стрибучість" макету</td><td>Зображення/реклама без розмірів, шрифт FOUT</td><td><code>width/height</code> на медіа, <code>next/font</code> (без layout shift), skeleton замість пустого блоку</td></tr>
+      <tr><td><strong>INP</strong></td><td>Затримка відгуку на взаємодію (замінив FID)</td><td>Важкі синхронні обробники, великий JS bundle, довгі рендери</td><td><code>useTransition</code>, дебаунс, розбиття важкої роботи, memo/virtualization</td></tr>
+    </table>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'state-context',
+      title: '🧭 Межі стану та Context',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Де живе стан <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Тип стану</th><th>Приклад</th><th>Інструмент</th></tr>
+      <tr><td><strong>Локальний</strong></td><td>відкрито/закрито dropdown, значення інпуту</td><td><code>useState</code> / <code>useReducer</code></td></tr>
+      <tr><td><strong>Серверний</strong></td><td>список юзерів, дані з API</td><td>TanStack Query (кеш, а не "стан")</td></tr>
+      <tr><td><strong>UI / клієнтський глобальний</strong></td><td>тема, стан кошика, sidebar collapsed</td><td>Zustand / Context</td></tr>
+      <tr><td><strong>URL</strong></td><td>фільтри, пагінація, вкладка</td><td><code>useSearchParams</code> — переживає перезавантаження, шариться лінком</td></tr>
+    </table>
+  </div>
+  <p>Найчастіша архітектурна помилка: тримати серверні дані в <code>useState</code>+<code>useEffect</code> (втрачаєш кеш/дедуплікацію/інвалідацію) або тримати URL-стан у <code>useState</code> (втрачаєш share-by-link і back-button).</p>
+  <h3 class="topic">Context API — коли достатньо, коли ні <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="grid2">
+    <div class="card green"><h4>✅ Годиться</h4><p>Рідкісні оновлення: тема, локаль, авторизований юзер, feature flags. Дерево споживачів не надто велике.</p></div>
+    <div class="card red"><h4>❌ Не годиться</h4><p>Часті оновлення (курсор миші, значення інпуту, real-time дані) — <strong>кожна зміна ре-рендерить УСІХ споживачів</strong> дерева під Provider, незалежно від того, яку частину value вони читають.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Пом'якшення: розбий великий контекст на кілька менших за частотою зміни
+<UserContext.Provider value={user}>       {/* рідко змінюється */}
+  <ThemeContext.Provider value={theme}>   {/* рідко змінюється */}
+    <CursorContext.Provider value={cursor}> {/* часто — тримай окремо, менше споживачів */}
+      <App />
+    </CursorContext.Provider>
+  </ThemeContext.Provider>
+</UserContext.Provider>
+
+// І мемоізуй value — інакше новий {} на кожен рендер Provider'а рве memo споживачів
+const value = useMemo(() => ({ user, setUser }), [user]);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">RxJS-в-React — коли потоки кращі за useEffect</h3>
+  <div class="card blue"><p>Комбінування кількох async-джерел з операторами (<code>debounceTime</code>, <code>switchMap</code>, <code>combineLatest</code>) читабельніше й декларативніше, ніж вкладені <code>useEffect</code> з ручним cleanup — типово для presence-статусів, debounced search, синхронізації кількох сокетів. Обгортається в <code>useObservable</code> (див. Hooks — Deep Dive → Custom Hooks) і далі виглядає як звичайний React-стан.</p></div>`,
+        },
+      ],
     },
     {
       "id": "tanstack-query",
@@ -108,6 +287,119 @@ export const reactContent: TopicContent = {
           "html": "<h3 class=\"topic\">Zustand vs Context <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>❌ Context для часто змінних даних</h4><p>Кожна зміна = ре-рендер ВСІХ споживачів. Навіть якщо вони не використовують змінену частину.</p></div>\n    <div class=\"card green\"><h4>✅ Zustand (або Jotai/Recoil)</h4><p>Гранулярні selectors. Ре-рендер тільки якщо вибрана частина state змінилась.</p></div>\n  </div>"
         }
       ]
+    },
+    {
+      id: 'patterns',
+      title: '🧩 Patterns',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Composition over inheritance <span class="tag tag-key">KEY</span></h3>
+  <p>React не має класового наслідування компонентів — переюз через <strong>композицію</strong>: <code>children</code>, слоти-пропи, compound components (набір компонентів, що діляться неявним станом через Context).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Compound components — Tabs.Root ділиться станом через Context
+const TabsCtx = createContext<{ active: string; setActive: (id: string) => void } | null>(null);
+
+function Root({ defaultTab, children }: { defaultTab: string; children: ReactNode }) {
+  const [active, setActive] = useState(defaultTab);
+  return <TabsCtx.Provider value={{ active, setActive }}>{children}</TabsCtx.Provider>;
+}
+function Tab({ id, children }: { id: string; children: ReactNode }) {
+  const ctx = useContext(TabsCtx)!;
+  return <button onClick={() => ctx.setActive(id)} aria-selected={ctx.active === id}>{children}</button>;
+}
+export const Tabs = { Root, Tab };
+
+// <Tabs.Root defaultTab="a"><Tabs.Tab id="a">A</Tabs.Tab><Tabs.Tab id="b">B</Tabs.Tab></Tabs.Root>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Render props / HOC — легасі-патерни</h3>
+  <p>До хуків (React &lt;16.8) це були єдині способи переюзати stateful-логіку між компонентами. Хуки закрили ~95% цих кейсів простіше й без "wrapper hell". HOC ще трапляється для наскрізних речей на межі компонента (напр. обгортання в error boundary, injectу пропів з роутера в legacy-коді).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Render prop (legacy)
+<MouseTracker render={({ x, y }) => <span>{x}, {y}</span>} />
+
+// HOC (legacy)
+const withAuth = (Component) => (props) =>
+  useAuth().user ? <Component {...props} /> : <Redirect to="/login" />;
+
+// Сучасний еквівалент — custom hook
+const { x, y } = useMouseTracker();
+const user = useAuth();
+if (!user) return <Redirect to="/login" />;`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Controlled vs Uncontrolled</h3>
+  <div class="grid2">
+    <div class="card"><h4>Controlled</h4><pre style="font-size:10.5px"><span class="kw">const</span> [v, setV] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="jsx">&lt;input</span> value={v} onChange={e =&gt; <span class="fn">setV</span>(e.target.value)} <span class="jsx">/&gt;</span>
+<span class="cmt">// React — source of truth, ре-рендер щокеystroke</span></pre></div>
+    <div class="card blue"><h4>Uncontrolled</h4><pre style="font-size:10.5px"><span class="kw">const</span> ref = <span class="fn">useRef</span>&lt;HTMLInputElement&gt;(<span class="kw">null</span>);
+<span class="jsx">&lt;input</span> ref={ref} defaultValue=<span class="str">""</span> <span class="jsx">/&gt;</span>
+<span class="cmt">// DOM — source of truth, читаєш ref.current.value при сабміті</span></pre></div>
+  </div>
+  <p>Uncontrolled + <code>ref</code> виправданий для великих форм (сотні полів) — без ре-рендеру всієї форми на кожен keystroke; react-hook-form побудований саме на цьому.</p>
+  <h3 class="topic">Container / Presentational — межа розмилась</h3>
+  <p>До хуків: Container (клас, логіка/дані) рендерить Presentational (функція, тільки UI). Зараз логіка виноситься в <strong>custom hook</strong>, а не в окремий container-компонент — один функціональний компонент викликає хук і рендерить UI. Розділення лишається корисним як <em>ідея</em> (розділяй "звідки дані" і "як показати"), але не як обов'язкова пара файлів/компонентів.</p>
+  <h3 class="topic">Error Boundaries <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Ловлять помилки рендеру дочірнього дерева. Досі <strong>тільки клас-компонент</strong> — немає хук-еквівалента <code>getDerivedStateFromError</code>/<code>componentDidCatch</code>. На практиці беруть готову бібліотеку <code>react-error-boundary</code> замість написання класу вручну.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { ErrorBoundary } from 'react-error-boundary';
+
+<ErrorBoundary fallback={<ErrorPage />} onError={(e) => logError(e)}>
+  <RiskyWidget />
+</ErrorBoundary>
+// Не ловить: помилки в event handlers, async код, SSR-помилки, помилки самого boundary`,
+        },
+      ],
+    },
+    {
+      id: 'react-19',
+      title: '✨ React 19',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Actions <span class="tag tag-new">React 19</span></h3>
+  <p><code>async</code>-функція, яку можна передати в <code>&lt;form action&gt;</code> або викликати в transition. React сам керує pending-станом, помилками й послідовністю (навіть кілька submit підряд не гонять один одного). Детально Server Actions у Next.js — див. Next.js → Server Actions і мутації.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// use() — читає Promise або Context, МОЖНА умовно (на відміну від звичайних хуків)
+function Profile({ userPromise }: { userPromise: Promise<User> }) {
+  if (!userPromise) return null;      // ✅ хуки так не можна, use() — можна
+  const user = use(userPromise);      // "призупиняє" компонент до resolve (як Suspense)
+  return <div>{user.name}</div>;
+}
+
+// useActionState — форма + результат + pending в одному хуку
+const [state, formAction, isPending] = useActionState(
+  async (prevState, formData: FormData) => {
+    const res = await createUser(formData);
+    return res.error ? { error: res.error } : { success: true };
+  },
+  { error: null },
+);
+// <form action={formAction}>...<button disabled={isPending}>Save</button></form>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React Compiler <span class="tag tag-new">RC / опційний</span></h3>
+  <p>Build-time плагін: сам додає memoization (еквівалент ручних <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code>) аналізуючи код компонента. Мета — прибрати ручну оптимізацію як джерело багів (забутий dep у масиві залежностей). Не означає "не вчити useMemo" для співбесіди — розуміння <em>чому</em> компілятор це робить і коли ручна оптимізація й досі потрібна (об'єкти поза рендером, складні кейси) все ще питають.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Статус на серпень 2026: React Compiler — production-ready в React 19, опційний (incremental adoption), потребує ESLint-плагін для перевірки "compiler-safe" коду (чисті компоненти, дотримання Rules of Hooks).</span></div>`,
+        },
+      ],
     },
     {
       "id": "nextjs-app-router",
@@ -141,6 +433,28 @@ export const reactCheat: TopicContent = {
         {
           "kind": "paragraph",
           "html": "<h3 class=\"topic\">useEffect — правила <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// Lifecycle analogy:</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"cmt\">// componentDidMount + componentDidUpdate</span>\n  <span class=\"kw\">return</span> () => { <span class=\"cmt\">/* componentWillUnmount */</span> };\n}, [dep]);        <span class=\"cmt\">// [] = тільки mount/unmount</span>\n                  <span class=\"cmt\">// без [] = кожен рендер</span>\n                  <span class=\"cmt\">// [dep] = при зміні dep</span></pre>\n    <pre><span class=\"cmt\">// Stale closure bug!</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"kw\">const</span> id = <span class=\"fn\">setInterval</span>(() => {\n    <span class=\"fn\">setCount</span>(count + <span class=\"num\">1</span>);  <span class=\"cmt\">// ❌ stale count=0</span>\n  }, <span class=\"num\">1000</span>);\n  <span class=\"kw\">return</span> () => <span class=\"fn\">clearInterval</span>(id);\n}, []);\n\n<span class=\"cmt\">// ✅ Functional update</span>\n<span class=\"fn\">setCount</span>(c => c + <span class=\"num\">1</span>);</pre>\n  </div><h3 class=\"topic\">useMemo / useCallback — коли використовувати <span class=\"tag tag-pit\">PITFALL</span></h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Hook</th><th>✅ Має сенс</th><th>❌ Не потрібно</th></tr>\n      <tr><td><strong>useMemo</strong></td><td>Дороге обчислення (filter 10k items), посилання для memo-компонента</td><td>Прості concat, тривіальні обчислення</td></tr>\n      <tr><td><strong>useCallback</strong></td><td>Функція йде в memo-компонент як prop або в dep array іншого hook</td><td>Локальні обробники на простих елементах</td></tr>\n      <tr><td><strong>React.memo</strong></td><td>Компонент ре-рендериться часто, рендер дорогий, props стабільні</td><td>Простий компонент, рідкісні оновлення</td></tr>\n    </table>\n  </div><h3 class=\"topic\">useRef — 3 use cases</h3><div class=\"grid3\">\n    <div class=\"card\"><h4>1. DOM ref</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> inputRef = <span class=\"fn\">useRef</span>&lt;HTMLInputElement&gt;(<span class=\"kw\">null</span>);\n<span class=\"cmt\">// &lt;input ref={inputRef} /&gt;</span>\ninputRef.current?.<span class=\"fn\">focus</span>();</pre></div>\n    <div class=\"card blue\"><h4>2. Mutable без ре-рендеру</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> timerRef = <span class=\"fn\">useRef</span>&lt;NodeJS.Timeout&gt;();\ntimerRef.current = <span class=\"fn\">setTimeout</span>(fn, <span class=\"num\">1000</span>);\n<span class=\"cmt\">// зміна .current не тригерить рендер</span></pre></div>\n    <div class=\"card green\"><h4>3. \"Живе\" значення в effect</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> valueRef = <span class=\"fn\">useRef</span>(value);\nvalueRef.current = value;\n<span class=\"cmt\">// effect завжди читає актуальне</span></pre></div>\n  </div><h3 class=\"topic\">useLayoutEffect vs useEffect</h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>useEffect (async)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. Використовуй в 95% випадків.</p></div>\n    <div class=\"card yellow\"><h4>useLayoutEffect (sync)</h4><p>Виконується <strong>до</strong> paint, після DOM mutations. Для читання layout/dimensions, уникнення flash.</p></div>\n  </div><h3 class=\"topic\">useReducer vs useState</h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// useState — для незалежних простих значень</span>\n<span class=\"kw\">const</span> [name, setName] = <span class=\"fn\">useState</span>(<span class=\"str\">''</span>);\n<span class=\"kw\">const</span> [loading, setLoading] = <span class=\"fn\">useState</span>(<span class=\"kw\">false</span>);</pre>\n    <pre><span class=\"cmt\">// useReducer — пов'язаний складний state</span>\n<span class=\"kw\">const</span> [state, dispatch] = <span class=\"fn\">useReducer</span>(reducer, {\n  data: <span class=\"kw\">null</span>, loading: <span class=\"kw\">false</span>, error: <span class=\"kw\">null</span>\n});\ndispatch({ type: <span class=\"str\">'FETCH_START'</span> });\ndispatch({ type: <span class=\"str\">'FETCH_SUCCESS'</span>, payload: data });</pre>\n  </div>"
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Custom Hooks</h3><div class="grid2">
+    <pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(v: T, ms=<span class="num">300</span>) {
+  <span class="kw">const</span> [d, setD] = <span class="fn">useState</span>(v);
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> id = <span class="fn">setTimeout</span>(() => <span class="fn">setD</span>(v), ms);
+    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(id);
+  }, [v, ms]);
+  <span class="kw">return</span> d;
+}</pre>
+    <pre style="font-size:10.5px"><span class="cmt">// useObservable — RxJS у хуку</span>
+<span class="kw">function</span> <span class="fn">useObservable</span>&lt;T&gt;(src$: Observable&lt;T&gt;, init: T) {
+  <span class="kw">const</span> [v, setV] = <span class="fn">useState</span>(init);
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> sub = src$.<span class="fn">subscribe</span>(setV);
+    <span class="kw">return</span> () => sub.<span class="fn">unsubscribe</span>();
+  }, [src$]);
+  <span class="kw">return</span> v;
+}</pre>
+  </div>`
         }
       ]
     },
@@ -156,8 +470,67 @@ export const reactCheat: TopicContent = {
           "kind": "code",
           "language": "tsx",
           "code": "// React 17: тільки event handlers\n// React 18: СКРІЗЬ (setTimeout, fetch, promises)\nsetTimeout(() => {\n  setCount(c => c + 1);      // React 18: один ре-рендер!\n  setName('Roman');           // React 17: два ре-рендери\n}, 0);\n\n// Вимкнути батчинг: flushSync()\nimport { flushSync } from 'react-dom';\nflushSync(() => setCount(c + 1));  // sync render"
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Чому ре-рендер?</h3><p>State (own) · ре-рендер батька (без <code>memo</code> — і дитина теж!) · зміна Context · force update. <code>key={index}</code> у списку з реордером = значення інпутів "стрибають" між рядками — юзай стабільний id.</p>`
         }
       ]
+    },
+    {
+      id: 'performance-deep-dive',
+      title: '🚀 Performance',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap">
+    <table>
+      <tr><th>Метрика</th><th>Винуватець</th><th>Фікс</th></tr>
+      <tr><td>LCP</td><td>важке hero-зображення, CSR</td><td>next/image priority, SSR/SSG</td></tr>
+      <tr><td>CLS</td><td>медіа без width/height, FOUT</td><td>next/font, зарезервований розмір</td></tr>
+      <tr><td>INP</td><td>важкі обробники, великий bundle</td><td>useTransition, code splitting</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// memo не рятує від нового референсу щорендеру — стабілізуй:
+const style = useMemo(() => ({ color: 'red' }), []);
+const onSelect = useCallback((id) => doSomething(id), []);
+const Row = React.memo(RowImpl);
+
+// Code splitting
+const Settings = React.lazy(() => import('./Settings'));
+<Suspense fallback={<Spinner />}>{show && <Settings />}</Suspense>
+
+// Virtualization (react-window) — рендер лише видимих рядків
+<FixedSizeList height={600} itemCount={items.length} itemSize={40}>
+  {({ index, style }) => <div style={style}>{items[index].title}</div>}
+</FixedSizeList>
+
+// DevTools Profiler → Flamegraph/Ranked/"Why did this render?"`,
+        },
+      ],
+    },
+    {
+      id: 'state-context',
+      title: '🧭 Межі стану',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap">
+    <table>
+      <tr><th>Стан</th><th>Інструмент</th></tr>
+      <tr><td>Локальний</td><td>useState/useReducer</td></tr>
+      <tr><td>Серверний</td><td>TanStack Query</td></tr>
+      <tr><td>UI глобальний</td><td>Zustand / Context (рідкісні оновлення!)</td></tr>
+      <tr><td>URL</td><td>useSearchParams</td></tr>
+    </table>
+  </div>
+  <p><strong>Context:</strong> будь-яка зміна value ре-рендерить УСІХ споживачів — не для частих оновлень. Розбивай на кілька контекстів + <code>useMemo</code> на value.</p>`,
+        },
+      ],
     },
     {
       "id": "tanstack-query",
@@ -223,6 +596,52 @@ export const reactCheat: TopicContent = {
           "html": "<h3 class=\"topic\">Zustand vs Context <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>❌ Context для часто змінних даних</h4><p>Кожна зміна = ре-рендер ВСІХ споживачів. Навіть якщо вони не використовують змінену частину.</p></div>\n    <div class=\"card green\"><h4>✅ Zustand (або Jotai/Recoil)</h4><p>Гранулярні selectors. Ре-рендер тільки якщо вибрана частина state змінилась.</p></div>\n  </div>"
         }
       ]
+    },
+    {
+      id: 'patterns',
+      title: '🧩 Patterns',
+      blocks: [
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Compound components — спільний стан через Context
+const Tabs = { Root, Tab }; // <Tabs.Root><Tabs.Tab id="a">...
+
+// Render props / HOC — legacy, хуки замінили в ~95% випадків
+<MouseTracker render={({x,y}) => <span>{x},{y}</span>} />
+const withAuth = (C) => (p) => useAuth().user ? <C {...p}/> : <Redirect/>;
+
+// Controlled vs Uncontrolled
+<input value={v} onChange={e => setV(e.target.value)} />   // controlled
+<input ref={ref} defaultValue="" />                          // uncontrolled (великі форми)
+
+// Container/Presentational → логіка тепер у custom hook, не в окремому container
+
+// Error Boundary — ЛИШЕ клас (getDerivedStateFromError/componentDidCatch)
+import { ErrorBoundary } from 'react-error-boundary';
+<ErrorBoundary fallback={<ErrorPage />}><RiskyWidget /></ErrorBoundary>`,
+        },
+      ],
+    },
+    {
+      id: 'react-19',
+      title: '✨ React 19',
+      blocks: [
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Actions — async-функція у <form action>, React керує pending/помилками
+// use() — читає Promise/Context, можна умовно (на відміну від хуків)
+const user = use(userPromise);
+
+// useActionState — форма + результат + pending
+const [state, formAction, isPending] = useActionState(fn, initial);
+// <form action={formAction}><button disabled={isPending}>Save</button></form>
+
+// React Compiler — авто useMemo/useCallback/memo на build-time
+// RC, опційний, все одно треба розуміти ручну оптимізацію для співбесіди`,
+        },
+      ],
     },
     {
       "id": "nextjs-app-router",

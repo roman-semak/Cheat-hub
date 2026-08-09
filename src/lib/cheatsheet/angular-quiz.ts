@@ -651,6 +651,42 @@ export const angularQuiz: QuizData = {
       ],
       "correct": 1,
       "explanation": "<strong>NgModule</strong> (@NgModule декоратор) — організаційна одиниця. Дозволяє групувати пов'язаний код, контролювати доступ (exports), керувати залежностями (imports, providers). AppModule — root модуль, часто feature модулі для різних частин додатку."
+    },
+    {
+      "id": "q55",
+      "question": "Чим WebdriverIO принципово відрізняється від Protractor?",
+      "options": [
+        "Нічим, це той самий інструмент з новою назвою",
+        "WebdriverIO — незалежний від Angular E2E-фреймворк поверх протоколу WebDriver; Protractor був жорстко зав'язаний на Angular internals і deprecated",
+        "WebdriverIO працює лише з Firefox",
+        "WebdriverIO — це unit-тест фреймворк, а не E2E"
+      ],
+      "correct": 1,
+      "explanation": "Protractor був офіційним E2E-інструментом Angular, але жорстко залежав від Angular-internals (waiting strategy на дайджест-цикл) і Selenium; команда Angular його deprecated. <strong>WebdriverIO</strong> — незалежний, крос-фреймворковий E2E-раннер поверх WebDriver-протоколу, підтримує будь-який фронтенд і навіть мобільні пристрої через Appium."
+    },
+    {
+      "id": "q56",
+      "question": "Які ключові слова Gherkin використовує Cucumber для опису сценарію в <code>.feature</code>-файлі?",
+      "options": [
+        "describe / it / expect",
+        "Given / When / Then",
+        "test / assert / mock",
+        "Arrange / Act / Assert"
+      ],
+      "correct": 1,
+      "explanation": "Gherkin-синтаксис Cucumber описує сценарій людською мовою через <strong>Given</strong> (початковий стан), <strong>When</strong> (дія користувача) і <strong>Then</strong> (очікуваний результат). Кожен рядок мапиться на step definition у коді — так сценарій читає весь крос-функціональний тім, а не лише розробники."
+    },
+    {
+      "id": "q57",
+      "question": "Що таке Quality Gate у SonarQube?",
+      "options": [
+        "Місце, де зберігаються токени доступу",
+        "Набір порогів якості (coverage, нові bugs/vulnerabilities, duplication), які PR має пройти, щоб merge був дозволений",
+        "Інша назва для ESLint-конфігу",
+        "Функція, доступна лише у платній версії"
+      ],
+      "correct": 1,
+      "explanation": "<strong>Quality Gate</strong> — набір умов (напр. coverage on new code ≥ 80%, 0 нових Bugs/Vulnerabilities, duplication нижче порогу), які SonarQube перевіряє на кожному аналізі. Якщо PR не проходить Quality Gate — merge блокується, це «останній бар'єр» якості окремо від ESLint-гейту в CI."
     }
   ]
 }

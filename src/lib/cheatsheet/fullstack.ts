@@ -751,6 +751,44 @@ CMD ["node", "dist/server.js"]`,
               <li><strong>12-factor app</strong> — конфіг в env, стейтлес-процеси, логи в stdout, dev/prod parity.</li>
             </ul>`,
         },
+        {
+          kind: 'code',
+          language: 'yaml',
+          caption: '.gitlab-ci.yml — типовий pipeline (GitLab CI)',
+          code: `stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+lint:
+  stage: lint
+  script:
+    - npm ci
+    - npm run lint
+
+test:
+  stage: test
+  script:
+    - npm run test -- --coverage
+  coverage: '/All files[^|]*\\|[^|]*\\s+([\\d.]+)/'
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+deploy:
+  stage: deploy
+  script:
+    - echo "deploy dist/ to production"
+  environment: production
+  only:
+    - main`,
+        },
       ],
     },
 
@@ -806,6 +844,27 @@ CMD ["node", "dist/server.js"]`,
                 <p>Шлях одного запиту через сервіси. OpenTelemetry, Jaeger. Незамінні в мікросервісах.</p>
               </div>
             </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">ELK Stack — агрегація логів</h3>
+            <p>ELK — три компоненти, кожен зі своєю відповідальністю в конвеєрі логів:</p>
+            <div class="grid3">
+              <div class="card">
+                <h4>Elasticsearch</h4>
+                <p>Пошуковий движок і сховище — приймає структуровані (JSON) логи, індексує їх, дозволяє швидкий повнотекстовий пошук і агрегації по мільйонах записів.</p>
+              </div>
+              <div class="card">
+                <h4>Logstash / Filebeat</h4>
+                <p>Збір і доставка. <strong>Filebeat</strong> — легкий агент на кожному хості, читає лог-файли й пересилає далі. <strong>Logstash</strong> — важчий, парсить/трансформує/збагачує (grok-патерни, фільтри) перед записом в Elasticsearch.</p>
+              </div>
+              <div class="card">
+                <h4>Kibana</h4>
+                <p>Візуалізація поверх Elasticsearch — дашборди, пошук по логах, побудова графіків і алертів на основі запитів.</p>
+              </div>
+            </div>
+            <p><strong>Типовий потік:</strong> <code>app пише JSON-логи в stdout → Filebeat читає файл/контейнерний лог → Logstash парсить і збагачує → Elasticsearch індексує → Kibana візуалізує</code>.</p>
+            <div class="alert"><strong>💬 Коли що.</strong> Self-hosted ELK — повний контроль і безкоштовний рушій, але важкий у підтримці (Elasticsearch-кластер, диск, ресурси). <strong>Managed</strong> (Datadog, Grafana Cloud) — платно, але без DevOps-накладних витрат. <strong>Loki</strong> (Grafana) — легша альтернатива: індексує лише метадані/labels, а не повний текст логу — дешевша, але менш гнучкий пошук.</div>`,
         },
         {
           kind: 'paragraph',
@@ -932,6 +991,52 @@ CMD ["node", "dist/server.js"]`,
           kind: 'note',
           tone: 'good',
           html: `<div class="alert good"><strong>🎯 Підхід Senior.</strong> На більшість питань правильна відповідь починається з <em>«залежить від…»</em> і завершується конкретним вибором з обґрунтуванням trade-off. Демонструй не енциклопедію, а <strong>інженерне судження</strong>: вимоги → варіанти → компроміс → рішення. Це й відрізняє Senior від Middle.</div>`,
+        },
+      ],
+    },
+
+    /* ============ 21. Soft skills та STAR ============ */
+    {
+      id: 'soft-skills-star',
+      title: '🤝 Soft Skills, STAR та поведінкові питання',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Технічних скілів достатньо для проходження першого етапу, але на behavioral-секції оцінюють <em>як ти працюєш з людьми</em>: ownership, продуктове мислення, комунікація, менторство. Структуруй відповіді методом <strong>STAR</strong>.</p>
+            <div class="grid2">
+              <div class="card">
+                <h4>STAR — структура</h4>
+                <ul>
+                  <li><strong>Situation</strong> — короткий контекст (проєкт, команда, обмеження)</li>
+                  <li><strong>Task</strong> — що конкретно від тебе вимагалось</li>
+                  <li><strong>Action</strong> — що ти зробив <em>особисто</em> (не «ми», а «я»)</li>
+                  <li><strong>Result</strong> — вимірюваний наслідок + що засвоїв</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h4>Приклад (конфлікт у команді)</h4>
+                <p><strong>S:</strong> два розробники по-різному бачили архітектуру фічі, дедлайн наближався. <strong>T:</strong> потрібно було розблокувати рішення, не зіпсувавши стосунки в команді. <strong>A:</strong> організував 30-хв дизайн-рев'ю, попросив кожного викласти trade-offs письмово, запропонував гібрид і зафіксував рішення в ADR. <strong>R:</strong> фічу здали вчасно, підхід із письмовими trade-offs команда лишила собі для майбутніх спорів.</p>
+              </div>
+            </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Типові поведінкові питання — під профіль вакансії</h3>
+            <div class="interview-tips">
+              <ul>
+                <li><strong>Team player / крос-функціональна команда:</strong> «Розкажи про співпрацю з backend/QA/дизайном над спільною фічею» → фокус на комунікації, а не лише на своєму коді.</li>
+                <li><strong>Ownership:</strong> «Коли ти довів завдання до кінця попри перешкоди?» → показати ініціативу без вказівки зверху, відповідальність за результат, а не лише за код.</li>
+                <li><strong>Product mindset / customer focus:</strong> «Коли технічне рішення довелось підлаштувати під потреби користувача/бізнесу?» → показати, що бачиш далі тікета — вплив на онбординг/pricing/конверсію.</li>
+                <li><strong>Mentoring:</strong> «Як ти допомагав менш досвідченому колезі?» → конкретний приклад code review чи парного програмування з вимірюваним результатом.</li>
+                <li><strong>Проактивність:</strong> «Коли ти помітив проблему, яку ніхто не просив вирішувати?» → приклад, де сам підняв технічний борг/ризик і довів до рішення.</li>
+                <li><strong>Готовність виходити за межі FE:</strong> «Розкажи про досвід, де довелось розібратись у backend/DevOps поза власною зоною» → показати цікавість і швидке навчання нового.</li>
+              </ul>
+            </div>`,
+        },
+        {
+          kind: 'note',
+          tone: 'info',
+          html: `<div class="alert"><strong>🧰 Інструменти співпраці (буде плюсом).</strong> <strong>Miro</strong> — колаборативна дошка для планування спринтів, ретро, user-flow та архітектурних діаграм у реальному часі з командою. <strong>Tableau</strong> — BI/data-visualization інструмент для дашбордів на основі бізнес-метрик; для фронтендера це радше «розумію, навіщо продукту потрібні дашборди й аналітика», ніж хендс-он навичка — досить вміти підтримати розмову про те, як фронтенд-події (аналітика, метрики) потрапляють у такі дашборди.</div>`,
         },
       ],
     },
