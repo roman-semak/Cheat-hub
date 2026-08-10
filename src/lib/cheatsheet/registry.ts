@@ -45,7 +45,7 @@ export const TOPICS: TopicMeta[] = [
     slug: 'react',
     title: 'React',
     icon: '⚛️',
-    blurb: 'Хуки, рендеринг, стан і патерни сучасного React.',
+    blurb: 'Хуки, рендеринг, стан і патерни сучасного React — від основ до Senior.',
     accent: 'cyan',
     formats: ['extended', 'cheatsheet', 'quiz'],
   },

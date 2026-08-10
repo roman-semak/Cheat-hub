@@ -1,95 +1,468 @@
-// AUTO-GENERATED from CheetSheet/react/{index,cheatsheet}.html.
-// Prose preserved as sanitized HTML blocks (styled via .cheat-prose) +
-// extracted code blocks. Re-running the parser overwrites this file.
+// React — методичка від основ до Senior.
+// Розширена версія (reactContent) + шпаргалка (reactCheat) поверх спільної
+// структури секцій. Формат контенту — TopicContent/ContentBlock (types.ts).
 import type { TopicContent } from './types'
 
 export const reactContent: TopicContent = {
-  "slug": "react",
-  "sections": [
+  slug: 'react',
+  intro: [
     {
-      "id": "hooks-deep-dive",
-      "title": "🪝 Hooks — Deep Dive",
-      "blocks": [
+      kind: 'paragraph',
+      html: `<p>Гайд побудований як шлях від "пишу перший компонент" до "поясню, чому він ре-рендерився" на Senior-співбесіді. Блоки 0–1 — фундамент, 2–5 — поглиблений React, 6–8 — Next.js та найсвіжіше. Кожен розділ має практичні приклади й блок <strong>🎤 На співбесіді часто запитують</strong> — саме там питання, які реально ставлять.</p>`,
+    },
+  ],
+  sections: [
+    /* ============================= BLOCK 0 — FUNDAMENTALS ============================= */
+    {
+      id: 'fundamentals-components-jsx',
+      title: '🧱 Компоненти та JSX',
+      blocks: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">useEffect — правила <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// Lifecycle analogy:</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"cmt\">// componentDidMount + componentDidUpdate</span>\n  <span class=\"kw\">return</span> () => { <span class=\"cmt\">/* componentWillUnmount */</span> };\n}, [dep]);        <span class=\"cmt\">// [] = тільки mount/unmount</span>\n                  <span class=\"cmt\">// без [] = кожен рендер</span>\n                  <span class=\"cmt\">// [dep] = при зміні dep</span></pre>\n    <pre><span class=\"cmt\">// Stale closure bug!</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"kw\">const</span> id = <span class=\"fn\">setInterval</span>(() => {\n    <span class=\"fn\">setCount</span>(count + <span class=\"num\">1</span>);  <span class=\"cmt\">// ❌ stale count=0</span>\n  }, <span class=\"num\">1000</span>);\n  <span class=\"kw\">return</span> () => <span class=\"fn\">clearInterval</span>(id);\n}, []);\n\n<span class=\"cmt\">// ✅ Functional update</span>\n<span class=\"fn\">setCount</span>(c => c + <span class=\"num\">1</span>);</pre>\n  </div><h3 class=\"topic\">useMemo / useCallback — коли використовувати <span class=\"tag tag-pit\">PITFALL</span></h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Hook</th><th>✅ Має сенс</th><th>❌ Не потрібно</th></tr>\n      <tr><td><strong>useMemo</strong></td><td>Дороге обчислення (filter 10k items), посилання для memo-компонента</td><td>Прості concat, тривіальні обчислення</td></tr>\n      <tr><td><strong>useCallback</strong></td><td>Функція йде в memo-компонент як prop або в dep array іншого hook</td><td>Локальні обробники на простих елементах</td></tr>\n      <tr><td><strong>React.memo</strong></td><td>Компонент ре-рендериться часто, рендер дорогий, props стабільні</td><td>Простий компонент, рідкісні оновлення</td></tr>\n    </table>\n  </div><h3 class=\"topic\">useRef — 3 use cases</h3><div class=\"grid3\">\n    <div class=\"card\"><h4>1. DOM ref</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> inputRef = <span class=\"fn\">useRef</span>&lt;HTMLInputElement&gt;(<span class=\"kw\">null</span>);\n<span class=\"cmt\">// &lt;input ref={inputRef} /&gt;</span>\ninputRef.current?.<span class=\"fn\">focus</span>();</pre></div>\n    <div class=\"card blue\"><h4>2. Mutable без ре-рендеру</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> timerRef = <span class=\"fn\">useRef</span>&lt;NodeJS.Timeout&gt;();\ntimerRef.current = <span class=\"fn\">setTimeout</span>(fn, <span class=\"num\">1000</span>);\n<span class=\"cmt\">// зміна .current не тригерить рендер</span></pre></div>\n    <div class=\"card green\"><h4>3. \"Живе\" значення в effect</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> valueRef = <span class=\"fn\">useRef</span>(value);\nvalueRef.current = value;\n<span class=\"cmt\">// effect завжди читає актуальне</span></pre></div>\n  </div><h3 class=\"topic\">useLayoutEffect vs useEffect</h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>useEffect (async)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. Використовуй в 95% випадків.</p></div>\n    <div class=\"card yellow\"><h4>useLayoutEffect (sync)</h4><p>Виконується <strong>до</strong> paint, після DOM mutations. Для читання layout/dimensions, уникнення flash.</p></div>\n  </div><h3 class=\"topic\">useReducer vs useState</h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// useState — для незалежних простих значень</span>\n<span class=\"kw\">const</span> [name, setName] = <span class=\"fn\">useState</span>(<span class=\"str\">''</span>);\n<span class=\"kw\">const</span> [loading, setLoading] = <span class=\"fn\">useState</span>(<span class=\"kw\">false</span>);</pre>\n    <pre><span class=\"cmt\">// useReducer — пов'язаний складний state</span>\n<span class=\"kw\">const</span> [state, dispatch] = <span class=\"fn\">useReducer</span>(reducer, {\n  data: <span class=\"kw\">null</span>, loading: <span class=\"kw\">false</span>, error: <span class=\"kw\">null</span>\n});\ndispatch({ type: <span class=\"str\">'FETCH_START'</span> });\ndispatch({ type: <span class=\"str\">'FETCH_SUCCESS'</span>, payload: data });</pre>\n  </div>"
+          kind: 'paragraph',
+          html: `<h3 class="topic">Компонент — це просто функція <span class="tag tag-key">KEY</span></h3>
+  <p>React-компонент — звичайна JS-функція, що приймає об'єкт <code>props</code> і повертає опис UI (JSX). Ім'я компонента <strong>завжди з великої літери</strong> — так React відрізняє компонент (<code>&lt;Button/&gt;</code>) від звичайного HTML-тега (<code>&lt;button/&gt;</code>).</p>
+  <div class="grid2">
+    <pre><span class="kw">function</span> <span class="fn">Greeting</span>({ name }: { name: <span class="type">string</span> }) {
+  <span class="kw">return</span> <span class="jsx">&lt;h1&gt;</span>Привіт, {name}!<span class="jsx">&lt;/h1&gt;</span>;
+}
+<span class="cmt">// Використання:</span>
+<span class="jsx">&lt;</span><span class="fn">Greeting</span> name=<span class="str">"Роман"</span> <span class="jsx">/&gt;</span></pre>
+    <pre><span class="cmt">// JSX — це НЕ HTML. Це синтаксичний цукор над:</span>
+React.<span class="fn">createElement</span>(
+  <span class="str">'h1'</span>,
+  <span class="kw">null</span>,
+  <span class="str">'Привіт, '</span>, name, <span class="str">'!'</span>
+);
+<span class="cmt">// createElement повертає плейн-обʼєкт (React element),</span>
+<span class="cmt">// не DOM-вузол. React будує з них дерево і сам малює DOM.</span></pre>
+  </div>
+  <h3 class="topic">JSX — правила <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Правило</th><th>Приклад</th></tr>
+      <tr><td>Один кореневий елемент</td><td><code>&lt;&gt;...&lt;/&gt;</code> (Fragment) якщо треба обгорнути кілька без зайвого <code>div</code></td></tr>
+      <tr><td><code>{'{ }'}</code> — вихід у JS-вираз</td><td><code>{'{'}user.name{'}'}</code>, <code>{'{'}items.map(...){'}'}</code> — тільки <em>вирази</em>, не <code>if</code>/<code>for</code> (statements)</td></tr>
+      <tr><td>Атрибути — camelCase</td><td><code>className</code> замість <code>class</code>, <code>onClick</code> замість <code>onclick</code></td></tr>
+      <tr><td>Кожен тег закритий</td><td><code>&lt;img /&gt;</code>, <code>&lt;br /&gt;</code> — самозакривні теги обов'язково з <code>/</code></td></tr>
+      <tr><td>Стилі — обʼєкт</td><td><code>style={{'{{'} color: 'red' {'}}'}}</code> — подвійні дужки: зовнішні JSX, внутрішні — обʼєкт</td></tr>
+    </table>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Умова "if" не працює в JSX напряму</strong> — <code>if</code> це statement, а всередині <code>{'{ }'}</code> можна лише вираз. Тому умовний рендеринг робиться через тернарник/<code>&amp;&amp;</code>/винесену змінну (детально — наступний розділ).</span></div>`,
+        },
+      ],
+    },
+    {
+      id: 'fundamentals-props-state',
+      title: '📦 Props, State та події',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Props — однонаправлений потік даних <span class="tag tag-key">KEY</span></h3>
+  <p>Дані рухаються <strong>тільки згори вниз</strong>: батько передає props дитині, дитина не може напряму змінити props батька (вони <em>read-only</em>). Щоб дитина "повідомила" щось наверх — батько передає їй callback-функцію як проп.</p>
+  <div class="grid2">
+    <pre><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Counter</span> value={count}
+    onIncrement={() =&gt; <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>)} <span class="jsx">/&gt;</span>;
+}</pre>
+    <pre><span class="kw">function</span> <span class="fn">Counter</span>({ value, onIncrement }: Props) {
+  <span class="cmt">// value — тільки читання, onIncrement — "канал наверх"</span>
+  <span class="kw">return</span> <span class="jsx">&lt;button</span> onClick={onIncrement}<span class="jsx">&gt;</span>{value}<span class="jsx">&lt;/button&gt;</span>;
+}</pre>
+  </div>
+  <h3 class="topic"><code>children</code> — особливий проп</h3>
+  <pre><span class="kw">function</span> <span class="fn">Card</span>({ children }: { children: React.ReactNode }) {
+  <span class="kw">return</span> <span class="jsx">&lt;div</span> className=<span class="str">"card"</span><span class="jsx">&gt;</span>{children}<span class="jsx">&lt;/div&gt;</span>;
+}
+<span class="cmt">// &lt;Card&gt;&lt;p&gt;будь-який JSX&lt;/p&gt;&lt;/Card&gt; — children = &lt;p&gt;...&lt;/p&gt;</span>
+<span class="cmt">// Це основа композиції (Block 5) — компонент не знає, ЩО всередині,</span>
+<span class="cmt">// лише "де" — так пишуться Layout/Modal/Card без жорсткої залежності від вмісту.</span></pre>
+  <h3 class="topic">useState — локальний стан <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <pre><span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+<span class="cmt">// count — поточне значення (read-only знімок)</span>
+<span class="cmt">// setCount — єдиний спосіб його змінити</span>
+<span class="fn">setCount</span>(count + <span class="num">1</span>);      <span class="cmt">// "постав нове значення"</span>
+<span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>);  <span class="cmt">// функціональна форма — безпечна</span>
+                              <span class="cmt">// при кількох апдейтах підряд</span></pre>
+    <pre><span class="cmt">// Виклик setState планує РЕ-РЕНДЕР, не мутує змінну одразу.</span>
+<span class="kw">function</span> <span class="fn">onClick</span>() {
+  <span class="fn">setCount</span>(count + <span class="num">1</span>);
+  console.<span class="fn">log</span>(count); <span class="cmt">// ❗ старе значення — рендер ще не стався</span>
+}
+<span class="cmt">// Це не "баг" — це модель: render функція завжди бачить</span>
+<span class="cmt">// стан ЦЬОГО рендеру (детальніше — closures, Block 1/2)</span></pre>
+  </div>
+  <h3 class="topic">Контрольований input</h3>
+  <pre><span class="kw">const</span> [text, setText] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="jsx">&lt;input</span> value={text} onChange={e =&gt; <span class="fn">setText</span>(e.target.value)} <span class="jsx">/&gt;</span>
+<span class="cmt">// value з React-стану = React "керує" тим, що показано в полі —</span>
+<span class="cmt">// це і є "controlled". Без value — DOM сам тримає своє значення (uncontrolled).</span></pre>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Чому <code>console.log(count)</code> одразу після <code>setCount</code> показує старе значення? → "setState асинхронний відносно поточної функції — планує рендер, не мутує змінну зараз".</li>
+      <li>Чим props відрізняються від state? → "props — ззовні, read-only, дитина не міняє; state — внутрішній, змінюваний через свій setter".</li>
+      <li>Навіщо потрібен <code>children</code>? → "композиція — компонент-обгортка не знає вміст, просто рендерить те, що передали".</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'fundamentals-lists-conditionals',
+      title: '🔁 Списки, умовний рендеринг, форми',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Умовний рендеринг</h3>
+  <div class="grid3">
+    <div class="card"><h4>Тернарник</h4><pre style="font-size:10.5px">{isLoggedIn
+  ? <span class="jsx">&lt;Dashboard /&gt;</span>
+  : <span class="jsx">&lt;Login /&gt;</span>}</pre></div>
+    <div class="card blue"><h4>&amp;&amp; — показати або нічого</h4><pre style="font-size:10.5px">{unreadCount &gt; <span class="num">0</span> &amp;&amp;
+  <span class="jsx">&lt;Badge count={unreadCount} /&gt;</span>}</pre></div>
+    <div class="card yellow"><h4>Рання early-return</h4><pre style="font-size:10.5px"><span class="kw">if</span> (loading) <span class="kw">return</span> <span class="jsx">&lt;Spinner /&gt;</span>;
+<span class="kw">return</span> <span class="jsx">&lt;Content /&gt;</span>;</pre></div>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Пастка <code>&amp;&amp;</code> з числом:</strong> <code>{'{'}count &amp;&amp; &lt;Badge/&gt;{'}'}</code> — якщо <code>count === 0</code>, у DOM виведеться <strong>"0"</strong> (falsy, але не boolean), а не "нічого". Фікс: <code>count &gt; 0 &amp;&amp; ...</code> або <code>Boolean(count) &amp;&amp; ...</code>.</span></div>
+  <h3 class="topic">Списки та <code>key</code> <span class="tag tag-key">KEY</span></h3>
+  <pre><span class="jsx">&lt;ul&gt;</span>
+  {users.<span class="fn">map</span>(user =&gt; (
+    <span class="jsx">&lt;li</span> key={user.id}<span class="jsx">&gt;</span>{user.name}<span class="jsx">&lt;/li&gt;</span>
+  ))}
+<span class="jsx">&lt;/ul&gt;</span>
+<span class="cmt">// key — стабільний ідентифікатор, за яким React зіставляє елементи</span>
+<span class="cmt">// між рендерами. Без key (або key={index}) — баги при вставці/видаленні</span>
+<span class="cmt">// посередині списку. Повне пояснення "чому саме" — Block 1 (Reconciliation).</span></pre>
+  <h3 class="topic">Форма — базовий приклад</h3>
+  <pre><span class="kw">function</span> <span class="fn">LoginForm</span>() {
+  <span class="kw">const</span> [email, setEmail] = <span class="fn">useState</span>(<span class="str">''</span>);
+
+  <span class="kw">function</span> <span class="fn">handleSubmit</span>(e: React.FormEvent) {
+    e.<span class="fn">preventDefault</span>();    <span class="cmt">// без цього — full page reload</span>
+    <span class="fn">login</span>(email);
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;form</span> onSubmit={handleSubmit}<span class="jsx">&gt;</span>
+      <span class="jsx">&lt;input</span> value={email} onChange={e =&gt; <span class="fn">setEmail</span>(e.target.value)} <span class="jsx">/&gt;</span>
+      <span class="jsx">&lt;button</span> type=<span class="str">"submit"</span><span class="jsx">&gt;</span>Увійти<span class="jsx">&lt;/button&gt;</span>
+    <span class="jsx">&lt;/form&gt;</span>
+  );
+}</pre>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Чому не можна <code>key={Math.random()}</code>? → "новий key щорендеру = React вважає елемент новим щоразу — знищує й пересоздає DOM-вузол, втрачає стан/фокус".</li>
+      <li>Що виведе <code>{'{'}0 &amp;&amp; &lt;Badge/&gt;{'}'}</code>? → "0" в DOM — типова пастка з fallback-through значеннями в JSX.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 1 — REACT INTERNALS ============================= */
+    {
+      id: 'internals-reconciliation',
+      title: '🌳 Reconciliation, Virtual DOM, Fiber',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Virtual DOM — зачем <span class="tag tag-key">KEY</span></h3>
+  <p>Пряма робота з реальним DOM повільна (reflow/repaint). React будує легкий JS-опис дерева UI (<strong>Virtual DOM</strong> — дерево React-елементів з <code>createElement</code>), порівнює нову версію зі старою (<strong>diffing</strong>) і застосовує до справжнього DOM тільки мінімальний набір змін (<strong>reconciliation</strong>).</p>
+  <h3 class="topic">Правила diffing-алгоритму</h3>
+  <div class="grid2">
+    <div class="card"><h4>Різний тип елемента</h4><p>Було <code>&lt;div&gt;</code>, стало <code>&lt;span&gt;</code> (або компонент → інший компонент) — React <strong>знищує старе піддерево повністю</strong> й будує нове з нуля (стан втрачається, unmount → mount).</p></div>
+    <div class="card blue"><h4>Однаковий тип</h4><p>Той самий тег/компонент — React <strong>перевикористовує</strong> DOM-вузол/instance, оновлює лише змінені атрибути/props. Стан зберігається.</p></div>
+  </div>
+  <h3 class="topic"><code>key</code> у списках — чому саме <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Без <code>key</code> React зіставляє елементи списку <strong>за позицією</strong>. Вставка/видалення елемента посередині зсуває всі наступні позиції — React думає, що змінився контент кожного елемента після точки вставки, а не що додався один новий. З <code>index</code> як key — та сама проблема (index теж "позиція").</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ key={index}: інпути "стрибають"</h4><pre style="font-size:10.5px">list = [A, B, C], keys = [0,1,2]
+<span class="cmt">// видалили A (з інпутом-значенням "A-text")</span>
+list = [B, C],   keys = [0,1]
+<span class="cmt">// React: "елемент з key=0 змінив контент з A на B"</span>
+<span class="cmt">// → перевикористовує DOM-вузол B, а не видаляє вузол A</span>
+<span class="cmt">// значення інпуту "A-text" лишається — тепер під B!</span></pre></div>
+    <div class="card green"><h4>✅ key={item.id}: коректно</h4><pre style="font-size:10.5px">keys = [idA, idB, idC]
+<span class="cmt">// видалили A → keys = [idB, idC]</span>
+<span class="cmt">// React бачить: вузла з key=idA більше немає → unmount саме його</span>
+<span class="cmt">// вузли idB/idC — той самий key → перевикористані як є</span></pre></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span><code>key={index}</code> прийнятний, <strong>лише</strong> якщо список статичний (ніколи не сортується/фільтрується/не змінює порядок) і без стану в елементах.</span></div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Що таке Virtual DOM насправді? → "не технологія прискорення сама по собі — це JS-структура даних, що дозволяє порахувати мінімальний diff перед тим, як чіпати повільний реальний DOM".</li>
+      <li>Чим небезпечний <code>key={index}</code>? → конкретний приклад з інпутами/чекбоксами, що "перестрибують" значення при реордері.</li>
+    </ul>
+  </div>`,
         },
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Custom Hooks <span class="tag tag-key">KEY</span></h3>
-  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і відповідає тим самим правилам хуків (не в умовах/циклах). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — назад повертає дані/функції, компонент лишається "тупим".</p>
+          html: `<h3 class="topic">Fiber-архітектура <span class="tag tag-key">KEY</span></h3>
+  <p>Fiber (з React 16) — переписаний reconciler. Кожному React-елементу відповідає <strong>Fiber-вузол</strong> — обʼєкт з інформацією про компонент, його props/state і, головне, <strong>звʼязками</strong> (child/sibling/return, як однозв'язний список замість рекурсивного стека викликів). Це дозволяє React <strong>переривати</strong> роботу з рендерингу, віддавати керування браузеру (щоб не блокувати анімації/інпут) і продовжувати пізніше — чого не міг старий рекурсивний "Stack reconciler".</p>
   <div class="grid2">
-    <div class="card"><h4>useDebouncedValue</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(value: T, ms = <span class="num">300</span>) {
-  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value);
-  <span class="fn">useEffect</span>(() => {
-    <span class="kw">const</span> id = <span class="fn">setTimeout</span>(() => <span class="fn">setDebounced</span>(value), ms);
-    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(id);
-  }, [value, ms]);
-  <span class="kw">return</span> debounced;
-}</pre></div>
-    <div class="card blue"><h4>useObservable (RxJS у хуку) — Sigma-тема</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useObservable</span>&lt;T&gt;(source$: Observable&lt;T&gt;, initial: T) {
-  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(initial);
-  <span class="fn">useEffect</span>(() => {
-    <span class="kw">const</span> sub = source$.<span class="fn">subscribe</span>(setValue);
-    <span class="kw">return</span> () => sub.<span class="fn">unsubscribe</span>();  <span class="cmt">// cleanup — обов'язково!</span>
-  }, [source$]);
-  <span class="kw">return</span> value;
-}
-<span class="cmt">// presence$, debouncedSearch$ і т.п. стають звичайним React-значенням</span></pre></div>
-  </div>`
-        }
-      ]
+    <div class="card"><h4>До Fiber (React ≤15)</h4><p>Reconciliation — синхронний рекурсивний прохід всього дерева. Великий апдейт блокує main thread цілком, поки не завершиться.</p></div>
+    <div class="card blue"><h4>З Fiber (React 16+)</h4><p>Робота розбита на одиниці (fiber units). React може зупинитись між ними, дати браузеру обробити подію/анімацію, і продовжити — основа для Concurrent features (<code>useTransition</code> та ін., Block 2).</p></div>
+  </div>`,
+        },
+      ],
     },
     {
-      "id": "react-18-features",
-      "title": "⚡ React 18+ Features",
-      "blocks": [
+      id: 'internals-render-commit',
+      title: '🎬 Render vs Commit фази',
+      blocks: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Reconciliation (Fiber) <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card\"><h4>Дві фази</h4>\n      <p><strong>Render phase</strong> — можна переривати. Будує work-in-progress tree. Чисті функції, ніяких side-effects.</p>\n      <p style=\"margin-top:8px\"><strong>Commit phase</strong> — синхронна. DOM mutations, refs, useLayoutEffect, useEffect.</p>\n    </div>\n    <div class=\"card blue\"><h4>Правила reconciliation</h4>\n      <p>Різні типи → знести та побудувати з нуля.</p>\n      <p>Однакові типи → reuse, оновити props.</p>\n      <p>Списки → match по <code>key</code>. <strong>key={index} = баги!</strong></p>\n    </div>\n  </div><h3 class=\"topic\">useTransition + useDeferredValue <span class=\"tag tag-new\">React 18</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// useTransition — для дій</span>\n<span class=\"kw\">const</span> [isPending, startTransition] = <span class=\"fn\">useTransition</span>();\n\n<span class=\"fn\">startTransition</span>(() => {\n  <span class=\"fn\">setFiltered</span>(items.<span class=\"fn\">filter</span>(i => i.includes(q)));\n});\n<span class=\"cmt\">// Urgent: input оновлюється відразу</span>\n<span class=\"cmt\">// Non-urgent: filter defer'иться</span></pre>\n    <pre><span class=\"cmt\">// useDeferredValue — для значень</span>\n<span class=\"kw\">const</span> [query, setQuery] = <span class=\"fn\">useState</span>(<span class=\"str\">''</span>);\n<span class=\"kw\">const</span> deferredQuery = <span class=\"fn\">useDeferredValue</span>(query);\n\n<span class=\"cmt\">// deferredQuery оновлюється коли є час</span>\n<span class=\"cmt\">// query — одразу (input responsive)</span>\n<span class=\"jsx\">&lt;</span><span class=\"fn\">SearchResults</span> query={deferredQuery} <span class=\"jsx\">/&gt;</span></pre>\n  </div><h3 class=\"topic\">Automatic Batching <span class=\"tag tag-new\">React 18</span></h3>"
+          kind: 'paragraph',
+          html: `<h3 class="topic">Дві фази роботи React <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>1. Render (Reconciliation)</h4>
+      <p>React викликає тіла компонентів, будує work-in-progress Fiber-дерево, рахує diff. <strong>Можна переривати</strong> (Concurrent Mode) і навіть <strong>відкидати</strong> без наслідків.</p>
+      <p style="margin-top:8px"><strong>Має бути чистою функцією:</strong> без мутацій зовнішнього стану, без side-effects (fetch, підписки, ручні DOM-мутації) — саме тому вони заборонені прямо в тілі компонента.</p>
+    </div>
+    <div class="card blue"><h4>2. Commit</h4>
+      <p>React застосовує пораховані зміни до реального DOM. <strong>Синхронна</strong>, не переривається. Тут виконуються: DOM-мутації, оновлення <code>refs</code>, <code>useLayoutEffect</code> (синхронно, до paint), а після paint — <code>useEffect</code> (асинхронно).</p>
+    </div>
+  </div>
+  <h3 class="topic">Чому side-effects заборонені в render <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="grid2">
+    <pre><span class="cmt">// ❌ side-effect прямо в render</span>
+<span class="kw">function</span> <span class="fn">Profile</span>({ userId }) {
+  <span class="fn">fetch</span>(<span class="str">'/api/user/'</span> + userId); <span class="cmt">// !!!</span>
+  <span class="kw">return</span> <span class="jsx">&lt;div&gt;</span>...<span class="jsx">&lt;/div&gt;</span>;
+}
+<span class="cmt">// render може викликатись кілька разів на один</span>
+<span class="cmt">// "логічний" рендер (StrictMode, Concurrent-переривання,</span>
+<span class="cmt">// відкинутий і перерахований рендер) — fetch піде зайвий раз</span></pre>
+    <pre><span class="cmt">// ✅ side-effect у commit-фазі, через useEffect</span>
+<span class="kw">function</span> <span class="fn">Profile</span>({ userId }) {
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="fn">fetch</span>(<span class="str">'/api/user/'</span> + userId);
+  }, [userId]);   <span class="cmt">// гарантовано один раз на реальний commit</span>
+  <span class="kw">return</span> <span class="jsx">&lt;div&gt;</span>...<span class="jsx">&lt;/div&gt;</span>;
+}</pre>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Render-фазу React може почати, перервати (віддати пріоритет терміновішому оновленню) і почати заново — <strong>work-in-progress рендер, що не дійшов до commit, ніколи не показується користувачу</strong> і його наслідки (side-effects) не повинні бути видимими ззовні.</span></div>`,
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// React 17: тільки event handlers\n// React 18: СКРІЗЬ (setTimeout, fetch, promises)\nsetTimeout(() => {\n  setCount(c => c + 1);      // React 18: один ре-рендер!\n  setName('Roman');           // React 17: два ре-рендери\n}, 0);\n\n// Вимкнути батчинг: flushSync()\nimport { flushSync } from 'react-dom';\nflushSync(() => setCount(c + 1));  // sync render"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">&lt;StrictMode&gt; — подвійний виклик лише в dev <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> <code>&lt;StrictMode&gt;</code> — це runtime-перемикач ЛИШЕ для development-збірки. Він навмисно ДВІЧІ викликає render-функцію компонента, тіло <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> initializer'и, і — з React 18 — mount-фазу effects (mount → unmount → mount знову) на кожному компоненті всередині себе. <strong>Навіщо:</strong> викрити нечисті (impure) компоненти й ефекти без cleanup ще під час розробки, поки їх легко пофіксити, а не коли вони вже зламали concurrent-рендеринг у проді.</p><div class=\"alert alert-good\">\n            <strong>У продакшн-білді (<code>next build</code> / <code>vite build --mode production</code>) StrictMode нічого не подвоює.</strong> Це <em>runtime</em>-поведінка, що існує ТІЛЬКИ в dev-режимі — на відміну від Angular <code>--strict</code>, який є суто compile-time перевіркою й ніяк не змінює runtime (див. Angular → Architecture &amp; Bootstrap → Strict Mode).</div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Counter() {\n  console.log('render');           // у dev під StrictMode виведе ДВІЧІ підряд\n\n  useEffect(() => {\n    console.log('mount');          // dev: mount → unmount → mount (двічі теж)\n    return () => console.log('unmount');\n  }, []);\n\n  const [state] = useState(() => {\n    console.log('init');           // lazy initializer також викликається двічі\n    return 0;\n  });\n\n  return <div>{state}</div>;\n}\n\n// ⚠️ Це виявляє ефекти БЕЗ cleanup — без StrictMode такий баг непомітний у dev,\n// але призводить до подвійних підписок/запитів у concurrent-режимі прод-рантайму:\nuseEffect(() => {\n  const id = setInterval(tick, 1000); // ❌ немає clearInterval → StrictMode покаже 2 інтервали\n}, []);\n\nuseEffect(() => {\n  const id = setInterval(tick, 1000);\n  return () => clearInterval(id);     // ✅ cleanup — StrictMode проходить чисто\n}, []);\n\n// Ввімкнення (App Router / Next.js): next.config.js → reactStrictMode: true (default)\n// Або вручну: <React.StrictMode><App /></React.StrictMode>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li>StrictMode впливає на прод-білд? → \"Ні — подвійні виклики лише в dev; прод-білд рендерить і викликає ефекти один раз.\"</li>\n              <li>Навіщо StrictMode подвоює рендер? → \"Виявити нечисті компоненти (side effects у тілі рендеру) заздалегідь, поки concurrent features (React 18+) на них не спіткнулись.\"</li>\n              <li>StrictMode в Angular є? → \"Немає прямого аналога. Angular --strict — compile-time TS/template перевірки, не runtime double-invoke.\"</li>\n            </ul>\n          </div>"
-        },
+      ],
+    },
+    {
+      id: 'internals-rerenders-batching',
+      title: '🔄 Тригери ре-рендеру, Batching, StrictMode',
+      blocks: [
         {
           kind: 'paragraph',
           html: `<h3 class="topic">Чому компонент ре-рендериться <span class="tag tag-key">KEY</span></h3>
-  <p>Чотири тригери: (1) зміна власного <code>state</code>, (2) ре-рендер батька — <strong>дитина рендериться теж, навіть якщо її пропи не змінились</strong> (без <code>React.memo</code>), (3) зміна значення <code>Context</code>, яке вона споживає, (4) force update (<code>useReducer</code> dispatch того ж значення все одно триггерить рендер, на відміну від <code>useState</code> з тим самим значенням — React бейлить лише <code>useState</code>).</p>
+  <p>Чотири тригери: (1) зміна власного <code>state</code>, (2) ре-рендер батька — <strong>дитина рендериться теж, навіть якщо її пропи не змінились</strong> (без <code>React.memo</code>, Block 3), (3) зміна значення <code>Context</code>, яке вона споживає (Block 4), (4) <code>useReducer</code> dispatch того самого значення все одно триггерить рендер — на відміну від <code>useState</code> з тим самим значенням, де React <strong>бейлить</strong> (пропускає ре-рендер через <code>Object.is</code>-порівняння).</p>
   <div class="grid2">
     <div class="card red"><h4>❌ "Проп не змінився, а ре-рендер стався"</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
   <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
   <span class="kw">return</span> (
     <span class="jsx">&lt;&gt;</span>
-      <span class="jsx">&lt;button</span> onClick={() =&gt; <span class="fn">setCount</span>(c =&gt; c+<span class="num">1</span>)}<span class="jsx">&gt;</span>{count}<span class="jsx">&lt;/button&gt;</span>
-      <span class="jsx">&lt;</span><span class="fn">Child</span> label=<span class="str">"static"</span> <span class="jsx">/&gt;</span>  <span class="cmt">// проп не змінюється,</span>
-    <span class="jsx">&lt;/&gt;</span>                                     <span class="cmt">// але Child теж рендериться!</span>
+      <span class="jsx">&lt;button</span> onClick={() =&gt; <span class="fn">setCount</span>(c=&gt;c+<span class="num">1</span>)}<span class="jsx">&gt;</span>{count}<span class="jsx">&lt;/button&gt;</span>
+      <span class="jsx">&lt;</span><span class="fn">Child</span> label=<span class="str">"static"</span> <span class="jsx">/&gt;</span>  <span class="cmt">// проп не міняється,</span>
+    <span class="jsx">&lt;/&gt;</span>                                     <span class="cmt">// Child все одно рендериться!</span>
   );
 }</pre></div>
     <div class="card green"><h4>✅ React.memo рве ланцюжок</h4><pre style="font-size:10.5px"><span class="kw">const</span> Child = React.<span class="fn">memo</span>(<span class="kw">function</span> <span class="fn">Child</span>({ label }) {
   <span class="kw">return</span> <span class="jsx">&lt;div&gt;</span>{label}<span class="jsx">&lt;/div&gt;</span>;
 });
-<span class="cmt">// Тепер Child ре-рендериться тільки якщо label реально змінився</span></pre></div>
+<span class="cmt">// Тепер Child ре-рендериться тільки якщо label реально змінився</span>
+<span class="cmt">// (детальніше про memo і чому він часто "не працює" — Block 3)</span></pre></div>
   </div>
-  <h3 class="topic">key={index} — конкретний баг <span class="tag tag-pit">PITFALL</span></h3>
-  <p>Список інпутів з <code>key={index}</code>: видали/встав рядок посередині — React зіставляє елементи <strong>за позицією key</strong>, а не за змістом. Значення інпутів "перестрибують" на сусідні рядки, бо DOM-вузол переюзається для іншого айтема. Фікс — стабільний унікальний <code>key</code> (id даних, не індекс масиву).</p>`
-        }
-      ]
+  <h3 class="topic">Automatic Batching <span class="tag tag-new">React 18</span></h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// React 17: батчинг тільки в React event handlers
+// React 18: батчинг СКРІЗЬ (setTimeout, fetch/promise, native event listeners)
+setTimeout(() => {
+  setCount(c => c + 1);      // React 18: ОДИН ре-рендер на обидва апдейти
+  setName('Roman');           // React 17: ДВА окремих ре-рендери
+}, 0);
+
+// Явно вимкнути батчинг (рідко потрібно) — flushSync()
+import { flushSync } from 'react-dom';
+flushSync(() => setCount(c => c + 1));  // синхронний рендер одразу після цього виклику`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">&lt;StrictMode&gt; — подвійний виклик лише в dev <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Що це:</strong> runtime-перемикач ЛИШЕ для development-збірки. Навмисно ДВІЧІ викликає тіло компонента, <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> initializer'и і (React 18+) mount-фазу effects (mount → unmount → mount). <strong>Навіщо:</strong> викрити нечисті компоненти й ефекти без cleanup ще в розробці, поки легко пофіксити.</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>У продакшн-білді нічого не подвоюється</strong> — це суто dev-поведінка, на відміну, наприклад, від Angular <code>--strict</code>, який є compile-time перевіркою і ніяк не змінює runtime.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Counter() {
+  console.log('render');           // dev + StrictMode: виведе ДВІЧІ підряд
+
+  useEffect(() => {
+    console.log('mount');          // dev: mount → unmount → mount (теж двічі)
+    return () => console.log('unmount');
+  }, []);
+
+  return <div />;
+}
+
+// Це виявляє ефекти БЕЗ cleanup — без StrictMode такий баг непомітний у dev,
+// але в concurrent-рендерингу прода призводить до подвійних підписок/запитів:
+useEffect(() => {
+  const id = setInterval(tick, 1000); // ❌ немає clearInterval → StrictMode покаже "2 інтервали"
+}, []);
+
+useEffect(() => {
+  const id = setInterval(tick, 1000);
+  return () => clearInterval(id);     // ✅ cleanup — StrictMode проходить чисто
+}, []);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Назви 4 причини ре-рендеру компонента → власний state, ре-рендер батька, зміна Context, force update через useReducer.</li>
+      <li>Що змінилось у batching в React 18? → раніше батчинг лише в React-обробниках подій, тепер — всюди (таймери, проміси, нативні листенери).</li>
+      <li>StrictMode впливає на прод-білд? → ні, лише dev, подвійні виклики — щоб виявити нечисті ефекти заздалегідь.</li>
+    </ul>
+  </div>`,
+        },
+      ],
     },
+    /* ============================= BLOCK 2 — HOOKS DEEP DIVE ============================= */
+    {
+      id: 'hooks-deep-dive',
+      title: '🪝 Hooks — Deep Dive',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useEffect — правила <span class="tag tag-key">KEY</span></h3><div class="grid2">
+    <pre><span class="cmt">// Lifecycle-аналогія:</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="cmt">// componentDidMount + componentDidUpdate</span>
+  <span class="kw">return</span> () =&gt; { <span class="cmt">/* componentWillUnmount */</span> };
+}, [dep]);        <span class="cmt">// [] = лише mount/unmount</span>
+                  <span class="cmt">// без масиву = кожен рендер</span>
+                  <span class="cmt">// [dep] = при зміні dep</span></pre>
+    <pre><span class="cmt">// Stale closure bug!</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() =&gt; {
+    <span class="fn">setCount</span>(count + <span class="num">1</span>);  <span class="cmt">// ❌ stale count=0 назавжди</span>
+  }, <span class="num">1000</span>);
+  <span class="kw">return</span> () =&gt; <span class="fn">clearInterval</span>(id);
+}, []);
+
+<span class="cmt">// ✅ Функціональний апдейт — не залежить від closure</span>
+<span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>);</pre>
+  </div>
+  <h3 class="topic">useMemo / useCallback — коли реально треба <span class="tag tag-pit">PITFALL</span></h3><div class="table-wrap">
+    <table>
+      <tr><th>Hook</th><th>✅ Має сенс</th><th>❌ Передчасна оптимізація</th></tr>
+      <tr><td><strong>useMemo</strong></td><td>Дороге обчислення (filter/sort 10k items), стабільне посилання для memo-компонента</td><td>Прості конкатенації, тривіальні обчислення — сам виклик useMemo дорожчий</td></tr>
+      <tr><td><strong>useCallback</strong></td><td>Функція йде в memo-компонент як prop, або в dep array іншого hook</td><td>Локальний onClick на звичайному <code>&lt;button&gt;</code></td></tr>
+      <tr><td><strong>React.memo</strong></td><td>Компонент рендериться часто, рендер дорогий, props стабільні</td><td>Простий компонент, рідкісні оновлення (Block 3 — деталі)</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">useRef — 3 use cases</h3><div class="grid3">
+    <div class="card"><h4>1. DOM ref</h4><pre style="font-size:10.5px"><span class="kw">const</span> inputRef = <span class="fn">useRef</span>&lt;HTMLInputElement&gt;(<span class="kw">null</span>);
+<span class="cmt">// &lt;input ref={inputRef} /&gt;</span>
+inputRef.current?.<span class="fn">focus</span>();</pre></div>
+    <div class="card blue"><h4>2. Mutable без ре-рендеру</h4><pre style="font-size:10.5px"><span class="kw">const</span> timerRef = <span class="fn">useRef</span>&lt;NodeJS.Timeout&gt;();
+timerRef.current = <span class="fn">setTimeout</span>(fn, <span class="num">1000</span>);
+<span class="cmt">// зміна .current НЕ тригерить рендер</span></pre></div>
+    <div class="card green"><h4>3. "Живе" значення в effect</h4><pre style="font-size:10.5px"><span class="kw">const</span> valueRef = <span class="fn">useRef</span>(value);
+valueRef.current = value;
+<span class="cmt">// effect завжди читає актуальне значення</span>
+<span class="cmt">// (обхід stale closure без зміни dep array)</span></pre></div>
+  </div>
+  <h3 class="topic">useLayoutEffect vs useEffect</h3><div class="grid2">
+    <div class="card red"><h4>useEffect (асинхронний)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. Використовуй в 95% випадків (fetch, підписки, аналітика).</p></div>
+    <div class="card yellow"><h4>useLayoutEffect (синхронний)</h4><p>Виконується <strong>до</strong> paint, одразу після DOM-мутацій. Потрібен для читання layout/dimensions і синхронних правок DOM — уникнути візуального "флешу".</p></div>
+  </div>
+  <h3 class="topic">useReducer vs useState</h3><div class="grid2">
+    <pre><span class="cmt">// useState — незалежні прості значення</span>
+<span class="kw">const</span> [name, setName] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">false</span>);</pre>
+    <pre><span class="cmt">// useReducer — повʼязаний складний state,</span>
+<span class="cmt">// перехід між станами через явні action-и</span>
+<span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, {
+  data: <span class="kw">null</span>, loading: <span class="kw">false</span>, error: <span class="kw">null</span>
+});
+<span class="fn">dispatch</span>({ type: <span class="str">'FETCH_START'</span> });
+<span class="fn">dispatch</span>({ type: <span class="str">'FETCH_SUCCESS'</span>, payload: data });</pre>
+  </div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Що таке stale closure і як його уникнути? → приклад з setInterval + functional update / useRef.</li>
+      <li>Коли useReducer краще за useState? → коли наступний стан залежить від попереднього складним чином, або переходи станів треба тестувати ізольовано від UI.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-concurrent',
+      title: '⚡ useTransition / useDeferredValue',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Concurrent features <span class="tag tag-new">React 18</span></h3>
+  <p>Обидва хуки позначають частину оновлення як <strong>неурочну (non-urgent)</strong> — React рендерить її з нижчим пріоритетом і може перервати заради урочнішого оновлення (наприклад, наступного натискання клавіші). Це і є практичне застосування Fiber-переривності (Block 1).</p><div class="grid2">
+    <pre><span class="cmt">// useTransition — для ДІЙ (функцій)</span>
+<span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();
+
+<span class="fn">startTransition</span>(() =&gt; {
+  <span class="fn">setFiltered</span>(items.<span class="fn">filter</span>(i =&gt; i.includes(q)));
+});
+<span class="cmt">// Urgent: сам input оновлюється відразу</span>
+<span class="cmt">// Non-urgent: важкий filter — deferred, isPending=true поки триває</span></pre>
+    <pre><span class="cmt">// useDeferredValue — для ЗНАЧЕНЬ</span>
+<span class="kw">const</span> [query, setQuery] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="kw">const</span> deferredQuery = <span class="fn">useDeferredValue</span>(query);
+
+<span class="cmt">// deferredQuery оновлюється, коли React має час</span>
+<span class="cmt">// query — миттєво (input лишається responsive)</span>
+<span class="jsx">&lt;</span><span class="fn">SearchResults</span> query={deferredQuery} <span class="jsx">/&gt;</span></pre>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Різниця у виборі: є функція, яку викликаєш сам (сеттер) → <code>useTransition</code>. Є готове значення (проп ззовні, не контролюєш сеттер) → <code>useDeferredValue</code>.</span></div>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-custom',
+      title: '🧵 Custom Hooks',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Custom Hooks <span class="tag tag-key">KEY</span></h3>
+  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і підпорядковується тим самим правилам хуків (не в умовах/циклах/вкладених функціях). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — компонент, що її використовує, лишається "тупим" (тонкий шар рендеру).</p>
+  <div class="grid2">
+    <div class="card"><h4>useDebouncedValue</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(value: T, ms = <span class="num">300</span>) {
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value);
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> id = <span class="fn">setTimeout</span>(() =&gt; <span class="fn">setDebounced</span>(value), ms);
+    <span class="kw">return</span> () =&gt; <span class="fn">clearTimeout</span>(id);
+  }, [value, ms]);
+  <span class="kw">return</span> debounced;
+}</pre></div>
+    <div class="card blue"><h4>useObservable (RxJS у хуку) — Sigma-тема</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useObservable</span>&lt;T&gt;(source$: Observable&lt;T&gt;, initial: T) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(initial);
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> sub = source$.<span class="fn">subscribe</span>(setValue);
+    <span class="kw">return</span> () =&gt; sub.<span class="fn">unsubscribe</span>();  <span class="cmt">// cleanup — обовʼязково!</span>
+  }, [source$]);
+  <span class="kw">return</span> value;
+}
+<span class="cmt">// presence$, debouncedSearch$ і т.п. стають звичайним React-значенням</span></pre></div>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Custom hook — не про "перевикористання UI" (для цього компоненти), а про <strong>перевикористання stateful-логіки</strong>. Кожен виклик хука в різних компонентах створює <em>ізольований</em> стан — вони не діляться значенням між собою.</span></div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 3 — PERFORMANCE ============================= */
     {
       id: 'performance-deep-dive',
       title: '🚀 Performance Deep Dive',
@@ -97,7 +470,7 @@ export const reactContent: TopicContent = {
         {
           kind: 'paragraph',
           html: `<h3 class="topic">React.memo — коли працює, коли ні <span class="tag tag-key">KEY</span></h3>
-  <p><code>React.memo</code> порівнює пропи <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий об'єкт/масив/функція на кожен рендер батька (референс завжди інший). Можна передати власний компаратор — але це рідко потрібно і легко зламати непомітно.</p>`,
+  <p><code>React.memo</code> порівнює пропи <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий обʼєкт/масив/функція на кожен рендер батька (референс завжди інший). Можна передати власний компаратор — рідко потрібно і легко зламати непомітно.</p>`,
         },
         {
           kind: 'code',
@@ -127,13 +500,10 @@ export const reactContent: TopicContent = {
   <span class="kw">const</span> onSelect = <span class="fn">useCallback</span>((id) =&gt; <span class="fn">doSomething</span>(id), []);
   <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={style} onSelect={onSelect} <span class="jsx">/&gt;</span>;
 }</pre></div>
-  </div>`,
-        },
-        {
-          kind: 'paragraph',
-          html: `<h3 class="topic">Профілювання — React DevTools Profiler <span class="tag tag-key">KEY</span></h3>
+  </div>
+  <h3 class="topic">Профілювання — React DevTools Profiler <span class="tag tag-key">KEY</span></h3>
   <p>Вкладка <strong>Profiler</strong>: запиши взаємодію → <strong>Flamegraph</strong> показує, які компоненти рендерились і скільки це коштувало; <strong>Ranked</strong> сортує за тривалістю. Клік на компонент → секція <strong>"Why did this render?"</strong> (треба увімкнути в налаштуваннях) називає точну причину: hook changed, props changed, parent rendered.</p>
-  <div class="alert warn"><span class="icon">⚠️</span><span>Робочий процес на співбесіді/у реальності: спершу профілюй, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація, яка додає складність без гарантованого ефекту.</span></div>`,
+  <div class="alert warn"><span class="icon">⚠️</span><span>Робочий процес на співбесіді/у реальності: спершу <strong>профілюй</strong>, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація, яка додає складність без гарантованого ефекту.</span></div>`,
         },
         {
           kind: 'code',
@@ -174,12 +544,20 @@ function BigList({ items }: { items: Item[] }) {
       <tr><td><strong>CLS</strong></td><td>Візуальна "стрибучість" макету</td><td>Зображення/реклама без розмірів, шрифт FOUT</td><td><code>width/height</code> на медіа, <code>next/font</code> (без layout shift), skeleton замість пустого блоку</td></tr>
       <tr><td><strong>INP</strong></td><td>Затримка відгуку на взаємодію (замінив FID)</td><td>Важкі синхронні обробники, великий JS bundle, довгі рендери</td><td><code>useTransition</code>, дебаунс, розбиття важкої роботи, memo/virtualization</td></tr>
     </table>
+  </div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>memo не допоміг — з чого почнеш дебаг? → "спершу Profiler + Why did this render, а не здогадки; типова причина — новий референс пропу".</li>
+      <li>Коли virtualization справді потрібна? → списки в сотні-тисячі DOM-вузлів; для 20-50 елементів — зайва складність.</li>
+    </ul>
   </div>`,
         },
       ],
     },
+    /* ============================= BLOCK 4 — STATE MANAGEMENT ============================= */
     {
-      id: 'state-context',
+      id: 'state-boundaries',
       title: '🧭 Межі стану та Context',
       blocks: [
         {
@@ -198,96 +576,222 @@ function BigList({ items }: { items: Item[] }) {
   <h3 class="topic">Context API — коли достатньо, коли ні <span class="tag tag-pit">PITFALL</span></h3>
   <div class="grid2">
     <div class="card green"><h4>✅ Годиться</h4><p>Рідкісні оновлення: тема, локаль, авторизований юзер, feature flags. Дерево споживачів не надто велике.</p></div>
-    <div class="card red"><h4>❌ Не годиться</h4><p>Часті оновлення (курсор миші, значення інпуту, real-time дані) — <strong>кожна зміна ре-рендерить УСІХ споживачів</strong> дерева під Provider, незалежно від того, яку частину value вони читають.</p></div>
+    <div class="card red"><h4>❌ Не годиться</h4><p>Часті оновлення (позиція курсора, стан форми, реалтайм-дані) — <strong>будь-яка</strong> зміна value ре-рендерить <strong>УСІХ</strong> споживачів контексту, навіть тих, кому потрібна лише незмінна частина.</p></div>
   </div>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          code: `// Пом'якшення: розбий великий контекст на кілька менших за частотою зміни
-<UserContext.Provider value={user}>       {/* рідко змінюється */}
-  <ThemeContext.Provider value={theme}>   {/* рідко змінюється */}
-    <CursorContext.Provider value={cursor}> {/* часто — тримай окремо, менше споживачів */}
-      <App />
-    </CursorContext.Provider>
-  </ThemeContext.Provider>
-</UserContext.Provider>
+          code: `// Пастка: один Context на все = зайві ре-рендери
+const AppContext = createContext<{ user: User; theme: Theme } | null>(null);
+// зміна theme ре-рендерить усіх, кому потрібен лише user
 
-// І мемоізуй value — інакше новий {} на кожен рендер Provider'а рве memo споживачів
-const value = useMemo(() => ({ user, setUser }), [user]);`,
-        },
-        {
-          kind: 'paragraph',
-          html: `<h3 class="topic">RxJS-в-React — коли потоки кращі за useEffect</h3>
-  <div class="card blue"><p>Комбінування кількох async-джерел з операторами (<code>debounceTime</code>, <code>switchMap</code>, <code>combineLatest</code>) читабельніше й декларативніше, ніж вкладені <code>useEffect</code> з ручним cleanup — типово для presence-статусів, debounced search, синхронізації кількох сокетів. Обгортається в <code>useObservable</code> (див. Hooks — Deep Dive → Custom Hooks) і далі виглядає як звичайний React-стан.</p></div>`,
+// Фікс: розбити на кілька контекстів за частотою зміни
+const UserContext = createContext<User | null>(null);
+const ThemeContext = createContext<Theme>('dark');
+
+// + useMemo на value, інакше новий об'єкт-обгортка щорендеру
+// провайдера "зраджує" memo-компоненти нижче:
+const value = useMemo(() => ({ user, theme }), [user, theme]);
+<AppContext.Provider value={value}>{children}</AppContext.Provider>`,
         },
       ],
     },
     {
-      "id": "tanstack-query",
-      "title": "🔄 TanStack Query",
-      "blocks": [
+      id: 'state-zustand',
+      title: '🐻 Zustand',
+      blocks: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Філософія: Server State ≠ Client State <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>❌ Anti-pattern (useEffect + useState)</h4>\n      <pre style=\"font-size:10.5px\"><span class=\"fn\">useEffect</span>(() => {\n  <span class=\"fn\">setLoading</span>(<span class=\"kw\">true</span>);\n  <span class=\"fn\">fetch</span>(<span class=\"str\">'/api/users'</span>)\n    .<span class=\"fn\">then</span>(r => r.<span class=\"fn\">json</span>())\n    .<span class=\"fn\">then</span>(setUsers)\n    .<span class=\"fn\">catch</span>(setError)\n    .<span class=\"fn\">finally</span>(() => <span class=\"fn\">setLoading</span>(<span class=\"kw\">false</span>));\n}, []);</pre>\n    </div>\n    <div class=\"card green\"><h4>✅ useQuery</h4>\n      <pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> { data, isLoading, error, refetch } = <span class=\"fn\">useQuery</span>({\n  queryKey: [<span class=\"str\">'users'</span>],\n  queryFn: () => <span class=\"fn\">fetchUsers</span>(),\n  staleTime: <span class=\"num\">5</span> * <span class=\"num\">60</span> * <span class=\"num\">1000</span>,  <span class=\"cmt\">// 5min</span>\n  gcTime: <span class=\"num\">10</span> * <span class=\"num\">60</span> * <span class=\"num\">1000</span>,   <span class=\"cmt\">// cacheTime</span>\n});</pre>\n    </div>\n  </div><h3 class=\"topic\">useMutation + Optimistic Updates <span class=\"tag tag-key\">KEY</span></h3>"
+          kind: 'paragraph',
+          html: `<h3 class="topic">Базовий store</h3>`,
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const mutation = useMutation({\n  mutationFn: (todo: Todo) => createTodo(todo),\n  onMutate: async (newTodo) => {\n    await queryClient.cancelQueries({ queryKey: ['todos'] });\n    const previous = queryClient.getQueryData(['todos']);\n    queryClient.setQueryData(['todos'], old => [...old, newTodo]);  // optimistic!\n    return { previous };\n  },\n  onError: (err, newTodo, context) => {\n    queryClient.setQueryData(['todos'], context.previous);  // rollback\n  },\n  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] })\n});"
+          kind: 'code',
+          language: 'tsx',
+          code: `import { create } from 'zustand';
+
+interface BearState {
+  bears: number;
+  addBear: () => void;
+  reset: () => void;
+}
+
+export const useBearStore = create<BearState>()((set) => ({
+  bears: 0,
+  addBear: () => set(state => ({ bears: state.bears + 1 })),
+  reset: () => set({ bears: 0 }),
+}));`,
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">QueryKey — best practices</h3>"
+          kind: 'paragraph',
+          html: `<h3 class="topic">Selectors — уникай зайвих ре-рендерів <span class="tag tag-key">KEY</span></h3><div class="grid2">
+    <pre><span class="cmt">// ❌ Ре-рендер при БУДЬ-ЯКІЙ зміні store</span>
+<span class="kw">const</span> store = <span class="fn">useBearStore</span>();
+<span class="kw">const</span> bears = store.bears;</pre>
+    <pre><span class="cmt">// ✅ Ре-рендер тільки при зміні bears</span>
+<span class="kw">const</span> bears = <span class="fn">useBearStore</span>(state =&gt; state.bears);
+
+<span class="cmt">// Кілька полів — useShallow</span>
+<span class="kw">import</span> { useShallow } <span class="kw">from</span> <span class="str">'zustand/react/shallow'</span>;
+<span class="kw">const</span> { bears, fish } = <span class="fn">useBearStore</span>(<span class="fn">useShallow</span>(
+  state =&gt; ({ bears: state.bears, fish: state.fish })
+));</pre>
+  </div>
+  <h3 class="topic">Zustand vs Context <span class="tag tag-key">KEY</span></h3><div class="grid2">
+    <div class="card red"><h4>❌ Context для часто змінних даних</h4><p>Кожна зміна = ре-рендер ВСІХ споживачів, навіть якщо вони не використовують змінену частину.</p></div>
+    <div class="card green"><h4>✅ Zustand (або Jotai/Recoil)</h4><p>Гранулярні selectors поза React-деревом рендерингу контексту. Ре-рендер тільки якщо вибрана частина state справді змінилась.</p></div>
+  </div>`,
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Ієрархія: [resource, id, filters]\nqueryKey: ['users']                               // список\nqueryKey: ['users', userId]                        // один юзер\nqueryKey: ['users', userId, 'posts']              // пости юзера\nqueryKey: ['users', { page, filter, sort }]        // з параметрами\n\n// Invalidate по префіксу:\nqueryClient.invalidateQueries({ queryKey: ['users'] }); // всі users queries"
+          kind: 'code',
+          language: 'tsx',
+          code: `// Slices pattern — великий store, розбитий на частини
+// userSlice.ts
+export const createUserSlice = (set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+});
+// store.ts
+export const useStore = create()((...args) => ({
+  ...createUserSlice(...args),
+  ...createCartSlice(...args),
+}));
+
+// Middleware
+import { devtools, persist, immer } from 'zustand/middleware';
+const useStore = create(
+  devtools(              // Redux DevTools
+    persist(              // localStorage
+      immer((set) => ({   // мутабельні апдейти під капотом — immutable назовні
+        items: [],
+        addItem: (item) => set(state => { state.items.push(item) }),
+      })),
+      { name: 'my-store' }
+    )
+  )
+);`,
         },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Корисні опції</h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Опція</th><th>Default</th><th>Що робить</th></tr>\n      <tr><td><code>staleTime</code></td><td>0</td><td>Час до \"застарівання\". 0 = refetch при фокусі/mount</td></tr>\n      <tr><td><code>gcTime</code></td><td>5 min</td><td>Час до видалення з кешу після відписки</td></tr>\n      <tr><td><code>retry</code></td><td>3</td><td>К-сть retry при помилці</td></tr>\n      <tr><td><code>refetchOnWindowFocus</code></td><td>true</td><td>Refetch при поверненні на вкладку</td></tr>\n      <tr><td><code>enabled</code></td><td>true</td><td>false = не виконувати (чекати на умову)</td></tr>\n      <tr><td><code>select</code></td><td>—</td><td>Transform data перед поверненням у компонент</td></tr>\n      <tr><td><code>placeholderData</code></td><td>—</td><td>Дані-заглушка поки завантажується (keepPreviousData)</td></tr>\n    </table>\n  </div>"
-        }
-      ]
+      ],
     },
     {
-      "id": "zustand",
-      "title": "🐻 Zustand",
-      "blocks": [
+      id: 'state-tanstack-query',
+      title: '🔄 TanStack Query',
+      blocks: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Базовий store</h3>"
+          kind: 'paragraph',
+          html: `<h3 class="topic">Філософія: Server State ≠ Client State <span class="tag tag-key">KEY</span></h3><div class="grid2">
+    <div class="card red"><h4>❌ Anti-pattern (useEffect + useState)</h4>
+      <pre style="font-size:10.5px"><span class="fn">useEffect</span>(() =&gt; {
+  <span class="fn">setLoading</span>(<span class="kw">true</span>);
+  <span class="fn">fetch</span>(<span class="str">'/api/users'</span>)
+    .<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>())
+    .<span class="fn">then</span>(setUsers)
+    .<span class="fn">catch</span>(setError)
+    .<span class="fn">finally</span>(() =&gt; <span class="fn">setLoading</span>(<span class="kw">false</span>));
+}, []);
+<span class="cmt">// немає кешу, дедуплікації, інвалідації, retry, refetch-on-focus</span></pre>
+    </div>
+    <div class="card green"><h4>✅ useQuery</h4>
+      <pre style="font-size:10.5px"><span class="kw">const</span> { data, isLoading, error, refetch } = <span class="fn">useQuery</span>({
+  queryKey: [<span class="str">'users'</span>],
+  queryFn: () =&gt; <span class="fn">fetchUsers</span>(),
+  staleTime: <span class="num">5</span> * <span class="num">60</span> * <span class="num">1000</span>,  <span class="cmt">// 5 хв</span>
+  gcTime: <span class="num">10</span> * <span class="num">60</span> * <span class="num">1000</span>,   <span class="cmt">// раніше cacheTime</span>
+});</pre>
+    </div>
+  </div>
+  <h3 class="topic">useMutation + Optimistic Updates <span class="tag tag-key">KEY</span></h3>`,
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { create } from 'zustand';\n\ninterface BearState {\n  bears: number;\n  addBear: () => void;\n  reset: () => void;\n}\n\nexport const useBearStore = create<BearState>()((set) => ({\n  bears: 0,\n  addBear: () => set(state => ({ bears: state.bears + 1 })),\n  reset: () => set({ bears: 0 }),\n}));"
+          kind: 'code',
+          language: 'tsx',
+          code: `const mutation = useMutation({
+  mutationFn: (todo: Todo) => createTodo(todo),
+  onMutate: async (newTodo) => {
+    await queryClient.cancelQueries({ queryKey: ['todos'] });
+    const previous = queryClient.getQueryData(['todos']);
+    queryClient.setQueryData(['todos'], old => [...old, newTodo]);  // optimistic!
+    return { previous };
+  },
+  onError: (err, newTodo, context) => {
+    queryClient.setQueryData(['todos'], context.previous);  // rollback
+  },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+});`,
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Selectors — уникай зайвих ре-рендерів <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// ❌ Ре-рендер при будь-якій зміні store</span>\n<span class=\"kw\">const</span> store = <span class=\"fn\">useBearStore</span>();\n<span class=\"kw\">const</span> bears = store.bears;</pre>\n    <pre><span class=\"cmt\">// ✅ Ре-рендер тільки при зміні bears</span>\n<span class=\"kw\">const</span> bears = <span class=\"fn\">useBearStore</span>(state => state.bears);\n\n<span class=\"cmt\">// Multiple fields — useShallow</span>\n<span class=\"kw\">import</span> { useShallow } <span class=\"kw\">from</span> <span class=\"str\">'zustand/react/shallow'</span>;\n<span class=\"kw\">const</span> { bears, fish } = <span class=\"fn\">useBearStore</span>(<span class=\"fn\">useShallow</span>(\n  state => ({ bears: state.bears, fish: state.fish })\n));</pre>\n  </div><h3 class=\"topic\">Slices Pattern (великий store)</h3>"
+          kind: 'paragraph',
+          html: `<h3 class="topic">queryKey — ієрархія</h3>`,
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// userSlice.ts\nexport const createUserSlice = (set) => ({\n  user: null,\n  setUser: (user) => set({ user }),\n});\n\n// store.ts\nexport const useStore = create()((...args) => ({\n  ...createUserSlice(...args),\n  ...createCartSlice(...args),\n}));"
+          kind: 'code',
+          language: 'tsx',
+          code: `queryKey: ['users']                          // список
+queryKey: ['users', userId]                   // один юзер
+queryKey: ['users', userId, 'posts']          // пости юзера
+queryKey: ['users', { page, filter, sort }]   // з параметрами
+
+// Invalidate по префіксу — усі "users"-запити разом:
+queryClient.invalidateQueries({ queryKey: ['users'] });`,
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Middleware</h3>"
+          kind: 'paragraph',
+          html: `<h3 class="topic">Корисні опції</h3><div class="table-wrap">
+    <table>
+      <tr><th>Опція</th><th>Default</th><th>Що робить</th></tr>
+      <tr><td><code>staleTime</code></td><td>0</td><td>Час до "застарівання". 0 = refetch при фокусі/mount</td></tr>
+      <tr><td><code>gcTime</code></td><td>5 хв</td><td>Час до видалення з кешу після відписки останнього спостерігача</td></tr>
+      <tr><td><code>retry</code></td><td>3</td><td>К-сть retry при помилці</td></tr>
+      <tr><td><code>refetchOnWindowFocus</code></td><td>true</td><td>Refetch при поверненні на вкладку</td></tr>
+      <tr><td><code>enabled</code></td><td>true</td><td>false = не виконувати (чекати на умову — залежні запити)</td></tr>
+      <tr><td><code>select</code></td><td>—</td><td>Трансформація data перед поверненням у компонент</td></tr>
+      <tr><td><code>placeholderData</code></td><td>—</td><td>Дані-заглушка поки завантажується (keepPreviousData — без "миготіння" при пагінації)</td></tr>
+    </table>
+  </div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Чим кеш TanStack Query відрізняється від Redux/Zustand стору? → "це не клієнтський стан, а кеш серверних даних зі своїм життєвим циклом (stale/fresh, invalidate, refetch) — тримати серверні дані у Zustand означає вручну реалізовувати те, що Query дає з коробки".</li>
+      <li>Що робить staleTime: 0 за замовчуванням? → кожен новий mount/фокус вікна триггерить background refetch, навіть якщо дані в кеші є — UI показує кешовані одразу, потім оновлює.</li>
+    </ul>
+  </div>`,
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { devtools, persist, immer } from 'zustand/middleware';\n\nconst useStore = create(\n  devtools(              // Redux DevTools\n    persist(            // localStorage\n      immer((set) => ({  // мутабельні апдейти\n        items: [],\n        addItem: (item) => set(state => { state.items.push(item) }),\n      })),\n      { name: 'my-store' }\n    )\n  )\n);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Zustand vs Context <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>❌ Context для часто змінних даних</h4><p>Кожна зміна = ре-рендер ВСІХ споживачів. Навіть якщо вони не використовують змінену частину.</p></div>\n    <div class=\"card green\"><h4>✅ Zustand (або Jotai/Recoil)</h4><p>Гранулярні selectors. Ре-рендер тільки якщо вибрана частина state змінилась.</p></div>\n  </div>"
-        }
-      ]
+      ],
     },
+    {
+      id: 'state-rxjs',
+      title: '🌊 RxJS у React',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Коли потоки кращі за useEffect <span class="tag tag-key">KEY</span></h3>
+  <p>Для одноразового fetch — <code>useEffect</code>/TanStack Query достатньо. RxJS виправдовує себе, коли є <strong>кілька джерел подій у часі</strong>, які треба комбінувати, дебаунсити, скасовувати, перемикати: presence-статуси, debounced search з відміною попереднього запиту, WebSocket-потоки, drag&amp;drop-жести.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Debounced search з автоматичною відміною застарілого запиту
+const search$ = new Subject<string>();
+
+const results$ = search$.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(query => query ? searchApi(query) : of([])),
+  // switchMap сам скасовує попередній HTTP-запит при новому query —
+  // те, що вручну довелось би робити через AbortController у useEffect
+);
+
+// у компоненті — через useObservable custom hook (Block 2)
+const results = useObservable(results$, []);
+<input onChange={e => search$.next(e.target.value)} />`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">✅</span><span>Правило вибору: один асинхронний запит, залежний від пропу/id → <code>useEffect</code>/Query. Потік подій у часі з комбінуванням/скасуванням/дебаунсом → RxJS у custom hook.</span></div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 5 — PATTERNS ============================= */
     {
       id: 'patterns',
       title: '🧩 Patterns',
@@ -295,187 +799,376 @@ const value = useMemo(() => ({ user, setUser }), [user]);`,
         {
           kind: 'paragraph',
           html: `<h3 class="topic">Composition over inheritance <span class="tag tag-key">KEY</span></h3>
-  <p>React не має класового наслідування компонентів — переюз через <strong>композицію</strong>: <code>children</code>, слоти-пропи, compound components (набір компонентів, що діляться неявним станом через Context).</p>`,
+  <p>React не має класичного механізму наслідування компонентів — і не має бути. Замість "Button extends BaseButton" — компонент приймає <code>children</code> або спеціалізовані пропи-слоти. <strong>Compound components</strong> — набір компонентів, що діляться неявним станом через Context, і разом утворюють один "віджет".</p>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          code: `// Compound components — Tabs.Root ділиться станом через Context
-const TabsCtx = createContext<{ active: string; setActive: (id: string) => void } | null>(null);
+          code: `// Compound components — спільний стан через Context, гнучкий склад ззовні
+const TabsContext = createContext<{ active: string; setActive: (id: string) => void } | null>(null);
 
-function Root({ defaultTab, children }: { defaultTab: string; children: ReactNode }) {
+function Tabs({ defaultTab, children }: { defaultTab: string; children: React.ReactNode }) {
   const [active, setActive] = useState(defaultTab);
-  return <TabsCtx.Provider value={{ active, setActive }}>{children}</TabsCtx.Provider>;
+  return <TabsContext.Provider value={{ active, setActive }}>{children}</TabsContext.Provider>;
 }
-function Tab({ id, children }: { id: string; children: ReactNode }) {
-  const ctx = useContext(TabsCtx)!;
-  return <button onClick={() => ctx.setActive(id)} aria-selected={ctx.active === id}>{children}</button>;
-}
-export const Tabs = { Root, Tab };
-
-// <Tabs.Root defaultTab="a"><Tabs.Tab id="a">A</Tabs.Tab><Tabs.Tab id="b">B</Tabs.Tab></Tabs.Root>`,
+Tabs.Tab = function Tab({ id, children }: { id: string; children: React.ReactNode }) {
+  const ctx = useContext(TabsContext)!;
+  return <button onClick={() => ctx.setActive(id)} data-active={ctx.active === id}>{children}</button>;
+};
+// <Tabs defaultTab="a"><Tabs.Tab id="a">A</Tabs.Tab><Tabs.Tab id="b">B</Tabs.Tab></Tabs>
+// споживач сам вирішує порядок/кількість табів — компонент не "знає" про них наперед`,
         },
         {
           kind: 'paragraph',
           html: `<h3 class="topic">Render props / HOC — легасі-патерни</h3>
-  <p>До хуків (React &lt;16.8) це були єдині способи переюзати stateful-логіку між компонентами. Хуки закрили ~95% цих кейсів простіше й без "wrapper hell". HOC ще трапляється для наскрізних речей на межі компонента (напр. обгортання в error boundary, injectу пропів з роутера в legacy-коді).</p>`,
+  <p>Обидва вирішували "як перевикористати логіку без наслідування" до хуків. Custom hooks замінили ~95% їх застосувань — прямолінійніше й без "wrapper hell" (глибокої вкладеності HOC-обгорток у React DevTools).</p>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          code: `// Render prop (legacy)
+          code: `// Render props — legacy
 <MouseTracker render={({ x, y }) => <span>{x}, {y}</span>} />
 
-// HOC (legacy)
+// HOC — legacy
 const withAuth = (Component) => (props) =>
   useAuth().user ? <Component {...props} /> : <Redirect to="/login" />;
 
-// Сучасний еквівалент — custom hook
-const { x, y } = useMouseTracker();
-const user = useAuth();
-if (!user) return <Redirect to="/login" />;`,
+// Той самий кейс сьогодні — custom hook, без обгортки в дереві компонентів:
+function useMouse() { /* ...повертає { x, y } */ }
+function Profile() {
+  const requireAuth = useRequireAuth(); // редірект усередині хука
+  const { x, y } = useMouse();
+  return <span>{x}, {y}</span>;
+}`,
         },
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Controlled vs Uncontrolled</h3>
-  <div class="grid2">
-    <div class="card"><h4>Controlled</h4><pre style="font-size:10.5px"><span class="kw">const</span> [v, setV] = <span class="fn">useState</span>(<span class="str">''</span>);
-<span class="jsx">&lt;input</span> value={v} onChange={e =&gt; <span class="fn">setV</span>(e.target.value)} <span class="jsx">/&gt;</span>
-<span class="cmt">// React — source of truth, ре-рендер щокеystroke</span></pre></div>
-    <div class="card blue"><h4>Uncontrolled</h4><pre style="font-size:10.5px"><span class="kw">const</span> ref = <span class="fn">useRef</span>&lt;HTMLInputElement&gt;(<span class="kw">null</span>);
-<span class="jsx">&lt;input</span> ref={ref} defaultValue=<span class="str">""</span> <span class="jsx">/&gt;</span>
-<span class="cmt">// DOM — source of truth, читаєш ref.current.value при сабміті</span></pre></div>
+          html: `<h3 class="topic">Controlled vs Uncontrolled</h3><div class="grid2">
+    <div class="card"><h4>Controlled</h4><pre style="font-size:10.5px"><span class="jsx">&lt;input</span> value={v} onChange={e =&gt; <span class="fn">setV</span>(e.target.value)} <span class="jsx">/&gt;</span>
+<span class="cmt">// React — джерело правди. Валідація/маска в реальному часі,</span>
+<span class="cmt">// умовне вимкнення submit — усе легко.</span></pre></div>
+    <div class="card blue"><h4>Uncontrolled</h4><pre style="font-size:10.5px"><span class="jsx">&lt;input</span> ref={ref} defaultValue=<span class="str">""</span> <span class="jsx">/&gt;</span>
+<span class="cmt">// DOM — джерело правди, читаєш через ref.current.value.</span>
+<span class="cmt">// Менше ре-рендерів — придатно для великих форм (react-hook-form).</span></pre></div>
   </div>
-  <p>Uncontrolled + <code>ref</code> виправданий для великих форм (сотні полів) — без ре-рендеру всієї форми на кожен keystroke; react-hook-form побудований саме на цьому.</p>
   <h3 class="topic">Container / Presentational — межа розмилась</h3>
-  <p>До хуків: Container (клас, логіка/дані) рендерить Presentational (функція, тільки UI). Зараз логіка виноситься в <strong>custom hook</strong>, а не в окремий container-компонент — один функціональний компонент викликає хук і рендерить UI. Розділення лишається корисним як <em>ідея</em> (розділяй "звідки дані" і "як показати"), але не як обов'язкова пара файлів/компонентів.</p>
-  <h3 class="topic">Error Boundaries <span class="tag tag-pit">PITFALL</span></h3>
-  <p>Ловлять помилки рендеру дочірнього дерева. Досі <strong>тільки клас-компонент</strong> — немає хук-еквівалента <code>getDerivedStateFromError</code>/<code>componentDidCatch</code>. На практиці беруть готову бібліотеку <code>react-error-boundary</code> замість написання класу вручну.</p>`,
+  <p>До хуків: Container-компонент тримав стан/логіку, Presentational — лише рендерив пропи. Сьогодні логіка виноситься в <strong>custom hook</strong> (Block 2), а не в окремий компонент-обгортку — той самий поділ відповідальностей, але без зайвого шару в дереві компонентів.</p>
+  <h3 class="topic">Error Boundaries — лише класові <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Немає хук-еквівалента <code>componentDidCatch</code>/<code>getDerivedStateFromError</code> — Error Boundary досі мусить бути класовим компонентом (або обгорткою на кшталт <code>react-error-boundary</code>, яка сама є класом всередині). Ловить помилки рендерингу дерева <strong>нижче себе</strong> — не ловить помилки в обробниках подій, асинхронному коді, самому Error Boundary.</p>`,
         },
         {
           kind: 'code',
           language: 'tsx',
           code: `import { ErrorBoundary } from 'react-error-boundary';
 
-<ErrorBoundary fallback={<ErrorPage />} onError={(e) => logError(e)}>
+<ErrorBoundary
+  fallback={<ErrorPage />}
+  onError={(error, info) => logToSentry(error, info)}
+>
   <RiskyWidget />
 </ErrorBoundary>
-// Не ловить: помилки в event handlers, async код, SSR-помилки, помилки самого boundary`,
+
+// ⚠️ НЕ ловить: помилки в onClick/onChange (звичайний try/catch там),
+// помилки в асинхронному коді (fetch .catch()), SSR-помилки.`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Чому немає хука для Error Boundary? → потребує lifecycle-методів рендер-фази (getDerivedStateFromError), яких у функціональній моделі хуків немає — рендер компонента не може "зловити" помилку самого себе.</li>
+      <li>Controlled чи uncontrolled для великої форми з 50 полями? → uncontrolled/react-hook-form — controlled ре-рендерить форму на кожен keystroke.</li>
+    </ul>
+  </div>`,
         },
       ],
     },
+    /* ============================= BLOCK 6 — NEXT.JS RENDER MODELS ============================= */
     {
-      id: 'react-19',
-      title: '✨ React 19',
+      id: 'nextjs-render-models',
+      title: '🖥️ Next.js: рендер-моделі',
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Actions <span class="tag tag-new">React 19</span></h3>
-  <p><code>async</code>-функція, яку можна передати в <code>&lt;form action&gt;</code> або викликати в transition. React сам керує pending-станом, помилками й послідовністю (навіть кілька submit підряд не гонять один одного). Детально Server Actions у Next.js — див. Next.js → Server Actions і мутації. Там же — Next.js 15 breaking changes: <code>params</code>/<code>searchParams</code>/<code>cookies()</code>/<code>headers()</code> стали <code>Promise</code>, і <code>fetch</code> більше не кешується за замовчуванням.</p>`,
+          html: `<h3 class="topic">CSR / SSR / SSG / ISR <span class="tag tag-key">KEY</span></h3><div class="table-wrap">
+    <table>
+      <tr><th>Mode</th><th>Коли рендериться HTML</th><th>Коли доречно</th></tr>
+      <tr><td><strong>CSR</strong></td><td>У браузері, після завантаження JS</td><td>Дашборди, інтерактивні частини за автентифікацією</td></tr>
+      <tr><td><strong>SSR</strong></td><td>На сервері, на кожен запит</td><td>Персоналізовані сторінки, дані, що часто міняються</td></tr>
+      <tr><td><strong>SSG</strong></td><td>На сервері, під час білда, один раз</td><td>Blog posts, marketing pages — контент майже не міняється</td></tr>
+      <tr><td><strong>ISR</strong></td><td>Як SSG, але перегенерується у фоні через <code>revalidate</code></td><td>Новини, каталог товарів — часто, але не real-time</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">RSC — не те саме, що SSR <span class="tag tag-pit">PITFALL</span></h3>
+  <p>SSR — <strong>коли</strong> рендериться HTML (на сервері vs у браузері) — про час і місце. RSC (React Server Components) — <strong>де живе компонент</strong> взагалі: Server Component ніколи не потрапляє в JS-бандл клієнта, його код і залежності виконуються лише на сервері й ніколи не гідруються. SSR-компонент — це звичайний Client Component, просто його <em>перший</em> рендер відбувся на сервері для HTML, а потім він гідрується і живе в браузері.</p>
+  <h3 class="topic">Serialization через "use client" межу <span class="tag tag-key">KEY</span></h3>
+  <p>Пропи, що йдуть із Server Component у Client Component, серіалізуються (як JSON) — <strong>не можна</strong> передати функції, класи, <code>Date</code>-об'єкти напряму, Symbol. Виняток: сам <code>children</code> (JSX-дерево) можна передати — Server Component може лишатись "невидимим" деревом усередині Client Component через children.</p>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          code: `// use() — читає Promise або Context, МОЖНА умовно (на відміну від звичайних хуків)
-function Profile({ userPromise }: { userPromise: Promise<User> }) {
-  if (!userPromise) return null;      // ✅ хуки так не можна, use() — можна
-  const user = use(userPromise);      // "призупиняє" компонент до resolve (як Suspense)
-  return <div>{user.name}</div>;
-}
-
-// useActionState — форма + результат + pending в одному хуку
-const [state, formAction, isPending] = useActionState(
-  async (prevState, formData: FormData) => {
-    const res = await createUser(formData);
-    return res.error ? { error: res.error } : { success: true };
-  },
-  { error: null },
-);
-// <form action={formAction}>...<button disabled={isPending}>Save</button></form>`,
+          code: `// app/page.tsx — Server Component
+export default function Page() {
+  return (
+    <>
+      <Header />                                    {/* Відразу */}
+      <Suspense fallback={<DashboardSkeleton />}>
+        <SlowDashboard />                          {/* Стрімиться окремо */}
+      </Suspense>
+    </>
+  );
+}`,
         },
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">React Compiler <span class="tag tag-new">RC / опційний</span></h3>
-  <p>Build-time плагін: сам додає memoization (еквівалент ручних <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code>) аналізуючи код компонента. Мета — прибрати ручну оптимізацію як джерело багів (забутий dep у масиві залежностей). Не означає "не вчити useMemo" для співбесіди — розуміння <em>чому</em> компілятор це робить і коли ручна оптимізація й досі потрібна (об'єкти поза рендером, складні кейси) все ще питають.</p>
-  <div class="alert warn"><span class="icon">⚠️</span><span>Статус на серпень 2026: React Compiler — production-ready в React 19, опційний (incremental adoption), потребує ESLint-плагін для перевірки "compiler-safe" коду (чисті компоненти, дотримання Rules of Hooks).</span></div>`,
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span><strong>Hydration mismatch:</strong> якщо серверний і клієнтський рендер відрізняються (<code>Date.now()</code>, <code>window</code>, <code>Math.random()</code> у рендері) — React лається на mismatch. Фікс: <code>suppressHydrationWarning</code> на конкретному вузлі або перенести browser-only контент у <code>useEffect</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Bundle leak:</strong> <code>"use client"</code> на "корені" фічі тягне за собою у клієнтський бандл усі дочірні модулі-імпорти. Client Component може отримати Server Component лише через <code>children</code>-проп, ніколи через прямий <code>import</code>.</span></div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>SSR і RSC — це одне й те саме? → ні: SSR — коли рендериться HTML; RSC — де взагалі виконується компонент (сервер, ніколи не в бандлі клієнта).</li>
+      <li>Чому не можна передати onClick з Server у Client Component як проп у зворотньому напрямку (Client → Server)? → пропи серіалізуються, функції не серіалізуються — сервер не може отримати посилання на клієнтську функцію.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 7 — NEXT.JS APP ROUTER ============================= */
+    {
+      id: 'nextjs-app-router',
+      title: '▲ Next.js App Router',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Server vs Client Components <span class="tag tag-key">KEY</span></h3><div class="table-wrap">
+    <table>
+      <tr><th></th><th>Server Component</th><th>Client Component</th></tr>
+      <tr><td><strong>Default</strong></td><td>✅ Так</td><td>❌ Потрібен 'use client'</td></tr>
+      <tr><td><strong>async/await у тілі</strong></td><td>✅</td><td>❌</td></tr>
+      <tr><td><strong>useState/useEffect</strong></td><td>❌</td><td>✅</td></tr>
+      <tr><td><strong>Event handlers</strong></td><td>❌</td><td>✅</td></tr>
+      <tr><td><strong>DB/FS доступ напряму</strong></td><td>✅</td><td>❌</td></tr>
+      <tr><td><strong>Йде в JS bundle</strong></td><td>❌ (не йде!)</td><td>✅</td></tr>
+      <tr><td><strong>Browser APIs</strong></td><td>❌</td><td>✅</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">File conventions</h3><div class="grid2">
+    <div class="card"><h4>app/ structure</h4>
+      <pre style="font-size:10.5px">app/
+  layout.tsx        <span class="cmt">← спільний layout (persistent)</span>
+  page.tsx          <span class="cmt">← UI роуту</span>
+  loading.tsx       <span class="cmt">← Suspense fallback</span>
+  error.tsx         <span class="cmt">← error boundary ('use client'!)</span>
+  not-found.tsx     <span class="cmt">← 404</span>
+  route.ts          <span class="cmt">← API Route Handler</span>
+  template.tsx      <span class="cmt">← ре-маунт при навігації (vs layout)</span></pre>
+    </div>
+    <div class="card blue"><h4>Server Actions</h4>
+      <pre style="font-size:10.5px"><span class="str">'use server'</span>;
+
+<span class="kw">export async function</span> <span class="fn">deletePost</span>(id: <span class="type">string</span>) {
+  <span class="kw">const</span> session = <span class="kw">await</span> <span class="fn">getSession</span>();
+  <span class="kw">if</span> (!session) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Unauthorized'</span>);
+  <span class="kw">await</span> db.post.<span class="fn">delete</span>({ where: { id } });
+  <span class="fn">revalidatePath</span>(<span class="str">'/posts'</span>);
+}
+<span class="cmt">// ⚠️ ЗАВЖДИ перевіряй права всередині Server Action —</span>
+<span class="cmt">// це, по суті, публічний HTTP-ендпоінт з зручним синтаксисом.</span></pre>
+    </div>
+  </div>
+  <h3 class="topic">Route Handlers</h3>
+  <p><code>route.ts</code> у будь-якій папці <code>app/</code> — повноцінний API-ендпоінт (<code>GET</code>/<code>POST</code>/... іменовані експорти), співіснує з <code>page.tsx</code> у тій самій папці лише якщо різні сегменти шляху.</p>
+  <h3 class="topic">Caching layers — найзаплутаніша тема Next <span class="tag tag-pit">PITFALL</span></h3><div class="table-wrap">
+    <table>
+      <tr><th>Кеш</th><th>Де</th><th>Що кешує</th><th>Як інвалідувати</th></tr>
+      <tr><td><strong>Request Memoization</strong></td><td>Сервер, час одного рендеру</td><td>Дедуплікація однакових <code>fetch</code> у дереві компонентів</td><td>Сам минає після рендеру</td></tr>
+      <tr><td><strong>Data Cache</strong></td><td>Сервер, персистентний</td><td>Результат <code>fetch</code> між запитами/деплоями</td><td><code>revalidatePath/Tag</code>, <code>fetch(..., {'{'} next: {'{'} revalidate {'}'} {'}'})</code></td></tr>
+      <tr><td><strong>Full Route Cache</strong></td><td>Сервер, persist</td><td>Згенерований HTML+RSC payload статичних роутів</td><td>Ребілд, або динамічний роут (opt-out)</td></tr>
+      <tr><td><strong>Router Cache</strong></td><td>Клієнт, in-memory</td><td>RSC payload відвіданих роутів для миттєвої back/forward навігації</td><td>Хард-рефреш, <code>router.refresh()</code></td></tr>
+    </table>
+  </div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Що заважає забути перевірити авторизацію в Server Action? → нічого, це відповідальність розробника — Action виглядає як звичайна функція, але викликається з клієнта як ендпоінт.</li>
+      <li>4 рівні кешування Next.js — назви й різницю → Request Memoization / Data Cache / Full Route Cache / Router Cache, сервер vs клієнт, per-request vs persistent.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 8 — REACT 19 / FUTURE ============================= */
+    {
+      id: 'react-19-future',
+      title: '✨ React 19 / майбутнє',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React 19 — нове <span class="tag tag-new">React 19</span></h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Actions — async-функція просто у <form action>,
+// React сам керує pending/помилками/оптимістичними апдейтами
+async function submitAction(formData: FormData) {
+  'use server';
+  await saveName(formData.get('name'));
+}
+<form action={submitAction}>...</form>
+
+// use() — читає Promise або Context, можна викликати УМОВНО
+// (на відміну від звичайних хуків, яким заборонено бути в if)
+function Comments({ commentsPromise }: { commentsPromise: Promise<Comment[]> }) {
+  const comments = use(commentsPromise); // suspends до resolve
+  return <ul>{comments.map(c => <li key={c.id}>{c.text}</li>)}</ul>;
+}
+
+// useOptimistic — миттєве UI-оновлення до підтвердження сервера
+const [optimisticTodos, addOptimistic] = useOptimistic(
+  todos,
+  (state, newTodo) => [...state, newTodo]
+);
+
+// useActionState — форма + результат + pending в одному хуку
+const [state, formAction, isPending] = useActionState(submitAction, initialState);
+// <form action={formAction}><button disabled={isPending}>Save</button></form>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React Compiler</h3>
+  <p>Build-time інструмент, що автоматично вставляє мемоізацію (еквівалент <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code>) там, де компілятор бачить сенс — без ручного розставляння. Опційний, поступово стабілізується. <strong>Для співбесіди все одно треба розуміти ручну оптимізацію</strong> (Block 3) — Compiler не замінює розуміння referential stability, лише автоматизує рутину.</p>
+  <h3 class="topic">Next.js 15 — зміни</h3>
+  <div class="grid2">
+    <div class="card"><h4>Async Request APIs</h4><pre style="font-size:10.5px"><span class="cmt">// Next 14: синхронні</span>
+<span class="kw">const</span> { id } = params;
+<span class="cmt">// Next 15: асинхронні (готують до майбутньої</span>
+<span class="cmt">// стрімінгової моделі рендерингу)</span>
+<span class="kw">const</span> { id } = <span class="kw">await</span> params;
+<span class="kw">const</span> cookieStore = <span class="kw">await</span> <span class="fn">cookies</span>();</pre></div>
+    <div class="card yellow"><h4>Дефолт кешування змінився</h4><p><code>fetch</code> та GET Route Handlers <strong>більше не кешуються за замовчуванням</strong> (раніше — force-cache). Явно вмикай через <code>cache: 'force-cache'</code> там, де кешування дійсно потрібне.</p></div>
+  </div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Чим use() відрізняється від await у Server Component? → use() можна викликати умовно і в Client Components (для Context/переданого Promise), await у Server Component — ні для Client.</li>
+      <li>React Compiler означає "більше не треба знати useMemo"? → ні — для співбесіди й для дебагу edge-case'ів розуміння ручної мемоізації лишається обов'язковим.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+  ],
+}
+
+/* =========================================================================
+ * Шпаргалка — ті самі секції/id/порядок, стисло: таблиці + короткий код,
+ * без розлогих пояснень і interview-tips (ті лишились у reactContent).
+ * ========================================================================= */
+export const reactCheat: TopicContent = {
+  slug: 'react',
+  sections: [
+    {
+      id: 'fundamentals-components-jsx',
+      title: '🧱 Компоненти та JSX',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Компонент = функція, повертає JSX. JSX → <code>React.createElement(type, props, ...children)</code>, не HTML. <code>{'{ }'}</code> — лише вирази, не statements (<code>if</code>/<code>for</code>). Атрибути camelCase (<code>className</code>, <code>onClick</code>). Один кореневий елемент або <code>&lt;&gt;...&lt;/&gt;</code>.</p>`,
         },
       ],
     },
     {
-      "id": "nextjs-app-router",
-      "title": "▲ Next.js App Router",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Server vs Client Components <span class=\"tag tag-key\">KEY</span></h3><div class=\"table-wrap\">\n    <table>\n      <tr><th></th><th>Server Component</th><th>Client Component</th></tr>\n      <tr><td><strong>Default</strong></td><td>✅ Так</td><td>❌ Потрібен 'use client'</td></tr>\n      <tr><td><strong>async/await</strong></td><td>✅</td><td>❌</td></tr>\n      <tr><td><strong>useState/useEffect</strong></td><td>❌</td><td>✅</td></tr>\n      <tr><td><strong>Event handlers</strong></td><td>❌</td><td>✅</td></tr>\n      <tr><td><strong>DB/FS доступ</strong></td><td>✅</td><td>❌</td></tr>\n      <tr><td><strong>У JS bundle</strong></td><td>❌ (не йде!)</td><td>✅</td></tr>\n      <tr><td><strong>Browser APIs</strong></td><td>❌</td><td>✅</td></tr>\n    </table>\n  </div><h3 class=\"topic\">Rendering modes</h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Mode</th><th>Next.js</th><th>Коли</th></tr>\n      <tr><td><strong>SSR</strong></td><td><code>cache: 'no-store'</code> або dynamic</td><td>Персоналізовані сторінки, auth</td></tr>\n      <tr><td><strong>SSG</strong></td><td><code>cache: 'force-cache'</code> (default)</td><td>Blog posts, marketing pages</td></tr>\n      <tr><td><strong>ISR</strong></td><td><code>next: { revalidate: 60 }</code></td><td>Новини, продукти — часті але не real-time</td></tr>\n      <tr><td><strong>CSR</strong></td><td>'use client' + useEffect/TanStack</td><td>Дашборди, інтерактивні части</td></tr>\n    </table>\n  </div><h3 class=\"topic\">File conventions</h3><div class=\"grid2\">\n    <div class=\"card\"><h4>app/ structure</h4>\n      <pre style=\"font-size:10.5px\">app/\n  layout.tsx        <span class=\"cmt\">← shared layout (persistent)</span>\n  page.tsx          <span class=\"cmt\">← route UI</span>\n  loading.tsx       <span class=\"cmt\">← Suspense fallback</span>\n  error.tsx         <span class=\"cmt\">← error boundary ('use client'!)</span>\n  not-found.tsx     <span class=\"cmt\">← 404</span>\n  route.ts          <span class=\"cmt\">← API Route Handler</span>\n  template.tsx      <span class=\"cmt\">← re-mount on nav (vs layout)</span></pre>\n    </div>\n    <div class=\"card blue\"><h4>Server Actions</h4>\n      <pre style=\"font-size:10.5px\"><span class=\"str\">'use server'</span>;\n\n<span class=\"kw\">export async function</span> <span class=\"fn\">deletePost</span>(id: string) {\n  <span class=\"kw\">const</span> session = <span class=\"kw\">await</span> <span class=\"fn\">getSession</span>();\n  <span class=\"kw\">if</span> (!session) <span class=\"kw\">throw new</span> <span class=\"fn\">Error</span>(<span class=\"str\">'Unauthorized'</span>);\n  <span class=\"kw\">await</span> db.post.<span class=\"fn\">delete</span>({ where: { id } });\n  <span class=\"fn\">revalidatePath</span>(<span class=\"str\">'/posts'</span>);\n}\n<span class=\"cmt\">// ⚠️ ЗАВЖДИ перевіряй права в Server Actions!</span></pre>\n    </div>\n  </div><h3 class=\"topic\">Streaming + Suspense</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// app/page.tsx — Server Component\nexport default function Page() {\n  return (\n    <>\n      <Header />                                    {/* Відразу */}\n      <Suspense fallback={<DashboardSkeleton />}>\n        <SlowDashboard />                          {/* Стрімиться окремо */}\n      </Suspense>\n    </>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\">\n    <span class=\"icon\">⚠️</span>\n    <span><strong>Gotcha:</strong> Hydration mismatch — якщо Server і Client рендер відрізняються (Date.now(), window, Math.random()). Використовуй <code>suppressHydrationWarning</code> або <code>useEffect</code> для browser-only контенту.</span>\n  </div><div class=\"alert warn\">\n    <span class=\"icon\">⚠️</span>\n    <span><strong>Bundle leak:</strong> 'use client' на \"корінь\" фічі = всі дочірні модулі йдуть в bundle. Client Components можуть отримувати Server Components тільки через <code>children</code>, не через import!</span>\n  </div>"
-        }
-      ]
-    }
-  ]
-}
-
-export const reactCheat: TopicContent = {
-  "slug": "react",
-  "sections": [
-    {
-      "id": "hooks-deep-dive",
-      "title": "🪝 Hooks — Deep Dive",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">useEffect — правила <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// Lifecycle analogy:</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"cmt\">// componentDidMount + componentDidUpdate</span>\n  <span class=\"kw\">return</span> () => { <span class=\"cmt\">/* componentWillUnmount */</span> };\n}, [dep]);        <span class=\"cmt\">// [] = тільки mount/unmount</span>\n                  <span class=\"cmt\">// без [] = кожен рендер</span>\n                  <span class=\"cmt\">// [dep] = при зміні dep</span></pre>\n    <pre><span class=\"cmt\">// Stale closure bug!</span>\n<span class=\"fn\">useEffect</span>(() => {\n  <span class=\"kw\">const</span> id = <span class=\"fn\">setInterval</span>(() => {\n    <span class=\"fn\">setCount</span>(count + <span class=\"num\">1</span>);  <span class=\"cmt\">// ❌ stale count=0</span>\n  }, <span class=\"num\">1000</span>);\n  <span class=\"kw\">return</span> () => <span class=\"fn\">clearInterval</span>(id);\n}, []);\n\n<span class=\"cmt\">// ✅ Functional update</span>\n<span class=\"fn\">setCount</span>(c => c + <span class=\"num\">1</span>);</pre>\n  </div><h3 class=\"topic\">useMemo / useCallback — коли використовувати <span class=\"tag tag-pit\">PITFALL</span></h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Hook</th><th>✅ Має сенс</th><th>❌ Не потрібно</th></tr>\n      <tr><td><strong>useMemo</strong></td><td>Дороге обчислення (filter 10k items), посилання для memo-компонента</td><td>Прості concat, тривіальні обчислення</td></tr>\n      <tr><td><strong>useCallback</strong></td><td>Функція йде в memo-компонент як prop або в dep array іншого hook</td><td>Локальні обробники на простих елементах</td></tr>\n      <tr><td><strong>React.memo</strong></td><td>Компонент ре-рендериться часто, рендер дорогий, props стабільні</td><td>Простий компонент, рідкісні оновлення</td></tr>\n    </table>\n  </div><h3 class=\"topic\">useRef — 3 use cases</h3><div class=\"grid3\">\n    <div class=\"card\"><h4>1. DOM ref</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> inputRef = <span class=\"fn\">useRef</span>&lt;HTMLInputElement&gt;(<span class=\"kw\">null</span>);\n<span class=\"cmt\">// &lt;input ref={inputRef} /&gt;</span>\ninputRef.current?.<span class=\"fn\">focus</span>();</pre></div>\n    <div class=\"card blue\"><h4>2. Mutable без ре-рендеру</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> timerRef = <span class=\"fn\">useRef</span>&lt;NodeJS.Timeout&gt;();\ntimerRef.current = <span class=\"fn\">setTimeout</span>(fn, <span class=\"num\">1000</span>);\n<span class=\"cmt\">// зміна .current не тригерить рендер</span></pre></div>\n    <div class=\"card green\"><h4>3. \"Живе\" значення в effect</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> valueRef = <span class=\"fn\">useRef</span>(value);\nvalueRef.current = value;\n<span class=\"cmt\">// effect завжди читає актуальне</span></pre></div>\n  </div><h3 class=\"topic\">useLayoutEffect vs useEffect</h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>useEffect (async)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. Використовуй в 95% випадків.</p></div>\n    <div class=\"card yellow\"><h4>useLayoutEffect (sync)</h4><p>Виконується <strong>до</strong> paint, після DOM mutations. Для читання layout/dimensions, уникнення flash.</p></div>\n  </div><h3 class=\"topic\">useReducer vs useState</h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// useState — для незалежних простих значень</span>\n<span class=\"kw\">const</span> [name, setName] = <span class=\"fn\">useState</span>(<span class=\"str\">''</span>);\n<span class=\"kw\">const</span> [loading, setLoading] = <span class=\"fn\">useState</span>(<span class=\"kw\">false</span>);</pre>\n    <pre><span class=\"cmt\">// useReducer — пов'язаний складний state</span>\n<span class=\"kw\">const</span> [state, dispatch] = <span class=\"fn\">useReducer</span>(reducer, {\n  data: <span class=\"kw\">null</span>, loading: <span class=\"kw\">false</span>, error: <span class=\"kw\">null</span>\n});\ndispatch({ type: <span class=\"str\">'FETCH_START'</span> });\ndispatch({ type: <span class=\"str\">'FETCH_SUCCESS'</span>, payload: data });</pre>\n  </div>"
-        },
+      id: 'fundamentals-props-state',
+      title: '📦 Props, State та події',
+      blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Custom Hooks</h3><div class="grid2">
-    <pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(v: T, ms=<span class="num">300</span>) {
-  <span class="kw">const</span> [d, setD] = <span class="fn">useState</span>(v);
-  <span class="fn">useEffect</span>(() => {
-    <span class="kw">const</span> id = <span class="fn">setTimeout</span>(() => <span class="fn">setD</span>(v), ms);
-    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(id);
-  }, [v, ms]);
-  <span class="kw">return</span> d;
-}</pre>
-    <pre style="font-size:10.5px"><span class="cmt">// useObservable — RxJS у хуку</span>
-<span class="kw">function</span> <span class="fn">useObservable</span>&lt;T&gt;(src$: Observable&lt;T&gt;, init: T) {
-  <span class="kw">const</span> [v, setV] = <span class="fn">useState</span>(init);
-  <span class="fn">useEffect</span>(() => {
-    <span class="kw">const</span> sub = src$.<span class="fn">subscribe</span>(setV);
-    <span class="kw">return</span> () => sub.<span class="fn">unsubscribe</span>();
-  }, [src$]);
-  <span class="kw">return</span> v;
-}</pre>
-  </div>`
-        }
-      ]
+          html: `<p>Props — read-only, згори вниз; "наверх" — через callback-проп. <code>children</code> — спеціальний проп для композиції. <code>useState</code>: <code>setX(v)</code> планує ре-рендер, не мутує змінну одразу — <code>console.log</code> одразу після покаже старе значення. Функціональний апдейт: <code>setX(x =&gt; x + 1)</code>. Controlled input: <code>value</code> + <code>onChange</code> з React-стану.</p>`,
+        },
+      ],
     },
     {
-      "id": "react-18-features",
-      "title": "⚡ React 18+ Features",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Reconciliation (Fiber) <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card\"><h4>Дві фази</h4>\n      <p><strong>Render phase</strong> — можна переривати. Будує work-in-progress tree. Чисті функції, ніяких side-effects.</p>\n      <p style=\"margin-top:8px\"><strong>Commit phase</strong> — синхронна. DOM mutations, refs, useLayoutEffect, useEffect.</p>\n    </div>\n    <div class=\"card blue\"><h4>Правила reconciliation</h4>\n      <p>Різні типи → знести та побудувати з нуля.</p>\n      <p>Однакові типи → reuse, оновити props.</p>\n      <p>Списки → match по <code>key</code>. <strong>key={index} = баги!</strong></p>\n    </div>\n  </div><h3 class=\"topic\">useTransition + useDeferredValue <span class=\"tag tag-new\">React 18</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// useTransition — для дій</span>\n<span class=\"kw\">const</span> [isPending, startTransition] = <span class=\"fn\">useTransition</span>();\n\n<span class=\"fn\">startTransition</span>(() => {\n  <span class=\"fn\">setFiltered</span>(items.<span class=\"fn\">filter</span>(i => i.includes(q)));\n});\n<span class=\"cmt\">// Urgent: input оновлюється відразу</span>\n<span class=\"cmt\">// Non-urgent: filter defer'иться</span></pre>\n    <pre><span class=\"cmt\">// useDeferredValue — для значень</span>\n<span class=\"kw\">const</span> [query, setQuery] = <span class=\"fn\">useState</span>(<span class=\"str\">''</span>);\n<span class=\"kw\">const</span> deferredQuery = <span class=\"fn\">useDeferredValue</span>(query);\n\n<span class=\"cmt\">// deferredQuery оновлюється коли є час</span>\n<span class=\"cmt\">// query — одразу (input responsive)</span>\n<span class=\"jsx\">&lt;</span><span class=\"fn\">SearchResults</span> query={deferredQuery} <span class=\"jsx\">/&gt;</span></pre>\n  </div><h3 class=\"topic\">Automatic Batching <span class=\"tag tag-new\">React 18</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// React 17: тільки event handlers\n// React 18: СКРІЗЬ (setTimeout, fetch, promises)\nsetTimeout(() => {\n  setCount(c => c + 1);      // React 18: один ре-рендер!\n  setName('Roman');           // React 17: два ре-рендери\n}, 0);\n\n// Вимкнути батчинг: flushSync()\nimport { flushSync } from 'react-dom';\nflushSync(() => setCount(c + 1));  // sync render"
-        },
+      id: 'fundamentals-lists-conditionals',
+      title: '🔁 Списки, умовний рендеринг, форми',
+      blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Чому ре-рендер?</h3><p>State (own) · ре-рендер батька (без <code>memo</code> — і дитина теж!) · зміна Context · force update. <code>key={index}</code> у списку з реордером = значення інпутів "стрибають" між рядками — юзай стабільний id.</p>`
-        }
-      ]
+          html: `<p>Умовний рендеринг: тернарник, <code>&amp;&amp;</code> (⚠️ <code>count &amp;&amp; ...</code> з <code>count=0</code> виведе "0" в DOM), early return. Списки: <code>.map()</code> + стабільний <code>key</code> (не index, не random). Форма: <code>onSubmit</code> + <code>e.preventDefault()</code>.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'internals-reconciliation',
+      title: '🌳 Reconciliation, Virtual DOM, Fiber',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Virtual DOM — JS-дерево елементів; React рахує diff і застосовує мінімум змін до реального DOM. Різний тип елемента → знести й перебудувати; однаковий → перевикористати. <code>key</code> — зіставлення елементів списку між рендерами; <code>key={index}</code> при реордері "зсуває" стан/значення інпутів на сусідні елементи. Fiber — переписаний reconciler (React 16+): дерево fiber-вузлів замість рекурсії, дозволяє переривати рендер.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'internals-render-commit',
+      title: '🎬 Render vs Commit фази',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap"><table>
+      <tr><th>Фаза</th><th>Що</th><th>Переривна?</th></tr>
+      <tr><td>Render</td><td>Виклик тіл компонентів, diff. Має бути чистою (без side-effects)</td><td>Так</td></tr>
+      <tr><td>Commit</td><td>DOM-мутації, refs, useLayoutEffect (до paint), useEffect (після paint)</td><td>Ні, синхронна</td></tr>
+    </table></div>
+  <p>Side-effects — лише в <code>useEffect</code>, не в тілі компонента: render може викликатись повторно/відкидатись.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'internals-rerenders-batching',
+      title: '🔄 Тригери ре-рендеру, Batching, StrictMode',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>4 тригери ре-рендеру: власний state, ре-рендер батька (без <code>memo</code> — і дитина теж), зміна Context, <code>useReducer</code> dispatch (навіть тим самим значенням — на відміну від <code>useState</code>, який бейлить). Batching (React 18): групування апдейтів стану скрізь (не лише в React-обробниках) — <code>flushSync</code> вимикає вручну. StrictMode — подвійний виклик рендеру/ефектів <strong>лише в dev</strong>, викриває ефекти без cleanup.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-deep-dive',
+      title: '🪝 Hooks — Deep Dive',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap"><table>
+      <tr><th>Hook</th><th>Суть</th></tr>
+      <tr><td><code>useEffect</code></td><td>[] mount/unmount, [dep] при зміні, без масиву — щорендеру. Stale closure → функціональний апдейт або useRef</td></tr>
+      <tr><td><code>useMemo/useCallback</code></td><td>Дороге обчислення / стабільний референс для memo — не для тривіальних операцій</td></tr>
+      <tr><td><code>useRef</code></td><td>DOM-ref, мутабельне значення без ре-рендеру, "живе" значення в effect</td></tr>
+      <tr><td><code>useLayoutEffect</code></td><td>Синхронно до paint (layout/dimensions) — <code>useEffect</code> для решти 95%</td></tr>
+      <tr><td><code>useReducer</code></td><td>Складний повʼязаний state, явні action-переходи</td></tr>
+    </table></div>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-concurrent',
+      title: '⚡ useTransition / useDeferredValue',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p><code>useTransition</code> — обгортає функцію-апдейт як неурочну (<code>startTransition(fn)</code> + <code>isPending</code>). <code>useDeferredValue</code> — те саме для готового значення ззовні. Обидва — non-urgent частина оновлення може перериватись урочнішою (React 18 concurrent rendering).</p>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-custom',
+      title: '🧵 Custom Hooks',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Функція <code>useXxx</code>, що викликає інші хуки — виносить stateful-логіку, не UI. Кожен виклик — ізольований стан (не шариться між компонентами). Приклади: <code>useDebouncedValue</code>, <code>useObservable</code> (RxJS у хуку).</p>`,
+        },
+      ],
     },
     {
       id: 'performance-deep-dive',
@@ -509,13 +1202,13 @@ const Settings = React.lazy(() => import('./Settings'));
   {({ index, style }) => <div style={style}>{items[index].title}</div>}
 </FixedSizeList>
 
-// DevTools Profiler → Flamegraph/Ranked/"Why did this render?"`,
+// DevTools Profiler → Flamegraph/Ranked/"Why did this render?" — профілюй перед оптимізацією`,
         },
       ],
     },
     {
-      id: 'state-context',
-      title: '🧭 Межі стану',
+      id: 'state-boundaries',
+      title: '🧭 Межі стану та Context',
       blocks: [
         {
           kind: 'paragraph',
@@ -533,69 +1226,56 @@ const Settings = React.lazy(() => import('./Settings'));
       ],
     },
     {
-      "id": "tanstack-query",
-      "title": "🔄 TanStack Query",
-      "blocks": [
+      id: 'state-zustand',
+      title: '🐻 Zustand',
+      blocks: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Філософія: Server State ≠ Client State <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>❌ Anti-pattern (useEffect + useState)</h4>\n      <pre style=\"font-size:10.5px\"><span class=\"fn\">useEffect</span>(() => {\n  <span class=\"fn\">setLoading</span>(<span class=\"kw\">true</span>);\n  <span class=\"fn\">fetch</span>(<span class=\"str\">'/api/users'</span>)\n    .<span class=\"fn\">then</span>(r => r.<span class=\"fn\">json</span>())\n    .<span class=\"fn\">then</span>(setUsers)\n    .<span class=\"fn\">catch</span>(setError)\n    .<span class=\"fn\">finally</span>(() => <span class=\"fn\">setLoading</span>(<span class=\"kw\">false</span>));\n}, []);</pre>\n    </div>\n    <div class=\"card green\"><h4>✅ useQuery</h4>\n      <pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> { data, isLoading, error, refetch } = <span class=\"fn\">useQuery</span>({\n  queryKey: [<span class=\"str\">'users'</span>],\n  queryFn: () => <span class=\"fn\">fetchUsers</span>(),\n  staleTime: <span class=\"num\">5</span> * <span class=\"num\">60</span> * <span class=\"num\">1000</span>,  <span class=\"cmt\">// 5min</span>\n  gcTime: <span class=\"num\">10</span> * <span class=\"num\">60</span> * <span class=\"num\">1000</span>,   <span class=\"cmt\">// cacheTime</span>\n});</pre>\n    </div>\n  </div><h3 class=\"topic\">useMutation + Optimistic Updates <span class=\"tag tag-key\">KEY</span></h3>"
+          kind: 'code',
+          language: 'tsx',
+          code: `export const useBearStore = create<BearState>()((set) => ({
+  bears: 0,
+  addBear: () => set(state => ({ bears: state.bears + 1 })),
+}));
+
+// ❌ useBearStore() — ре-рендер при будь-якій зміні store
+// ✅ useBearStore(state => state.bears) — селектор, гранулярний ре-рендер
+// useShallow для кількох полів; slices pattern для великого store;
+// middleware: devtools / persist / immer`,
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const mutation = useMutation({\n  mutationFn: (todo: Todo) => createTodo(todo),\n  onMutate: async (newTodo) => {\n    await queryClient.cancelQueries({ queryKey: ['todos'] });\n    const previous = queryClient.getQueryData(['todos']);\n    queryClient.setQueryData(['todos'], old => [...old, newTodo]);  // optimistic!\n    return { previous };\n  },\n  onError: (err, newTodo, context) => {\n    queryClient.setQueryData(['todos'], context.previous);  // rollback\n  },\n  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] })\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">QueryKey — best practices</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Ієрархія: [resource, id, filters]\nqueryKey: ['users']                               // список\nqueryKey: ['users', userId]                        // один юзер\nqueryKey: ['users', userId, 'posts']              // пости юзера\nqueryKey: ['users', { page, filter, sort }]        // з параметрами\n\n// Invalidate по префіксу:\nqueryClient.invalidateQueries({ queryKey: ['users'] }); // всі users queries"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Корисні опції</h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Опція</th><th>Default</th><th>Що робить</th></tr>\n      <tr><td><code>staleTime</code></td><td>0</td><td>Час до \"застарівання\". 0 = refetch при фокусі/mount</td></tr>\n      <tr><td><code>gcTime</code></td><td>5 min</td><td>Час до видалення з кешу після відписки</td></tr>\n      <tr><td><code>retry</code></td><td>3</td><td>К-сть retry при помилці</td></tr>\n      <tr><td><code>refetchOnWindowFocus</code></td><td>true</td><td>Refetch при поверненні на вкладку</td></tr>\n      <tr><td><code>enabled</code></td><td>true</td><td>false = не виконувати (чекати на умову)</td></tr>\n      <tr><td><code>select</code></td><td>—</td><td>Transform data перед поверненням у компонент</td></tr>\n      <tr><td><code>placeholderData</code></td><td>—</td><td>Дані-заглушка поки завантажується (keepPreviousData)</td></tr>\n    </table>\n  </div>"
-        }
-      ]
+      ],
     },
     {
-      "id": "zustand",
-      "title": "🐻 Zustand",
-      "blocks": [
+      id: 'state-tanstack-query',
+      title: '🔄 TanStack Query',
+      blocks: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Базовий store</h3>"
+          kind: 'code',
+          language: 'tsx',
+          code: `const { data, isLoading } = useQuery({
+  queryKey: ['users', userId],
+  queryFn: () => fetchUser(userId),
+  staleTime: 5 * 60 * 1000,
+});
+
+const mutation = useMutation({
+  mutationFn: createTodo,
+  onMutate: async (t) => { /* optimistic setQueryData + return { previous } */ },
+  onError: (e, t, ctx) => { /* rollback з ctx.previous */ },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+});
+// staleTime — коли "застаріє", gcTime — коли видалиться з кешу, enabled — умовний запуск`,
         },
+      ],
+    },
+    {
+      id: 'state-rxjs',
+      title: '🌊 RxJS у React',
+      blocks: [
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { create } from 'zustand';\n\ninterface BearState {\n  bears: number;\n  addBear: () => void;\n  reset: () => void;\n}\n\nexport const useBearStore = create<BearState>()((set) => ({\n  bears: 0,\n  addBear: () => set(state => ({ bears: state.bears + 1 })),\n  reset: () => set({ bears: 0 }),\n}));"
+          kind: 'paragraph',
+          html: `<p>Один запит → <code>useEffect</code>/Query. Потік подій у часі (debounce, switchMap-скасування, комбінування кількох джерел) → RxJS у custom hook (<code>useObservable</code>).</p>`,
         },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Selectors — уникай зайвих ре-рендерів <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <pre><span class=\"cmt\">// ❌ Ре-рендер при будь-якій зміні store</span>\n<span class=\"kw\">const</span> store = <span class=\"fn\">useBearStore</span>();\n<span class=\"kw\">const</span> bears = store.bears;</pre>\n    <pre><span class=\"cmt\">// ✅ Ре-рендер тільки при зміні bears</span>\n<span class=\"kw\">const</span> bears = <span class=\"fn\">useBearStore</span>(state => state.bears);\n\n<span class=\"cmt\">// Multiple fields — useShallow</span>\n<span class=\"kw\">import</span> { useShallow } <span class=\"kw\">from</span> <span class=\"str\">'zustand/react/shallow'</span>;\n<span class=\"kw\">const</span> { bears, fish } = <span class=\"fn\">useBearStore</span>(<span class=\"fn\">useShallow</span>(\n  state => ({ bears: state.bears, fish: state.fish })\n));</pre>\n  </div><h3 class=\"topic\">Slices Pattern (великий store)</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// userSlice.ts\nexport const createUserSlice = (set) => ({\n  user: null,\n  setUser: (user) => set({ user }),\n});\n\n// store.ts\nexport const useStore = create()((...args) => ({\n  ...createUserSlice(...args),\n  ...createCartSlice(...args),\n}));"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Middleware</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { devtools, persist, immer } from 'zustand/middleware';\n\nconst useStore = create(\n  devtools(              // Redux DevTools\n    persist(            // localStorage\n      immer((set) => ({  // мутабельні апдейти\n        items: [],\n        addItem: (item) => set(state => { state.items.push(item) }),\n      })),\n      { name: 'my-store' }\n    )\n  )\n);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Zustand vs Context <span class=\"tag tag-key\">KEY</span></h3><div class=\"grid2\">\n    <div class=\"card red\"><h4>❌ Context для часто змінних даних</h4><p>Кожна зміна = ре-рендер ВСІХ споживачів. Навіть якщо вони не використовують змінену частину.</p></div>\n    <div class=\"card green\"><h4>✅ Zustand (або Jotai/Recoil)</h4><p>Гранулярні selectors. Ре-рендер тільки якщо вибрана частина state змінилась.</p></div>\n  </div>"
-        }
-      ]
+      ],
     },
     {
       id: 'patterns',
@@ -624,43 +1304,83 @@ import { ErrorBoundary } from 'react-error-boundary';
       ],
     },
     {
-      id: 'react-19',
-      title: '✨ React 19',
+      id: 'nextjs-render-models',
+      title: '🖥️ Next.js: рендер-моделі',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap">
+    <table>
+      <tr><th>Mode</th><th>Коли</th></tr>
+      <tr><td>CSR</td><td>Дашборди, інтерактивні частини</td></tr>
+      <tr><td>SSR</td><td>Персоналізовані сторінки, auth</td></tr>
+      <tr><td>SSG</td><td>Blog/marketing — статичний контент</td></tr>
+      <tr><td>ISR (<code>revalidate</code>)</td><td>Часті, але не real-time дані</td></tr>
+    </table>
+  </div>
+  <p>RSC ≠ SSR: SSR — <em>коли</em> рендериться HTML; RSC — <em>де живе</em> компонент (сервер, ніколи не в клієнтському бандлі). Пропи через <code>"use client"</code> межу — серіалізуються (без функцій/класів), крім <code>children</code>.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Hydration mismatch — <code>Date.now()</code>/<code>window</code>/<code>Math.random()</code> у рендері. Fix: <code>suppressHydrationWarning</code> або <code>useEffect</code>.</span></div>`,
+        },
+      ],
+    },
+    {
+      id: 'nextjs-app-router',
+      title: '▲ Next.js App Router',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap">
+    <table>
+      <tr><th></th><th>Server</th><th>Client</th></tr>
+      <tr><td>Default</td><td>✅</td><td>❌ 'use client'</td></tr>
+      <tr><td>useState/Effect</td><td>❌</td><td>✅</td></tr>
+      <tr><td>У JS bundle</td><td>❌</td><td>✅</td></tr>
+    </table>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Кеш</th><th>Де</th><th>Інвалідація</th></tr>
+      <tr><td>Request Memoization</td><td>Сервер, per-request</td><td>Сама минає</td></tr>
+      <tr><td>Data Cache</td><td>Сервер, persist</td><td>revalidatePath/Tag</td></tr>
+      <tr><td>Full Route Cache</td><td>Сервер, persist</td><td>Ребілд / dynamic opt-out</td></tr>
+      <tr><td>Router Cache</td><td>Клієнт, in-memory</td><td>router.refresh()</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `'use server';
+export async function deletePost(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error('Unauthorized'); // ⚠️ завжди перевіряй права
+  await db.post.delete({ where: { id } });
+  revalidatePath('/posts');
+}`,
+        },
+      ],
+    },
+    {
+      id: 'react-19-future',
+      title: '✨ React 19 / майбутнє',
       blocks: [
         {
           kind: 'code',
           language: 'tsx',
-          code: `// Actions — async-функція у <form action>, React керує pending/помилками
+          code: `// Actions — async у <form action>, React керує pending/помилками
 // use() — читає Promise/Context, можна умовно (на відміну від хуків)
 const user = use(userPromise);
 
 // useActionState — форма + результат + pending
 const [state, formAction, isPending] = useActionState(fn, initial);
-// <form action={formAction}><button disabled={isPending}>Save</button></form>
 
-// React Compiler — авто useMemo/useCallback/memo на build-time
-// RC, опційний, все одно треба розуміти ручну оптимізацію для співбесіди`,
+// useOptimistic — миттєвий UI до підтвердження сервера
+
+// React Compiler — авто useMemo/useCallback/memo на build-time (опційно)
+// Next 15: async params/cookies(), fetch більше НЕ кешується за замовчуванням`,
         },
       ],
     },
-    {
-      "id": "nextjs-app-router",
-      "title": "▲ Next.js App Router",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Server vs Client Components <span class=\"tag tag-key\">KEY</span></h3><div class=\"table-wrap\">\n    <table>\n      <tr><th></th><th>Server Component</th><th>Client Component</th></tr>\n      <tr><td><strong>Default</strong></td><td>✅ Так</td><td>❌ Потрібен 'use client'</td></tr>\n      <tr><td><strong>async/await</strong></td><td>✅</td><td>❌</td></tr>\n      <tr><td><strong>useState/useEffect</strong></td><td>❌</td><td>✅</td></tr>\n      <tr><td><strong>Event handlers</strong></td><td>❌</td><td>✅</td></tr>\n      <tr><td><strong>DB/FS доступ</strong></td><td>✅</td><td>❌</td></tr>\n      <tr><td><strong>У JS bundle</strong></td><td>❌ (не йде!)</td><td>✅</td></tr>\n      <tr><td><strong>Browser APIs</strong></td><td>❌</td><td>✅</td></tr>\n    </table>\n  </div><h3 class=\"topic\">Rendering modes</h3><div class=\"table-wrap\">\n    <table>\n      <tr><th>Mode</th><th>Next.js</th><th>Коли</th></tr>\n      <tr><td><strong>SSR</strong></td><td><code>cache: 'no-store'</code> або dynamic</td><td>Персоналізовані сторінки, auth</td></tr>\n      <tr><td><strong>SSG</strong></td><td><code>cache: 'force-cache'</code> (default)</td><td>Blog posts, marketing pages</td></tr>\n      <tr><td><strong>ISR</strong></td><td><code>next: { revalidate: 60 }</code></td><td>Новини, продукти — часті але не real-time</td></tr>\n      <tr><td><strong>CSR</strong></td><td>'use client' + useEffect/TanStack</td><td>Дашборди, інтерактивні части</td></tr>\n    </table>\n  </div><h3 class=\"topic\">File conventions</h3><div class=\"grid2\">\n    <div class=\"card\"><h4>app/ structure</h4>\n      <pre style=\"font-size:10.5px\">app/\n  layout.tsx        <span class=\"cmt\">← shared layout (persistent)</span>\n  page.tsx          <span class=\"cmt\">← route UI</span>\n  loading.tsx       <span class=\"cmt\">← Suspense fallback</span>\n  error.tsx         <span class=\"cmt\">← error boundary ('use client'!)</span>\n  not-found.tsx     <span class=\"cmt\">← 404</span>\n  route.ts          <span class=\"cmt\">← API Route Handler</span>\n  template.tsx      <span class=\"cmt\">← re-mount on nav (vs layout)</span></pre>\n    </div>\n    <div class=\"card blue\"><h4>Server Actions</h4>\n      <pre style=\"font-size:10.5px\"><span class=\"str\">'use server'</span>;\n\n<span class=\"kw\">export async function</span> <span class=\"fn\">deletePost</span>(id: string) {\n  <span class=\"kw\">const</span> session = <span class=\"kw\">await</span> <span class=\"fn\">getSession</span>();\n  <span class=\"kw\">if</span> (!session) <span class=\"kw\">throw new</span> <span class=\"fn\">Error</span>(<span class=\"str\">'Unauthorized'</span>);\n  <span class=\"kw\">await</span> db.post.<span class=\"fn\">delete</span>({ where: { id } });\n  <span class=\"fn\">revalidatePath</span>(<span class=\"str\">'/posts'</span>);\n}\n<span class=\"cmt\">// ⚠️ ЗАВЖДИ перевіряй права в Server Actions!</span></pre>\n    </div>\n  </div><h3 class=\"topic\">Streaming + Suspense</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// app/page.tsx — Server Component\nexport default function Page() {\n  return (\n    <>\n      <Header />                                    {/* Відразу */}\n      <Suspense fallback={<DashboardSkeleton />}>\n        <SlowDashboard />                          {/* Стрімиться окремо */}\n      </Suspense>\n    </>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\">\n    <span class=\"icon\">⚠️</span>\n    <span><strong>Gotcha:</strong> Hydration mismatch — якщо Server і Client рендер відрізняються (Date.now(), window, Math.random()). Використовуй <code>suppressHydrationWarning</code> або <code>useEffect</code> для browser-only контенту.</span>\n  </div><div class=\"alert warn\">\n    <span class=\"icon\">⚠️</span>\n    <span><strong>Bundle leak:</strong> 'use client' на \"корінь\" фічі = всі дочірні модулі йдуть в bundle. Client Components можуть отримувати Server Components тільки через <code>children</code>, не через import!</span>\n  </div>"
-        }
-      ]
-    }
-  ]
+  ],
 }
+
