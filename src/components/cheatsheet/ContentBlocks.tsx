@@ -1,6 +1,7 @@
 import type { ContentBlock } from '@/lib/cheatsheet/types'
 import { CodeBlock } from './CodeBlock'
 import { LinksBlock } from './LinksBlock'
+import { FlashcardsBlock } from './FlashcardsBlock'
 
 // Renders the block model used by prose topics. Most prose is preserved as
 // sanitized HTML (styled by .cheat-prose); code blocks get the interactive
@@ -31,6 +32,8 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
           }
           case 'links':
             return <LinksBlock key={i} title={block.title} items={block.items} />
+          case 'flashcards':
+            return <FlashcardsBlock key={i} items={block.items} />
           default:
             return null
         }

@@ -220,3 +220,34 @@
 .cheat-prose .interview-tips-title {
   @apply mb-2 font-semibold text-indigo-200;
 }
+
+/* Flip flashcards (question/answer), used by FlashcardsBlock */
+.flip-card {
+  perspective: 1000px;
+  cursor: pointer;
+}
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+.flip-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+.flip-card-face {
+  @apply flex flex-col gap-2 rounded-xl border border-white/10 bg-white/[0.04] p-4;
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  justify-content: center;
+  overflow-y: auto;
+}
+.flip-card-back {
+  @apply border-emerald-500/30 bg-emerald-500/5;
+  transform: rotateY(180deg);
+}
+.flip-card-label {
+  @apply text-[10px] font-semibold uppercase tracking-wide text-slate-400;
+}

@@ -113,6 +113,11 @@ export interface Lifehack {
 export type BlockTag = 'KEY' | 'NEW' | 'TIP'
 export type NoteTone = 'info' | 'good' | 'bad' | 'warn'
 
+export interface FlashcardItem {
+  question: string // may contain inline <code>
+  answer: string // may contain inline <code>
+}
+
 export type ContentBlock =
   | { kind: 'heading'; level: 2 | 3; text: string; tag?: BlockTag }
   | { kind: 'paragraph'; html: string }
@@ -131,6 +136,7 @@ export type ContentBlock =
       title?: string
       items: { href: string; title: string; description: string }[]
     }
+  | { kind: 'flashcards'; items: FlashcardItem[] }
 
 export interface TopicSection {
   id: string // anchor / scroll-spy target

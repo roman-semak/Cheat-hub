@@ -603,6 +603,198 @@ export const javascriptQuiz: QuizData = {
       ],
       "correct": 1,
       "explanation": "npm/yarn копіюють кожен пакет у <code>node_modules</code> кожного проєкту (дублювання на диску). <strong>pnpm</strong> тримає один спільний store і лінкує файли symlinks/hardlinks — швидше, менше місця, і строгіша (non-flat) структура <code>node_modules</code> усуває phantom dependencies. Особливо виграшно у monorepo/workspaces."
+    },
+    {
+      "id": "q51",
+      "question": "Де зберігається сам об'єкт при <code>const user = { name: 'A' };</code>, а де — посилання на нього?",
+      "options": [
+        "І об'єкт, і посилання — в heap",
+        "Об'єкт — у heap, посилання (зв'язування `user`) — у stack",
+        "Об'єкт — у stack, посилання — у heap",
+        "І об'єкт, і посилання — в stack, якщо об'єкт маленький"
+      ],
+      "correct": 1,
+      "explanation": "Примітиви й посилання на об'єкти лежать у <strong>stack</strong> (call frame), а самі об'єкти/масиви/функції — у <strong>heap</strong>, бо їхній розмір може змінюватись і невідомий заздалегідь."
+    },
+    {
+      "id": "q52",
+      "question": "Чому в JS не використовують наївний reference counting для garbage collection?",
+      "options": [
+        "Тому що це надто швидко і не дає рушію \"відпочити\"",
+        "Тому що він не звільняє циклічні посилання (об'єкти, що взаємно посилаються один на одного)",
+        "Тому що reference counting несумісний з prototype chain",
+        "JS насправді використовує лише reference counting"
+      ],
+      "correct": 1,
+      "explanation": "При reference counting лічильник циклічно пов'язаних об'єктів ніколи не досягає нуля, навіть якщо ззовні на цикл ніхто не посилається — вони \"течуть\". V8 натомість використовує <strong>reachability</strong> (mark-and-sweep): недосяжний від roots цикл звільняється повністю."
+    },
+    {
+      "id": "q53",
+      "question": "Що таке \"weak generational hypothesis\", на якій базується generational GC у V8?",
+      "options": [
+        "Більшість об'єктів живуть дуже довго, тому їх варто одразу класти в Old Space",
+        "Більшість об'єктів \"вмирають молодими\" — живуть дуже коротко",
+        "WeakMap завжди швидший за Map",
+        "Об'єкти без посилань автоматично стають weak references"
+      ],
+      "correct": 1,
+      "explanation": "Гіпотеза: переважна більшість алокованих об'єктів стають недосяжними майже одразу (тимчасові змінні, проміжні обчислення). Тому вигідно часто й швидко перевіряти лише молоду пам'ять (Scavenge), а не сканувати весь heap."
+    },
+    {
+      "id": "q54",
+      "question": "У чому різниця між Scavenge та Mark-Sweep-Compact у V8?",
+      "options": [
+        "Це синоніми одного й того ж алгоритму",
+        "Scavenge — швидкий copying-алгоритм для малого New Space; Mark-Sweep-Compact — рідший прохід з ущільненням для великого Old Space",
+        "Scavenge працює тільки в Node.js, Mark-Sweep-Compact — тільки в браузері",
+        "Mark-Sweep-Compact завжди швидший, тому що не копіює дані"
+      ],
+      "correct": 1,
+      "explanation": "<strong>Scavenge</strong> — copying-алгоритм для New Space (from-space → to-space), швидкий, бо живих об'єктів мало. <strong>Mark-Sweep-Compact</strong> — для великого Old Space: позначити живе, замести мертве, за потреби ущільнити фрагментовану пам'ять."
+    },
+    {
+      "id": "q55",
+      "question": "Які три фази виконує алгоритм mark-and-sweep (з compaction)?",
+      "options": [
+        "Copy → Paste → Delete",
+        "Allocate → Free → Reallocate",
+        "Mark → Sweep → Compact",
+        "Scan → Index → Cache"
+      ],
+      "correct": 2,
+      "explanation": "<strong>Mark</strong> — обхід графа від roots, позначення досяжного. <strong>Sweep</strong> — звільнення непозначеного. <strong>Compact</strong> — пересування живих об'єктів для усунення фрагментації пам'яті (переважно в Old Space)."
+    },
+    {
+      "id": "q56",
+      "question": "Чому WeakMap краще підходить для кешу метаданих DOM-вузлів, ніж звичайний Map?",
+      "options": [
+        "WeakMap швидший за Map при читанні",
+        "WeakMap тримає ключі \"слабко\": коли DOM-вузол стає недосяжним деінде, запис у кеші зникає сам — без ручного видалення",
+        "WeakMap дозволяє ітерацію for...of, а Map — ні",
+        "Різниці немає, WeakMap — просто застаріла назва Map"
+      ],
+      "correct": 1,
+      "explanation": "У звичайному <code>Map</code> ключ — strong reference: DOM-вузол не звільниться, навіть якщо його видалили зі сторінки, поки він є ключем у Map. <code>WeakMap</code> тримає ключ слабко — вузол і повʼязані дані зникають разом, коли вузол більше нізвідки не досяжний."
+    },
+    {
+      "id": "q57",
+      "question": "Що таке \"detached DOM node\" і чому це проблема продуктивності?",
+      "options": [
+        "Вузол без CSS-стилів",
+        "Вузол, видалений з DOM-дерева, але на який JS усе ще тримає посилання — тому GC не може його звільнити",
+        "Вузол всередині <template>, який ще не вставлений у документ",
+        "Вузол, до якого не прив'язано жодного event listener"
+      ],
+      "correct": 1,
+      "explanation": "Якщо елемент видалили з DOM (<code>.remove()</code>), але кеш/замикання досі посилаються на нього, він лишається досяжним для GC, хоча на сторінці його вже немає — класична причина зростання heap у SPA."
+    },
+    {
+      "id": "q58",
+      "question": "Що виведе цей код?<code>const a = { x: 1 };\nconst b = { ...a };\nb.x = 2;\nconsole.log(a.x, b.x);</code>",
+      "options": [
+        "2 2",
+        "1 1",
+        "1 2",
+        "undefined 2"
+      ],
+      "correct": 2,
+      "explanation": "Spread (<code>{...a}</code>) створює <strong>shallow copy</strong>: новий об'єкт з тими самими значеннями верхнього рівня. Оскільки <code>x</code> — примітив, він копіюється за значенням, тому зміна <code>b.x</code> не впливає на <code>a.x</code>: результат <strong>1 2</strong>."
+    },
+    {
+      "id": "q59",
+      "question": "Чим structuredClone() відрізняється від shallow copy через spread (<code>{...obj}</code>)?",
+      "options": [
+        "Це те саме, просто інший синтаксис",
+        "structuredClone() рекурсивно копіює все дерево об'єкта (deep copy), тоді як spread копіює лише верхній рівень",
+        "structuredClone() працює тільки з масивами",
+        "Spread завжди повільніший за structuredClone()"
+      ],
+      "correct": 1,
+      "explanation": "<code>{...obj}</code> — shallow copy: вкладені об'єкти/масиви залишаються спільними посиланнями з оригіналом. <code>structuredClone(obj)</code> — deep copy: рекурсивно клонує все дерево, роблячи копію повністю незалежною (але не вміє клонувати функції та DOM-вузли)."
+    },
+    {
+      "id": "q60",
+      "question": "Чи можна примусово викликати garbage collection у стандартному JS-коді?",
+      "options": [
+        "Так, через global.gc() завжди доступний у будь-якому середовищі",
+        "Ні, публічного API для форсування GC немає; delete/= null лише прибирають посилання",
+        "Так, через Object.forceGC()",
+        "Так, GC запускається кожного разу при виклику console.log()"
+      ],
+      "correct": 1,
+      "explanation": "У JS немає стандартного способу примусово запустити GC (Node дозволяє це лише з флагом <code>--expose-gc</code>, і то для дебагу/тестів). <code>delete obj.prop</code> чи <code>obj = null</code> прибирають посилання — коли і чи звільниться памʼять, вирішує сам рушій."
+    },
+    {
+      "id": "q61",
+      "question": "Що станеться при спробі викликати клас без <code>new</code>, напр. <code>const a = Animal();</code>?",
+      "options": [
+        "Виконається так само, як звичайна функція",
+        "TypeError: Class constructor cannot be invoked without 'new'",
+        "Поверне undefined без помилок",
+        "Автоматично додасть new під капотом"
+      ],
+      "correct": 1,
+      "explanation": "На відміну від constructor function (яка просто виконується, з <code>this</code> = undefined у strict mode), клас, оголошений через <code>class</code>, кидає <code>TypeError</code> при виклику без <code>new</code> — це вбудована перевірка."
+    },
+    {
+      "id": "q62",
+      "question": "Чому цей код кидає ReferenceError?<code>class Dog extends Animal {\n  constructor(name) {\n    this.name = name; // ReferenceError\n    super(name);\n  }\n}</code>",
+      "options": [
+        "this недоступний у класах узагалі",
+        "У конструкторі підкласу this ініціалізується лише після виклику super() — звернення до this раніше заборонене",
+        "Треба спочатку оголосити name як поле класу",
+        "extends вимагає, щоб super() був останнім рядком"
+      ],
+      "correct": 1,
+      "explanation": "У класі з <code>extends</code> <code>this</code> створює батьківський конструктор. Доки <code>super()</code> не викликано, <code>this</code> перебуває в TDZ — будь-яке звернення до нього кидає <code>ReferenceError</code>."
+    },
+    {
+      "id": "q63",
+      "question": "Чим private field <code>#balance</code> у класі відрізняється від конвенції <code>_balance</code>?",
+      "options": [
+        "Нічим — обидва просто приховані за конвенцією іменування",
+        "#balance недоступне ззовні класу на рівні мови (SyntaxError при спробі доступу), _balance — лише угода між розробниками, технічно публічне",
+        "_balance швидший за #balance у V8",
+        "#balance можна перевизначити в підкласі, _balance — ні"
+      ],
+      "correct": 1,
+      "explanation": "<code>#field</code> (ES2022) — справжня інкапсуляція на синтаксичному рівні: <code>obj.#balance</code> ззовні класу кидає SyntaxError. <code>_field</code> — лише конвенція, яка нічого технічно не забороняє."
+    },
+    {
+      "id": "q64",
+      "question": "Кому належить <code>static</code>-метод у класі — інстанції чи самому класу?",
+      "options": [
+        "Кожній інстанції окремо, як звичайний метод",
+        "Самому класу — викликається як ClassName.method(), без створення інстанції через new",
+        "Прототипу класу, як і звичайні методи",
+        "Global object, як звичайна функція"
+      ],
+      "correct": 1,
+      "explanation": "<code>static</code> members (методи й поля) належать самому класу, а не instance — доступні через <code>ClassName.member</code> без <code>new</code>. Типово для utility-методів, лічильників, factory-методів."
+    },
+    {
+      "id": "q65",
+      "question": "Що станеться, якщо підклас не оголошує власний constructor?<code>class Cat extends Animal {\n  meow() { console.log('Meow'); }\n}\nnew Cat('Tom');</code>",
+      "options": [
+        "Помилка компіляції — constructor обов'язковий",
+        "this.name лишиться undefined, аргумент 'Tom' ігнорується",
+        "Рушій підставляє дефолтний конструктор constructor(...args) { super(...args) } — 'Tom' дійде до Animal-конструктора",
+        "Cat не зможе мати жодних полів"
+      ],
+      "correct": 2,
+      "explanation": "Якщо конструктор не оголошено явно, JS підставляє дефолтний, що прокидає всі аргументи в <code>super(...args)</code>. Тому <code>new Cat('Tom')</code> коректно передасть <code>'Tom'</code> у <code>Animal</code>'s constructor."
+    },
+    {
+      "id": "q66",
+      "question": "Чи можна використати клас у коді до рядка, де його оголошено (як з function declaration)?",
+      "options": [
+        "Так, класи повністю hoisted, як function declarations",
+        "Ні, класи взагалі не hoisted",
+        "Клас technically hoisted, але потрапляє в Temporal Dead Zone — звернення до нього до оголошення кидає ReferenceError",
+        "Залежить від того, extends клас щось чи ні"
+      ],
+      "correct": 2,
+      "explanation": "На відміну від <code>function</code> declaration (повний hoisting, можна викликати раніше), клас <em>hoisted</em>, але лишається в TDZ до виконання рядка оголошення — використання раніше кидає <code>ReferenceError</code>, так само як <code>let</code>/<code>const</code>."
     }
   ]
 }

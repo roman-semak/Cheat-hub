@@ -711,12 +711,12 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Garbage Collection — як працює <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> автоматичне звільнення пам'яті, яка стала недосяжною. <strong>Навіщо:</strong> у JS немає ручного <code>free()</code> — рушій сам знаходить «сміття» й повертає пам'ять.</p><p><strong>Досяжність (reachability):</strong> об'єкт живий, поки є шлях до нього від <em>коренів</em> (roots). Немає шляху — його можна зібрати.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Roots — звідки рахується досяжність</th></tr>\n              <tr><td>Глобальні змінні / <code>globalThis</code></td></tr>\n              <tr><td>Локальні змінні й параметри активних функцій (стек викликів)</td></tr>\n              <tr><td>Змінні, захоплені <strong>замиканнями</strong></td></tr>\n            </table>\n          </div><p><strong>Алгоритм — Mark-and-Sweep:</strong> (1) <em>Mark</em> — обхід графа від коренів, позначити все досяжне; (2) <em>Sweep</em> — усе непозначене звільнити. Тому <strong>циклічні посилання не течуть</strong>: недосяжний цикл зберуть (на відміну від наївного reference-counting, який на циклах ламається).</p><p><strong>V8 — generational GC:</strong> пам'ять поділена на <em>young</em> і <em>old</em> покоління. Більшість об'єктів «вмирають молодими» → часті швидкі збори young-простору (<em>Scavenge</em>); ті, що вижили, переходять у old-space (рідший <em>Mark-Sweep-Compact</em>). GC працює <strong>інкрементально/конкурентно</strong>, щоб не блокувати main thread надовго.</p><ul class=\"list\">\n            <li><strong>Форсувати GC не можна</strong> — немає API; <code>delete</code>/<code>= null</code> лише прибирають посилання, а не звільняють пам'ять одразу.</li>\n            <li><strong>Типові витоки</strong> (об'єкт лишається досяжним ненавмисно): забуті <code>setInterval</code>/таймери, невідписані event listeners, замикання з великими даними, detached DOM nodes, глобальні кеші (Map, що росте) → тут рятує <code>WeakMap</code>/<code>WeakSet</code>.</li>\n          </ul>"
+          "html": "<h3 class=\"topic\">Garbage Collection — як працює <span class=\"tag tag-key\">KEY</span></h3><p><strong>Коротко:</strong> V8 звільняє пам'ять об'єктів, недосяжних від коренів (reachability), генераційним Mark-and-Sweep. Повний розбір — stack vs heap, фази Mark/Sweep/Compact, типові memory leaks з кодом, порівняння/копіювання об'єктів та флешкартки для повторення — дивись секцію <strong>«🧠 Heap та управління пам'яттю»</strong> нижче ⬇.</p>"
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// Забудь про references для GC\nfunction example() {\n  let obj = { large: new Array(1000000) };\n  doSomething(obj);\n  // GC видалить obj після виходу з функції\n}\n\n// ПАСТКА: closure утримує reference\nfunction createListener() {\n  let largeData = new Array(1000000);\n  element.addEventListener('click', () => {\n    console.log(largeData[0]); // largeData завжди у памяті!\n  });\n  // removeEventListener() або null assignment необхідні\n}\n\n// Monitoring memory (DevTools Performance tab)\n// 1. Take heap snapshot\n// 2. Look for detached DOM nodes, retained objects\n// 3. Track allocation timeline"
+          "code": "// Monitoring memory (DevTools Performance tab)\n// 1. Take heap snapshot\n// 2. Look for detached DOM nodes, retained objects\n// 3. Track allocation timeline"
         },
         {
           "kind": "paragraph",
@@ -730,6 +730,157 @@ export const javascriptContent: TopicContent = {
         {
           "kind": "paragraph",
           "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Deoptimization неправильних типів може убити performance. Тримай consistentні типи у функціях. Профільний реальний код у DevTools, не вгадуй!\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>V8 JIT compilation як працює?</strong> — Ignition интерпретує. Hot code → TurboFan оптимізує. Deoptimize при type mismatch.</li>\n              <li><strong>Hidden classes для чого?</strong> — Fast property access. V8 групує об'єкти з однаковою структурою. Порядок полів важливий!</li>\n              <li><strong>Як мінімізувати deoptimization?</strong> — Consistentні типи у функціях. Уникай dinamichen property assignment.</li>\n              <li><strong>Memory leak closure для чого?</strong> — Closure утримує scope. Grandes data у listeners = memory leak. removeEventListener або null assign.</li>\n              <li><strong>Performance.now() vs Date.now()?</strong> — now() мікросекунди, Date.now() мілісекунди. now() для точних бенчмарків.</li>\n              <li><strong>DevTools Profiling як користуватись?</strong> — Performance tab → record → do action → stop. Подивись за Long Tasks, layout thrashing.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у V8 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025+</span><span class=\"changelog-text\">Maglev further optimizations, faster TurboFan, better GC latency</span></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "heap-memory-management",
+      "title": "🧠 Heap та управління пам'яттю",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Концепція — швидке повторення <span class=\"tag tag-key\">KEY</span></h3><p><strong>Stack (стек виконання):</strong> зберігає call frames — примітивні значення, посилання (адреси) на об'єкти, параметри функцій. Виділення й звільнення автоматичне, у LIFO-порядку при вході/виході з функції — швидко, фіксований розмір.</p><p><strong>Heap (купа):</strong> зберігає самі об'єкти, масиви, функції, замикання — все, чий розмір заздалегідь невідомий або може змінюватись. Виділення динамічне; звільненням керує Garbage Collector.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Де</th><th>Що зберігається</th><th>Хто керує</th></tr>\n              <tr><td>Stack</td><td>примітиви (number, string, boolean, undefined, null, symbol, bigint), посилання на об'єкти, call frames</td><td>рушій, автоматично (LIFO)</td></tr>\n              <tr><td>Heap</td><td>object/array/function/Map/Set/Date... — самі структури даних</td><td>Garbage Collector</td></tr>\n            </table>\n          </div>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "Примітиви за значенням vs об'єкти за посиланням",
+          "code": "const a = 10;                // 10 лежить прямо у stack-слоті `a`\nconst b = a;                  // копія значення — b і a незалежні\nb + 1;\nconsole.log(a, b);            // 10 10 (b не змінився від зміни a і навпаки)\n\nconst obj1 = { x: 1 };        // { x: 1 } лежить у heap\nconst obj2 = obj1;             // у stack копіюється лише ПОСИЛАННЯ (адреса)\nobj2.x = 2;\nconsole.log(obj1.x);           // 2 — obj1 і obj2 вказують на той самий об'єкт у heap"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Модель пам'яті V8 — New Space / Old Space</h3><p>V8 ділить heap на кілька просторів (spaces); два ключові для співбесіди:</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Простір</th><th>Що там</th><th>Розмір</th><th>Як часто чиститься</th></tr>\n              <tr><td><strong>New Space</strong> (young generation)</td><td>щойно створені об'єкти</td><td>малий (кілька MB), 2 семіпростори</td><td>дуже часто — Scavenge</td></tr>\n              <tr><td><strong>Old Space</strong> (old generation)</td><td>об'єкти, що «пережили» кілька Scavenge-циклів</td><td>великий</td><td>рідко — Mark-Sweep-Compact</td></tr>\n            </table>\n          </div><p>Є ще Large Object Space (об'єкти понад ~1MB минають New Space одразу) і Code Space (скомпільований код) — але на співбесіді зазвичай достатньо New/Old.</p>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Глибше занурення — generational GC <span class=\"tag tag-key\">KEY</span></h3><p><strong>Weak generational hypothesis:</strong> більшість об'єктів «вмирають молодими» — живуть дуже коротко (тимчасові змінні, проміжні обчислення). Тому вигідно окремо й часто перевіряти лише «молоду» пам'ять, а не сканувати весь heap щоразу — звідси поділ на покоління з різними алгоритмами й частотою запуску.</p><div class=\"grid2\">\n            <div class=\"card blue\"><h4>⚡ Scavenge (New Space)</h4><p>Copying-алгоритм: New Space поділений на <em>from-space</em> і <em>to-space</em>. Живі об'єкти копіюються з from → to (ущільнюючись), решта простору вважається вільною. Швидко, бо живих об'єктів у молодому поколінні зазвичай мало. Об'єкт, що пережив 2 Scavenge-цикли, «підвищується» (promotion) в Old Space.</p></div>\n            <div class=\"card yellow\"><h4>🐢 Mark-Sweep-Compact (Old Space)</h4><p>Old Space великий і здебільшого заповнений живими об'єктами — copying тут дорогий. Тому: Mark → Sweep → Compact. Працює рідше, інкрементально й паралельно, щоб мінімізувати stop-the-world паузи на main thread.</p></div>\n          </div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Три фази mark-and-sweep</h3><ul class=\"list\">\n            <li><strong>1. Mark</strong> — обхід графа об'єктів від roots (globals, стек викликів, замикання); усе досяжне позначається як «живе».</li>\n            <li><strong>2. Sweep</strong> — прохід по heap: усе непозначене вважається сміттям і повертається у вільну пам'ять.</li>\n            <li><strong>3. Compact</strong> (переважно в Old Space, не завжди) — живі об'єкти пересуваються ближче один до одного, щоб усунути фрагментацію й звільнити суцільні блоки пам'яті під майбутні алокації.</li>\n          </ul>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Reachability замість reference counting — чому цикли не течуть</h3><p><strong>Reference counting</strong> (наївний підхід): кожен об'єкт зберігає лічильник посилань на себе; коли лічильник = 0 — об'єкт звільняється. Проблема: <strong>цикл</strong> із двох об'єктів, що посилаються один на одного, ніколи не досягне 0, навіть якщо ззовні на нього ніхто не посилається — memory leak.</p><p><strong>Reachability (V8):</strong> об'єкт живий не тому, що на нього щось посилається, а тому, що до нього є шлях <em>від roots</em>. Цикл без зовнішнього шляху від roots — недосяжний цілком, і mark-and-sweep звільнить обидва об'єкти разом.</p>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "Циклічне посилання все одно збирається",
+          "code": "function makeCycle() {\n  const a: { other?: unknown } = {};\n  const b: { other?: unknown } = {};\n  a.other = b;\n  b.other = a; // цикл: a -> b -> a\n  return 'no external references kept';\n}\n\nmakeCycle();\n// Після виходу з функції ні `a`, ні `b` не досяжні від жодного root —\n// попри взаємне посилання, GC звільнить обидва об'єкти.\n// Наївний reference counting тут «протік» би: лічильник кожного = 1, ніколи не 0."
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Memory leaks на практиці <span class=\"tag tag-pit\">PIT</span></h3><p>Витік пам'яті в JS — це не «GC зламався», а об'єкт, що <strong>лишається досяжним ненавмисно</strong>. П'ять найчастіших патернів:</p>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "1. Забутий event listener",
+          "code": "// ❌ Забутий event listener\nfunction attach() {\n  const hugeData = new Array(1_000_000).fill('x');\n  const handler = () => console.log(hugeData.length);\n  window.addEventListener('resize', handler);\n  // handler і замкнений hugeData живуть, поки є listener,\n  // навіть якщо власник handler давно \"видалений\" зі сторінки\n}\n\n// ✅ Прибираємо, коли більше не потрібно\nfunction attachFixed() {\n  const hugeData = new Array(1_000_000).fill('x');\n  const handler = () => console.log(hugeData.length);\n  window.addEventListener('resize', handler);\n  return () => window.removeEventListener('resize', handler); // cleanup\n}"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "2. Таймер із замиканням",
+          "code": "// ❌ setInterval тримає замикання живим необмежено довго\nfunction startPolling(bigPayload: unknown) {\n  setInterval(() => {\n    sendBeacon(bigPayload); // bigPayload недосяжний іншим шляхом, крім цього таймера\n  }, 5000);\n  // немає clearInterval — таймер (і bigPayload) живе, поки живе процес\n}\n\n// ✅ Зберігаємо id і чистимо\nfunction startPollingFixed(bigPayload: unknown) {\n  const id = setInterval(() => sendBeacon(bigPayload), 5000);\n  return () => clearInterval(id);\n}"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "3. Замикання захоплює зайве",
+          "code": "// ❌ Замикання захоплює весь largeConfig, хоча треба лише один прапорець\nfunction makeLogger(largeConfig: { debug: boolean }) {\n  return () => console.log(largeConfig.debug);\n  // largeConfig (весь об'єкт) лишається живим, поки живе повернута функція\n}\n\n// ✅ Витягуємо тільки потрібне значення ДО створення замикання\nfunction makeLoggerFixed(largeConfig: { debug: boolean }) {\n  const { debug } = largeConfig; // largeConfig можна звільнити одразу після цього\n  return () => console.log(debug);\n}"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "4. Detached DOM node",
+          "code": "// ❌ Detached DOM node — вузол видалено з дерева, але JS все ще тримає посилання\nconst cache: Record<string, HTMLElement | null> = {};\nfunction cacheNode(id: string) {\n  cache[id] = document.getElementById(id);\n}\ncacheNode('sidebar');\ndocument.getElementById('sidebar')?.remove(); // видалили з DOM...\n// ...але cache.sidebar досі посилається на нього — \"detached\", але не GC'd\n\n// ✅ Прибираємо посилання разом із видаленням з DOM\ndelete cache['sidebar'];"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "5. Глобальний кеш → WeakMap",
+          "code": "// ❌ Кеш на звичайному Map росте вічно — ключі (DOM-вузли/об'єкти) ніколи\n// не звільняться, поки живий сам Map\nconst metaCache = new Map<HTMLElement, unknown>();\nfunction setMeta(el: HTMLElement, data: unknown) {\n  metaCache.set(el, data); // strong reference на el — el не збереться, навіть видаливши з DOM\n}\n\n// ✅ WeakMap — ключі тримаються \"слабко\": коли el стає недосяжним деінде,\n// пара {el: data} автоматично прибирається GC\nconst metaCacheWeak = new WeakMap<HTMLElement, unknown>();\nfunction setMetaFixed(el: HTMLElement, data: unknown) {\n  metaCacheWeak.set(el, data);\n}"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"alert alert-good\"><strong>Правило:</strong> якщо ключ кешу — об'єкт/DOM-вузол і ти хочеш, щоб запис у кеші сам зникав разом з об'єктом — використовуй <code>WeakMap</code> (пари ключ→значення) або <code>WeakSet</code> (множина об'єктів). Обидва не enumerable (немає <code>.size</code>, <code>.keys()</code>, <code>for...of</code>) — саме тому, що вміст може зникнути в будь-який момент.</div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Порівняння та копіювання об'єктів</h3><p><code>{} === {}</code> → <code>false</code>. Оператори порівняння для об'єктів (<code>===</code>, <code>==</code>) порівнюють <em>посилання</em> (адреси в heap), а не вміст. Два різні літерали — це два різні об'єкти в heap, навіть з однаковим вмістом.</p>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "{} === {} та порівняння за посиланням",
+          "code": "console.log({} === {});                 // false — різні об'єкти в heap\nconsole.log([] === []);                  // false — так само\n\nconst obj = { x: 1 };\nconst same = obj;\nconsole.log(obj === same);               // true — те саме посилання\n\nconsole.log(JSON.stringify({ a: 1 }) === JSON.stringify({ a: 1 })); // true — порівнюємо РЯДКИ, не об'єкти"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "Мутація крізь спільне посилання",
+          "code": "function addItem(cart: { items: string[] }, item: string) {\n  cart.items.push(item); // мутує оригінальний масив у heap!\n  return cart;\n}\n\nconst cart1 = { items: [] as string[] };\nconst cart2 = addItem(cart1, 'apple');\nconsole.log(cart1 === cart2);     // true — той самий об'єкт\nconsole.log(cart1.items);          // ['apple'] — cart1 теж змінився, хоч його \"не чіпали напряму\""
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Shallow copy (spread) vs deep copy (structuredClone)</h3><p><strong>Shallow copy</strong> (<code>{...obj}</code>, <code>[...arr]</code>, <code>Object.assign</code>) створює новий «верхній» об'єкт, але вкладені об'єкти/масиви всередині — ті самі посилання, що й в оригіналі.</p>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "Shallow vs deep copy",
+          "code": "const original = { name: 'Alice', address: { city: 'Kyiv' } };\n\nconst shallow = { ...original };\nshallow.name = 'Bob';                  // не впливає на original — top-level поле скопійоване\nshallow.address.city = 'Lviv';          // ⚠️ впливає і на original.address.city!\nconsole.log(original.address.city);     // 'Lviv' — address досі те саме посилання\n\nconst deep = structuredClone(original);\ndeep.address.city = 'Odesa';\nconsole.log(original.address.city);      // 'Lviv' — deep clone повністю незалежний\n\n// structuredClone НЕ вміє: функції, DOM-вузли, прототипні ланцюги, Symbol-властивості\n// (кине DataCloneError) — для таких кейсів потрібне ручне клонування."
+        },
+        {
+          "kind": "flashcards",
+          "items": [
+            {
+              "question": "Чи рахує JS посилання для GC (reference counting)?",
+              "answer": "Ні. V8 використовує <strong>reachability</strong> (mark-and-sweep): об'єкт живий, поки є шлях до нього від roots. Саме це дозволяє коректно звільняти цикли посилань, на яких наївний reference counting «зависає»."
+            },
+            {
+              "question": "Де зберігається значення const-об'єкта, наприклад <code>const user = { name: 'A' }</code>?",
+              "answer": "Саме <strong>зв'язування</strong> <code>user</code> (посилання/адреса) лежить у стеку виклику; сам об'єкт <code>{ name: 'A' }</code> — у heap. <code>const</code> забороняє змінити, куди вказує <code>user</code>, але не забороняє мутувати вміст об'єкта в heap."
+            },
+            {
+              "question": "Що таке detached DOM node?",
+              "answer": "DOM-вузол, видалений з дерева документа (<code>.remove()</code> або заміна батька), але на який JS десь досі тримає посилання (напр. у кеші чи замиканні) — тому GC не може його звільнити, хоча на сторінці його вже немає."
+            },
+            {
+              "question": "Навіщо потрібен WeakMap?",
+              "answer": "Для кешів/метаданих, прив'язаних до об'єктів (часто DOM-вузлів), де запис має автоматично зникати разом з об'єктом-ключем — без ручного видалення й без ризику витоку пам'яті."
+            },
+            {
+              "question": "Чому <code>{} === {}</code> дорівнює false?",
+              "answer": "<code>===</code> для об'єктів порівнює посилання (адреси в heap), а не вміст. Це два різні об'єкти — навіть з однаковим (порожнім) вмістом."
+            },
+            {
+              "question": "Чим Scavenge відрізняється від Mark-Sweep-Compact?",
+              "answer": "Scavenge — швидкий copying-алгоритм для малого New Space (молоді об'єкти). Mark-Sweep-Compact — повільніший, рідший прохід для великого Old Space, що додатково ущільнює пам'ять (compact), щоб уникнути фрагментації."
+            },
+            {
+              "question": "Чи можна форсувати garbage collection в JS?",
+              "answer": "Ні, у стандартному рушії немає публічного API для примусового запуску GC (Node з флагом <code>--expose-gc</code> — виняток для дебагу/тестів). <code>= null</code> чи <code>delete</code> лише прибирають посилання — звільняти пам'ять вирішує GC."
+            },
+            {
+              "question": "У чому різниця shallow copy й deep copy?",
+              "answer": "Shallow copy (<code>{...obj}</code>) копіює лише верхній рівень — вкладені об'єкти лишаються спільними посиланнями. Deep copy (<code>structuredClone</code>) рекурсивно копіює все дерево, роблячи копію повністю незалежною."
+            },
+            {
+              "question": "Чому цикл із двох об'єктів, що посилаються один на одного, не викликає memory leak в JS?",
+              "answer": "Бо GC перевіряє reachability від roots, а не лічильник посилань: якщо ззовні на цикл ніхто не посилається, обидва об'єкти недосяжні й будуть зібрані разом, попри взаємне посилання."
+            },
+            {
+              "question": "Що станеться, якщо <code>structuredClone</code> отримає об'єкт із методом (функцією)?",
+              "answer": "Кине <code>DataCloneError</code> — функції (як і DOM-вузли, Symbol-ключі) не підтримуються алгоритмом structured clone; такі поля треба клонувати/обробляти вручну."
+            }
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Каверзні питання <span class=\"tag tag-pit\">PIT</span></h3><div class=\"interview-tips\">\n            <div><strong>🎤 Що люблять питати senior-інтерв'юери:</strong></div>\n            <ul>\n              <li><strong>Чи <code>delete obj.prop</code> одразу звільняє пам'ять?</strong> — Ні. <code>delete</code> лише прибирає властивість з об'єкта; саме значення звільниться, тільки якщо на нього більше немає інших посилань, і то не миттєво, а коли до нього дійде GC.</li>\n              <li><strong><code>for (var i...)</code> vs <code>for (let i...)</code> у замиканнях всередині циклу з <code>setTimeout</code> — яка різниця для пам'яті?</strong> — <code>var</code> створює одну спільну змінну на весь цикл (усі замикання ділять один heap-слот); <code>let</code> створює нове лексичне зв'язування на кожну ітерацію — N окремих (маленьких) об'єктів-оточень замість одного спільного.</li>\n              <li><strong>Чи <code>WeakRef</code> + <code>FinalizationRegistry</code> гарантують, коли спрацює callback?</strong> — Ні, специфікація свідомо не гарантує ні коли, ні чи взагалі спрацює finalizer (рушій може не викликати його, якщо процес завершується раніше) — для логіки, критичної для коректності, покладатись на це не можна, лише для допоміжного clean-up/діагностики.</li>\n              <li><strong>Чи звільняється замикання, якщо воно посилається лише на одну змінну з великого scope?</strong> — У сучасних рушіях (V8) — частково оптимізовано: якщо аналіз показує, що замикання використовує лише частину змінних оточення, невикористані інколи звільняються раніше. Але покладатись на це не варто — краще явно «звузити» захоплення (див. приклад «Замикання захоплює зайве» вище).</li>\n              <li><strong>Чи <code>structuredClone</code> копіює прототип об'єкта?</strong> — Ні, результат — plain object (втрачається прототипний ланцюг і клас); для класів/кастомних прототипів потрібне ручне клонування.</li>\n              <li><strong>Чи можна отримати memory leak із самим WeakMap?</strong> — Так, якщо значення (не ключ!) містить сильне посилання назад на щось довгоживуче — сам WeakMap лише робить слабким посилання на ключ, а не на все, що зберігається у значенні.</li>\n            </ul>\n          </div>"
         }
       ]
     },
@@ -886,6 +1037,74 @@ export const javascriptCheat: TopicContent = {
       ]
     },
     {
+      "id": "classes-oop",
+      "title": "🏛️ Classes & Constructors",
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Що таке constructor <span class=\"tag tag-key\">KEY</span></h3><p><code>constructor</code> — спецметод, що виконується <strong>автоматично</strong> при <code>new ClassName(...)</code>: ініціалізує поля інстанції через <code>this</code>. Якщо клас не оголошує власний конструктор, рушій підставляє дефолтний — у підкласі він просто прокидає всі аргументи в <code>super(...args)</code>.</p>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "class Animal {\n  constructor(name) {\n    this.name = name;      // виконується одразу при new\n  }\n  speak() {\n    console.log(this.name + ' makes sound');\n  }\n}\n\nconst rex = new Animal('Rex'); // constructor відпрацював, this.name = 'Rex'"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Class vs Constructor Function</h3><div class=\"table-wrap\">\n    <table>\n      <tr><th></th><th>class</th><th>constructor function</th></tr>\n      <tr><td>Hoisting</td><td>Hoisted, але TDZ (недоступний до оголошення)</td><td>Повністю hoisted</td></tr>\n      <tr><td>Strict mode</td><td>Завжди, автоматично</td><td>Лише якщо явно 'use strict'</td></tr>\n      <tr><td>Методи на прототипі</td><td>Non-enumerable</td><td>Enumerable (видно у for...in)</td></tr>\n      <tr><td>Виклик без <code>new</code></td><td>❌ TypeError</td><td>Виконається, this = undefined/global</td></tr>\n      <tr><td>Private fields (<code>#</code>)</td><td>✅</td><td>❌</td></tr>\n      <tr><td>extends/super</td><td>✅ вбудовано</td><td>Вручну через Object.create/.call</td></tr>\n    </table>\n  </div>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "Inheritance — extends/super",
+          "code": "class Dog extends Animal {\n  constructor(name, breed) {\n    super(name);           // ОБОВ'ЯЗКОВО перед this — інакше ReferenceError\n    this.breed = breed;\n  }\n  speak() {\n    super.speak();          // виклик батьківського методу\n    console.log('Woof!');\n  }\n}"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "caption": "Private fields (#) & static",
+          "code": "class User {\n  #password;             // private — недоступне ззовні\n  static count = 0;      // належить класу, не instance\n\n  constructor(name, pass) {\n    this.name = name;\n    this.#password = pass;\n    User.count++;\n  }\n  checkPassword(guess) {\n    return guess === this.#password;\n  }\n}\n\nnew User('Alice', 'secret').name; // 'Alice'\nUser.count;                          // 1 — static, доступ без new"
+        },
+        {
+          "kind": "flashcards",
+          "items": [
+            {
+              "question": "Що робить <code>constructor</code> у класі?",
+              "answer": "Спецметод, що виконується автоматично при <code>new ClassName(...)</code> і ініціалізує поля інстанції через <code>this</code>."
+            },
+            {
+              "question": "Що станеться, якщо викликати клас без <code>new</code>, напр. <code>Animal()</code>?",
+              "answer": "<strong>TypeError</strong>: Class constructor cannot be invoked without 'new'. На відміну від constructor function, яка просто виконається (з <code>this</code> = undefined у strict mode)."
+            },
+            {
+              "question": "Чому <code>super()</code> обов'язковий у конструкторі підкласу перед використанням <code>this</code>?",
+              "answer": "У класі з <code>extends</code> <code>this</code> ініціалізується батьківським конструктором. Звернення до <code>this</code> до виклику <code>super()</code> кидає <code>ReferenceError</code>."
+            },
+            {
+              "question": "Чи хойстяться класи так само, як function declarations?",
+              "answer": "Клас <em>hoisted</em>, але потрапляє в <strong>TDZ</strong> (Temporal Dead Zone) — використати його до оголошення в коді не можна (ReferenceError), на відміну від function declaration."
+            },
+            {
+              "question": "У чому ключова різниця class vs constructor function?",
+              "answer": "<code>class</code> — syntactic sugar над прототипами: строгий режим за замовчуванням, non-enumerable методи, вимагає <code>new</code>, підтримує private fields (<code>#</code>) і вбудований <code>extends</code>/<code>super</code>."
+            },
+            {
+              "question": "Що таке private field (<code>#field</code>) і чим відрізняється від конвенції <code>_field</code>?",
+              "answer": "<code>#field</code> — справді недоступне ззовні класу на мовному рівні (SyntaxError при спробі доступу). <code>_field</code> — лише конвенція іменування, технічно так само публічне поле."
+            },
+            {
+              "question": "Що таке static-метод/поле?",
+              "answer": "Належить самому класу, а не інстанціям — викликається як <code>ClassName.method()</code> без <code>new</code>. Використовується для utility-методів, лічильників, factory-методів."
+            },
+            {
+              "question": "Що станеться, якщо не оголосити конструктор явно у підкласі?",
+              "answer": "Рушій підставляє дефолтний конструктор, який просто прокидає всі аргументи в <code>super(...args)</code> — еквівалент <code>constructor(...args) { super(...args); }</code>."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "async-javascript",
       "title": "🔀 Async JavaScript",
       "blocks": [
@@ -991,11 +1210,52 @@ export const javascriptCheat: TopicContent = {
     },
     {
       "id": "memory-weakrefs",
-      "title": "🧠 Memory & WeakRefs",
+      "title": "🧠 Heap та управління пам'яттю",
       "blocks": [
         {
           "kind": "paragraph",
-          "html": "<div class=\"grid2\">\n    <div>\n      <h3 class=\"topic\">Common Memory Leaks</h3>\n      <div class=\"card red\"><h4>❌ Часті причини витоку пам'яті</h4>\n        <p>• Event listeners без removeEventListener</p>\n        <p>• setInterval без clearInterval</p>\n        <p>• Closures що тримають великі об'єкти</p>\n        <p>• Detached DOM nodes в JS посиланнях</p>\n        <p>• Global variables / window properties</p>\n        <p>• Кеш без обмеження розміру</p>\n      </div>\n    </div>\n    <div>\n      <h3 class=\"topic\">WeakMap / WeakSet / WeakRef</h3>\n      <pre style=\"font-size:10.5px\"><span class=\"cmt\">// WeakMap — приватні дані до об'єктів</span>\n<span class=\"kw\">const</span> cache = <span class=\"kw\">new</span> WeakMap();\ncache.<span class=\"fn\">set</span>(domNode, computedData);\n<span class=\"cmt\">// Якщо domNode GC → автоматично очиститься</span>\n\n<span class=\"cmt\">// WeakRef — слабке посилання</span>\n<span class=\"kw\">const</span> ref = <span class=\"kw\">new</span> WeakRef(target);\n<span class=\"kw\">const</span> obj = ref.<span class=\"fn\">deref</span>();  <span class=\"cmt\">// може бути undefined</span>\n\n<span class=\"cmt\">// Ключова відмінність:</span>\n<span class=\"cmt\">// Map/Set — strong ref, блокують GC</span>\n<span class=\"cmt\">// WeakMap/WeakSet — weak ref, GC може прибрати</span></pre>\n    </div>\n  </div><h3 class=\"topic\">GC — як працює</h3><ul class=\"list\">\n    <li><strong>Reachability:</strong> живе те, до чого є шлях від коренів (globals, стек, замикання).</li>\n    <li><strong>Mark-and-Sweep:</strong> позначити досяжне → замести решту; циклічні посилання не течуть.</li>\n    <li><strong>V8 generational:</strong> young (Scavenge, часто) → old (Mark-Sweep-Compact, рідко), інкрементально.</li>\n    <li>Форсувати GC не можна; <code>= null</code> лише прибирає посилання, не звільняє одразу.</li>\n  </ul>"
+          "html": "<div class=\"grid2\">\n    <div>\n      <h3 class=\"topic\">Stack vs Heap</h3>\n      <div class=\"table-wrap\"><table>\n        <tr><th>Stack</th><th>Heap</th></tr>\n        <tr><td>примітиви, посилання, call frames</td><td>об'єкти/масиви/функції (значення)</td></tr>\n        <tr><td>LIFO, автоматично</td><td>динамічно, керує GC</td></tr>\n      </table></div>\n      <h3 class=\"topic\">Common Memory Leaks</h3>\n      <div class=\"card red\"><h4>❌ Часті причини витоку пам'яті</h4>\n        <p>• Event listeners без removeEventListener</p>\n        <p>• setInterval/setTimeout без clear*</p>\n        <p>• Closures що захоплюють зайве</p>\n        <p>• Detached DOM nodes в JS посиланнях</p>\n        <p>• Глобальний кеш (Map) без обмеження розміру → рятує WeakMap</p>\n      </div>\n    </div>\n    <div>\n      <h3 class=\"topic\">WeakMap / WeakSet / WeakRef</h3>\n      <pre style=\"font-size:10.5px\"><span class=\"cmt\">// WeakMap — приватні дані до об'єктів</span>\n<span class=\"kw\">const</span> cache = <span class=\"kw\">new</span> WeakMap();\ncache.<span class=\"fn\">set</span>(domNode, computedData);\n<span class=\"cmt\">// Якщо domNode GC → автоматично очиститься</span>\n\n<span class=\"cmt\">// WeakRef — слабке посилання</span>\n<span class=\"kw\">const</span> ref = <span class=\"kw\">new</span> WeakRef(target);\n<span class=\"kw\">const</span> obj = ref.<span class=\"fn\">deref</span>();  <span class=\"cmt\">// може бути undefined</span>\n\n<span class=\"cmt\">// Ключова відмінність:</span>\n<span class=\"cmt\">// Map/Set — strong ref, блокують GC</span>\n<span class=\"cmt\">// WeakMap/WeakSet — weak ref, GC може прибрати</span></pre>\n      <h3 class=\"topic\">GC — як працює</h3>\n      <ul class=\"list\">\n        <li><strong>Reachability, не reference counting:</strong> живе те, до чого є шлях від коренів (globals, стек, замикання) — тому циклічні посилання не течуть.</li>\n        <li><strong>Mark → Sweep → Compact:</strong> позначити досяжне → замести решту → ущільнити Old Space.</li>\n        <li><strong>V8 generational (weak generational hypothesis):</strong> young (Scavenge, часто, copying) → old (Mark-Sweep-Compact, рідко), інкрементально.</li>\n        <li>Форсувати GC не можна; <code>= null</code>/<code>delete</code> лише прибирають посилання, не звільняють одразу.</li>\n      </ul>\n    </div>\n  </div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"grid2\">\n    <div class=\"card\"><h4>Порівняння за посиланням</h4><pre style=\"font-size:10.5px\">{} === {}                 <span class=\"cmt\">// false — різні об'єкти в heap</span>\n<span class=\"kw\">const</span> a = { x: 1 };\n<span class=\"kw\">const</span> b = a;\nb.x = 2;\na.x                        <span class=\"cmt\">// 2 — a і b те саме посилання</span></pre></div>\n    <div class=\"card\"><h4>Shallow vs deep copy</h4><pre style=\"font-size:10.5px\"><span class=\"kw\">const</span> shallow = { ...original };  <span class=\"cmt\">// вкладені об'єкти — спільні</span>\n<span class=\"kw\">const</span> deep = structuredClone(original); <span class=\"cmt\">// повністю незалежний</span>\n<span class=\"cmt\">// structuredClone НЕ клонує функції/DOM-вузли (DataCloneError)</span></pre></div>\n  </div>"
+        },
+        {
+          "kind": "flashcards",
+          "items": [
+            {
+              "question": "Чи рахує JS посилання для GC (reference counting)?",
+              "answer": "Ні. V8 використовує <strong>reachability</strong> (mark-and-sweep): об'єкт живий, поки є шлях до нього від roots. Це дозволяє коректно звільняти цикли посилань."
+            },
+            {
+              "question": "Де зберігається значення const-об'єкта?",
+              "answer": "Зв'язування (посилання) — у стеку. Сам об'єкт — у heap. <code>const</code> фіксує посилання, а не вміст."
+            },
+            {
+              "question": "Що таке detached DOM node?",
+              "answer": "Вузол, видалений з DOM-дерева, на який JS усе ще тримає посилання (кеш, замикання) — тому GC не може його звільнити."
+            },
+            {
+              "question": "Навіщо WeakMap?",
+              "answer": "Для кешів, прив'язаних до об'єктів (DOM-вузлів), де запис має автоматично зникати разом з ключем — без ручного видалення."
+            },
+            {
+              "question": "Чому <code>{} === {}</code> → false?",
+              "answer": "<code>===</code> для об'єктів порівнює посилання (адреси в heap), а не вміст."
+            },
+            {
+              "question": "Scavenge vs Mark-Sweep-Compact?",
+              "answer": "Scavenge — швидкий copying для малого New Space. Mark-Sweep-Compact — рідший прохід для великого Old Space, з ущільненням."
+            },
+            {
+              "question": "Чи можна форсувати GC?",
+              "answer": "Ні, публічного API немає. <code>= null</code>/<code>delete</code> лише прибирають посилання."
+            },
+            {
+              "question": "Shallow copy vs deep copy?",
+              "answer": "Shallow (<code>{...obj}</code>) копіює лише верхній рівень — вкладене лишається спільним. Deep (<code>structuredClone</code>) копіює все дерево незалежно."
+            }
+          ]
         }
       ]
     },
