@@ -1,1 +1,6 @@
-4
+{
+  "nextId": 6,
+  "totalCreated": 5,
+  "active": ["004", "005"],
+  "archived": ["001", "002", "003"]
+}
