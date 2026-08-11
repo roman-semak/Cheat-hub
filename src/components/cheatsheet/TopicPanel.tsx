@@ -1,23 +1,28 @@
 'use client'
 
+import { Check, RotateCcw, Circle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { ReadState } from '@/lib/userStore'
 
 export interface TopicPanelItem {
   id: string
   label: string
   emoji?: string
+  state?: ReadState
 }
 
 export function TopicPanel({
   items,
   activeId,
   onJump,
+  onToggleState,
   accentText = 'text-orange-300',
   accentBorder = 'border-orange-400',
 }: {
   items: TopicPanelItem[]
   activeId: string
   onJump: (id: string) => void
+  onToggleState?: (id: string) => void
   accentText?: string
   accentBorder?: string
 }) {
@@ -26,20 +31,62 @@ export function TopicPanel({
       <ul className="flex flex-col">
         {items.map((item) => {
           const active = item.id === activeId
+          const stateBg =
+            item.state === 'read'
+              ? 'bg-emerald-500/10'
+              : item.state === 'review'
+                ? 'bg-amber-500/10'
+                : ''
           return (
             <li key={item.id}>
-              <button
-                onClick={() => onJump(item.id)}
+              <div
                 className={cn(
-                  'flex w-full items-center gap-2 border-l-[3px] px-3 py-2 text-left text-[13px] transition-colors',
+                  'flex w-full items-center gap-1 border-l-[3px] pr-1.5 text-[13px] transition-colors',
                   active
-                    ? cn('border-l-current bg-white/5', accentText, accentBorder)
-                    : 'border-transparent text-slate-400 hover:bg-white/5 hover:text-slate-200',
+                    ? cn('border-l-current', stateBg || 'bg-white/5', accentText, accentBorder)
+                    : cn(
+                        'border-transparent text-slate-400 hover:text-slate-200',
+                        stateBg || 'hover:bg-white/5',
+                      ),
                 )}
               >
-                {item.emoji && <span className="shrink-0">{item.emoji}</span>}
-                <span className="truncate">{item.label}</span>
-              </button>
+                <button
+                  onClick={() => onJump(item.id)}
+                  className="flex min-w-0 flex-1 items-center gap-2 py-2 pl-3 text-left"
+                >
+                  {item.emoji && <span className="shrink-0">{item.emoji}</span>}
+                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                </button>
+                {onToggleState && (
+                  <button
+                    type="button"
+                    aria-label={
+                      item.state === 'read'
+                        ? 'Позначити як таке, що потрібно перечитати'
+                        : item.state === 'review'
+                          ? 'Скинути позначку'
+                          : 'Позначити як прочитане'
+                    }
+                    onClick={() => onToggleState(item.id)}
+                    className={cn(
+                      'shrink-0 rounded p-0.5 hover:bg-white/10',
+                      item.state === 'read'
+                        ? 'text-emerald-400'
+                        : item.state === 'review'
+                          ? 'text-amber-400'
+                          : 'text-slate-600',
+                    )}
+                  >
+                    {item.state === 'read' ? (
+                      <Check size={13} />
+                    ) : item.state === 'review' ? (
+                      <RotateCcw size={13} />
+                    ) : (
+                      <Circle size={13} />
+                    )}
+                  </button>
+                )}
+              </div>
             </li>
           )
         })}

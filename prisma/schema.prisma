@@ -43,3 +43,12 @@ model Progress {
   status    String  // "solved" | "attempted" | "todo"
   updatedAt DateTime @updatedAt
 }
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String   // "<saltHex>:<hashHex>" via scryptSync
+  data         String   @default("{}") // JSON string of UserData (progress/submissions/quizzes)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

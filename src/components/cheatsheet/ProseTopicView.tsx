@@ -4,6 +4,8 @@ import { useMemo, useRef } from 'react'
 import type { TopicContent, TopicMeta } from '@/lib/cheatsheet/types'
 import { ACCENT } from '@/lib/cheatsheet/registry'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
+import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
+import { useUserStore, cycleReadState } from '@/lib/userStore'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
 import { ContentBlocks } from './ContentBlocks'
@@ -17,17 +19,30 @@ export function ProseTopicView({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const accent = ACCENT[meta.accent]
+  const { data } = useUserStore()
+
+  // Kept independent of `data.readState` so its identity is stable across
+  // read-state changes — otherwise useReadTracking's effect would re-run on
+  // every toggle/auto-mark, re-observing already-visible sentinels and
+  // firing a spurious auto-read right after a manual toggle.
+  const ids = useMemo(() => content.sections.map((s) => s.id), [content.sections])
 
   const items: TopicPanelItem[] = useMemo(
-    () => content.sections.map((s) => ({ id: s.id, label: s.title })),
-    [content.sections],
+    () =>
+      content.sections.map((s) => ({
+        id: s.id,
+        label: s.title,
+        state: data.readState[`${content.slug}:${s.id}`],
+      })),
+    [content.sections, content.slug, data.readState],
   )
-  const ids = useMemo(() => items.map((i) => i.id), [items])
   const activeId = useScrollSpy(ids, scrollRef)
+  useReadTracking(content.slug, ids, scrollRef)
 
   const jump = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+  const toggleState = (id: string) => cycleReadState(`${content.slug}:${id}`)
 
   return (
     <div className="flex h-screen">
@@ -35,6 +50,7 @@ export function ProseTopicView({
         items={items}
         activeId={activeId}
         onJump={jump}
+        onToggleState={toggleState}
         accentText={accent.text}
         accentBorder=""
       />
@@ -54,6 +70,7 @@ export function ProseTopicView({
             <div className="mx-auto max-w-3xl">
               <h2 className="mb-4 text-2xl font-bold text-slate-100">{section.title}</h2>
               <ContentBlocks blocks={section.blocks} />
+              <div id={`${section.id}-end`} />
             </div>
           </section>
         ))}

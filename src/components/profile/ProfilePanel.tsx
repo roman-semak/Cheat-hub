@@ -1,9 +1,98 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Download, Upload, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import { useUserStore } from '@/lib/userStore'
+
+const SYNC_STATE_LABEL: Record<string, string> = {
+  idle: '',
+  syncing: 'Синхронізація…',
+  synced: 'Синхронізовано',
+  error: 'Помилка синхронізації',
+}
+
+function SyncPanel() {
+  const { authUsername, syncState, login, logout } = useUserStore()
+  const usernameRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState('')
+  const [pending, setPending] = useState(false)
+
+  // Read straight from the DOM at submit time rather than trusting
+  // controlled-input state — some browsers/password managers autofill these
+  // fields without firing a React-visible change event, which left the
+  // button permanently disabled even though the inputs looked filled.
+  // `login` transparently creates the account on first use, so there's only
+  // one action here — no separate register step.
+  const handleLogin = async () => {
+    const username = usernameRef.current?.value.trim() ?? ''
+    const password = passwordRef.current?.value ?? ''
+    if (!username || !password) {
+      setError('Введіть логін та пароль')
+      return
+    }
+    setError('')
+    setPending(true)
+    const result = await login(username, password)
+    setPending(false)
+    if (result.error) {
+      setError(result.error)
+    } else {
+      if (usernameRef.current) usernameRef.current.value = ''
+      if (passwordRef.current) passwordRef.current.value = ''
+    }
+  }
+
+  if (authUsername) {
+    return (
+      <div className="glass-subtle rounded-xl p-6 space-y-3">
+        <h2 className="text-sm font-semibold text-slate-300">Синхронізація</h2>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant="success">{authUsername}</Badge>
+          <span className="text-xs text-slate-400">{SYNC_STATE_LABEL[syncState]}</span>
+        </div>
+        <Button onClick={logout} variant="ghost" className="inline-flex items-center gap-2">
+          Вийти
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="glass-subtle rounded-xl p-6 space-y-3">
+      <h2 className="text-sm font-semibold text-slate-300">Синхронізація</h2>
+      <p className="text-xs text-slate-400">
+        Увійдіть, щоб автоматично синхронізувати прогрес між пристроями.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <input
+          ref={usernameRef}
+          type="text"
+          autoComplete="username"
+          defaultValue=""
+          placeholder="Логін"
+          className="flex-1 min-w-[140px] px-3 py-2 rounded-lg bg-slate-900/50 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400"
+        />
+        <input
+          ref={passwordRef}
+          type="password"
+          autoComplete="current-password"
+          defaultValue=""
+          placeholder="Пароль"
+          className="flex-1 min-w-[140px] px-3 py-2 rounded-lg bg-slate-900/50 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400"
+        />
+      </div>
+      {error && <p className="text-sm text-red-300">{error}</p>}
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={handleLogin} disabled={pending} variant="default">
+          Увійти / Зареєструватися
+        </Button>
+      </div>
+    </div>
+  )
+}
 
 export function ProfilePanel() {
   const { data, setUsername, exportJson, importJson, resetData } = useUserStore()
@@ -35,6 +124,8 @@ export function ProfilePanel() {
           або перенести на інший пристрій.
         </p>
       </div>
+
+      <SyncPanel />
 
       {/* Username */}
       <div className="glass-subtle rounded-xl p-6 space-y-2">

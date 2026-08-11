@@ -1,35 +1,20 @@
 'use client'
 
 import { useSyncExternalStore } from 'react'
+import { type UserData, type SubmissionRecord, type ReadState, emptyData, normalize } from './userData'
+
+export type { ProgressStatus, SubmissionRecord, QuizProgress, ReadState, UserData } from './userData'
+export { normalize } from './userData'
 
 const STORAGE_KEY = 'cheatHubUser'
+const AUTH_FLAG_KEY = 'cheatHubAuthUser'
 
-export type ProgressStatus = 'solved' | 'attempted'
+export type SyncState = 'idle' | 'syncing' | 'synced' | 'error'
 
-export interface SubmissionRecord {
-  slug: string
-  code: string
-  language: string
-  status: 'Accepted' | 'Wrong Answer'
-  runtime?: number
-  createdAt: string
-}
-
-// Per-quiz progress. `answers[questionIndex] = chosenOptionIndex`.
-export interface QuizProgress {
-  answers: Record<number, number>
-}
-
-export interface UserData {
-  username: string
-  progress: Record<string, ProgressStatus>
-  submissions: SubmissionRecord[]
-  quizzes: Record<string, QuizProgress>
-  updatedAt: string
-}
-
-function emptyData(): UserData {
-  return { username: '', progress: {}, submissions: [], quizzes: {}, updatedAt: '' }
+interface SyncSnapshot {
+  authUsername: string | null
+  syncState: SyncState
+  lastSyncedAt: string
 }
 
 // In-memory snapshot, kept in sync with localStorage. `useSyncExternalStore`
@@ -37,6 +22,13 @@ function emptyData(): UserData {
 let snapshot: UserData = emptyData()
 let loaded = false
 const listeners = new Set<() => void>()
+
+// Sync/auth state — kept separate from `UserData` itself so it's never
+// written into localStorage or pushed to the server as part of the blob.
+// Held as a single object (reassigned wholesale, like `snapshot` above) so
+// `useSyncExternalStore` gets a stable reference between renders.
+let syncSnapshot: SyncSnapshot = { authUsername: null, syncState: 'idle', lastSyncedAt: '' }
+let pushTimer: ReturnType<typeof setTimeout> | null = null
 
 function isBrowser() {
   return typeof window !== 'undefined'
@@ -54,41 +46,20 @@ function loadFromStorage(): UserData {
   }
 }
 
-function normalizeQuizzes(value: unknown): Record<string, QuizProgress> {
-  if (!value || typeof value !== 'object') return {}
-  const out: Record<string, QuizProgress> = {}
-  for (const [id, q] of Object.entries(value as Record<string, unknown>)) {
-    const answers =
-      q && typeof q === 'object' && (q as QuizProgress).answers &&
-      typeof (q as QuizProgress).answers === 'object'
-        ? ((q as QuizProgress).answers as Record<number, number>)
-        : {}
-    out[id] = { answers }
-  }
-  return out
-}
-
-export function normalize(value: unknown): UserData {
-  const base = emptyData()
-  if (!value || typeof value !== 'object') return base
-  const v = value as Partial<UserData>
-  return {
-    username: typeof v.username === 'string' ? v.username : '',
-    progress:
-      v.progress && typeof v.progress === 'object'
-        ? (v.progress as Record<string, ProgressStatus>)
-        : {},
-    submissions: Array.isArray(v.submissions) ? v.submissions : [],
-    quizzes: normalizeQuizzes(v.quizzes),
-    updatedAt: typeof v.updatedAt === 'string' ? v.updatedAt : '',
-  }
-}
-
 function ensureLoaded() {
   if (!loaded && isBrowser()) {
     snapshot = loadFromStorage()
     loaded = true
+    const storedAuth = window.localStorage.getItem(AUTH_FLAG_KEY)
+    if (storedAuth) {
+      syncSnapshot = { ...syncSnapshot, authUsername: storedAuth }
+      void pullFromServer()
+    }
   }
+}
+
+function notify() {
+  listeners.forEach((l) => l())
 }
 
 function persist(next: UserData) {
@@ -96,7 +67,7 @@ function persist(next: UserData) {
   if (isBrowser()) {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
   }
-  listeners.forEach((l) => l())
+  notify()
 }
 
 function update(mutator: (draft: UserData) => UserData) {
@@ -106,9 +77,99 @@ function update(mutator: (draft: UserData) => UserData) {
     progress: { ...snapshot.progress },
     submissions: [...snapshot.submissions],
     quizzes: { ...snapshot.quizzes },
+    readState: { ...snapshot.readState },
   })
   next.updatedAt = new Date().toISOString()
   persist(next)
+  schedulePush()
+}
+
+// ---- remote sync ----
+
+function setSyncState(next: SyncState) {
+  syncSnapshot = {
+    ...syncSnapshot,
+    syncState: next,
+    lastSyncedAt: next === 'synced' ? new Date().toISOString() : syncSnapshot.lastSyncedAt,
+  }
+  notify()
+}
+
+function schedulePush() {
+  if (!syncSnapshot.authUsername || !isBrowser()) return
+  if (pushTimer) clearTimeout(pushTimer)
+  pushTimer = setTimeout(() => void pushToServer(), 1500)
+}
+
+async function pushToServer() {
+  if (!syncSnapshot.authUsername) return
+  setSyncState('syncing')
+  try {
+    const res = await fetch('/api/sync', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(snapshot),
+    })
+    if (res.status === 401) {
+      clearAuthLocally()
+      return
+    }
+    if (!res.ok) throw new Error('push failed')
+    setSyncState('synced')
+  } catch {
+    setSyncState('error')
+  }
+}
+
+async function pullFromServer() {
+  setSyncState('syncing')
+  try {
+    const res = await fetch('/api/sync')
+    if (res.status === 401) {
+      clearAuthLocally()
+      return
+    }
+    if (!res.ok) throw new Error('pull failed')
+    const data = await res.json()
+    persist(normalize(data))
+    setSyncState('synced')
+  } catch {
+    setSyncState('error')
+  }
+}
+
+function clearAuthLocally() {
+  syncSnapshot = { authUsername: null, syncState: 'idle', lastSyncedAt: syncSnapshot.lastSyncedAt }
+  if (isBrowser()) window.localStorage.removeItem(AUTH_FLAG_KEY)
+  notify()
+}
+
+async function login(username: string, password: string): Promise<{ error?: string }> {
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    })
+    const json = await res.json()
+    if (!res.ok) return { error: json.error ?? 'Не вдалося увійти' }
+    // Server data overwrites local — accepted last-write-wins simplification.
+    // The authenticated username is folded into the persisted UserData (not
+    // just the ephemeral authUsername flag) so it's part of the synced blob
+    // and shows up as the display name wherever `data.username` is read.
+    persist({ ...normalize(json.data), username: json.username })
+    syncSnapshot = { ...syncSnapshot, authUsername: json.username }
+    if (isBrowser()) window.localStorage.setItem(AUTH_FLAG_KEY, json.username)
+    setSyncState('synced')
+    return {}
+  } catch {
+    return { error: 'Не вдалося з’єднатися з сервером' }
+  }
+}
+
+function logout() {
+  void fetch('/api/auth/logout', { method: 'POST' })
+  clearAuthLocally()
 }
 
 // ---- store subscription (for useSyncExternalStore) ----
@@ -137,6 +198,17 @@ function getSnapshot(): UserData {
 
 function getServerSnapshot(): UserData {
   return emptyData()
+}
+
+const serverSyncSnapshot: SyncSnapshot = { authUsername: null, syncState: 'idle', lastSyncedAt: '' }
+
+function getSyncSnapshot(): SyncSnapshot {
+  ensureLoaded()
+  return syncSnapshot
+}
+
+function getServerSyncSnapshot(): SyncSnapshot {
+  return serverSyncSnapshot
 }
 
 // ---- public actions ----
@@ -184,8 +256,30 @@ export function resetQuiz(quizId: string) {
   }))
 }
 
+// Cycles a cheatsheet subsection's read state: unread -> read -> review -> unread.
+export function cycleReadState(key: string) {
+  update((d) => {
+    const current = d.readState[key]
+    const next = current === 'read' ? 'review' : current === 'review' ? undefined : 'read'
+    const readState = { ...d.readState }
+    if (next) readState[key] = next
+    else delete readState[key]
+    return { ...d, readState }
+  })
+}
+
+// Auto-mark-as-read from scroll tracking. No-op if the key already has a
+// state (read or review), so it never clobbers a manual "needs review" flag.
+export function markReadIfUnset(key: string) {
+  update((d) => {
+    if (d.readState[key] !== undefined) return d
+    return { ...d, readState: { ...d.readState, [key]: 'read' as ReadState } }
+  })
+}
+
 export function resetData() {
   persist(emptyData())
+  schedulePush()
 }
 
 export function exportJson() {
@@ -208,24 +302,31 @@ export async function importJson(file: File): Promise<void> {
   const text = await file.text()
   const parsed = JSON.parse(text)
   persist(normalize(parsed))
+  schedulePush()
 }
 
 // ---- React hook ----
 
 export function useUserStore() {
   const data = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const sync = useSyncExternalStore(subscribe, getSyncSnapshot, getServerSyncSnapshot)
   const hydrated = loaded
   return {
     data,
     hydrated,
+    ...sync,
     setUsername,
     markSolved,
     markAttempted,
     addSubmission,
     setQuizAnswer,
     resetQuiz,
+    cycleReadState,
+    markReadIfUnset,
     resetData,
     exportJson,
     importJson,
+    login,
+    logout,
   }
 }

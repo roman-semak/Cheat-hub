@@ -25,11 +25,16 @@ export function MobileSectionNav({
         onChange={(e) => onJump(e.target.value)}
         className="w-full rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm text-slate-200"
       >
-        {items.map((item) => (
-          <option key={item.id} value={item.id}>
-            {item.emoji ? `${item.emoji} ${item.label}` : item.label}
-          </option>
-        ))}
+        {items.map((item) => {
+          const prefix = item.state === 'read' ? '✓ ' : item.state === 'review' ? '↻ ' : ''
+          const label = item.emoji ? `${item.emoji} ${item.label}` : item.label
+          return (
+            <option key={item.id} value={item.id}>
+              {prefix}
+              {label}
+            </option>
+          )
+        })}
       </select>
     </div>
   )
