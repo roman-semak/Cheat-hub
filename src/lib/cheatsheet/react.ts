@@ -12,6 +12,146 @@ export const reactContent: TopicContent = {
     },
   ],
   sections: [
+    /* ============================= BLOCK -1 — BIG PICTURE & TOOLING ============================= */
+    {
+      id: 'history-versions',
+      title: '📜 Історія версій React',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="version-row">
+    <span class="ver ver-15">v0.3 · 2013</span>
+    <span class="ver ver-16">v15 · 2016</span>
+    <span class="ver ver-17">v16 · 2017</span>
+    <span class="ver ver-18">v16.8 · 2019</span>
+    <span class="ver ver-19">v17 · 2020</span>
+    <span class="ver ver-20">v18 · 2022</span>
+    <span class="ver ver-21">v19 · 2024 ✦</span>
+  </div>
+  <div class="changelog changelog-past">
+    <div class="changelog-title">🕐 Історія</div>
+    <div class="changelog-row"><span class="chver">2013</span><span class="changelog-text">Open-source реліз (Facebook) — Virtual DOM як основна ідея, ще з домішками Flux</span></div>
+    <div class="changelog-row"><span class="chver">2015</span><span class="changelog-text">React Native — той самий компонентний підхід для мобільних застосунків</span></div>
+    <div class="changelog-row"><span class="chver">2016 · v15</span><span class="changelog-text">Останній реліз перед переписом реконсилера — стабільна, але синхронна модель рендерингу</span></div>
+    <div class="changelog-row"><span class="chver">2017 · v16</span><span class="changelog-text">Fiber-архітектура (повний переписаний реконсилер), Fragments, Error Boundaries, Portals</span></div>
+    <div class="changelog-row"><span class="chver">2019 · v16.8</span><span class="changelog-text"><strong>Hooks</strong> — useState/useEffect/... Функціональні компоненти отримують стан без класів</span></div>
+    <div class="changelog-row"><span class="chver">2020 · v17</span><span class="changelog-text">"No new features" реліз — підготовка до поступових апгрейдів, новий JSX transform (без ручного <code>import React</code>)</span></div>
+    <div class="changelog-row"><span class="chver">2022 · v18</span><span class="changelog-text">Concurrent rendering, automatic batching, <code>useTransition</code>/<code>useDeferredValue</code>, Suspense для data fetching, перші Server Components</span></div>
+    <div class="changelog-row"><span class="chver">2024 · v19 ✦</span><span class="changelog-text"><strong>Поточна:</strong> Actions, <code>use()</code>, <code>useActionState</code>, <code>useOptimistic</code>, React Compiler (RC)</span></div>
+  </div>
+  <p><strong>Головний вектор 2013 → 2024:</strong> від "бібліотеки для рендерингу View у MVC" → до власної рантайм-моделі з конкурентним рендерингом і серверними компонентами. Найбільший зсув для щоденної роботи — <strong>Hooks (2019)</strong>: класи перестали бути обов'язковими для стану/lifecycle (детально — розділ "Lifecycle: Class vs Functional" нижче).</p>`,
+        },
+      ],
+    },
+    {
+      id: 'library-vs-framework',
+      title: '📚 Бібліотека чи фреймворк? + Virtual DOM',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Чому React — бібліотека, а не фреймворк <span class="tag tag-key">KEY</span></h3>
+  <p>Ключова відмінність — <strong>хто кого викликає (inversion of control)</strong>. З фреймворком (Angular) твій код вбудовується у чужий "скелет": фреймворк визначає структуру проєкту, routing, HTTP, forms, DI — і сам викликає твій код у визначених точках. З бібліотекою (React) — навпаки: <strong>ти сам вирішуєш архітектуру</strong> і викликаєш React там, де потрібен UI-рендеринг; router, HTTP-клієнт, state-менеджер — окремі бібліотеки, які ти підбираєш сам (Next.js/TanStack Router, TanStack Query, Zustand — усе це вибір, а не частина "коробки").</p>
+  <div class="grid2">
+    <div class="card"><h4>Framework (Angular)</h4><p>"Не дзвони нам, ми подзвонимо тобі" — DI-контейнер, модулі, lifecycle hooks викликаються фреймворком за жорсткими правилами.</p></div>
+    <div class="card blue"><h4>Library (React)</h4><p>Ти пишеш звичайний JS/TS-застосунок і <em>імпортуєш</em> React там, де потрібен декларативний UI. Решта архітектури — твій вибір.</p></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Практичний наслідок для співбесіди: "React-екосистема" (Next.js, React Router, TanStack) існує саме тому, що сам React навмисно не вирішує ці питання — на відміну від Angular, де вони вбудовані.</span></div>
+  <h3 class="topic">Virtual DOM — 30-секундна версія</h3>
+  <p>Робота з реальним DOM напряму — повільна (reflow/repaint на кожну зміну). React будує легкий JS-опис UI (Virtual DOM), порівнює нову версію зі старою і застосовує до справжнього DOM лише мінімальний набір змін. <strong>Це вступ</strong> — повний механізм (Fiber, reconciliation, diffing-правила) — у розділі "Reconciliation, Virtual DOM, Fiber" нижче.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'tooling-vite',
+      title: '🧰 Vite та інструменти збірки',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що таке Vite <span class="tag tag-key">KEY</span></h3>
+  <p>Dev-сервер + білд-інструмент. У розробці Vite віддає файли як нативні ES-модулі прямо браузеру (компілює/трансформує лише файл, який реально запитав браузер, через esbuild — миттєвий старт і HMR незалежно від розміру проєкту). Для продакшн-білда використовує Rollup — трясе дерево (tree-shaking), об'єднує чанки.</p>
+  <h3 class="topic">Хто був до Vite</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Інструмент</th><th>Статус</th><th>Проблема</th></tr>
+      <tr><td><strong>Create React App (CRA)</strong></td><td>❌ Офіційно deprecated (2023)</td><td>Webpack під капотом без конфігурації — на великих проєктах dev-старт і HMR ставали дуже повільними</td></tr>
+      <tr><td><strong>Webpack (вручну)</strong></td><td>Живий, але рідше для нових проєктів</td><td>Бандлить усе перед стартом dev-сервера — час старту росте з розміром проєкту</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Альтернативи Vite сьогодні</h3>
+  <div class="grid2">
+    <div class="card"><h4>Next.js</h4><p>Не просто бандлер — фреймворк поверх React з роутингом/SSR/RSC (Block 6-7). Обирають, коли потрібен той самий React + сервер-рендеринг з коробки.</p></div>
+    <div class="card blue"><h4>Rspack / Turbopack</h4><p>Webpack-сумісні бандлери на Rust — швидші за Webpack, орієнтовані на існуючі Webpack-конфіги (Turbopack — двигун під капотом Next.js).</p></div>
+  </div>
+  <h3 class="topic">Створення проєкту — покроково</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'bash',
+          code: `npm create vite@latest my-app -- --template react-ts
+cd my-app
+npm install
+npm run dev          # dev-сервер з HMR, за замовчуванням localhost:5173
+
+# Структура після створення:
+# index.html          ← точка входу (НЕ в public/, на відміну від CRA!)
+# src/main.tsx         ← createRoot(...).render(<App />)
+# src/App.tsx
+# vite.config.ts       ← плагіни (@vitejs/plugin-react), aliases, dev-сервер`,
+        },
+      ],
+    },
+    {
+      id: 'tooling-vscode',
+      title: '🖥️ React + VS Code',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Обов'язкові розширення <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Розширення</th><th>Навіщо</th></tr>
+      <tr><td><strong>ES7+ React/Redux/React-Native Snippets</strong></td><td>Сніпети <code>rfc</code>/<code>rafce</code> — функціональний компонент за секунду; <code>rcc</code> — класовий (легасі-проєкти, Block "Lifecycle")</td></tr>
+      <tr><td><strong>Prettier</strong></td><td>Автоформатування — прибирає суперечки про стиль коду в команді</td></tr>
+      <tr><td><strong>ESLint</strong></td><td>Лінтинг у редакторі в реальному часі (правила Rules of Hooks — <code>eslint-plugin-react-hooks</code> ловить порушення до рантайму)</td></tr>
+      <tr><td><strong>Auto Rename Tag</strong></td><td>Перейменування відкриваючого JSX-тега автоматично перейменовує закриваючий</td></tr>
+      <tr><td><strong>Tailwind CSS IntelliSense</strong></td><td>Автодоповнення utility-класів + підсвітка кольорів (якщо проєкт на Tailwind)</td></tr>
+    </table>
+  </div>
+  <h3 class="topic"><code>rfc</code> vs <code>rcc</code> — приклад</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// rfc / rafce → генерує:
+export default function ComponentName() {
+  return <div>ComponentName</div>;
+}
+
+// rcc → генерує (класовий, легасі — детально в розділі Lifecycle):
+import React, { Component } from 'react';
+
+export default class ComponentName extends Component {
+  render() {
+    return <div>ComponentName</div>;
+  }
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Корисні налаштування <code>settings.json</code></h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          code: `{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "editor.quickSuggestions": { "strings": true } // автодоповнення в className/JSX-атрибутах
+}`,
+        },
+      ],
+    },
     /* ============================= BLOCK 0 — FUNDAMENTALS ============================= */
     {
       id: 'fundamentals-components-jsx',
@@ -47,7 +187,177 @@ React.<span class="fn">createElement</span>(
       <tr><td>Стилі — обʼєкт</td><td><code>style={{'{{'} color: 'red' {'}}'}}</code> — подвійні дужки: зовнішні JSX, внутрішні — обʼєкт</td></tr>
     </table>
   </div>
-  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Умова "if" не працює в JSX напряму</strong> — <code>if</code> це statement, а всередині <code>{'{ }'}</code> можна лише вираз. Тому умовний рендеринг робиться через тернарник/<code>&amp;&amp;</code>/винесену змінну (детально — наступний розділ).</span></div>`,
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Умова "if" не працює в JSX напряму</strong> — <code>if</code> це statement, а всередині <code>{'{ }'}</code> можна лише вираз. Тому умовний рендеринг робиться через тернарник/<code>&amp;&amp;</code>/винесену змінну (детально — наступний розділ).</span></div>
+  <h3 class="topic">Навіщо взагалі JSX <span class="tag tag-key">KEY</span></h3>
+  <p>JSX створили, бо розмітка й логіка, що її генерує, нерозривно пов'язані — React обрав тримати їх <strong>разом в одному файлі</strong> (на відміну від класичного "розділення шаблону і логіки"), а не змушувати писати <code>React.createElement</code> вручну. Компілятор (Babel/SWC) перетворює JSX на виклики функції ще до рантайму — сам React ніколи "не бачить" JSX, лише результат.</p>
+  <h3 class="topic">Три дерева: Element tree → Fiber tree → DOM tree <span class="tag tag-key">KEY</span></h3>
+  <p>Це часто плутають на співбесіді, кажучи "Virtual DOM" про все одразу — насправді це <strong>три різні дерева</strong> з різним часом життя:</p>
+  <div class="grid3">
+    <div class="card"><h4>1. Element tree</h4><p>Результат <code>createElement</code> (з JSX). Легкий плейн-обʼєкт. <strong>Перестворюється щорендеру заново</strong> — "Virtual DOM" у побутовому сенсі.</p></div>
+    <div class="card blue"><h4>2. Fiber tree</h4><p>Внутрішня структура React (Block 1). <strong>Персистентна</strong> — живе між рендерами, саме її React diff'ить і зберігає в ній стан хуків.</p></div>
+    <div class="card green"><h4>3. DOM tree</h4><p>Реальні браузерні вузли. Оновлюється мінімально, точково — лише те, що показав diff Fiber-дерева.</p></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Element tree відкидається й будується заново на кожен рендер (дешево — плейн-обʼєкти). Fiber tree — довгоживуча структура, яку React звіряє зі свіжим element tree, щоб порахувати мінімальний патч для DOM tree. Детально про Fiber — розділ "Reconciliation, Virtual DOM, Fiber" нижче.</span></div>
+  <h3 class="topic">Fragment — варіанти <span class="tag tag-key">KEY</span></h3>
+  <p>Компонент повинен повернути один кореневий вузол. Fragment дозволяє згрупувати кілька елементів <strong>без зайвого DOM-вузла</strong> (жодного <code>&lt;div&gt;</code> у результаті).</p>
+  <div class="grid2">
+    <pre><span class="cmt">// Коротка форма — найчастіша</span>
+<span class="kw">return</span> (
+  <span class="jsx">&lt;&gt;</span>
+    <span class="jsx">&lt;dt&gt;</span>{term}<span class="jsx">&lt;/dt&gt;</span>
+    <span class="jsx">&lt;dd&gt;</span>{description}<span class="jsx">&lt;/dd&gt;</span>
+  <span class="jsx">&lt;/&gt;</span>
+);
+<span class="cmt">// ⚠️ коротка форма НЕ приймає key — потрібна повна</span></pre>
+    <pre><span class="cmt">// Повна форма — коли потрібен key (у .map())</span>
+{items.<span class="fn">map</span>(item =&gt; (
+  <span class="jsx">&lt;React.Fragment</span> key={item.id}<span class="jsx">&gt;</span>
+    <span class="jsx">&lt;dt&gt;</span>{item.term}<span class="jsx">&lt;/dt&gt;</span>
+    <span class="jsx">&lt;dd&gt;</span>{item.description}<span class="jsx">&lt;/dd&gt;</span>
+  <span class="jsx">&lt;/React.Fragment&gt;</span>
+))}</pre>
+  </div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Чим element tree відрізняється від Fiber tree? → element tree перестворюється щорендеру (дешеві плейн-обʼєкти), Fiber tree персистентна і зберігає стан між рендерами — саме її React diff'ить.</li>
+      <li>Чому <code>&lt;&gt;...&lt;/&gt;</code> іноді не підходить у <code>.map()</code>? → коротка форма не приймає <code>key</code>, а список без key ламає reconciliation (Block 1) — потрібен повний <code>&lt;React.Fragment key={...}&gt;</code>.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'fundamentals-component-anatomy',
+      title: '🧩 Анатомія компонента: шаблон, стилі, зображення',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Мінімальний компонент end-to-end <span class="tag tag-key">KEY</span></h3>
+  <p>Реальний файл компонента зазвичай містить: імпорти (React — не обов'язково з новим JSX transform, типи, стилі, картинки), саму функцію-компонент, і <code>export</code>. Конвенція іменування файлу — збігається з іменем компонента (<code>UserCard.tsx</code> → <code>UserCard</code>).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// UserCard.tsx
+import type { FC } from 'react';
+import styles from './UserCard.module.css';   // CSS Modules — класи скоуплені локально
+import avatarFallback from './avatar-fallback.png'; // бандлер повертає URL, не бінарник
+
+interface UserCardProps {
+  name: string;
+  avatarUrl?: string;
+}
+
+export const UserCard: FC<UserCardProps> = ({ name, avatarUrl }) => {
+  return (
+    <div className={styles.card}>
+      <img
+        className={styles.avatar}
+        src={avatarUrl ?? avatarFallback}
+        alt={\`Аватар \${name}\`}
+      />
+      <span className={styles.name}>{name}</span>
+    </div>
+  );
+};`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що тут важливо <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Що</th><th>Чому саме так</th></tr>
+      <tr><td>Компонент повертає <strong>один</strong> JSX-вираз</td><td>Функція — рано чи пізно <code>return</code>, JSX-вираз — плейн-обʼєкт (Block вище)</td></tr>
+      <tr><td>Імпорт картинки <code>import img from './x.png'</code></td><td>Бандлер (Vite/Webpack) підміняє імпорт на URL до файлу в білді (з хешем для кешування) — не можна просто вказати рядковий шлях без імпорту, якщо файл не в <code>public/</code></td></tr>
+      <tr><td><code>CSS Modules</code> (<code>*.module.css</code>)</td><td>Класи локально скоуплені — <code>styles.card</code> компілюється в унікальний хеш-клас, немає конфліктів імен між компонентами</td></tr>
+      <tr><td><code>alt</code> на <code>&lt;img&gt;</code></td><td>Доступність — не стилістична забаганка, а вимога a11y-лінтерів</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Файли, що лежать у <code>public/</code> (Vite) — копіюються as-is, доступні по кореневому шляху (<code>/logo.png</code>) БЕЗ імпорту. Файли поруч з компонентом — завжди через <code>import</code>, щоб бандлер їх обробив (оптимізація, хешування, tree-shaking невикористаних).</span></div>`,
+        },
+      ],
+    },
+    {
+      id: 'styling-approaches',
+      title: '🎨 Styled Components та Tailwind',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">styled-components — CSS-in-JS <span class="tag tag-key">KEY</span></h3>
+  <p>Стилі описуються прямо в JS через tagged template literals — компонент і його стилі живуть в одному файлі, стилі можуть залежати від <code>props</code>.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import styled from 'styled-components';
+
+const Button = styled.button<{ variant?: 'primary' | 'danger' }>\`
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: \${p => (p.variant === 'danger' ? '#ef4444' : '#6366f1')};
+  color: white;
+
+  &:hover { opacity: 0.9; }
+\`;
+
+// <Button variant="danger" onClick={onDelete}>Delete</Button>
+// Клас генерується на льоту, унікальний — конфліктів імен немає,
+// але це runtime-вартість: парсинг шаблонів + вставка <style> у DOM при mount`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Tailwind CSS — утилітарний підхід</h3>
+  <p>Замість написання CSS-правил — готові utility-класи прямо в <code>className</code>. Немає runtime-вартості (звичайний CSS-файл, згенерований на build-time) і немає проблеми іменування класів.</p>
+  <h3 class="topic">Підключення до React + Vite — покроково</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'bash',
+          code: `npm install tailwindcss @tailwindcss/vite`,
+        },
+        {
+          kind: 'code',
+          language: 'ts',
+          code: `// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});`,
+        },
+        {
+          kind: 'code',
+          language: 'css',
+          code: `/* src/index.css — один рядок замість окремого tailwind.config.js для базового кейсу */
+@import "tailwindcss";`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Готово — utility-класи одразу доступні
+export function Button({ children }: { children: React.ReactNode }) {
+  return (
+    <button className="rounded-md bg-indigo-600 px-4 py-2 text-white hover:opacity-90">
+      {children}
+    </button>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Коли що обрати</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>styled-components</th><th>Tailwind</th></tr>
+      <tr><td>Runtime вартість</td><td>Так — генерація стилів у браузері</td><td>Ні — звичайний CSS, згенерований на білді</td></tr>
+      <tr><td>Стилі, залежні від props</td><td>Природно (<code>\${p => ...}</code>)</td><td>Через умовну конкатенацію класів (<code>clsx</code>/<code>cn</code>)</td></tr>
+      <tr><td>Крива навчання</td><td>Звичайний CSS-синтаксис</td><td>Треба вивчити назви утиліт</td></tr>
+      <tr><td>Розмір бандла</td><td>Бібліотека + рантайм</td><td>Лише використані класи (purge на білді)</td></tr>
+    </table>
+  </div>`,
         },
       ],
     },
@@ -92,6 +402,21 @@ React.<span class="fn">createElement</span>(
 }
 <span class="cmt">// Це не "баг" — це модель: render функція завжди бачить</span>
 <span class="cmt">// стан ЦЬОГО рендеру (детальніше — closures, Block 1/2)</span></pre>
+  </div>
+  <h3 class="topic">Stateful vs Stateless <span class="tag tag-key">KEY</span></h3>
+  <p>Компонент <strong>stateful</strong> — має власний <code>useState</code>/<code>useReducer</code> усередині, "пам'ятає" щось між рендерами. Компонент <strong>stateless</strong> — чиста функція від <code>props</code>: однакові пропи завжди дають однаковий вивід, немає внутрішньої памʼяті. До хуків (до 2019) такий компонент офіційно називався <strong>"stateless functional component" (SFC)</strong> — термін лишився в старих статтях/книгах, хоча сьогодні "функціональний компонент" вже не означає автоматично "без стану" (з хуками функціональний компонент може бути так само stateful, як і класовий).</p>
+  <div class="grid2">
+    <div class="card blue"><h4>Stateless</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Avatar</span>({ url, alt }: Props) {
+  <span class="cmt">// нічого не памʼятає між рендерами —</span>
+  <span class="cmt">// весь вивід залежить тільки від props</span>
+  <span class="kw">return</span> <span class="jsx">&lt;img</span> src={url} alt={alt} <span class="jsx">/&gt;</span>;
+}</pre></div>
+    <div class="card green"><h4>Stateful</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Avatar</span>({ url, alt }: Props) {
+  <span class="kw">const</span> [loaded, setLoaded] = <span class="fn">useState</span>(<span class="kw">false</span>);
+  <span class="cmt">// власна памʼять — чи вже завантажилось зображення</span>
+  <span class="kw">return</span> <span class="jsx">&lt;img</span> src={url} alt={alt}
+    onLoad={() =&gt; <span class="fn">setLoaded</span>(<span class="kw">true</span>)} <span class="jsx">/&gt;</span>;
+}</pre></div>
   </div>
   <h3 class="topic">Контрольований input</h3>
   <pre><span class="kw">const</span> [text, setText] = <span class="fn">useState</span>(<span class="str">''</span>);
@@ -205,7 +530,21 @@ list = [B, C],   keys = [0,1]
   <div class="grid2">
     <div class="card"><h4>До Fiber (React ≤15)</h4><p>Reconciliation — синхронний рекурсивний прохід всього дерева. Великий апдейт блокує main thread цілком, поки не завершиться.</p></div>
     <div class="card blue"><h4>З Fiber (React 16+)</h4><p>Робота розбита на одиниці (fiber units). React може зупинитись між ними, дати браузеру обробити подію/анімацію, і продовжити — основа для Concurrent features (<code>useTransition</code> та ін., Block 2).</p></div>
-  </div>`,
+  </div>
+  <h3 class="topic">Fiber Tree vs DOM Tree — що саме несе Fiber-вузол <span class="tag tag-key">KEY</span></h3>
+  <p>DOM-вузол — "тупий" опис розмітки (тег, атрибути, діти). Fiber-вузол — набагато товстіший обʼєкт: окрім опису UI, він несе <strong>бухгалтерію самого React</strong> — з чого й видно, чому React не може просто "ходити по DOM" і мусить тримати власне дерево.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Поле Fiber-вузла</th><th>Навіщо</th><th>Є в DOM-вузлі?</th></tr>
+      <tr><td><code>type</code></td><td>Тег ('div') або посилання на функцію-компонент</td><td>Частково (tagName)</td></tr>
+      <tr><td><code>key</code></td><td>Ідентичність елемента в списку між рендерами</td><td>❌ Немає</td></tr>
+      <tr><td><code>child / sibling / return</code></td><td>Звʼязки дерева як однозв'язний список — дозволяють обхід без рекурсії, переривний</td><td>❌ DOM використовує інше внутрішнє представлення обходу</td></tr>
+      <tr><td><code>alternate</code></td><td>Посилання на Fiber-вузол <strong>попереднього</strong> рендеру — звідси й diffing (порівняння "current" і "work-in-progress" дерев)</td><td>❌ Немає поняття "попередній стан"</td></tr>
+      <tr><td><code>memoizedState</code></td><td>Зв'язний список станів усіх хуків цього компонента (по черзі виклику!)</td><td>❌ Немає</td></tr>
+      <tr><td><code>pendingProps / memoizedProps</code></td><td>Нові пропи (ще не застосовані) vs застосовані на минулому рендері — основа diff</td><td>❌ Немає</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Саме <code>memoizedState</code> — причина, чому <strong>порядок виклику хуків має бути стабільним</strong> (Rules of Hooks): React зіставляє хуки з їхніми значеннями за позицією у зв'язному списку Fiber-вузла, а не за іменем змінної.</span></div>`,
         },
       ],
     },
@@ -291,7 +630,33 @@ flushSync(() => setCount(c => c + 1));  // синхронний рендер о�
           kind: 'paragraph',
           html: `<h3 class="topic">&lt;StrictMode&gt; — подвійний виклик лише в dev <span class="tag tag-key">KEY</span></h3>
   <p><strong>Що це:</strong> runtime-перемикач ЛИШЕ для development-збірки. Навмисно ДВІЧІ викликає тіло компонента, <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> initializer'и і (React 18+) mount-фазу effects (mount → unmount → mount). <strong>Навіщо:</strong> викрити нечисті компоненти й ефекти без cleanup ще в розробці, поки легко пофіксити.</p>
-  <div class="alert good"><span class="icon">✅</span><span><strong>У продакшн-білді нічого не подвоюється</strong> — це суто dev-поведінка, на відміну, наприклад, від Angular <code>--strict</code>, який є compile-time перевіркою і ніяк не змінює runtime.</span></div>`,
+  <div class="alert good"><span class="icon">✅</span><span><strong>У продакшн-білді нічого не подвоюється</strong> — це суто dev-поведінка, на відміну, наприклад, від Angular <code>--strict</code>, який є compile-time перевіркою і ніяк не змінює runtime.</span></div>
+  <h3 class="topic">Як вмикати і прийнята конвенція <span class="tag tag-key">KEY</span></h3>
+  <p>Обгортається <strong>один раз, навколо кореня застосунку</strong> — не розкидано по окремих компонентах. У Vite/CRA-подібному застосунку — навколо <code>&lt;App /&gt;</code> у точці входу; у Next.js App Router увімкнено <strong>за замовчуванням</strong> (<code>reactStrictMode: true</code> — дефолтна поведінка <code>next.config.js</code>, вимикати навмисно не рекомендують).</p>
+  <div class="grid2">
+    <pre><span class="cmt">// main.tsx (Vite) — один раз, навколо кореня</span>
+createRoot(document.<span class="fn">getElementById</span>(<span class="str">'root'</span>)!).<span class="fn">render</span>(
+  <span class="jsx">&lt;React.StrictMode&gt;</span>
+    <span class="jsx">&lt;App /&gt;</span>
+  <span class="jsx">&lt;/React.StrictMode&gt;</span>
+);</pre>
+    <pre><span class="cmt">// next.config.js — увімкнено за замовчуванням</span>
+<span class="kw">const</span> nextConfig = {
+  reactStrictMode: <span class="kw">true</span>, <span class="cmt">// дефолт, зазвичай не чіпають</span>
+};</pre>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Подвоюється не лише сам ефект</strong> — будь-який <code>console.log</code> у тілі компонента чи в <code>useEffect</code>, викликаному в StrictMode, виведеться в консоль <strong>двічі поспіль</strong>. Це не помилка логування — так само подвоюється весь код, що виконується в цих точках.</span></div>
+  <h3 class="topic">StrictMode (React) vs <code>'use strict'</code> (JavaScript) — не плутати <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th><code>&lt;React.StrictMode&gt;</code></th><th><code>'use strict'</code></th></tr>
+      <tr><td>Що це</td><td>React-компонент (JSX-обгортка)</td><td>Директива мови JavaScript (рядок на початку файлу/функції)</td></tr>
+      <tr><td>Хто виконує</td><td>React runtime</td><td>JS-рушій (V8 та ін.)</td></tr>
+      <tr><td>Діє де</td><td>Лише в development-збірці</td><td>Завжди, у будь-якому середовищі — dev і прод однаково</td></tr>
+      <tr><td>Що робить</td><td>Подвоює рендер/ефекти, щоб виявити нечистоту</td><td>Забороняє небезпечні конструкції (неоголошені змінні, дублікати параметрів), робить деякі мовчазні помилки такими, що кидають виняток</td></tr>
+      <tr><td>Стосунок один до одного</td><td colspan="2">Жодного — випадковий збіг слова "strict". <code>'use strict'</code> і так увімкнений автоматично в ES-модулях (весь сучасний React/TS-код) незалежно від StrictMode-компонента.</td></tr>
+    </table>
+  </div>`,
         },
         {
           kind: 'code',
@@ -462,6 +827,150 @@ valueRef.current = value;
         },
       ],
     },
+    {
+      id: 'lifecycle-class-vs-functional',
+      title: '🔄 Lifecycle компонента: Class vs Functional',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Три фази життя компонента <span class="tag tag-key">KEY</span></h3>
+  <p>Кожен компонент проходить: <strong>Mount</strong> (перше створення й вставка в DOM) → <strong>Update</strong> (повторюється на кожен ре-рендер: зміна props/state/context) → <strong>Unmount</strong> (видалення з DOM). Класові компоненти виражали це явними методами; функціональні — тим самим через <code>useEffect</code> та порядок виконання самого тіла функції.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'text',
+          code: `MOUNT                       UPDATE (на кожен ре-рендер)         UNMOUNT
+  │                              │                                    │
+  constructor                   (props/state/context змінились)      │
+  │                              │                                    │
+  getDerivedStateFromProps      getDerivedStateFromProps              │
+  │                              │                                    │
+  render                        shouldComponentUpdate (false → стоп)  │
+  │                              │                                    │
+  (React оновлює DOM)           render                                │
+  │                              │                                    │
+  componentDidMount             (React оновлює DOM)                   │
+                                 │                                    │
+                                 getSnapshotBeforeUpdate               │
+                                 │                                    │
+                                 componentDidUpdate            componentWillUnmount`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Методи класового компонента — що важливо, що ні</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Метод</th><th>Фаза</th><th>Важливість</th><th>Навіщо</th></tr>
+      <tr><td><code>constructor</code></td><td>Mount</td><td><span class="tag tag-key">KEY</span></td><td>Ініціалізація <code>this.state</code>, біндинг методів (<code>this.onClick = this.onClick.bind(this)</code>)</td></tr>
+      <tr><td><code>render</code></td><td>Mount + Update</td><td><span class="tag tag-key">KEY</span></td><td>Єдиний обов'язковий метод — повертає JSX. Має бути чистим (як render-фаза функціонального компонента)</td></tr>
+      <tr><td><code>componentDidMount</code></td><td>Mount</td><td><span class="tag tag-key">KEY</span></td><td>Side-effects після першого рендеру: fetch, підписки, робота з DOM-нодою</td></tr>
+      <tr><td><code>componentDidUpdate</code></td><td>Update</td><td><span class="tag tag-key">KEY</span></td><td>Side-effects після кожного оновлення — типово порівнює <code>prevProps</code>/<code>prevState</code> вручну, щоб не зациклитись</td></tr>
+      <tr><td><code>componentWillUnmount</code></td><td>Unmount</td><td><span class="tag tag-key">KEY</span></td><td>Cleanup: відписки, таймери — аналог return-функції з <code>useEffect</code></td></tr>
+      <tr><td><code>shouldComponentUpdate</code></td><td>Update</td><td>Середня</td><td>Ручний контроль пропуску ре-рендеру — попередник <code>React.memo</code> (Block 3)</td></tr>
+      <tr><td><code>getDerivedStateFromProps</code></td><td>Mount + Update</td><td>Низька</td><td>Рідкісний кейс: state, що залежить від props — сьогодні частіше просто рахують значення прямо в render, без стану</td></tr>
+      <tr><td><code>getSnapshotBeforeUpdate</code></td><td>Update</td><td>Низька</td><td>Зчитати DOM (напр. scroll-позицію) ДО того, як React його змінить — рідкісний UI-кейс</td></tr>
+      <tr><td><code>componentDidCatch</code></td><td>—</td><td>Нішева, але незамінна</td><td>Error Boundary (Block 5) — досі без хук-еквівалента</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Class vs Functional — той самий компонент</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Класовий (rcc-сніпет VS Code) — типовий "до хуків" компонент
+class UserProfile extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { user: null };
+  }
+
+  componentDidMount() {
+    fetchUser(this.props.userId).then(user => this.setState({ user }));
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.userId !== this.props.userId) {           // ручне порівняння!
+      fetchUser(this.props.userId).then(user => this.setState({ user }));
+    }
+  }
+
+  componentWillUnmount() {
+    this.subscription?.unsubscribe();
+  }
+
+  render() {
+    return <div>{this.state.user?.name}</div>;
+  }
+}
+
+// Функціональний (rfc-сніпет) — та сама логіка, без дублювання fetch-виклику
+function UserProfile({ userId }: Props) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+    return () => subscription?.unsubscribe();
+  }, [userId]);  // dependency array = componentDidMount + componentDidUpdate злиті в одне
+
+  return <div>{user?.name}</div>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Мапа lifecycle-методів на хуки <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Класовий метод</th><th>Хук-еквівалент</th></tr>
+      <tr><td><code>constructor</code> (ініціалізація state)</td><td><code>useState(initialValue)</code></td></tr>
+      <tr><td><code>componentDidMount</code></td><td><code>useEffect(() => {'{'} ... {'}'}, [])</code></td></tr>
+      <tr><td><code>componentDidUpdate</code></td><td><code>useEffect(() => {'{'} ... {'}'}, [dep])</code></td></tr>
+      <tr><td><code>componentDidMount + componentDidUpdate</code> разом</td><td><code>useEffect</code> без правильного розділення — саме тому в класах треба було вручну звіряти <code>prevProps</code></td></tr>
+      <tr><td><code>componentWillUnmount</code></td><td>return-функція з <code>useEffect</code></td></tr>
+      <tr><td><code>shouldComponentUpdate</code></td><td><code>React.memo</code> (Block 3) — для всього компонента</td></tr>
+      <tr><td><code>this.state</code> кілька полів</td><td>кілька <code>useState</code> АБО один <code>useReducer</code></td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Головна практична перевага хуків тут — <code>componentDidMount</code>/<code>componentDidUpdate</code> у класі часто дублювали один і той самий код (як у прикладі вище), бо логіку "зробити X при mount і при зміні Y" доводилось писати двічі. Один <code>useEffect(fn, [dep])</code> покриває обидва випадки за визначенням залежностей.</span></div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Який єдиний lifecycle-метод обов'язковий у класовому компоненті? → <code>render</code>.</li>
+      <li>Чим один <code>useEffect</code> кращий за пару <code>componentDidMount</code>/<code>componentDidUpdate</code>? → не дублює логіку, dependency array сама вирішує "mount чи update" замість ручного порівняння <code>prevProps</code>.</li>
+      <li>Що з lifecycle досі не має хук-еквівалента? → <code>componentDidCatch</code>/<code>getDerivedStateFromError</code> (Error Boundary, Block 5).</li>
+    </ul>
+  </div>`,
+        },
+        {
+          kind: 'flashcards',
+          items: [
+            {
+              question: 'Що замінює <code>componentDidMount</code> у функціональному компоненті?',
+              answer: '<code>useEffect(() => { ... }, [])</code> — порожній масив залежностей = один раз при mount.',
+            },
+            {
+              question: 'Що замінює <code>componentWillUnmount</code>?',
+              answer: 'Функція, яку повертає <code>useEffect</code> (cleanup) — <code>useEffect(() => { return () => { ... } }, [])</code>.',
+            },
+            {
+              question: 'Який метод — попередник <code>React.memo</code>?',
+              answer: '<code>shouldComponentUpdate</code> — ручне рішення, чи пропускати ре-рендер класового компонента.',
+            },
+            {
+              question: 'Чому в класі часто дублювали код у <code>componentDidMount</code> і <code>componentDidUpdate</code>?',
+              answer: 'Бо "зробити X при mount і при зміні пропу" — одна логічна дія, розбита на два окремі методи; <code>useEffect(fn, [dep])</code> покриває обидва одним викликом.',
+            },
+            {
+              question: 'Який lifecycle-метод досі не має хук-еквівалента?',
+              answer: '<code>componentDidCatch</code> / <code>getDerivedStateFromError</code> — Error Boundary й досі мусить бути класом.',
+            },
+            {
+              question: 'Що робить VS Code сніпет <code>rcc</code>? А <code>rfc</code>?',
+              answer: '<code>rcc</code> генерує класовий компонент (<code>extends React.Component</code>), <code>rfc</code>/<code>rafce</code> — функціональний компонент за секунду.',
+            },
+          ],
+        },
+      ],
+    },
     /* ============================= BLOCK 3 — PERFORMANCE ============================= */
     {
       id: 'performance-deep-dive',
@@ -501,6 +1010,39 @@ valueRef.current = value;
   <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={style} onSelect={onSelect} <span class="jsx">/&gt;</span>;
 }</pre></div>
   </div>
+  <h3 class="topic">Як саме ре-рендериться дерево — покроковий приклад <span class="tag tag-key">KEY</span></h3>
+  <p>Дерево з трьох рівнів: <code>Parent</code> тримає <code>useState</code>, рендерить <code>Child</code>, той рендерить <code>Grandchild</code>. Жоден проп між ними реально не змінюється — лише <code>Parent</code> оновлює свій власний стан.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Parent() {
+  const [count, setCount] = useState(0);
+  return (
+    <>
+      <button onClick={() => setCount(c => c + 1)}>{count}</button>
+      <Child label="static" />                 {/* проп НЕ змінюється */}
+    </>
+  );
+}
+function Child({ label }: { label: string }) {
+  return <Grandchild label={label} />;          {/* проп НЕ змінюється */}
+}
+function Grandchild({ label }: { label: string }) {
+  return <span>{label}</span>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="grid2">
+    <div class="card red"><h4>❌ Без memo — усі три рендеряться</h4>
+      <p>Клік по кнопці → <code>setCount</code> → <code>Parent</code> ре-рендериться (власний state, тригер #1 з розділу вище). <strong>За замовчуванням React рендерить усе піддерево під ним</strong> — <code>Child</code> рендериться (тригер "ре-рендер батька"), і оскільки <code>Child</code> сам повертає <code>&lt;Grandchild&gt;</code> у своєму тілі, <code>Grandchild</code> рендериться теж. Три рендери на клік, хоча <code>label</code> ніде не змінився.</p>
+    </div>
+    <div class="card green"><h4>✅ memo(Child) зупиняє каскад на першому кордоні</h4>
+      <p>Обгорни лише <code>Child</code> в <code>React.memo</code>. При кліку: <code>Parent</code> рендериться (не уникнути — власний state), <code>Child</code> отримує ре-рендер-запит від батька, але <code>React.memo</code> порівнює його пропи (<code>label="static"</code> — не змінився) і <strong>каже React: "not rendering"</strong>. Оскільки сам <code>Child</code> не виконався — <code>Grandchild</code> усередині нього <strong>взагалі не викликається</strong>, каскад зупинився на межі.</p>
+    </div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span><code>memo</code> — це <strong>межа (boundary)</strong>, а не глобальний перемикач: він зупиняє поширення ре-рендеру рівно в тому місці дерева, де стоїть, і не потребує обгортати кожен компонент — досить поставити його перед "важким" піддеревом, яке не залежить від того, що змінюється вище.</span></div>
   <h3 class="topic">Профілювання — React DevTools Profiler <span class="tag tag-key">KEY</span></h3>
   <p>Вкладка <strong>Profiler</strong>: запиши взаємодію → <strong>Flamegraph</strong> показує, які компоненти рендерились і скільки це коштувало; <strong>Ranked</strong> сортує за тривалістю. Клік на компонент → секція <strong>"Why did this render?"</strong> (треба увімкнути в налаштуваннях) називає точну причину: hook changed, props changed, parent rendered.</p>
   <div class="alert warn"><span class="icon">⚠️</span><span>Робочий процес на співбесіді/у реальності: спершу <strong>профілюй</strong>, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація, яка додає складність без гарантованого ефекту.</span></div>`,
@@ -550,6 +1092,44 @@ function BigList({ items }: { items: Item[] }) {
     <ul>
       <li>memo не допоміг — з чого почнеш дебаг? → "спершу Profiler + Why did this render, а не здогадки; типова причина — новий референс пропу".</li>
       <li>Коли virtualization справді потрібна? → списки в сотні-тисячі DOM-вузлів; для 20-50 елементів — зайва складність.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'react-devtools',
+      title: '🔍 React DevTools як Senior',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Дві вкладки, дві мети <span class="tag tag-key">KEY</span></h3>
+  <p>Розширення браузера додає дві панелі: <strong>⚛️ Components</strong> — інспекція дерева й даних; <strong>⚛️ Profiler</strong> — вимірювання продуктивності в часі (вже згадувалась вище). Разом вони покривають і "що зараз у стані/пропах", і "чому щось повільне".</p>
+  <h3 class="topic">Вкладка Components</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Фіча</th><th>Навіщо</th></tr>
+      <tr><td>Дерево компонентів</td><td>Клік на вузол → праворуч видно <code>props</code>, <code>state</code>, і — окремо — список хуків у порядку виклику (з їхніми поточними значеннями)</td></tr>
+      <tr><td>Inline-редагування</td><td>Можна змінити значення props/state прямо в панелі й одразу побачити результат — без правки коду</td></tr>
+      <tr><td>🔍 Search</td><td>Пошук компонента за іменем у великому дереві</td></tr>
+      <tr><td>"Highlight updates when components render"</td><td>Налаштування (⚙️) — обводить компонент кольоровою рамкою на кожен реальний ре-рендер прямо на сторінці. Найшвидший спосіб візуально побачити зайві ре-рендери без відкриття Profiler</td></tr>
+      <tr><td><code>$r</code> у консолі браузера</td><td>Після кліку на компонент у DevTools — <code>$r</code> у Console дає доступ до його instance (props/state) прямо з JS-консолі</td></tr>
+      <tr><td>Іконка ⚛️ джерела</td><td>Показує, який файл/компонент "власник" (owner) вузла — швидко знайти, де в коді він рендериться</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Сеньйорський воркфлоу: Components + Profiler разом</h3>
+  <div class="grid2">
+    <div class="card"><h4>1. Виявити</h4><p>Увімкни "Highlight updates" → взаємодій зі сторінкою → візуально помітно, який компонент "блимає" частіше за очікуване.</p></div>
+    <div class="card blue"><h4>2. Виміряти</h4><p>Profiler → Record → повтори взаємодію → Stop → Flamegraph/Ranked показують точну тривалість кожного рендеру.</p></div>
+    <div class="card yellow"><h4>3. Діагностувати</h4><p>Клік на компонент у Flamegraph → "Why did this render?" (увімкнено в ⚙️) — точна причина: <code>props changed</code>, <code>hooks changed</code>, <code>parent rendered</code>.</p></div>
+    <div class="card green"><h4>4. Виправити й перевірити</h4><p><code>memo</code>/стабілізація референсу/віртуалізація (Block 3) → знову Profile → порівняй тривалість до/після, а не "здається швидше".</p></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Interactions-трекінг у Profiler (запис конкретної взаємодії, а не всієї сесії) дає чистіший вимір — записуй одну дію (клік, ввід), а не хвилину довільного скролу.</span></div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Як швидко перевірити гіпотезу "цей компонент ре-рендериться забагато" без Profiler? → "Highlight updates when components render" у Components tab — візуальна рамка на кожен рендер.</li>
+      <li>Що показує "Why did this render?" → точну причину конкретного ре-рендеру: зміна props, зміна хука, чи просто ре-рендер батька.</li>
     </ul>
   </div>`,
         },
@@ -1069,12 +1649,95 @@ export const reactCheat: TopicContent = {
   slug: 'react',
   sections: [
     {
+      id: 'history-versions',
+      title: '📜 Історія версій React',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>2013 — open-source реліз. 2017 (v16) — Fiber. 2019 (v16.8) — Hooks. 2020 (v17) — "no new features". 2022 (v18) — Concurrent rendering, automatic batching, перші Server Components. 2024 (v19) — Actions, <code>use()</code>, React Compiler.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'library-vs-framework',
+      title: '📚 Бібліотека чи фреймворк? + Virtual DOM',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>React — бібліотека: ти викликаєш React, не навпаки (inversion of control лишається на тобі). Router/HTTP/state — окремі бібліотеки на вибір. Angular — фреймворк, диктує структуру й сам викликає твій код. Virtual DOM: легкий JS-опис UI, React рахує diff і застосовує мінімум змін до реального DOM.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'tooling-vite',
+      title: '🧰 Vite та інструменти збірки',
+      blocks: [
+        {
+          kind: 'code',
+          language: 'bash',
+          code: `npm create vite@latest my-app -- --template react-ts
+cd my-app && npm install && npm run dev
+
+# CRA — deprecated (Webpack, повільний HMR). Альтернативи: Next.js, Rspack, Turbopack.
+# index.html — точка входу (не в public/), src/main.tsx — createRoot(...).render()`,
+        },
+      ],
+    },
+    {
+      id: 'tooling-vscode',
+      title: '🖥️ React + VS Code',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>ES7+ React/Redux/React-Native Snippets — <code>rfc</code>/<code>rafce</code> (функціональний), <code>rcc</code> (класовий). + Prettier, ESLint (<code>eslint-plugin-react-hooks</code>), Auto Rename Tag, Tailwind CSS IntelliSense.</p>`,
+        },
+      ],
+    },
+    {
       id: 'fundamentals-components-jsx',
       title: '🧱 Компоненти та JSX',
       blocks: [
         {
           kind: 'paragraph',
-          html: `<p>Компонент = функція, повертає JSX. JSX → <code>React.createElement(type, props, ...children)</code>, не HTML. <code>{'{ }'}</code> — лише вирази, не statements (<code>if</code>/<code>for</code>). Атрибути camelCase (<code>className</code>, <code>onClick</code>). Один кореневий елемент або <code>&lt;&gt;...&lt;/&gt;</code>.</p>`,
+          html: `<p>Компонент = функція, повертає JSX. JSX → <code>React.createElement(type, props, ...children)</code>, не HTML. <code>{'{ }'}</code> — лише вирази, не statements (<code>if</code>/<code>for</code>). Атрибути camelCase (<code>className</code>, <code>onClick</code>). Один кореневий елемент або <code>&lt;&gt;...&lt;/&gt;</code>.</p>
+  <p><strong>Три дерева:</strong> Element tree (перестворюється щорендеру) → Fiber tree (персистентна, її React diff'ить) → DOM tree (реальні вузли, оновлюються мінімально). <strong>Fragment:</strong> <code>&lt;&gt;...&lt;/&gt;</code> без key, <code>&lt;React.Fragment key={id}&gt;</code> у <code>.map()</code>.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'fundamentals-component-anatomy',
+      title: '🧩 Анатомія компонента: шаблон, стилі, зображення',
+      blocks: [
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import styles from './UserCard.module.css';   // CSS Modules — локально скоуплені класи
+import avatarFallback from './avatar-fallback.png'; // бандлер повертає URL
+
+export function UserCard({ name, avatarUrl }: Props) {
+  return (
+    <div className={styles.card}>
+      <img className={styles.avatar} src={avatarUrl ?? avatarFallback} alt={\`Аватар \${name}\`} />
+      <span className={styles.name}>{name}</span>
+    </div>
+  );
+}
+// public/ — файли as-is, БЕЗ імпорту. Поруч з компонентом — завжди через import.`,
+        },
+      ],
+    },
+    {
+      id: 'styling-approaches',
+      title: '🎨 Styled Components та Tailwind',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap"><table>
+      <tr><th></th><th>styled-components</th><th>Tailwind</th></tr>
+      <tr><td>Runtime вартість</td><td>Так</td><td>Ні (звичайний CSS)</td></tr>
+      <tr><td>Props → стилі</td><td>Природно (<code>\${'$'}{p =&gt; ...}</code>)</td><td>Через <code>clsx</code>/<code>cn</code></td></tr>
+    </table></div>
+  <p>Vite + Tailwind: <code>npm install tailwindcss @tailwindcss/vite</code> → додати <code>tailwindcss()</code> у <code>vite.config.ts</code> plugins → <code>@import "tailwindcss";</code> в CSS.</p>`,
         },
       ],
     },
@@ -1084,7 +1747,8 @@ export const reactCheat: TopicContent = {
       blocks: [
         {
           kind: 'paragraph',
-          html: `<p>Props — read-only, згори вниз; "наверх" — через callback-проп. <code>children</code> — спеціальний проп для композиції. <code>useState</code>: <code>setX(v)</code> планує ре-рендер, не мутує змінну одразу — <code>console.log</code> одразу після покаже старе значення. Функціональний апдейт: <code>setX(x =&gt; x + 1)</code>. Controlled input: <code>value</code> + <code>onChange</code> з React-стану.</p>`,
+          html: `<p>Props — read-only, згори вниз; "наверх" — через callback-проп. <code>children</code> — спеціальний проп для композиції. <code>useState</code>: <code>setX(v)</code> планує ре-рендер, не мутує змінну одразу — <code>console.log</code> одразу після покаже старе значення. Функціональний апдейт: <code>setX(x =&gt; x + 1)</code>. Controlled input: <code>value</code> + <code>onChange</code> з React-стану.</p>
+  <p><strong>Stateless</strong> — чиста функція від props, немає власного <code>useState</code>. <strong>Stateful</strong> — має внутрішню памʼять. До хуків такий "без стану" компонент називався SFC (stateless functional component).</p>`,
         },
       ],
     },
@@ -1104,7 +1768,8 @@ export const reactCheat: TopicContent = {
       blocks: [
         {
           kind: 'paragraph',
-          html: `<p>Virtual DOM — JS-дерево елементів; React рахує diff і застосовує мінімум змін до реального DOM. Різний тип елемента → знести й перебудувати; однаковий → перевикористати. <code>key</code> — зіставлення елементів списку між рендерами; <code>key={index}</code> при реордері "зсуває" стан/значення інпутів на сусідні елементи. Fiber — переписаний reconciler (React 16+): дерево fiber-вузлів замість рекурсії, дозволяє переривати рендер.</p>`,
+          html: `<p>Virtual DOM — JS-дерево елементів; React рахує diff і застосовує мінімум змін до реального DOM. Різний тип елемента → знести й перебудувати; однаковий → перевикористати. <code>key</code> — зіставлення елементів списку між рендерами; <code>key={index}</code> при реордері "зсуває" стан/значення інпутів на сусідні елементи. Fiber — переписаний reconciler (React 16+): дерево fiber-вузлів замість рекурсії, дозволяє переривати рендер.</p>
+  <p><strong>Fiber-вузол vs DOM-вузол:</strong> Fiber несе <code>type</code>/<code>key</code>/<code>child</code>-<code>sibling</code>-<code>return</code>-звʼязки/<code>alternate</code> (посилання на попередній рендер)/<code>memoizedState</code> (хуки, за позицією!) — нічого з цього немає в тупому DOM-вузлі.</p>`,
         },
       ],
     },
@@ -1129,7 +1794,8 @@ export const reactCheat: TopicContent = {
       blocks: [
         {
           kind: 'paragraph',
-          html: `<p>4 тригери ре-рендеру: власний state, ре-рендер батька (без <code>memo</code> — і дитина теж), зміна Context, <code>useReducer</code> dispatch (навіть тим самим значенням — на відміну від <code>useState</code>, який бейлить). Batching (React 18): групування апдейтів стану скрізь (не лише в React-обробниках) — <code>flushSync</code> вимикає вручну. StrictMode — подвійний виклик рендеру/ефектів <strong>лише в dev</strong>, викриває ефекти без cleanup.</p>`,
+          html: `<p>4 тригери ре-рендеру: власний state, ре-рендер батька (без <code>memo</code> — і дитина теж), зміна Context, <code>useReducer</code> dispatch (навіть тим самим значенням — на відміну від <code>useState</code>, який бейлить). Batching (React 18): групування апдейтів стану скрізь (не лише в React-обробниках) — <code>flushSync</code> вимикає вручну. StrictMode — подвійний виклик рендеру/ефектів (і <code>console.log</code> теж!) <strong>лише в dev</strong>, викриває ефекти без cleanup. Обгортається один раз навколо кореня (<code>&lt;React.StrictMode&gt;</code>), у Next.js — увімкнено дефолтно.</p>
+  <p><strong>StrictMode ≠ <code>'use strict'</code>:</strong> StrictMode — React-компонент, лише dev, подвоює рендер/ефекти. <code>'use strict'</code> — директива JS-мови, діє завжди (dev і прод), забороняє небезпечні конструкції. Нічого спільного, крім слова "strict".</p>`,
         },
       ],
     },
@@ -1171,6 +1837,25 @@ export const reactCheat: TopicContent = {
       ],
     },
     {
+      id: 'lifecycle-class-vs-functional',
+      title: '🔄 Lifecycle компонента: Class vs Functional',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap"><table>
+      <tr><th>Класовий метод</th><th>Хук-еквівалент</th></tr>
+      <tr><td><code>constructor</code> (init state)</td><td><code>useState(initial)</code></td></tr>
+      <tr><td><code>componentDidMount</code></td><td><code>useEffect(fn, [])</code></td></tr>
+      <tr><td><code>componentDidUpdate</code></td><td><code>useEffect(fn, [dep])</code></td></tr>
+      <tr><td><code>componentWillUnmount</code></td><td>return-функція з <code>useEffect</code></td></tr>
+      <tr><td><code>shouldComponentUpdate</code></td><td><code>React.memo</code></td></tr>
+      <tr><td><code>componentDidCatch</code></td><td>немає — Error Boundary й досі лише клас</td></tr>
+    </table></div>
+  <p>Фази: Mount → Update (на кожен ре-рендер) → Unmount. Єдиний обов'язковий метод класу — <code>render</code>. VS Code: сніпет <code>rcc</code> — класовий компонент, <code>rfc</code>/<code>rafce</code> — функціональний.</p>`,
+        },
+      ],
+    },
+    {
       id: 'performance-deep-dive',
       title: '🚀 Performance',
       blocks: [
@@ -1183,7 +1868,8 @@ export const reactCheat: TopicContent = {
       <tr><td>CLS</td><td>медіа без width/height, FOUT</td><td>next/font, зарезервований розмір</td></tr>
       <tr><td>INP</td><td>важкі обробники, великий bundle</td><td>useTransition, code splitting</td></tr>
     </table>
-  </div>`,
+  </div>
+  <p><strong>Parent→Child→Grandchild:</strong> без memo — клік по стану Parent ре-рендерить усі три (каскад "згори вниз"). <code>memo(Child)</code> — Child бачить незмінні пропи й не виконується, тому Grandchild усередині нього взагалі не викликається. memo = межа, що зупиняє каскад у конкретному місці дерева.</p>`,
         },
         {
           kind: 'code',
@@ -1203,6 +1889,17 @@ const Settings = React.lazy(() => import('./Settings'));
 </FixedSizeList>
 
 // DevTools Profiler → Flamegraph/Ranked/"Why did this render?" — профілюй перед оптимізацією`,
+        },
+      ],
+    },
+    {
+      id: 'react-devtools',
+      title: '🔍 React DevTools як Senior',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p><strong>Components tab:</strong> дерево + props/state/hooks конкретного вузла, inline-редагування, "Highlight updates when components render" (⚙️) — візуальна рамка на кожен реальний ре-рендер, <code>$r</code> у консолі — доступ до обраного компонента.</p>
+  <p><strong>Profiler tab:</strong> Record → взаємодія → Stop → Flamegraph/Ranked + "Why did this render?". Воркфлоу: виявити (highlight updates) → виміряти (Profiler) → діагностувати (why did this render) → виправити (memo/стабілізація) → перевиміряти.</p>`,
         },
       ],
     },
