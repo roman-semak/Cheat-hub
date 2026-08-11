@@ -698,6 +698,125 @@ useEffect(() => {
     },
     /* ============================= BLOCK 2 — HOOKS DEEP DIVE ============================= */
     {
+      id: 'hooks-why',
+      title: '🪝 Навіщо хуки: яку проблему вирішують',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Проблема до хуків (React &lt;16.8, 2019) <span class="tag tag-key">KEY</span></h3>
+  <p>Класи були єдиним способом дати компоненту стан і lifecycle. Це створювало дві конкретні болі:</p>
+  <div class="grid2">
+    <div class="card red"><h4>1. Перевикористання stateful-логіки — лише через "wrapper hell"</h4><p>Хотів переюзати логіку (підписка, debounce, auth-check) в кількох компонентах — доводилось обгортати компонент у HOC або render-props (Block 5, розділ "Patterns"). Кожна така обгортка — ще один рівень у дереві React DevTools, ще один шар пропів, що "просвічують" крізь усі обгортки.</p></div>
+    <div class="card red"><h4>2. Логіка розкидана по методах, а не по фічах</h4><p><code>componentDidMount</code> міг мати код для трьох незвʼязаних речей (fetch, аналітика, підписка) в одному методі — і той самий "fetch"-код доводилось дублювати в <code>componentDidUpdate</code> (детально — розділ "Lifecycle: Class vs Functional" вище, там же й <code>this</code>-binding).</p></div>
+  </div>
+  <p><strong>Хуки (React 16.8, 2019)</strong> вирішили обидві: логіку можна винести у звичайну функцію (custom hook, розділ нижче) без жодної обгортки в дереві компонентів, і повʼязаний код (state + effect для нього) живе поруч в одному місці, а не розкиданий по lifecycle-методах.</p>
+  <h3 class="topic">Звідки назва "hook"</h3>
+  <p>Функція "чіпляється" (hooks into) за внутрішній механізм React — стан і lifecycle компонента — ззовні, без класової ієрархії. Це не метафора з DOM чи подіями браузера, а буквально "гачок" у React-рантайм.</p>
+  <h3 class="topic">Хук vs звичайна функція — принципова різниця <span class="tag tag-key">KEY</span></h3>
+  <p>Хук — не просто "функція, яку можна викликати". У хука є доступ до <strong>персистентного слоту памʼяті</strong>, привʼязаного до конкретного Fiber-вузла (<code>memoizedState</code> — зв'язний список, розділ "Reconciliation, Virtual DOM, Fiber" вище), який <strong>переживає</strong> кожен наступний рендер саме цього компонента. Звичайна функція, викликана двічі, не має такої памʼяті — кожен виклик стартує "з нуля", без звʼязку з попереднім.</p>
+  <div class="grid2">
+    <div class="card blue"><h4>Звичайна функція</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>;  <span class="cmt">// живе, поки живе замикання,</span>
+  <span class="kw">return</span> () =&gt; ++count;  <span class="cmt">// не привʼязано до Fiber-вузла</span>
+}
+<span class="cmt">// Викликана в тілі компонента — count скидається щорендеру,</span>
+<span class="cmt">// бо немає звʼязку з конкретним "місцем" у Fiber-дереві</span></pre></div>
+    <div class="card green"><h4>useState — хук</h4><pre style="font-size:10.5px"><span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+<span class="cmt">// значення живе в memoizedState ЦЬОГО Fiber-вузла,</span>
+<span class="cmt">// React повертає його на кожному наступному рендері —</span>
+<span class="cmt">// саме тому це можливо ЛИШЕ у функції-компоненті/хуку,</span>
+<span class="cmt">// що React викликає й відстежує сам (детально — наступний розділ)</span></pre></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Це і є відповідь на "чим хук відрізняється від функції": хук отримує доступ до React-рантайму (конкретно — до слоту в Fiber-дереві поточного компонента), звичайна функція — ні. Саме тому хуки не можна "просто взяти й викликати" будь-де — звідси Правила хуків (наступний розділ).</span></div>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-rules',
+      title: '📏 Правила хуків: коли не можна викликати',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Два правила <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>1. Лише на верхньому рівні</h4><p>Ніколи всередині <code>if</code>/циклів/вкладених функцій/<code>try-catch</code>/після раннього <code>return</code>. Хуки викликаються в <strong>однаковому порядку на кожному рендері</strong>.</p></div>
+    <div class="card blue"><h4>2. Лише з React-функцій</h4><p>Функції-компоненти або інші custom hooks. Ніколи — зі звичайних JS-функцій, методів класу, чи колбека, визначеного поза компонентом.</p></div>
+  </div>
+  <h3 class="topic">Чому саме так — звʼязок з Fiber <span class="tag tag-pit">PITFALL</span></h3>
+  <p>React зіставляє хуки між рендерами <strong>за позицією виклику</strong> у зв'язному списку <code>memoizedState</code> Fiber-вузла — не за іменем змінної (розділ вище). Умовний виклик хука зсуває позицію <strong>усіх наступних</strong> хуків у тому ж компоненті — і React підставляє їм чужі значення.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// ❌ ЗЛАМАНО — умовний виклик хука
+function Profile({ userId }: Props) {
+  if (userId) {
+    const [name, setName] = useState('');   // хук #1 — умовний!
+  }
+  const [loading, setLoading] = useState(false); // хук #2 (або #1, залежно від userId!)
+
+  // Рендер 1 (userId є): порядок хуків = [name, loading]
+  // Рендер 2 (userId стало falsy): порядок хуків = [loading]
+  // React бере значення зі слоту #1 для "loading" — це насправді старе значення "name"!
+  // Результат: loading несподівано містить рядок замість boolean, стан "поїхав"
+}
+
+// ✅ ПРАВИЛЬНО — хук завжди викликається, умова йде ВСЕРЕДИНУ
+function Profile({ userId }: Props) {
+  const [name, setName] = useState('');       // завжди хук #1
+  const [loading, setLoading] = useState(false); // завжди хук #2
+
+  useEffect(() => {
+    if (!userId) return;      // умова всередині ефекту, не навколо хука
+    fetchName(userId).then(setName);
+  }, [userId]);
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">✅</span><span>Ловиться до рантайму: <code>eslint-plugin-react-hooks</code> (правило <code>rules-of-hooks</code>) — вже в рекомендованому наборі розширення ES7+ Snippets (розділ "React + VS Code" вище). Друге правило того ж плагіна, <code>exhaustive-deps</code>, стежить за коректністю dependency-масивів <code>useEffect</code>/<code>useMemo</code>/<code>useCallback</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>React Compiler (розділ "React 19 / майбутнє" вище) автоматизує мемоізацію, але <strong>не скасовує</strong> ці два правила — виклик хука досі мусить бути передбачуваним і на верхньому рівні, компілятор аналізує код статично й не "зрозуміє" динамічний порядок хуків.</span></div>
+  <div class="interview-tips">
+    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
+    <ul>
+      <li>Що станеться, якщо викликати useState всередині if? → наведи приклад із конкретним "зсувом" значень між слотами, а не просто "так не можна".</li>
+      <li>Чим ловиться порушення Rules of Hooks до рантайму? → eslint-plugin-react-hooks, правило rules-of-hooks.</li>
+    </ul>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-catalog-full',
+      title: '📋 Повний каталог хуків',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Мапа всіх хуків React за категоріями. Ті, що мають детальний розбір нижче (useEffect, useMemo/useCallback, useRef, useLayoutEffect, useReducer — розділ "Hooks — Deep Dive"; useTransition/useDeferredValue — розділ "useTransition / useDeferredValue"), тут — коротким рядком з переходом. Решта — <strong>лише тут</strong>, повністю.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Хук</th><th>Категорія</th><th>З якої версії</th><th>Навіщо</th><th>Edge case</th></tr>
+      <tr><td><code>useState</code></td><td>State</td><td>16.8</td><td>Локальний стан, незалежні прості значення</td><td>Lazy initializer — <code>useState(() =&gt; expensive())</code>, інакше <code>expensive()</code> виконується щорендеру, навіть якщо результат використано лише при mount</td></tr>
+      <tr><td><code>useReducer</code></td><td>State</td><td>16.8</td><td>Складний повʼязаний state, явні action-переходи</td><td>Детально — "Hooks — Deep Dive" (є свій lazy-init нюанс)</td></tr>
+      <tr><td><code>useEffect</code></td><td>Effect</td><td>16.8</td><td>Side-effects після paint (fetch, підписки)</td><td>Детально — "Hooks — Deep Dive" (stale closures)</td></tr>
+      <tr><td><code>useLayoutEffect</code></td><td>Effect</td><td>16.8</td><td>Синхронно до paint — читання layout</td><td>Детально — "Hooks — Deep Dive"</td></tr>
+      <tr><td><code>useInsertionEffect</code></td><td>Effect</td><td>18</td><td>Вставка <code>&lt;style&gt;</code> ДО useLayoutEffect — лише для CSS-in-JS бібліотек (styled-components, розділ "Styling" вище)</td><td>Не для прикладного коду — немає доступу до refs, призначений виключно авторам бібліотек стилізації</td></tr>
+      <tr><td><code>useRef</code></td><td>Ref</td><td>16.8</td><td>DOM-ref / мутабельне значення без ре-рендеру</td><td>Детально — "Hooks — Deep Dive"</td></tr>
+      <tr><td><code>useImperativeHandle</code></td><td>Ref</td><td>16.8</td><td>Кастомізує, що саме батько бачить через <code>ref</code> на дочірній компонент (у парі з <code>forwardRef</code> або React 19 <code>ref</code>-як-проп)</td><td>Легко зловживати — імперативний API (<code>focus()</code>, <code>reset()</code>) в React мусить лишатись винятком, не звичкою; 95% кейсів вирішуються звичайним потоком props/state</td></tr>
+      <tr><td><code>useMemo</code></td><td>Performance</td><td>16.8</td><td>Кешує дороге обчислення / стабільний референс</td><td>Детально — "Hooks — Deep Dive" (не гарантія!)</td></tr>
+      <tr><td><code>useCallback</code></td><td>Performance</td><td>16.8</td><td>Кешує референс функції</td><td>Детально — "Hooks — Deep Dive"</td></tr>
+      <tr><td><code>useContext</code></td><td>Context</td><td>16.8</td><td>Читає значення найближчого Provider вище по дереву</td><td>Компонент, що споживає Context, ре-рендериться на <strong>будь-яку</strong> зміну value провайдера — навіть якщо реально використовує лише одне поле з обʼєкта value (детально — розділ "Межі стану та Context")</td></tr>
+      <tr><td><code>useTransition</code></td><td>Concurrent</td><td>18</td><td>Неурочна дія (функція-апдейт)</td><td>Детально — розділ "useTransition / useDeferredValue"</td></tr>
+      <tr><td><code>useDeferredValue</code></td><td>Concurrent</td><td>18</td><td>Неурочне значення (ззовні)</td><td>Детально — розділ "useTransition / useDeferredValue"</td></tr>
+      <tr><td><code>useId</code></td><td>Misc</td><td>18</td><td>Унікальний id, стабільний між сервером і клієнтом — для <code>&lt;label htmlFor&gt;</code>/ARIA-атрибутів</td><td><code>Math.random()</code>/лічильник у модулі для генерації id ламається при SSR — сервер і клієнт рахують по-різному → hydration mismatch (розділ "Next.js: рендер-моделі"). <code>useId</code> гарантовано однаковий на сервері й клієнті</td></tr>
+      <tr><td><code>useSyncExternalStore</code></td><td>Misc</td><td>18</td><td>Коректна підписка на зовнішнє джерело стану поза React (браузерні API, стан-менеджери)</td><td>Це те, на чому <strong>всередині</strong> побудований Zustand-хук (розділ "Zustand" вище) — гарантує коректність під час concurrent-рендерингу (tearing-safe), на відміну від ручного <code>useEffect</code> + <code>useState</code> для підписки</td></tr>
+      <tr><td><code>useDebugValue</code></td><td>Misc</td><td>16.8</td><td>Підписує custom hook міткою в React DevTools (розділ вище)</td><td>Працює лише в custom hooks, ефекту в звичайному компоненті не має — суто DX для авторів бібліотек хуків</td></tr>
+    </table>
+  </div>`,
+        },
+      ],
+    },
+    {
       id: 'hooks-deep-dive',
       title: '🪝 Hooks — Deep Dive',
       blocks: [
@@ -730,6 +849,7 @@ useEffect(() => {
       <tr><td><strong>React.memo</strong></td><td>Компонент рендериться часто, рендер дорогий, props стабільні</td><td>Простий компонент, рідкісні оновлення (Block 3 — деталі)</td></tr>
     </table>
   </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useMemo — підказка, не гарантія <span class="tag tag-pit">PITFALL</span>:</strong> React офіційно залишає за собою право <strong>відкинути</strong> закешоване значення й порахувати заново (наприклад, щоб звільнити память) навіть якщо залежності не змінились. Код <strong>не повинен покладатись</strong> на useMemo для коректності (напр. мутація об'єкта всередині обчислення "бо воно виконається лише раз") — лише для продуктивності. Якщо потрібна гарантія "виконати рівно раз" — <code>useRef</code> з lazy-ініціалізацією або <code>useEffect</code>.</span></div>
   <h3 class="topic">useRef — 3 use cases</h3><div class="grid3">
     <div class="card"><h4>1. DOM ref</h4><pre style="font-size:10.5px"><span class="kw">const</span> inputRef = <span class="fn">useRef</span>&lt;HTMLInputElement&gt;(<span class="kw">null</span>);
 <span class="cmt">// &lt;input ref={inputRef} /&gt;</span>
@@ -742,6 +862,7 @@ valueRef.current = value;
 <span class="cmt">// effect завжди читає актуальне значення</span>
 <span class="cmt">// (обхід stale closure без зміни dep array)</span></pre></div>
   </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Антипатерн useRef <span class="tag tag-pit">PITFALL</span>:</strong> зберігати в ref значення, яке <strong>повинно</strong> відображатись в UI. Зміна <code>.current</code> не тригерить ре-рендер — компонент показує застарілі дані, доки якийсь ІНШИЙ стан не змусить його перерендеритись. Якщо значення впливає на те, що бачить користувач — це <code>useState</code>, не <code>useRef</code>.</span></div>
   <h3 class="topic">useLayoutEffect vs useEffect</h3><div class="grid2">
     <div class="card red"><h4>useEffect (асинхронний)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. Використовуй в 95% випадків (fetch, підписки, аналітика).</p></div>
     <div class="card yellow"><h4>useLayoutEffect (синхронний)</h4><p>Виконується <strong>до</strong> paint, одразу після DOM-мутацій. Потрібен для читання layout/dimensions і синхронних правок DOM — уникнути візуального "флешу".</p></div>
@@ -758,11 +879,22 @@ valueRef.current = value;
 <span class="fn">dispatch</span>({ type: <span class="str">'FETCH_START'</span> });
 <span class="fn">dispatch</span>({ type: <span class="str">'FETCH_SUCCESS'</span>, payload: data });</pre>
   </div>
+  <h3 class="topic">useReducer — третій аргумент, lazy init</h3>
+  <pre><span class="cmt">// Як і useState(() => expensive()), useReducer має lazy-варіант —</span>
+<span class="cmt">// третій аргумент "init" застосовується до initialArg лише ОДИН раз при mount</span>
+<span class="kw">function</span> <span class="fn">init</span>(initialCount: <span class="type">number</span>) {
+  <span class="kw">return</span> { count: initialCount, history: [] };  <span class="cmt">// дороге обчислення initial-стану</span>
+}
+<span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, initialCount, init);
+<span class="cmt">// без цього довелось би рахувати початковий стан щорендеру назовні хука</span></pre>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useCallback не "чинить" сам себе <span class="tag tag-pit">PITFALL</span>:</strong> референс функції лишається стабільним, лише якщо стабільні ВСІ значення в її dependency array. Якщо один з deps — новий обʼєкт/масив щорендеру (Block 3, referential stability), <code>useCallback</code> все одно поверне нову функцію — сама наявність <code>useCallback</code> нічого не гарантує без стабільності залежностей.</span></div>
   <div class="interview-tips">
     <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
     <ul>
       <li>Що таке stale closure і як його уникнути? → приклад з setInterval + functional update / useRef.</li>
       <li>Коли useReducer краще за useState? → коли наступний стан залежить від попереднього складним чином, або переходи станів треба тестувати ізольовано від UI.</li>
+      <li>Чи можна покладатись на useMemo для коректності коду (не лише продуктивності)? → ні, React може відкинути кеш у будь-який момент — це підказка (hint), не гарантія.</li>
+      <li>useCallback обгортає функцію — референс точно стабільний? → лише якщо стабільні всі deps; нестабільна залежність все одно дає нову функцію щорендеру.</li>
     </ul>
   </div>`,
         },
@@ -803,7 +935,8 @@ valueRef.current = value;
         {
           kind: 'paragraph',
           html: `<h3 class="topic">Custom Hooks <span class="tag tag-key">KEY</span></h3>
-  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і підпорядковується тим самим правилам хуків (не в умовах/циклах/вкладених функціях). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — компонент, що її використовує, лишається "тупим" (тонкий шар рендеру).</p>
+  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і підпорядковується тим самим правилам хуків (не в умовах/циклах/вкладених функціях, розділ "Правила хуків" вище). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — компонент, що її використовує, лишається "тупим" (тонкий шар рендеру).</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Префікс <code>use</code> — не стиль, а вимога.</strong> Саме за ним <code>eslint-plugin-react-hooks</code> розпізнає функцію як хук і застосовує до неї Rules of Hooks-лінтинг. Назви функцію без цього префікса — і лінтер більше не перевірить порядок викликів усередині, навіть якщо вона викликає інші хуки.</span></div>
   <div class="grid2">
     <div class="card"><h4>useDebouncedValue</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(value: T, ms = <span class="num">300</span>) {
   <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value);
@@ -822,6 +955,57 @@ valueRef.current = value;
   <span class="kw">return</span> value;
 }
 <span class="cmt">// presence$, debouncedSearch$ і т.п. стають звичайним React-значенням</span></pre></div>
+  </div>
+  <h3 class="topic">Ще приклади — найчастіші custom hooks у реальних проєктах</h3>
+  <div class="grid2">
+    <div class="card"><h4>usePrevious</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">usePrevious</span>&lt;T&gt;(value: T) {
+  <span class="kw">const</span> ref = <span class="fn">useRef</span>&lt;T&gt;();
+  <span class="fn">useEffect</span>(() =&gt; {
+    ref.current = value;      <span class="cmt">// записується ПІСЛЯ рендеру,</span>
+  });                         <span class="cmt">// тому під час рендеру ref.current — ще старе значення</span>
+  <span class="kw">return</span> ref.current;   <span class="cmt">// "значення з минулого рендеру"</span>
+}
+<span class="cmt">// const prevCount = usePrevious(count);</span>
+<span class="cmt">// if (count !== prevCount) { ... } — порівняння з минулим рендером</span></pre></div>
+    <div class="card blue"><h4>useLocalStorage</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useLocalStorage</span>&lt;T&gt;(key: <span class="type">string</span>, initial: T) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>&lt;T&gt;(() =&gt; {
+    <span class="kw">if</span> (<span class="kw">typeof</span> window === <span class="str">'undefined'</span>) <span class="kw">return</span> initial; <span class="cmt">// SSR guard!</span>
+    <span class="kw">const</span> saved = localStorage.<span class="fn">getItem</span>(key);
+    <span class="kw">return</span> saved ? JSON.<span class="fn">parse</span>(saved) : initial;
+  });
+  <span class="fn">useEffect</span>(() =&gt; {
+    localStorage.<span class="fn">setItem</span>(key, JSON.<span class="fn">stringify</span>(value));
+  }, [key, value]);
+  <span class="kw">return</span> [value, setValue] <span class="kw">as const</span>;
+}</pre></div>
+    <div class="card green"><h4>useOnClickOutside</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useOnClickOutside</span>(
+  ref: RefObject&lt;HTMLElement&gt;, handler: () =&gt; <span class="type">void</span>
+) {
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> <span class="fn">listener</span> = (e: MouseEvent) =&gt; {
+      <span class="kw">if</span> (!ref.current?.<span class="fn">contains</span>(e.target <span class="kw">as</span> Node)) handler();
+    };
+    document.<span class="fn">addEventListener</span>(<span class="str">'mousedown'</span>, listener);
+    <span class="kw">return</span> () =&gt; document.<span class="fn">removeEventListener</span>(<span class="str">'mousedown'</span>, listener); <span class="cmt">// без cleanup — memory leak на кожен mount/unmount</span>
+  }, [ref, handler]);
+}</pre></div>
+    <div class="card yellow"><h4>useMediaQuery</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useMediaQuery</span>(query: <span class="type">string</span>) {
+  <span class="kw">return</span> <span class="fn">useSyncExternalStore</span>(
+    onChange =&gt; {
+      <span class="kw">const</span> mql = <span class="fn">matchMedia</span>(query);
+      mql.<span class="fn">addEventListener</span>(<span class="str">'change'</span>, onChange);
+      <span class="kw">return</span> () =&gt; mql.<span class="fn">removeEventListener</span>(<span class="str">'change'</span>, onChange);
+    },
+    () =&gt; <span class="fn">matchMedia</span>(query).matches   <span class="cmt">// getSnapshot</span>
+  );
+  <span class="cmt">// useSyncExternalStore, а не useEffect+useState — коректно</span>
+  <span class="cmt">// під concurrent-рендерингом (каталог хуків вище)</span>
+}</pre></div>
+  </div>
+  <h3 class="topic">Плюси й мінуси</h3>
+  <div class="grid2">
+    <div class="card green"><h4>✅ Плюси</h4><p>Перевикористання логіки без жодної обгортки в дереві компонентів (на відміну від HOC, розділ "Навіщо хуки" вище). Логіка тестується ізольовано (<code>renderHook</code> з testing-library). Композиція — custom hook може викликати інші custom hooks.</p></div>
+    <div class="card red"><h4>❌ Мінуси / edge cases</h4><p><strong>Stale closures</strong> всередині самого хука — та сама проблема, що й у звичайному <code>useEffect</code> (розділ "Hooks — Deep Dive"), просто захована на рівень абстракції глибше — легше не помітити. <strong>Нестабільний референс, що повертається</strong> — якщо хук повертає новий обʼєкт/масив/функцію щовиклику (навіть без зміни даних), кожен компонент-споживач отримує "змінений" проп щорендеру — ламає <code>memo</code>/dep-array у споживача (Block 3, referential stability) так само, як і звичайний нестабільний проп.</p></div>
   </div>
   <div class="alert warn"><span class="icon">⚠️</span><span>Custom hook — не про "перевикористання UI" (для цього компоненти), а про <strong>перевикористання stateful-логіки</strong>. Кожен виклик хука в різних компонентах створює <em>ізольований</em> стан — вони не діляться значенням між собою.</span></div>`,
         },
@@ -1800,6 +1984,46 @@ export function UserCard({ name, avatarUrl }: Props) {
       ],
     },
     {
+      id: 'hooks-why',
+      title: '🪝 Навіщо хуки: яку проблему вирішують',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>До хуків (React &lt;16.8): перевикористання stateful-логіки — лише через HOC/render-props ("wrapper hell"); lifecycle-код розкиданий по методах, дублювався між componentDidMount/componentDidUpdate. Хуки: логіка — у звичайній функції без обгортки в дереві.</p>
+  <p><strong>Хук vs функція:</strong> хук має доступ до персистентного слоту (<code>memoizedState</code> у Fiber-вузлі), що переживає рендери саме цього компонента — звичайна функція такого звʼязку не має, кожен виклик "з нуля".</p>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-rules',
+      title: '📏 Правила хуків: коли не можна викликати',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p><strong>1.</strong> Лише на верхньому рівні (не в if/циклах/вкладених функціях). <strong>2.</strong> Лише з React-компонентів або custom hooks. Причина: React зіставляє хуки за позицією виклику в <code>memoizedState</code> — умовний виклик зсуває позицію всіх наступних хуків. Ловиться <code>eslint-plugin-react-hooks</code> (rules-of-hooks + exhaustive-deps).</p>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-catalog-full',
+      title: '📋 Повний каталог хуків',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="table-wrap"><table>
+      <tr><th>Хук</th><th>Навіщо</th><th>Edge case</th></tr>
+      <tr><td><code>useState</code></td><td>Локальний стан</td><td>Lazy initializer <code>useState(() =&gt; expensive())</code></td></tr>
+      <tr><td><code>useContext</code></td><td>Читає найближчий Provider</td><td>Ре-рендер на БУДЬ-яку зміну value, навіть невикористаного поля</td></tr>
+      <tr><td><code>useInsertionEffect</code></td><td>Вставка стилів ДО useLayoutEffect</td><td>Лише для CSS-in-JS бібліотек, не для прикладного коду</td></tr>
+      <tr><td><code>useImperativeHandle</code></td><td>Кастомізує ref на дочірній компонент</td><td>Легко зловживати — виняток, не звичка</td></tr>
+      <tr><td><code>useId</code></td><td>SSR-стабільний унікальний id</td><td>Math.random()/лічильник ламається при SSR (hydration mismatch)</td></tr>
+      <tr><td><code>useSyncExternalStore</code></td><td>Коректна підписка на зовнішній стан</td><td>Tearing-safe під concurrent-рендерингом — на цьому побудований Zustand</td></tr>
+      <tr><td><code>useDebugValue</code></td><td>Мітка custom hook у DevTools</td><td>Працює лише всередині custom hooks</td></tr>
+    </table></div>`,
+        },
+      ],
+    },
+    {
       id: 'hooks-deep-dive',
       title: '🪝 Hooks — Deep Dive',
       blocks: [
@@ -1808,10 +2032,10 @@ export function UserCard({ name, avatarUrl }: Props) {
           html: `<div class="table-wrap"><table>
       <tr><th>Hook</th><th>Суть</th></tr>
       <tr><td><code>useEffect</code></td><td>[] mount/unmount, [dep] при зміні, без масиву — щорендеру. Stale closure → функціональний апдейт або useRef</td></tr>
-      <tr><td><code>useMemo/useCallback</code></td><td>Дороге обчислення / стабільний референс для memo — не для тривіальних операцій</td></tr>
-      <tr><td><code>useRef</code></td><td>DOM-ref, мутабельне значення без ре-рендеру, "живе" значення в effect</td></tr>
+      <tr><td><code>useMemo/useCallback</code></td><td>Дороге обчислення / стабільний референс для memo — не для тривіальних операцій. useMemo — hint, не гарантія; React може відкинути кеш</td></tr>
+      <tr><td><code>useRef</code></td><td>DOM-ref, мутабельне значення без ре-рендеру, "живе" значення в effect. ⚠️ Не для значень, що мають впливати на UI — зміна .current не тригерить рендер</td></tr>
       <tr><td><code>useLayoutEffect</code></td><td>Синхронно до paint (layout/dimensions) — <code>useEffect</code> для решти 95%</td></tr>
-      <tr><td><code>useReducer</code></td><td>Складний повʼязаний state, явні action-переходи</td></tr>
+      <tr><td><code>useReducer</code></td><td>Складний повʼязаний state, явні action-переходи. Третій аргумент — lazy init (як у useState)</td></tr>
     </table></div>`,
         },
       ],
@@ -1832,7 +2056,8 @@ export function UserCard({ name, avatarUrl }: Props) {
       blocks: [
         {
           kind: 'paragraph',
-          html: `<p>Функція <code>useXxx</code>, що викликає інші хуки — виносить stateful-логіку, не UI. Кожен виклик — ізольований стан (не шариться між компонентами). Приклади: <code>useDebouncedValue</code>, <code>useObservable</code> (RxJS у хуку).</p>`,
+          html: `<p>Функція <code>useXxx</code> (префікс обовʼязковий — лінтер розпізнає хук саме за ним), що викликає інші хуки — виносить stateful-логіку, не UI. Кожен виклик — ізольований стан (не шариться між компонентами). Приклади: <code>useDebouncedValue</code>, <code>useObservable</code> (RxJS), <code>usePrevious</code>, <code>useLocalStorage</code> (SSR guard!), <code>useOnClickOutside</code>, <code>useMediaQuery</code> (через useSyncExternalStore).</p>
+  <p>⚠️ Edge cases: stale closures всередині самого хука; нестабільний референс, що повертається — ламає memo/dep-array у споживача так само, як звичайний нестабільний проп.</p>`,
         },
       ],
     },
