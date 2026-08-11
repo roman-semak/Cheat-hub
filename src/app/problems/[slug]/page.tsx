@@ -118,7 +118,7 @@ export default async function ProblemPage({ params }: PageProps) {
       />
       <main className="min-h-screen">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-120px)]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-auto lg:h-[calc(100vh-120px)]">
             {/* Left side: Problem description */}
             <div className="overflow-y-auto pr-4 custom-scrollbar">
               <ProblemDescription
@@ -133,7 +133,7 @@ export default async function ProblemPage({ params }: PageProps) {
             </div>
 
             {/* Right side: Code editor */}
-            <div className="overflow-hidden flex flex-col">
+            <div className="overflow-hidden flex flex-col min-h-[520px] lg:min-h-0">
               <CodeEditor
                 starterCode={problem.starterCode}
                 testCases={testCases}

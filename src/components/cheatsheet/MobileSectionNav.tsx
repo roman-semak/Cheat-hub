@@ -2,8 +2,9 @@
 
 import type { TopicPanelItem } from './TopicPanel'
 
-// Compact section selector shown only on small screens, where the fixed
-// TopicPanel is hidden. Jumps to the chosen section.
+// Compact section selector shown below the `lg` breakpoint, where the fixed
+// TopicPanel is hidden (it would otherwise double up with the hub sidebar on
+// iPad-width screens). Jumps to the chosen section.
 export function MobileSectionNav({
   items,
   activeId,
@@ -14,7 +15,7 @@ export function MobileSectionNav({
   onJump: (id: string) => void
 }) {
   return (
-    <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/80 px-4 py-2 backdrop-blur md:hidden">
+    <div className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/80 px-4 py-2 backdrop-blur lg:hidden">
       <label className="sr-only" htmlFor="section-nav">
         Розділи
       </label>

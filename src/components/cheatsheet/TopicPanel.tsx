@@ -22,7 +22,7 @@ export function TopicPanel({
   accentBorder?: string
 }) {
   return (
-    <nav className="hidden h-full w-56 shrink-0 overflow-y-auto border-r border-white/10 py-3 md:block">
+    <nav className="hidden h-full w-56 shrink-0 overflow-y-auto border-r border-white/10 py-3 lg:block">
       <ul className="flex flex-col">
         {items.map((item) => {
           const active = item.id === activeId
