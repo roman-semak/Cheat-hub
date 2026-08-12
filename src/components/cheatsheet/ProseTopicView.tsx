@@ -55,7 +55,10 @@ export function ProseTopicView({
         accentBorder=""
       />
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto scroll-smooth">
+      <div
+        ref={scrollRef}
+        className="flex-1 snap-y snap-proximity overflow-y-auto scroll-smooth"
+      >
         <MobileSectionNav items={items} activeId={activeId} onJump={jump} />
 
         <header className="border-b border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent px-6 py-8 md:px-10">
@@ -66,7 +69,11 @@ export function ProseTopicView({
         </header>
 
         {content.sections.map((section) => (
-          <section key={section.id} id={section.id} className="scroll-mt-4 px-6 py-8 md:px-10">
+          <section
+            key={section.id}
+            id={section.id}
+            className="min-h-[100dvh] scroll-mt-4 snap-start px-6 py-8 md:px-10"
+          >
             <div className="mx-auto max-w-3xl">
               <h2 className="mb-4 text-2xl font-bold text-slate-100">{section.title}</h2>
               <ContentBlocks blocks={section.blocks} />
