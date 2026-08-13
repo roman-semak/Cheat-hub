@@ -9,6 +9,16 @@ export const gitContent: TopicContent = {
     {
       "id": "git-internals",
       "title": "🔍 Git Internals",
+      interviewQuestions: [
+        {
+          "question": "З яких трьох базових типів об'єктів складається Git-репозиторій на рівні файлової системи, і як вони пов'язані між собою?",
+          "answer": "Blob (вміст файлу), tree (снапшот структури директорії — список blob'ів і піддерев з іменами), і commit (посилання на один tree + метадані: автор, повідомлення, батьківські коміти). Кожен об'єкт адресується SHA-1/SHA-256 хешем свого вмісту — тому Git фактично є content-addressable файловою системою, а гілка — це просто вказівник (файл із хешем) на конкретний commit."
+        },
+        {
+          "question": "Чому Git вважається «content-addressable», і яка практична перевага з цього випливає?",
+          "answer": "Об'єкт зберігається й адресується за хешем свого власного вмісту — ідентичний вміст (навіть в різних файлах чи комітах) завжди дає той самий хеш і зберігається в репозиторії лише один раз (дедуплікація на рівні вмісту). Практична перевага — цілісність: будь-яка зміна вмісту об'єкта змінює його хеш, тому пошкодження чи підміну даних легко виявити."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -60,6 +70,12 @@ export const gitContent: TopicContent = {
     {
       "id": "three-trees-model-key",
       "title": "🌳 Three Trees Model KEY",
+      interviewQuestions: [
+        {
+          "question": "Поясни модель трьох дерев Git (working directory, index/staging area, HEAD) і навіщо потрібен проміжний staging area?",
+          "answer": "Working directory — файли, які ти реально редагуєш; index (staging area) — «чернетка» наступного коміту, куди потрапляє через <code>git add</code>; HEAD — останній коміт поточної гілки. Staging area дозволяє формувати коміт вибірково (додати лише частину змінених файлів чи навіть частину змін у файлі через <code>git add -p</code>), не комітячи все відразу, що дає атомарні, логічно згруповані коміти."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -88,6 +104,12 @@ export const gitContent: TopicContent = {
     {
       "id": "branching-strategies",
       "title": "🌿 Branching Strategies",
+      interviewQuestions: [
+        {
+          "question": "Чим Trunk-Based Development відрізняється від GitFlow, і чому багато сучасних команд з CI/CD переходять саме на trunk-based?",
+          "answer": "GitFlow тримає довгоживучі гілки (develop, release, feature) з рідкими злиттями — це створює великі, ризиковані merge'і й затримує інтеграцію. Trunk-Based Development тримає короткоживучі feature-гілки (дні, не тижні) і часто зливає в main — менші, простіші для рев'ю diff'и, швидший feedback loop, що узгоджується з continuous deployment, де кожен merge потенційно одразу йде в прод."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -125,6 +147,16 @@ export const gitContent: TopicContent = {
     {
       "id": "merge-strategies-key",
       "title": "🔀 Merge Strategies KEY",
+      interviewQuestions: [
+        {
+          "question": "Чим merge commit відрізняється від fast-forward merge, і коли Git обирає кожен варіант автоматично?",
+          "answer": "Fast-forward можливий, коли поточна гілка не отримала жодного нового коміту з моменту відгалуження — Git просто пересуває вказівник гілки вперед без створення нового коміту, історія лишається лінійною. Якщо обидві гілки розійшлись (є нові коміти в обох), Git створює merge commit із двома батьками, що об'єднує історії — це необхідно, коли лінійне «пересування» вказівника вже неможливе."
+        },
+        {
+          "question": "Чим squash merge відрізняється від звичайного merge, і які трейд-оффи цього підходу для історії проєкту?",
+          "answer": "Squash merge об'єднує всі коміти feature-гілки в один коміт при злитті в main — історія main лишається чистою, один PR = один коміт. Ціна — втрачається детальна історія окремих кроків розробки всередині feature-гілки (для дебагу через <code>git bisect</code> це означає меншу гранулярність), тому вибір squash vs merge — компроміс між чистотою історії й деталізацією для майбутнього дебагу."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -207,6 +239,16 @@ export const gitContent: TopicContent = {
     {
       "id": "rebase-key",
       "title": "♻️ Rebase KEY",
+      interviewQuestions: [
+        {
+          "question": "Чим rebase відрізняється від merge з точки зору історії, і чому rebase небезпечний для публічних (вже запушених і розшарених) гілок?",
+          "answer": "Rebase переписує коміти feature-гілки так, ніби вони були зроблені поверх нового HEAD main — результат лінійна історія без merge commit, але кожен переписаний коміт отримує <strong>новий хеш</strong>. Якщо гілку вже розшарили з іншими розробниками, rebase створює розбіжність між їхньою локальною історією і твоєю переписаною — наступний pull призведе до дублювання комітів чи конфліктів, тому rebase публічних гілок вважається антипатерном (»don't rebase what you've pushed»)."
+        },
+        {
+          "question": "Що таке interactive rebase, і які типові задачі він вирішує перед відкриттям PR?",
+          "answer": "<code>git rebase -i</code> дозволяє переписати список комітів feature-гілки: об'єднати кілька комітів в один (squash), змінити повідомлення коміту (reword), переставити порядок, чи видалити коміт повністю (drop) — типово використовується, щоб «прибрати» історію (коміти на кшталт «wip», «fix typo») перед тим, як показати чисту, логічну послідовність змін у PR для рев'ю."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -271,6 +313,12 @@ export const gitContent: TopicContent = {
     {
       "id": "history-rewriting-advanced",
       "title": "🕐 History Rewriting ADVANCED",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>git filter-branch</code>/<code>git filter-repo</code> відрізняється від звичайного interactive rebase за масштабом операції?",
+          "answer": "Interactive rebase переписує невелику кількість останніх комітів (типово — комітів однієї feature-гілки). <code>filter-repo</code>/<code>filter-branch</code> переписує <strong>всю</strong> історію репозиторію за певним правилом (наприклад, видалити файл із секретом з усіх комітів коли-небудь) — це набагато масштабніша й ризикованіша операція, що змінює хеші абсолютно всіх наступних комітів і вимагає координації з усією командою для повторного клонування репозиторію."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -308,6 +356,16 @@ export const gitContent: TopicContent = {
     {
       "id": "cherry-pick-stash",
       "title": "🍒 Cherry-pick & Stash",
+      interviewQuestions: [
+        {
+          "question": "Коли варто використовувати <code>cherry-pick</code> замість повного merge чи rebase гілки?",
+          "answer": "<code>cherry-pick</code> застосовують, коли потрібен лише <strong>один конкретний</strong> коміт з іншої гілки (наприклад, терміновий hotfix, який уже є в feature-гілці, але сама гілка ще не готова до повного злиття), без перенесення всієї історії тієї гілки — типовий кейс: бекпорт виправлення в release-гілку."
+        },
+        {
+          "question": "Чим <code>git stash</code> відрізняється від коміту в тимчасову гілку для збереження незавершеної роботи?",
+          "answer": "<code>stash</code> зберігає незакомічені зміни (working directory + опційно index) в окремому, невидимому в звичайній історії сховищі, дозволяючи миттєво повернутись до чистого working directory (наприклад, щоб терміново перемкнутись на іншу гілку) і потім відновити ці зміни через <code>stash pop</code> — швидше й менш «шумно» для історії, ніж створювати WIP-коміт і потім його скасовувати."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -345,6 +403,12 @@ export const gitContent: TopicContent = {
     {
       "id": "remote-operations",
       "title": "🌐 Remote Operations",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>git fetch</code> відрізняється від <code>git pull</code>, і чому досвідчені розробники часто віддають перевагу явному fetch + merge/rebase?",
+          "answer": "<code>fetch</code> лише завантажує нові коміти з remote у локальні remote-tracking гілки, не чіпаючи поточну робочу гілку. <code>pull</code> — це <code>fetch</code> одразу з автоматичним merge (або rebase, залежно від конфігурації) у поточну гілку. Явний <code>fetch</code> дозволяє спершу переглянути, що змінилось (<code>git log HEAD..origin/main</code>), перш ніж вирішувати, як саме інтегрувати зміни — менше несподіванок, ніж автоматичний pull."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -373,6 +437,12 @@ export const gitContent: TopicContent = {
     {
       "id": "git-hooks",
       "title": "🪝 Git Hooks",
+      interviewQuestions: [
+        {
+          "question": "Чим client-side git hooks (наприклад, pre-commit) відрізняються від CI-перевірок, і чи можна покладатись лише на них?",
+          "answer": "Client-side хуки виконуються локально на машині розробника <em>до</em> того, як зміни потраплять у репозиторій (лінтинг, форматування, швидкі тести) — швидкий feedback, але їх можна обійти (<code>--no-verify</code>) або вони просто не встановлені в іншого розробника, оскільки хуки не версіонуються разом з репозиторієм за замовчуванням. Тому client-side хуки — зручність для UX розробки, а не гарантія якості; фінальний бар'єр завжди мають забезпечувати CI-перевірки на сервері."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -401,6 +471,12 @@ export const gitContent: TopicContent = {
     {
       "id": "submodules-subtrees",
       "title": "📦 Submodules & Subtrees",
+      interviewQuestions: [
+        {
+          "question": "Чим git submodule відрізняється від monorepo-підходу для розділення коду між кількома репозиторіями?",
+          "answer": "Submodule зберігає посилання на конкретний коміт зовнішнього репозиторію всередині основного — кожен репозиторій лишається незалежним з власною історією, але синхронізація версій вимагає явного оновлення посилання і легко забувається/розходиться. Monorepo тримає весь код в одному репозиторії з єдиною історією — простіше атомарно змінювати кілька пакетів одночасно, але репозиторій зростає, і потрібні спеціальні інструменти (Nx, Turborepo) для інкрементальних білдів."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -429,6 +505,12 @@ export const gitContent: TopicContent = {
     {
       "id": "bisect-debugging-key",
       "title": "🔬 Bisect & Debugging KEY",
+      interviewQuestions: [
+        {
+          "question": "Як працює <code>git bisect</code>, і чому це набагато швидше за ручний перегляд історії комітів для пошуку регресії?",
+          "answer": "<code>bisect</code> виконує бінарний пошук по історії комітів: позначивши один коміт як «good» (без бага), інший як «bad» (з багом), Git автоматично чекаутить середній коміт між ними, і після твоєї відповіді (good/bad) звужує діапазон вдвічі щоразу — знаходить винний коміт за O(log n) перевірок замість лінійного перегляду всіх N комітів вручну."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -493,6 +575,12 @@ export const gitContent: TopicContent = {
     {
       "id": "tags-releases",
       "title": "🏷️ Tags & Releases",
+      interviewQuestions: [
+        {
+          "question": "Чим annotated tag відрізняється від lightweight tag, і чому для релізів рекомендують саме annotated?",
+          "answer": "Lightweight tag — просто іменований вказівник на коміт, без власних метаданих. Annotated tag — повноцінний Git-об'єкт із автором, датою, повідомленням і опційним GPG-підписом — дозволяє перевірити автентичність релізу криптографічно й зберігає контекст (чому саме цей коміт позначений як реліз), що критично для аудиту production-релізів."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -557,6 +645,12 @@ export const gitContent: TopicContent = {
     {
       "id": "large-repos-performance-advanced",
       "title": "🚀 Large Repos & Performance ADVANCED",
+      interviewQuestions: [
+        {
+          "question": "Які техніки застосовують для роботи з дуже великими Git-репозиторіями (мільйони файлів/комітів), коли звичайний clone стає непрактичним?",
+          "answer": "Shallow clone (<code>--depth</code>, обмежена глибина історії), sparse checkout (завантаження лише потрібної частини файлового дерева замість усього репозиторію), і Git LFS (Large File Storage — зберігає вказівники на великі бінарні файли в самому репозиторії, а реальний вміст окремо) — усе це зменшує обсяг даних, які реально потрібно завантажити й тримати локально."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -608,6 +702,12 @@ export const gitContent: TopicContent = {
     {
       "id": "advanced-config-aliases",
       "title": "⚙️ Advanced Config & Aliases",
+      interviewQuestions: [
+        {
+          "question": "Навіщо сеньйори налаштовують власні Git-алiаси та глобальний <code>.gitignore</code>, а не покладаються лише на дефолтну конфігурацію?",
+          "answer": "Аліаси (<code>git lg</code> для красивого логу, <code>git undo</code> для скасування останнього коміту) прибирають повторюваний boilerplate довгих команд, які інакше довелось би набирати чи гуглити щоразу. Глобальний <code>.gitignore</code> (для файлів IDE, ОС на кшталт <code>.DS_Store</code>) уникає забруднення кожного окремого репозиторію особистими налаштуваннями оточення, які не мають стосунку до самого проєкту."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",

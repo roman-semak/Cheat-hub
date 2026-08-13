@@ -1038,6 +1038,70 @@ function Profile({ userId }: Props) {
       ],
     },
     {
+      id: 'memoization-concept',
+      title: '🧠 Мемоізація: єдина концепція',
+      interviewQuestions: [
+        {
+          question: 'Поясни мемоізацію як загальну техніку (без React), а потім покажи, чому useMemo, useCallback і React.memo — це насправді одна й та сама ідея.',
+          answer: 'Мемоізація — кешування результату обчислення за ключем вхідних даних: наступний виклик з тим самим ключем повертає кеш замість повторного обчислення (памʼять в обмін на швидкість). У React ця сама схема застосована до трьох різних "одиниць": <code>useMemo</code> кешує значення (ключ — deps-масив), <code>useCallback</code> кешує посилання на функцію (той самий useMemo під капотом), <code>React.memo</code> кешує РЕЗУЛЬТАТ РЕНДЕРУ компонента (ключ — props). В усіх трьох: ключ порівнюється через Object.is/поверхнево, зміна ключа = інвалідація кешу.',
+        },
+        {
+          question: 'Fiber-поле memoizedState теж називається "мемоізація" — це та сама техніка, що useMemo?',
+          answer: 'Ні, і це поширена плутанина через збіг слова. memoizedState — просто "слот останнього відомого значення" хука в Fiber-вузлі, без ключа й без інвалідації за замовчуванням. useMemo/useCallback/React.memo — справжній кеш-за-ключем із чіткою умовою скидання (зміна deps/props). Схожа за назвою, але окрема від них річ — Next.js Request Memoization, навпаки, це саме кешування-за-ключем (дедуплікація однакових fetch у межах одного рендеру за URL+опціями як ключем).',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що таке мемоізація — загальна техніка <span class="tag tag-key">KEY</span></h3>
+  <p>Мемоізація — не React-специфічна концепція, а класична техніка з CS: <strong>кешуй результат обчислення, ключем — його вхідні дані</strong>. Наступного разу з тими самими вхідними даними — поверни збережений результат замість повторного обчислення. Плата — памʼять під кеш; вигода — заощаджений CPU. Ось мінімальна реалізація поза React (класичне питання на співбесіді — написати самому):</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function memoize<Args extends unknown[], R>(fn: (...args: Args) => R) {
+  const cache = new Map<string, R>();
+
+  return (...args: Args): R => {
+    const key = JSON.stringify(args);       // ключ кешу — вхідні дані
+    if (cache.has(key)) return cache.get(key)!;  // є в кеші — не рахуємо заново
+
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+
+const slowSquare = (n: number) => { /* важке обчислення */ return n * n; };
+const fastSquare = memoize(slowSquare);
+fastSquare(5); // рахує
+fastSquare(5); // з кешу, миттєво — той самий "ключ" (5)`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Одна ідея, три "одиниці" кешування в React <span class="tag tag-key">KEY</span></h3>
+  <p>Побачивши схему вище, легко впізнати її ще тричі — <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code> НЕ три окремі концепції для зазубрювання, а <strong>та сама</strong> схема "кеш за ключем", застосована до різних речей:</p>
+  <div class="grid3">
+    <div class="card"><h4>useMemo</h4><p>Кешує <strong>значення</strong>. Ключ — deps-масив. <code>useMemo(fn, deps)</code> ≈ <code>memoize(fn)</code> з ключем <code>deps</code>.</p></div>
+    <div class="card blue"><h4>useCallback</h4><p>Кешує <strong>посилання на функцію</strong> — окремий випадок useMemo (детально, з формулою еквівалентності — розділ "Hooks — Deep Dive" нижче).</p></div>
+    <div class="card green"><h4>React.memo</h4><p>Кешує <strong>результат рендеру компонента</strong>. Ключ — props. "Аргументи" (props) ті самі → пропускаємо повторний виклик функції-компонента, як і в memoize().</p></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Елемент схеми "кеш за ключем"</th><th>У React</th></tr>
+      <tr><td>Ключ кешу</td><td>Deps-масив (useMemo/useCallback) або props (React.memo)</td></tr>
+      <tr><td>Порівняння ключа</td><td><code>Object.is</code> по кожному елементу (не глибоке порівняння!)</td></tr>
+      <tr><td>Інвалідація кешу</td><td>Ключ змінився → перерахувати/перерендерити; не змінився → віддати кеш</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Це і є "єдина концепція": щойно зрозуміло <code>memoize()</code> вище, <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code> — не три різні API для завчання, а один патерн, застосований до значення, функції й компонента відповідно.</span></div>
+  <h3 class="topic">Не плутати зі схожими словами <span class="tag tag-pit">PITFALL</span></h3>
+  <p><code>memoizedState</code> у Fiber-вузлі (розділ "Reconciliation, Virtual DOM, Fiber" вище) — <strong>не</strong> ця техніка: це просто слот "останнє відоме значення хука", без ключа й без умови інвалідації. А от Next.js <strong>Request Memoization</strong> (розділ "Next.js App Router" нижче) — навпаки, СПРАВЖНІЙ приклад тієї самої схеми: дедуплікація однакових <code>fetch</code>-викликів у межах одного рендеру, де ключ — URL + опції запиту.</p>
+  <p>Детальні API, edge cases і pitfalls кожного з трьох — <code>useMemo</code>/<code>useCallback</code> у розділі "Hooks — Deep Dive" нижче, <code>React.memo</code> у розділі "Performance Deep Dive". React Compiler (розділ "React 19 / майбутнє") автоматизує застосування саме цієї схеми — розставляє мемоізацію за тебе, не змінюючи самої ідеї.</p>`,
+        },
+      ],
+    },
+    {
       id: 'hooks-deep-dive',
       title: '🪝 Hooks — Deep Dive',
       interviewQuestions: [
@@ -1072,6 +1136,7 @@ function Profile({ userId }: Props) {
 <span class="cmt">// ✅ Функціональний апдейт — не залежить від closure</span>
 <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>);</pre>
   </div>
+  <p style="font-size:12.5px;opacity:.75">Обидва хуки нижче — конкретне застосування єдиної схеми "кеш за ключем" (розділ "Мемоізація: єдина концепція" вище).</p>
   <h3 class="topic">useMemo / useCallback — коли реально треба <span class="tag tag-pit">PITFALL</span></h3><div class="table-wrap">
     <table>
       <tr><th>Hook</th><th>✅ Має сенс</th><th>❌ Передчасна оптимізація</th></tr>
@@ -1433,7 +1498,8 @@ function UserProfile({ userId }: Props) {
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">React.memo — коли працює, коли ні <span class="tag tag-key">KEY</span></h3>
+          html: `<p style="font-size:12.5px;opacity:.75">Та сама схема "кеш за ключем", що й useMemo/useCallback (розділ "Мемоізація: єдина концепція", Block 2) — тут ключ не deps-масив, а props компонента.</p>
+  <h3 class="topic">React.memo — коли працює, коли ні <span class="tag tag-key">KEY</span></h3>
   <p><code>React.memo</code> порівнює пропи <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий обʼєкт/масив/функція на кожен рендер батька (референс завжди інший). Можна передати власний компаратор — рідко потрібно і легко зламати непомітно.</p>`,
         },
         {
@@ -2789,6 +2855,23 @@ export function UserCard({ name, avatarUrl }: Props) {
       <tr><td><code>useSyncExternalStore</code></td><td>Коректна підписка на зовнішній стан</td><td>Tearing-safe під concurrent-рендерингом — на цьому побудований Zustand</td></tr>
       <tr><td><code>useDebugValue</code></td><td>Мітка custom hook у DevTools</td><td>Працює лише всередині custom hooks</td></tr>
     </table></div>`,
+        },
+      ],
+    },
+    {
+      id: 'memoization-concept',
+      title: '🧠 Мемоізація: єдина концепція',
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Мемоізація — техніка з CS, не React-специфіка: кешуй результат за ключем вхідних даних, наступний виклик з тим самим ключем — з кешу. useMemo/useCallback/React.memo — <strong>та сама схема</strong>, застосована до трьох різних речей:</p>
+  <div class="table-wrap"><table>
+      <tr><th>API</th><th>Кешує</th><th>Ключ</th></tr>
+      <tr><td><code>useMemo</code></td><td>Значення</td><td>Deps-масив</td></tr>
+      <tr><td><code>useCallback</code></td><td>Посилання на функцію</td><td>Deps-масив (окремий випадок useMemo)</td></tr>
+      <tr><td><code>React.memo</code></td><td>Результат рендеру компонента</td><td>Props</td></tr>
+    </table></div>
+  <p>⚠️ Не плутати з <code>memoizedState</code> у Fiber (просто "слот останнього значення", без ключа/інвалідації) — а Next.js Request Memoization, навпаки, справжній приклад тієї самої схеми (дедуплікація fetch за ключем URL+опції).</p>`,
         },
       ],
     },
