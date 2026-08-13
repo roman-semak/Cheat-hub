@@ -9,6 +9,16 @@ export const nextjsContent: TopicContent = {
     {
       id: 'nextjs-overview',
       title: '🧭 Next.js поверх React',
+      interviewQuestions: [
+        {
+          question: 'Чому команда обирає Next.js замість «чистого» React + власного набору бібліотек, якщо і те, й інше зрештою дає SPA?',
+          answer: 'Next.js закриває одразу роутинг, рендер-стратегії (SSR/SSG/ISR/RSC), бандлінг, оптимізацію зображень/шрифтів і metadata API «з коробки» — команді не потрібно збирати й підтримувати цей стек самостійно та узгоджувати версії між пакетами. Ціна — менша гнучкість і прив\'язка до конвенцій фреймворку (файлова структура, рендер-модель за замовчуванням).',
+        },
+        {
+          question: 'Які реальні задачі чистий React не вирішує сам по собі, через що на практиці майже завжди додається щось поверх нього?',
+          answer: 'React відповідає лише за рендеринг компонентів у DOM за станом. Роутинг, SSR/SSG, розбиття бандла по маршрутах, SEO/metadata, оптимізація зображень — усе це поза межами бібліотеки; тому будь-який продакшн-застосунок або збирає ці шматки вручну (react-router + Vite + власний SSR-сервер), або переходить на фреймворк, що вже це вирішив.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -42,6 +52,16 @@ export const nextjsContent: TopicContent = {
     {
       id: 'server-client-components',
       title: '🧩 Server vs Client Components',
+      interviewQuestions: [
+        {
+          question: 'Чому Server Components не можуть використовувати <code>useState</code>/<code>useEffect</code> і взаємодіяти з браузерним API?',
+          answer: 'Server Component виконується <strong>тільки на сервері</strong> й ніколи не потрапляє в клієнтський JS-бандл — у нього немає рантайму React на клієнті, який міг би підтримувати стан чи ефекти, і немає доступу до <code>window</code>/<code>document</code>, бо коду в браузері просто не існує. Інтерактивність і будь-який client-side стан виносяться в окремий компонент з <code>\'use client\'</code>.',
+        },
+        {
+          question: 'Як передаються дані від Server Component до Client Component, і які обмеження на ці дані існують?',
+          answer: 'Через звичайні props, як завжди — але значення мають бути <strong>серіалізовними</strong> (RSC payload передається спеціальним форматом, схожим на JSON): функції, класи, символи, нативні об\'єкти на кшталт <code>Date</code> без спеціальної обробки передати не можна. Найпоширеніша помилка новачків — спроба передати callback з Server у Client Component напряму.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -104,6 +124,16 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
     {
       id: 'routing',
       title: '🗂️ App Router — роутинг',
+      interviewQuestions: [
+        {
+          question: 'Як App Router визначає ієрархію layout\'ів, і чому вкладені layout\'и не перемонтовуються при навігації між дочірніми маршрутами?',
+          answer: 'Кожен сегмент шляху (папка) може мати власний <code>layout.tsx</code>, і React зберігає ці компоненти живими в дереві між навігаціями — оновлюється лише той сегмент, що реально змінився (<code>page.tsx</code> всередині). Це дає збереження стану layout\'а (наприклад, розкритого сайдбара чи скролу) без ручної роботи розробника.',
+        },
+        {
+          question: 'У чому різниця між файлами <code>loading.tsx</code>, <code>error.tsx</code> і <code>not-found.tsx</code> на рівні механіки рендерингу?',
+          answer: '<code>loading.tsx</code> автоматично обгортає <code>page.tsx</code> у <code>&lt;Suspense&gt;</code>, показуючи fallback поки серверний сегмент вантажиться. <code>error.tsx</code> — це Error Boundary для свого сегмента, ловить помилки рендеру/даних саме в цьому піддереві, не «зносячи» весь застосунок. <code>not-found.tsx</code> рендериться, коли явно викликано <code>notFound()</code> або сегмент не знайдено — на відміну від <code>error.tsx</code>, це не помилка, а очікуваний стан.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -160,6 +190,16 @@ export async function generateMetadata({ params }) {
     {
       id: 'rendering-caching',
       title: '🎨 Рендеринг і кешування',
+      interviewQuestions: [
+        {
+          question: 'Next.js кешує запити <code>fetch()</code> за замовчуванням — які проблеми це може створити, якщо про це не знати?',
+          answer: 'Без явного <code>cache: \'no-store\'</code> або <code>revalidate</code> Next.js статично кешує результат <code>fetch</code> під час білду/першого запиту, тому дані, які мають бути завжди свіжими (баланс рахунку, статус замовлення), можуть показувати застарілу інформацію користувачам — класична причина «баг тільки в проді» доти, доки хтось явно не задасть стратегію кешування для конкретного запиту.',
+        },
+        {
+          question: 'Чим ISR (<code>revalidate</code>) відрізняється від чистого SSR з точки зору навантаження на бекенд?',
+          answer: 'При SSR кожен запит користувача заново виконує рендер на сервері й звертається до джерела даних. При ISR сторінка генерується один раз і віддається зі статичного кешу всім наступним користувачам, доки не спливе <code>revalidate</code>-інтервал — тоді фонова регенерація оновлює кеш, а користувачі тим часом продовжують отримувати попередню (ще валідну) версію. Це різко знижує навантаження на бекенд порівняно з SSR на кожен запит.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -208,6 +248,16 @@ export const revalidate = 3600;           // ISR за замовчуванням
     {
       id: 'data-fetching',
       title: '📡 Завантаження даних',
+      interviewQuestions: [
+        {
+          question: 'Чому в App Router рекомендують фетчити дані прямо в async Server Component, а не через <code>useEffect</code> на клієнті?',
+          answer: 'Fetch у Server Component виконується на сервері до відправки HTML — користувач одразу отримує сторінку з даними (кращий LCP, немає «блимання» loading-стану), а сам запит ніколи не потрапляє в клієнтський бандл. <code>useEffect</code>-фетч на клієнті означає порожній перший рендер, окремий round-trip з браузера, і додатковий JS для логіки завантаження.',
+        },
+        {
+          question: 'Як у Server Components уникнути «водоспаду» (waterfall), коли кілька незалежних fetch-запитів виконуються послідовно одне за одним?',
+          answer: 'Ініціювати всі незалежні проміси одразу (без <code>await</code> одразу після кожного виклику) і резолвити їх разом через <code>Promise.all</code>, або передати кожен проміс окремому дочірньому Server Component/Suspense-межі, щоб вони виконувались паралельно, а не блокували одне одного послідовним очікуванням.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -264,6 +314,16 @@ export default function Dashboard() {
     {
       id: 'server-actions',
       title: '⚡ Server Actions і мутації',
+      interviewQuestions: [
+        {
+          question: 'Що таке Server Action, і чим виклик такої функції з клієнта відрізняється від звичайного REST/fetch-запиту до API route?',
+          answer: 'Server Action — асинхронна функція, позначена <code>\'use server\'</code>, яку можна викликати напряму з клієнтського коду (наприклад, з <code>&lt;form action={myAction}&gt;</code>) так, ніби це локальний виклик; під капотом Next.js автоматично генерує захищений POST-ендпоінт і серіалізацію аргументів/результату. Розробнику не потрібно вручну описувати route, парсити body чи писати клієнтський fetch-виклик.',
+        },
+        {
+          question: 'Які ризики безпеки виникають із Server Actions, і як їх мінімізувати?',
+          answer: 'Оскільки Server Action фактично стає публічним HTTP-ендпоінтом, до нього можна звернутись напряму, обійшовши UI — тому всередині дії обов\'язкова власна перевірка авторизації та валідація вхідних даних (не покладатись на те, що виклик прийшов «зі своєї форми»). Також не можна вважати аргументи довіреними лише тому, що вони типізовані на TS-рівні — типи не захищають рантайм.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -356,6 +416,12 @@ const theme = cookieStore.get('theme');`,
     {
       id: 'navigation-hooks',
       title: '🔗 Навігація та хуки',
+      interviewQuestions: [
+        {
+          question: 'Чим хук <code>useRouter</code> з App Router відрізняється від однойменного хука в Pages Router?',
+          answer: 'У App Router <code>useRouter</code> (з <code>next/navigation</code>) — значно вужчий API, орієнтований на навігацію (<code>push</code>, <code>replace</code>, <code>refresh</code>, <code>back</code>), без доступу до <code>query</code>/<code>pathname</code> напряму — для цього окремі хуки <code>useSearchParams</code> і <code>usePathname</code>. У Pages Router один <code>useRouter</code> ніс усе разом. Розділення дозволяє точніше контролювати, які клієнтські підписки на URL реально потрібні компоненту.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -400,6 +466,12 @@ if (!post) notFound();`,
     {
       id: 'performance-prod',
       title: '🚀 Перформанс і прод',
+      interviewQuestions: [
+        {
+          question: 'Які вбудовані оптимізації Next.js реально впливають на Core Web Vitals у продакшні, і за які метрики вони відповідають?',
+          answer: '<code>next/image</code> — автоматичний lazy-loading, правильні розміри й сучасні формати (впливає на LCP і CLS через явні розміри, що запобігають зсуву макета). <code>next/font</code> — self-hosting шрифтів без зовнішнього запиту й запобігання FOUT/CLS від пізнього завантаження шрифту. Автоматичний code-splitting по маршрутах зменшує обсяг JS на початкове завантаження, покращуючи TTI/INP.',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',
@@ -447,6 +519,16 @@ export const runtime = 'edge';                   // або 'nodejs' (default)`,
     {
       id: 'gotchas-interview',
       title: '⚠️ Підводні камені та питання співбесіди',
+      interviewQuestions: [
+        {
+          question: 'Назви типову помилку джуна, пов\'язану зі змішуванням Server і Client Components, яку часто питають на співбесіді.',
+          answer: 'Спроба імпортувати Server Component <em>усередину</em> Client Component і використовувати в ньому стан/ефекти — не працює, бо Client Component та все, що він імпортує напряму (не як children/props), стає частиною клієнтського бандла й втрачає серверні можливості. Правильний патерн — передавати вже відрендерений Server Component як <code>children</code> у Client Component ззовні.',
+        },
+        {
+          question: 'Чому «просто додати <code>\'use client\'</code> на весь застосунок, щоб не думати про це» — погана порада, яку іноді дають на співбесіді як «швидкий фікс»?',
+          answer: 'Це фактично відкочує App Router до поведінки старого CSR-застосунку: втрачаються переваги RSC (менший бандл, серверний data fetching без зайвого JS, стрімінг), а весь код знову вантажиться й гідратується в браузері. Питання на співбесіді якраз перевіряє, чи розуміє кандидат <em>навіщо</em> існує межа server/client, а не просто «як позбутись помилки».',
+        },
+      ],
       blocks: [
         {
           kind: 'paragraph',

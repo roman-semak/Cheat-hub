@@ -9,6 +9,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "type-system-interfaces",
       "title": "🧩 Type System & Interfaces",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>interface</code> відрізняється від <code>type</code> у TypeScript, і коли це реально має значення?",
+          "answer": "Обидва здебільшого взаємозамінні для опису форми об'єкта, але <code>interface</code> підтримує declaration merging (повторне оголошення доповнює попереднє) і краще підходить для публічних API бібліотек, де споживачі можуть розширювати тип. <code>type</code> може описувати union/intersection/mapped types, чого <code>interface</code> не вміє. На практиці різниця стає важливою в бібліотечному коді, де потрібне розширення типів ззовні."
+        },
+        {
+          "question": "Що таке structural typing в TypeScript, і чим це принципово відрізняється від nominal typing (наприклад, у Java)?",
+          "answer": "TypeScript порівнює типи за <strong>формою</strong> (набором полів і їхніх типів), а не за іменем оголошення — два різні інтерфейси з однаковими полями взаємозамінні. У nominal typing два класи з ідентичною структурою, але різними іменами, несумісні без явного успадкування. Це дає TypeScript гнучкість, але й ризик випадкової сумісності типів, які концептуально не мають бути взаємозамінними."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -64,6 +74,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "functions-closures-scope",
       "title": "🔧 Functions, Closures & Scope",
+      interviewQuestions: [
+        {
+          "question": "Поясни, як замикання (closure) дозволяють реалізувати приватний стан у JavaScript без класів.",
+          "answer": "Функція, оголошена всередині іншої функції, зберігає доступ до змінних зовнішньої функції навіть після її завершення (лексичне середовище не звільняється, доки на нього є посилання). Це дозволяє створити «приватну» змінну, доступну лише через повернуті функції-геттери/сеттери — сама змінна не досяжна ззовні напряму, класична реалізація модульного патерну до появи <code>class</code> з приватними полями."
+        },
+        {
+          "question": "Яка класична помилка з <code>var</code> у циклі й замиканнях, і чому <code>let</code> її вирішує без додаткового коду?",
+          "answer": "<code>var</code> має функціональну область видимості — всі ітерації циклу ділять одну й ту саму змінну, тому асинхронні колбеки (наприклад, у <code>setTimeout</code>) бачать її фінальне значення після завершення циклу, а не значення на момент своєї ітерації. <code>let</code> створює нову прив'язку змінної на кожну ітерацію блоку, тому кожне замикання захоплює власну копію."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -128,6 +148,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "this-binding-callapplybind",
       "title": "🎯 This Binding & call/apply/bind",
+      interviewQuestions: [
+        {
+          "question": "Чим стрілкові функції відрізняються від звичайних з точки зору <code>this</code>, і чому це важливо для React/Angular-обробників подій?",
+          "answer": "Звичайна функція отримує <code>this</code> динамічно, залежно від того, <em>як</em> її викликали (метод об'єкта, callback, і т.д.) — тому переданий як callback метод втрачає контекст. Стрілкова функція не має власного <code>this</code> — вона бере його лексично з оточення, де була оголошена, тому клас-методи, оголошені як стрілкові властивості, безпечно передавати як обробники подій без ручного <code>.bind()</code>."
+        },
+        {
+          "question": "У чому різниця між <code>call</code>, <code>apply</code> і <code>bind</code>?",
+          "answer": "Усі три явно задають <code>this</code> для виклику функції. <code>call(thisArg, arg1, arg2)</code> викликає функцію одразу з аргументами через кому; <code>apply(thisArg, [args])</code> — те саме, але аргументи масивом; <code>bind(thisArg)</code> не викликає функцію одразу, а повертає <strong>нову</strong> функцію з назавжди зафіксованим <code>this</code>, яку можна викликати пізніше."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -156,6 +186,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "async-promises-event-loop",
       "title": "⚡ Async, Promises & Event Loop",
+      interviewQuestions: [
+        {
+          "question": "Поясни різницю між microtask queue і macrotask queue, і чому проміси завжди виконуються раніше за <code>setTimeout(fn, 0)</code>.",
+          "answer": "Після кожної macrotask (наприклад, обробки таймера чи події) event loop повністю спустошує microtask queue (проміси, <code>queueMicrotask</code>), перш ніж перейти до наступної macrotask (черга таймерів, I/O). Тому навіть <code>setTimeout(fn, 0)</code>, запланований раніше за <code>Promise.resolve().then(fn2)</code>, виконається пізніше — мікротаски завжди мають пріоритет над наступною макротаскою."
+        },
+        {
+          "question": "Чим <code>async/await</code> відрізняється від ланцюжка <code>.then()</code> лише синтаксично, чи є семантичні відмінності?",
+          "answer": "Синтаксично <code>async/await</code> — це цукор над промісами (транспілюється у стан-машину на generator'ах або еквівалент), семантика виконання та сама. Практична відмінність — обробка помилок: <code>try/catch</code> навколо <code>await</code> природно ловить і синхронні, і асинхронні помилки в одному місці, тоді як з <code>.then()</code> потрібен окремий <code>.catch()</code>, і легше пропустити обробку помилки в середині ланцюжка."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -193,6 +233,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "prototypes-classes",
       "title": "🏛️ Prototypes & Classes",
+      interviewQuestions: [
+        {
+          "question": "Що таке прототипний ланцюжок, і чим <code>class</code> у JS відрізняється від класів у класичних ООП-мовах?",
+          "answer": "Кожен об'єкт має внутрішнє посилання <code>[[Prototype]]</code> на інший об'єкт; при зверненні до властивості, якої немає на самому об'єкті, JS шукає її вгору по ланцюжку прототипів. <code>class</code> у JS — синтаксичний цукор над цим самим прототипним механізмом (не окрема система типів, як у Java) — <code>class Dog extends Animal</code> під капотом все одно налаштовує <code>Dog.prototype.__proto__ = Animal.prototype</code>."
+        },
+        {
+          "question": "Чому <code>Object.create(null)</code> іноді використовують замість <code>{}</code> для об'єктів-словників?",
+          "answer": "<code>{}</code> успадковує <code>Object.prototype</code> з методами на кшталт <code>toString</code>, <code>hasOwnProperty</code>, <code>constructor</code> — якщо об'єкт використовується як довільний словник із ключами від користувача, ключ на кшталт <code>\"toString\"</code> може конфліктувати зі спадкованим методом. <code>Object.create(null)</code> створює об'єкт без прототипу взагалі — чистий словник без ризику таких колізій."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -239,6 +289,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "modules-esm-vs-cjs",
       "title": "📦 Modules (ESM vs CJS)",
+      interviewQuestions: [
+        {
+          "question": "Чим ESM (<code>import</code>/<code>export</code>) відрізняється від CommonJS (<code>require</code>) на рівні виконання, а не лише синтаксису?",
+          "answer": "ESM-імпорти статично аналізуються <em>до</em> виконання коду (це дозволяє tree-shaking — бандлер бачить, що реально використовується) і є асинхронними за специфікацією. CommonJS <code>require</code> — синхронний виклик функції під час виконання, тому граф залежностей неможливо повністю визначити статично, і tree-shaking для CJS-модулів значно обмеженіший."
+        },
+        {
+          "question": "Що таке циклічна залежність між модулями, і чим вона по-різному поводиться в ESM і CJS?",
+          "answer": "У CJS циклічна залежність повертає <strong>частково заповнений</strong> об'єкт module.exports на момент циклу (модуль, що імпортує, отримує лише те, що вже було експортовано до циклічного require). У ESM завдяки live bindings (посилання на змінну, а не копія значення) циклічні залежності часто працюють коректніше — значення «доганяє» реальне після повного виконання обох модулів, за умови, що воно не використовується одразу під час ініціалізації."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -294,6 +354,12 @@ export const javascriptContent: TopicContent = {
     {
       "id": "generics-typescript-expanded",
       "title": "🔬 Generics (TypeScript) — EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Навіщо потрібні generics, якщо можна просто типізувати параметр як <code>any</code> чи <code>unknown</code>?",
+          "answer": "<code>any</code> вимикає перевірку типів взагалі — компілятор нічого не гарантує про зв'язок між вхідним і вихідним значенням. Generic (<code>function identity&lt;T&gt;(x: T): T</code>) зберігає цей зв'язок: TypeScript знає, що результат — той самий тип, що й вхід, і виявить помилку, якщо код спробує використати результат неправильно. <code>unknown</code> безпечніший за <code>any</code>, але вимагає звуження типу перед використанням і не зберігає зв'язок між входом/виходом функції."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -349,6 +415,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "utility-types-typescript-expanded",
       "title": "🛠️ Utility Types (TypeScript) — EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>Partial&lt;T&gt;</code> відрізняється від <code>Required&lt;T&gt;</code>, і для якого типового сценарію кожен із них?",
+          "answer": "<code>Partial&lt;T&gt;</code> робить усі поля типу необов'язковими — типовий кейс: об'єкт із даними для часткового оновлення (PATCH-запит, форма редагування, де не всі поля змінюються). <code>Required&lt;T&gt;</code> — навпаки, робить усі поля обов'язковими, навіть якщо в оригінальному типі вони були опціональними — корисно, коли потрібно гарантувати, що об'єкт повністю заповнений перед відправкою (наприклад, після валідації форми)."
+        },
+        {
+          "question": "Як побудований <code>Pick&lt;T, K&gt;</code> «під капотом» через mapped types?",
+          "answer": "<code>Pick&lt;T, K extends keyof T&gt;</code> реалізований приблизно як <code>{ [P in K]: T[P] }</code> — mapped type, що ітерується по union-типу ключів <code>K</code> і для кожного бере відповідний тип поля з <code>T</code>. Розуміння цього патерну дозволяє писати власні utility types (наприклад, <code>Nullable&lt;T&gt;</code> чи <code>DeepPartial&lt;T&gt;</code>) замість покладання лише на вбудовані."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -404,6 +480,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "error-handling-trycatchfinally-custom-errors",
       "title": "⚠️ Error Handling — try/catch/finally & Custom Errors",
+      interviewQuestions: [
+        {
+          "question": "Навіщо створювати власні класи помилок (<code>class ValidationError extends Error</code>) замість того, щоб завжди кидати звичайний <code>Error</code>?",
+          "answer": "Кастомний клас помилки дозволяє розрізняти типи помилок через <code>instanceof</code> у <code>catch</code>-блоці й реагувати по-різному (наприклад, показати валідаційне повідомлення користувачу, але залогувати й повторити мережеву помилку). Без цього доводиться парсити текст повідомлення рядком, що крихко й ненадійно."
+        },
+        {
+          "question": "Чи виконується блок <code>finally</code>, якщо в <code>try</code> стався <code>return</code>, а в <code>catch</code> — ще один <code>return</code>?",
+          "answer": "Так, <code>finally</code> виконується завжди — навіть якщо <code>try</code> чи <code>catch</code> вже викликали <code>return</code>. Якщо <code>finally</code> сам містить <code>return</code>, він <strong>перекриє</strong> будь-яке значення, повернуте з <code>try</code>/<code>catch</code> — тонкий і небезпечний edge case, тому <code>return</code> у <code>finally</code> вважається антипатерном."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -450,6 +536,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "iterators-generators-yield-async-generators",
       "title": "🔄 Iterators & Generators — yield & Async Generators",
+      interviewQuestions: [
+        {
+          "question": "Що таке ітераційний протокол (<code>Symbol.iterator</code>), і як він дозволяє власним об'єктам працювати з <code>for...of</code>?",
+          "answer": "Об'єкт вважається ітерованим, якщо має метод <code>[Symbol.iterator]</code>, що повертає ітератор — об'єкт із методом <code>next()</code>, який на кожен виклик повертає <code>{ value, done }</code>. Реалізувавши цей метод на власному класі (наприклад, кастомній колекції), можна використовувати <code>for...of</code>, spread-оператор і деструктуризацію так само природно, як із масивами."
+        },
+        {
+          "question": "Чим генератор (<code>function*</code>) простіший за ручну реалізацію ітератора через <code>Symbol.iterator</code>?",
+          "answer": "Генератор автоматично реалізує весь протокол ітератора — виклик <code>yield</code> призупиняє виконання й повертає значення, а стан функції (локальні змінні, позиція виконання) зберігається між викликами <code>next()</code> без ручного відстеження прапорців чи індексів, які довелось би писати вручну при реалізації <code>next()</code> напряму."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -487,6 +583,12 @@ export const javascriptContent: TopicContent = {
     {
       "id": "destructuring-array-object-patterns",
       "title": "📦 Destructuring — Array & Object Patterns",
+      interviewQuestions: [
+        {
+          "question": "Як деструктуризація з дефолтними значеннями допомагає уникнути перевірок <code>undefined</code> для параметрів функції?",
+          "answer": "<code>function fn({ limit = 10, offset = 0 } = {})</code> одразу задає значення за замовчуванням для кожного поля об'єкта-параметра і для самого об'єкта (якщо функцію викликали взагалі без аргументів) — це замінює кілька рядків ручних перевірок <code>if (options.limit === undefined) ...</code> одним декларативним виразом у сигнатурі функції."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -524,6 +626,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "design-patterns-observer-factory-singleton-proxy",
       "title": "🏗️ Design Patterns — Observer, Factory, Singleton, Proxy",
+      interviewQuestions: [
+        {
+          "question": "Наведи приклад, де JS-екосистема сама використовує патерн Observer, навіть якщо розробник не пише його вручну.",
+          "answer": "DOM Events (<code>addEventListener</code>) — класичний Observer: слухачі підписуються на подію, диспетчер (елемент) сповіщає всіх підписників при її виникненні, не знаючи наперед, скільки їх і хто вони. RxJS Observable — той самий патерн, формалізований у бібліотеку з операторами для комбінування й трансформації потоків подій."
+        },
+        {
+          "question": "Чому Singleton вважається антипатерном у сучасному фронтенд-коді, попри свою простоту?",
+          "answer": "Singleton створює приховану глобальну залежність, яку важко замінити в тестах (мокнути) чи ізолювати між кількома незалежними інстансами застосунку (наприклад, у SSR, де кожен запит має отримати власний стан, а не ділити один глобальний об'єкт між усіма користувачами). Явна ін'єкція залежності (через DI-контейнер чи просто параметр) дає той самий «єдиний екземпляр там, де треба», але без прихованого глобального стану."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -570,6 +682,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "built-in-objects-map-set-array-object-methods",
       "title": "⚙️ Built-in Objects — Map, Set, Array, Object Methods",
+      interviewQuestions: [
+        {
+          "question": "Коли варто використовувати <code>Map</code> замість звичайного об'єкта <code>{}</code> як словник?",
+          "answer": "<code>Map</code> дозволяє використовувати ключі будь-якого типу (не лише рядки/символи, як в об'єкта — можна об'єкт чи функцію як ключ), зберігає порядок вставки гарантовано, має властивість <code>.size</code> без ручного підрахунку, і не має ризику колізії з успадкованими властивостями прототипу (<code>toString</code>, <code>constructor</code>), на відміну від <code>{}</code>."
+        },
+        {
+          "question": "Чим <code>Set</code> корисний для дедуплікації масиву, і чи зберігає він порядок елементів?",
+          "answer": "<code>[...new Set(array)]</code> — найкоротший спосіб отримати унікальні значення масиву, бо <code>Set</code> за визначенням не допускає дублікатів (порівняння через SameValueZero, схоже на <code>===</code>, але <code>NaN</code> вважається рівним <code>NaN</code>). Порядок ітерації зберігається — це порядок вставки, тобто перше входження кожного унікального значення."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -616,6 +738,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "browser-apis-fetch-abortcontroller-intersectionobserver",
       "title": "🌐 Browser APIs — Fetch, AbortController, IntersectionObserver",
+      interviewQuestions: [
+        {
+          "question": "Навіщо потрібен <code>AbortController</code> при роботі з <code>fetch</code>, і яку конкретну проблему він вирішує в React/Angular-компонентах?",
+          "answer": "Без скасування запит, ініційований у компоненті, що розмонтувався (наприклад, користувач швидко перейшов на іншу сторінку), все одно завершується і намагається оновити стан вже неіснуючого компонента — попередження в консолі або витік пам'яті. <code>AbortController.signal</code>, переданий у <code>fetch</code>, дозволяє викликати <code>controller.abort()</code> у cleanup-функції ефекту й коректно скасувати незавершений запит."
+        },
+        {
+          "question": "Чим <code>IntersectionObserver</code> кращий за ручне відстеження скролу (<code>scroll</code>-подія + обчислення <code>getBoundingClientRect</code>) для lazy-loading чи infinite scroll?",
+          "answer": "<code>IntersectionObserver</code> асинхронний і не блокує головний потік — браузер сам ефективно обчислює перетин елемента з viewport, замість того щоб JS-код синхронно рахував геометрію на кожен <code>scroll</code>-івент (який може спрацьовувати десятки разів за секунду й змушувати layout thrashing при читанні <code>getBoundingClientRect</code>)."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -653,6 +785,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "testing-jest-vitest-describetestexpect",
       "title": "✅ Testing — Jest, Vitest, describe/test/expect",
+      interviewQuestions: [
+        {
+          "question": "Чим Vitest відрізняється від Jest настільки, що багато нових проєктів обирають саме його?",
+          "answer": "Vitest побудований на тому ж рушії, що й Vite (esbuild/Rollup), тому ділить конфігурацію трансформації коду з основним білдом застосунку — не потрібен окремий babel/ts-jest конфіг для тестів. Запуск тестів суттєво швидший завдяки ESM-нативному підходу й smart watch-режиму, що перезапускає лише тести, залежні від зміненого файлу."
+        },
+        {
+          "question": "Чим мокання (<code>vi.mock</code>/<code>jest.mock</code>) модуля відрізняється від мокання окремої функції через spy, і коли що застосовувати?",
+          "answer": "Мок модуля підміняє <strong>увесь</strong> імпортований модуль (усі його експорти) — корисно, коли тестований код звертається до зовнішньої залежності (API-клієнт, файлова система), яку в юніт-тесті не можна викликати по-справжньому. Spy на окремій функції (<code>vi.spyOn</code>) підміняє чи відстежує виклики конкретного методу, зберігаючи решту модуля реальною — точніший інструмент, коли потрібно замокати лише одну поведінку, не чіпаючи інші."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -690,6 +832,12 @@ export const javascriptContent: TopicContent = {
     {
       "id": "performance-v8-pipeline-jit-hidden-classes-devtools",
       "title": "⚡ Performance — V8 Pipeline, JIT, Hidden Classes, DevTools",
+      interviewQuestions: [
+        {
+          "question": "Що таке hidden classes у V8, і чому непослідовне створення об'єктів однієї «форми» шкодить продуктивності?",
+          "answer": "V8 оптимізує доступ до властивостей об'єктів, групуючи об'єкти з однаковим набором і порядком властивостей у «прихований клас» — доступ до властивості такого об'єкта компілюється в швидкий офсет-доступ, схожий на статично типізовані мови. Якщо однотипні об'єкти створюються з різним порядком полів або поля додаються динамічно після створення, V8 не може перевикористати той самий hidden class, і оптимізація деградує до повільнішого dictionary-mode доступу."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -736,6 +884,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "heap-memory-management",
       "title": "🧠 Heap та управління пам'яттю",
+      interviewQuestions: [
+        {
+          "question": "Як влаштований garbage collector у V8 (generational GC), і чому «молоді» об'єкти збираються частіше за «старі»?",
+          "answer": "V8 ділить heap на young generation (нові, здебільшого короткоживучі об'єкти) і old generation. Young generation збирається часто швидким scavenger-алгоритмом, бо за статистикою більшість об'єктів помирають молодими (гіпотеза генераційності). Об'єкти, що пережили кілька циклів збирання в young generation, переносяться (tenuring) в old generation, яка збирається рідше, повільнішим mark-sweep-compact алгоритмом, бо там очікується менше сміття."
+        },
+        {
+          "question": "Наведи типовий приклад витоку пам'яті в SPA, пов'язаний із замиканнями чи глобальними колекціями.",
+          "answer": "Кешування DOM-елементів чи даних компонента в глобальному <code>Map</code>/масиві без видалення запису при знищенні компонента — посилання в глобальній колекції тримає весь об'єкт (і все, на що він посилається через замикання) живим у пам'яті навіть після того, як компонент видалено з DOM і логічно мав би бути зібраний garbage collector'ом."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -887,6 +1045,12 @@ export const javascriptContent: TopicContent = {
     {
       "id": "symbols-custom-iterables-well-known-symbols",
       "title": "🔑 Symbols & Custom Iterables — Well-Known Symbols",
+      interviewQuestions: [
+        {
+          "question": "Навіщо потрібен тип <code>Symbol</code>, якщо для унікальних ключів можна використовувати рядки?",
+          "answer": "<code>Symbol()</code> завжди створює <strong>гарантовано унікальне</strong> значення, навіть якщо опис (перший аргумент) збігається з іншим символом — на відміну від рядка, де колізія ключів (<code>\"id\"</code> від двох різних бібліотек) можлива й непередбачувана. Symbols також не перелічуються в звичайному <code>for...in</code>/<code>Object.keys</code>, що робить їх зручними для «прихованих» службових властивостей об'єкта, які не мають заважати серіалізації чи ітерації."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -915,6 +1079,12 @@ export const javascriptContent: TopicContent = {
     {
       "id": "regular-expressions-flags-lookahead-named-groups-matchall",
       "title": "🔍 Regular Expressions — Flags, Lookahead, Named Groups, matchAll",
+      interviewQuestions: [
+        {
+          "question": "Чим named capturing groups (<code>(?&lt;year&gt;\\d{4})</code>) кращі за звичайні нумеровані групи для читабельності коду?",
+          "answer": "Іменована група дозволяє звертатись до результату через <code>match.groups.year</code> замість <code>match[1]</code> — код одразу самодокументований і не ламається, якщо порядок груп у регулярному виразі згодом зміниться (нумеровані індекси довелось би перераховувати вручну)."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -952,6 +1122,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "advanced-async-patterns-debounce-throttle-taskqueue-promisewithresolvers",
       "title": "🚀 Advanced Async Patterns — debounce, throttle, TaskQueue, Promise.withResolvers",
+      interviewQuestions: [
+        {
+          "question": "Чим debounce відрізняється від throttle, і який типовий UI-кейс для кожного?",
+          "answer": "Debounce відкладає виконання функції, доки не пройде вказана пауза без нових викликів — скидає таймер на кожен новий виклик (типовий кейс — пошуковий інпут: запит відправляється лише коли користувач перестав друкувати). Throttle гарантує виконання не частіше, ніж раз на заданий інтервал, незалежно від кількості викликів (типовий кейс — обробник <code>scroll</code>/<code>resize</code>, де потрібні регулярні, але не надто часті оновлення)."
+        },
+        {
+          "question": "Що дає <code>Promise.withResolvers()</code> порівняно зі старим патерном ручного створення «зовнішнього» проміса?",
+          "answer": "До цього методу, щоб отримати <code>resolve</code>/<code>reject</code> поза виконавчою функцією проміса, доводилось створювати проміжні змінні й присвоювати їх усередині колбека конструктора (<code>new Promise((res, rej) => { resolve = res; reject = rej })</code>) — незручно й легко переплутати. <code>Promise.withResolvers()</code> одразу повертає <code>{ promise, resolve, reject }</code> одним викликом, без обхідного патерну."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -989,6 +1169,16 @@ export const javascriptContent: TopicContent = {
     {
       "id": "korysni-posylannya",
       "title": "🔗 Корисні посилання",
+      interviewQuestions: [
+        {
+          "question": "Як ти особисто слідкуєш за змінами в мові/специфікації JS та TypeScript, щоб не відстати від актуальних практик?",
+          "answer": "Регулярний перегляд TC39 proposals (які фічі на якій стадії — stage 3/4 варто вже знати), release notes TypeScript і V8 blog для змін у рушії, плюс практика перевіряти незнайомі API на caniuse/MDN перед використанням у продакшн-коді, а не покладатись на застарілі знання."
+        },
+        {
+          "question": "Наскільки важливо для сеньйора вміти читати офіційну специфікацію (ECMA-262) чи документацію рушія, а не лише статті-пояснення?",
+          "answer": "Статті часто спрощують чи застарівають швидше за офіційні джерела; специфікація й документація рушія (наприклад, V8 blog) — першоджерело істини для тонких деталей поведінки (порядок виконання мікротасок, edge cases coercion), які саме такі деталі часто перевіряють на співбесідах сеньйорського рівня."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",

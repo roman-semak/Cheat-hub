@@ -143,6 +143,7 @@ export interface TopicSection {
   title: string
   emoji?: string
   blocks: ContentBlock[]
+  interviewQuestions?: FlashcardItem[] // senior-frontend Q&A shown in the end-of-section popup
 }
 
 export interface TopicContent {

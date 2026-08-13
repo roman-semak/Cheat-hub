@@ -9,6 +9,7 @@ import { useUserStore, cycleReadState } from '@/lib/userStore'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
 import { ContentBlocks } from './ContentBlocks'
+import { InterviewQuestionsBlock } from './InterviewQuestionsBlock'
 
 export function ProseTopicView({
   content,
@@ -77,6 +78,12 @@ export function ProseTopicView({
             <div className="mx-auto max-w-3xl">
               <h2 className="mb-4 text-2xl font-bold text-slate-100">{section.title}</h2>
               <ContentBlocks blocks={section.blocks} />
+              {section.interviewQuestions && section.interviewQuestions.length > 0 && (
+                <InterviewQuestionsBlock
+                  sectionTitle={section.title}
+                  questions={section.interviewQuestions}
+                />
+              )}
               <div id={`${section.id}-end`} />
             </div>
           </section>

@@ -9,6 +9,16 @@ export const angularContent: TopicContent = {
     {
       "id": "апдейти-angular",
       "title": "🚀 Апдейти: v15 → v22",
+      interviewQuestions: [
+        {
+          "question": "Який головний архітектурний вектор Angular від v15 до v22, і чому це важливо розуміти для оцінки legacy-проєкту на співбесіді?",
+          "answer": "Вектор — від NgModule + Zone.js + RxJS-центричної моделі до standalone-компонентів + Signals + zoneless. Розуміння цього дозволяє швидко оцінити, наскільки проєкт «застарілий»: наявність NgModule-архітектури й Zone.js сигналізує про технічний борг, а Signals/standalone/zoneless — про сучасний стек."
+        },
+        {
+          "question": "Чому Angular рекомендує оновлюватись по одному major-релізу за раз через <code>ng update</code>, а не стрибати одразу на кілька версій?",
+          "answer": "Кожен major може містити breaking changes і власні codemod-схематики, розраховані саме на перехід з попередньої версії; стрибок через кілька версій одразу веде до конфліктів схематик і незрозумілих помилок компіляції. Покроковий апдейт дає змогу на кожному кроці прогнати тести й переконатись, що застосунок стабільний, перш ніж рухатись далі."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -98,6 +108,12 @@ export const angularContent: TopicContent = {
     {
       "id": "що-таке-angular",
       "title": "🅰️ Що таке Angular?",
+      interviewQuestions: [
+        {
+          "question": "Чим Angular принципово відрізняється від React як «платформа», а не бібліотека?",
+          "answer": "Angular постачає власний роутер, HTTP-клієнт, форми, DI-контейнер, CLI зі збіркою та тестовий фреймворк як єдину узгоджену систему — команді не потрібно самостійно обирати й інтегрувати ці частини. Це компроміс: менше рішень для команди, але й менше гнучкості й вищий поріг входу через обсяг вбудованих концепцій (DI, модулі/standalone, RxJS)."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -117,6 +133,12 @@ export const angularContent: TopicContent = {
     {
       "id": "architecture-bootstrap",
       "title": "🏗️ Architecture & Bootstrap",
+      interviewQuestions: [
+        {
+          "question": "Чим bootstrap standalone-застосунку (<code>bootstrapApplication</code>) відрізняється від класичного <code>NgModule</code>-підходу (<code>bootstrapModule</code>)?",
+          "answer": "<code>bootstrapApplication</code> запускає застосунок напряму з кореневого standalone-компонента, а провайдери (роутер, HTTP, DI) реєструються функціями конфігурації (<code>provideRouter</code>, <code>provideHttpClient</code>) замість декларації в <code>NgModule.imports/providers</code>. Це прибирає цілий шар модульної системи й спрощує tree-shaking, бо залежності компонента видно напряму з його <code>imports</code>."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -154,6 +176,16 @@ export const angularContent: TopicContent = {
     {
       "id": "change-detection-expanded",
       "title": "🔄 Change Detection — EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Як працює Change Detection за замовчуванням (без Signals), і чому Zone.js історично був необхідний?",
+          "answer": "Angular обходить дерево компонентів «згори вниз» і перевіряє прив'язані значення на зміну після кожної потенційно-стан-змінюючої події. Zone.js «патчить» асинхронні API браузера (setTimeout, промайси, event listeners), щоб Angular <em>дізнавався</em>, коли така подія відбулась, і запускав перевірку — без Zone.js фреймворк не знав би, коли саме перевіряти дерево."
+        },
+        {
+          "question": "У чому різниця між стратегіями <code>Default</code> і <code>OnPush</code>, і чому <code>OnPush</code> став стандартом за замовчуванням у нових версіях?",
+          "answer": "<code>Default</code> перевіряє компонент на кожен цикл change detection незалежно від того, чи реально змінились його вхідні дані. <code>OnPush</code> пропускає перевірку компонента, доки не зміниться посилання на вхідний <code>@Input()</code>, не спрацює подія всередині компонента, чи не оновиться сигнал, яким він користується — це різко зменшує кількість непотрібних перевірок у великих деревах і стало базою для zoneless-моделі."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -191,6 +223,16 @@ export const angularContent: TopicContent = {
     {
       "id": "signals-computed-expanded",
       "title": "⚡ Signals & Computed — EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>signal()</code>/<code>computed()</code> у Angular принципово відрізняються від change detection на основі Zone.js?",
+          "answer": "Signals дають <strong>fine-grained</strong> реактивність: коли сигнал змінюється, Angular знає точно, які саме шаблони/обчислення залежать від нього, і оновлює лише їх — без потреби обходити все дерево компонентів чи патчити асинхронні API через Zone.js. Це фундамент для zoneless-режиму, де Zone.js взагалі не підключається."
+        },
+        {
+          "question": "Чим <code>computed()</code> відрізняється від звичайного getter-методу в компоненті з точки зору продуктивності?",
+          "answer": "<code>computed()</code> кешує (мемоізує) результат і перераховує його лише коли реально змінився один із сигналів-залежностей, на яких він побудований. Звичайний getter у шаблоні викликається на <em>кожен</em> цикл change detection незалежно від того, чи змінились дані — це поширена причина продуктивних проблем у старих Angular-шаблонах, де важкі обчислення випадково винесені в getter."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -259,6 +301,16 @@ export const angularContent: TopicContent = {
     {
       "id": "dependency-injection-expanded",
       "title": "💉 Dependency Injection — EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Навіщо потрібна ієрархічна система DI в Angular, а не один глобальний контейнер, як у деяких інших фреймворках?",
+          "answer": "Ієрархія (root → module → component) дозволяє мати різні інстанси одного сервісу на різних рівнях дерева — наприклад, кожен екземпляр компонента-картки може отримати власний ізольований стан-сервіс, тоді як автентифікація залишається одним синглтоном на весь застосунок. Це дає контроль над часом життя й ізоляцією стану без ручного керування синглтонами."
+        },
+        {
+          "question": "У чому різниця між функцією <code>inject()</code> та ін'єкцією через конструктор?",
+          "answer": "<code>inject()</code> можна викликати в будь-якому injection context — не лише в конструкторі класу, а й у функціональних guard'ах, resolver'ах, фабричних провайдерах чи навіть у тілі функціонального компонента — що усуває потребу обгортати логіку в клас лише заради доступу до DI. Ін'єкція через конструктор обмежена класами й вимагає передавати залежність через увесь ланцюжок викликів вручну, якщо вона потрібна не в самому класі."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -300,6 +352,16 @@ export const angularContent: TopicContent = {
     {
       "id": "rxjs-core-operators-expanded",
       "title": "🌊 RxJS — Core Operators EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>switchMap</code> відрізняється від <code>mergeMap</code>/<code>concatMap</code>, і чому вибір неправильного оператора — типова причина race condition у продакшні?",
+          "answer": "<code>switchMap</code> скасовує попередній внутрішній потік при появі нового значення з джерела — ідеально для пошуку-по-вводу, де потрібна лише остання відповідь. <code>mergeMap</code> запускає всі внутрішні потоки паралельно без скасування, <code>concatMap</code> — послідовно, чекаючи завершення попереднього. Використання <code>mergeMap</code> замість <code>switchMap</code> для запитів, що залежать від останнього вводу користувача, може призвести до того, що застаріла відповідь прийде <em>після</em> свіжої й перезапише її."
+        },
+        {
+          "question": "Навіщо потрібен оператор <code>takeUntilDestroyed()</code>, і яку проблему він вирішує порівняно з ручним <code>ngOnDestroy</code> + <code>Subject</code>?",
+          "answer": "Без явного ansubscribe підписка на Observable, що живе довше за компонент (HTTP-полінг, WebSocket, RxJS-стор), продовжує викликати колбек і після знищення компонента — витік пам'яті й спроби оновити знищений стан. <code>takeUntilDestroyed()</code> автоматично прив'язується до <code>DestroyRef</code> поточного injection context і відписується сам, без boilerplate'у з <code>Subject</code> + <code>ngOnDestroy</code>."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -359,6 +421,16 @@ export const angularContent: TopicContent = {
     {
       "id": "routing-lazy-loading-guards-expanded",
       "title": "🗺️ Routing — Lazy Loading & Guards EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Чому lazy loading маршрутів (<code>loadComponent</code>/<code>loadChildren</code>) критично важливий для великих Angular-застосунків?",
+          "answer": "Без lazy loading увесь код усіх фіч потрапляє в один початковий бандл, який завантажується ще до того, як користувач взаємодіє з застосунком — це напряму збільшує Time to Interactive. Lazy loading ділить код по маршрутах на окремі чанки, які довантажуються лише при переході користувача на конкретний розділ."
+        },
+        {
+          "question": "Чим функціональні guard'и (<code>CanActivateFn</code>) відрізняються від класових guard-сервісів, які існували раніше?",
+          "answer": "Функціональний guard — це проста функція, яка викликає <code>inject()</code> для потрібних залежностей усередині себе, без необхідності оголошувати окремий injectable-клас, що реалізує інтерфейс <code>CanActivate</code>. Це зменшує boilerplate і узгоджується із загальним рухом Angular до функціонального стилю (як і функціональні interceptor'и)."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -432,6 +504,12 @@ export const angularContent: TopicContent = {
     {
       "id": "http-functional-interceptors-expanded",
       "title": "🌐 HTTP & Functional Interceptors EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Навіщо потрібні HTTP-interceptor'и, і яку типову задачу вони вирішують у продакшн-застосунках?",
+          "answer": "Interceptor перехоплює кожен вихідний HTTP-запит/вхідну відповідь централізовано — типове застосування: автоматичне додавання Authorization-заголовка, глобальна обробка 401 (редирект на логін), логування чи ретраї — без потреби дублювати цю логіку в кожному сервісі, що робить запити."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -469,6 +547,12 @@ export const angularContent: TopicContent = {
     {
       "id": "api-communication-patterns",
       "title": "🔌 API Communication Patterns",
+      interviewQuestions: [
+        {
+          "question": "Які підходи до роботи з асинхронними даними в Angular-компоненті ти порівняв би — ручна підписка з <code>ngOnDestroy</code>, <code>async</code> pipe чи Signals-based resource?",
+          "answer": "Ручна підписка вимагає власноручного ansubscribe (ризик витоку пам'яті). <code>async</code> pipe у шаблоні підписується й автоматично відписується разом із життєвим циклом в'юшки — безпечніше й менше коду, але дані лишаються у форматі Observable. Signals-based <code>resource()</code>/сигнальний стор дає той самий безпечний lifecycle, але вже в моделі fine-grained реактивності, сумісній із zoneless-режимом без RxJS-обгортки."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -549,6 +633,16 @@ export const angularContent: TopicContent = {
     {
       "id": "reactive-forms-advanced-expanded",
       "title": "📝 Forms — Reactive, Template-driven & Custom EXPANDED",
+      interviewQuestions: [
+        {
+          "question": "Чим Reactive Forms відрізняються від Template-driven Forms з точки зору тестованості й контролю?",
+          "answer": "Reactive Forms будують модель форми (<code>FormGroup</code>/<code>FormControl</code>) явно в коді компонента — це дає синхронний доступ до стану/валідності, легке unit-тестування без рендеру шаблону, і предбачувану, іммутабельну модель даних. Template-driven Forms описують структуру в HTML через директиви (<code>ngModel</code>) — простіше для маленьких форм, але важче тестувати ізольовано від DOM і складніше для динамічних/умовних полів."
+        },
+        {
+          "question": "Як створити кастомний валідатор, що залежить від значень кількох полів одночасно (крос-польова валідація)?",
+          "answer": "Такий валідатор навішується не на окремий <code>FormControl</code>, а на батьківський <code>FormGroup</code> цілком — функція отримує весь груповий об'єкт, читає значення потрібних контролів через <code>group.get('field').value</code> і повертає об'єкт помилки або <code>null</code>. Типовий приклад — перевірка «пароль == підтвердження пароля», яку неможливо коректно виразити валідатором на рівні одного поля."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -631,6 +725,12 @@ export const angularContent: TopicContent = {
     {
       "id": "pipes-transform-data-in-templates",
       "title": "🔧 Pipes — Transform Data in Templates",
+      interviewQuestions: [
+        {
+          "question": "У чому різниця між pure і impure pipe, і чому impure pipe може створити проблему з продуктивністю?",
+          "answer": "Pure pipe (за замовчуванням) перераховується лише коли змінюється саме вхідне значення (за посиланням) — Angular кешує результат. Impure pipe (<code>pure: false</code>) виконується <strong>на кожен цикл change detection</strong> незалежно від того, чи змінились дані — корисно для нестабільних джерел (наприклад, живий таймер), але випадкове використання impure pipe для важких трансформацій може суттєво деградувати продуктивність."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -695,6 +795,12 @@ export const angularContent: TopicContent = {
     {
       "id": "translations-i18n-багатомовність",
       "title": "🌐 Translations / i18n — Багатомовність",
+      interviewQuestions: [
+        {
+          "question": "Які основні підходи до i18n в Angular-застосунку ти знаєш, і в чому їхній трейд-офф?",
+          "answer": "Вбудований Angular i18n компілює окрему збірку на кожну мову під час білду — максимальна продуктивність (немає рантайм-накладних витрат на переклад), але потребує окремого деплою на кожну локаль і перебілду для оновлення перекладів. Рантайм-бібліотеки (ngx-translate й подібні) дозволяють перемикати мову без перезавантаження сторінки й підвантажувати переклади динамічно, ціною невеликого рантайм-оверхеду й ручного контролю пропущених ключів."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -765,6 +871,12 @@ export const angularContent: TopicContent = {
     {
       "id": "lifecycle-hooks-execution-order",
       "title": "🔁 Lifecycle Hooks — Execution Order",
+      interviewQuestions: [
+        {
+          "question": "У якому порядку викликаються <code>ngOnChanges</code>, <code>ngOnInit</code> і <code>ngAfterViewInit</code>, і чому саме в такому?",
+          "answer": "<code>ngOnChanges</code> викликається першим (і перед кожним наступним оновленням вхідних <code>@Input()</code>) — Angular ще до ініціалізації повідомляє про початкові значення. <code>ngOnInit</code> — одразу після першого <code>ngOnChanges</code>, коли компонент вже має свої вхідні дані й можна безпечно ініціалізувати логіку. <code>ngAfterViewInit</code> — лише після того, як дочірні в'юшки (включно з <code>@ViewChild</code>) повністю ініціалізовані, бо до цього моменту звернення до них дало б <code>undefined</code>."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -793,6 +905,12 @@ export const angularContent: TopicContent = {
     {
       "id": "content-projection-viewchild",
       "title": "🎭 Content Projection & ViewChild",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>&lt;ng-content&gt;</code> (content projection) відрізняється від передачі даних через звичайний <code>@Input()</code>?",
+          "answer": "<code>@Input()</code> передає <em>дані</em>, які компонент сам вирішує, як відрендерити. <code>&lt;ng-content&gt;</code> дозволяє батьківському компоненту передати <strong>готову розмітку/шаблон</strong> усередину дочірнього — сам дочірній компонент лише визначає, <em>де</em> цей контент з'явиться в його структурі, не контролюючи його вміст. Це аналог <code>children</code> у React."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -830,6 +948,12 @@ export const angularContent: TopicContent = {
     {
       "id": "performance-optimization-memory-leaks",
       "title": "⚡ Performance Optimization & Memory Leaks",
+      interviewQuestions: [
+        {
+          "question": "Які найпоширеніші причини витоків пам'яті в Angular-застосунках, окрім невідписаних RxJS-підписок?",
+          "answer": "Забуті слухачі подій, додані напряму через <code>addEventListener</code> без відповідного <code>removeEventListener</code> у <code>ngOnDestroy</code>; таймери (<code>setInterval</code>) без <code>clearInterval</code>; замикання, що тримають посилання на знищений компонент (наприклад, callback, переданий у зовнішню бібліотеку й ніколи не очищений)."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -867,6 +991,12 @@ export const angularContent: TopicContent = {
     {
       "id": "tree-shaking-bundle-optimization",
       "title": "📦 Tree-shaking & Bundle Optimization",
+      interviewQuestions: [
+        {
+          "question": "Чому standalone-компоненти покращують tree-shaking порівняно з NgModule-архітектурою?",
+          "answer": "У NgModule-моделі бандлер часто не міг гарантовано визначити, чи весь вміст модуля реально використовується, бо модуль імпортувався цілком навіть якщо компонент користувався лише частиною його декларацій. Standalone-компоненти явно перелічують власні залежності у власному масиві <code>imports</code>, тому бандлер точно бачить графік залежностей на рівні компонента, а не модуля, і ефективніше відкидає невикористаний код."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -895,6 +1025,12 @@ export const angularContent: TopicContent = {
     {
       "id": "web-workers",
       "title": "🧵 Web Workers — Offloading the Main Thread",
+      interviewQuestions: [
+        {
+          "question": "Коли варто винести обчислення в Web Worker в Angular-застосунку, і які обмеження це накладає?",
+          "answer": "Web Worker виправданий для важких, чисто обчислювальних задач (парсинг великих файлів, складна математика), які інакше заблокували б головний потік і зробили б UI «зависаючим». Обмеження — Worker не має доступу до DOM і Angular-контексту (DI, change detection), тому обмін даними відбувається лише через серіалізовані повідомлення (<code>postMessage</code>), а не пряме звернення до сервісів чи компонентів."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -923,6 +1059,12 @@ export const angularContent: TopicContent = {
     {
       "id": "debugging-browser-devtools",
       "title": "🐞 Debugging & Browser DevTools — Senior Workflow",
+      interviewQuestions: [
+        {
+          "question": "Які прийоми ти використовуєш для дебагу Change Detection-проблем у великому Angular-застосунку (наприклад, «щось перерендерюється занадто часто»)?",
+          "answer": "Angular DevTools (офіційне розширення) показує дерево компонентів із індикацією, які компоненти й скільки разів перевірялись за цикл change detection, плюс профайлер тривалості. Додатково — <code>ng.getComponent(domElement)</code> у консолі для інспекції інстансу компонента напряму з DOM, і тимчасове логування в <code>ngDoCheck</code> для підтвердження, чи компонент взагалі має бути <code>OnPush</code>."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -972,6 +1114,12 @@ export const angularContent: TopicContent = {
     {
       "id": "state-management-ngrx-signalstore-browser-apis",
       "title": "🗄️ State Management — NgRx, SignalStore, Browser APIs",
+      interviewQuestions: [
+        {
+          "question": "Коли варто підключати NgRx у проєкті, а коли Signals/SignalStore достатньо?",
+          "answer": "NgRx виправданий у великих командах/застосунках із багатьма джерелами асинхронних подій, потребою в time-travel debugging, строгій, передбачуваній схемі мутацій стану (unidirectional data flow через actions/reducers/effects). Для менших застосунків чи ізольованих фіч SignalStore/сигнали дають подібну реактивність зі значно меншим boilerplate і без окремої ментальної моделі actions/reducers."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -991,6 +1139,12 @@ export const angularContent: TopicContent = {
     {
       "id": "testing-unit-integration-e2e",
       "title": "🧪 Testing — Unit, Integration, E2E",
+      interviewQuestions: [
+        {
+          "question": "Чим unit-тест Angular-компонента з <code>TestBed</code> відрізняється від чистого unit-тесту функції/сервісу без Angular-контексту?",
+          "answer": "<code>TestBed</code> піднімає спрощений Angular-контекст (DI, change detection, шаблон) навколо компонента, дозволяючи протестувати взаємодію з шаблоном і lifecycle hooks — це, по суті, вже інтеграційний тест на рівні компонента. Тест чистого сервісу без DOM/шаблону — справжній ізольований unit-тест, швидший і простіший, тому логіку варто виносити в сервіси саме заради такого простішого тестування."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -1041,6 +1195,12 @@ export const angularContent: TopicContent = {
     {
       "id": "security-xss-csrf-audits",
       "title": "🔒 Security — XSS, CSRF, Audits",
+      interviewQuestions: [
+        {
+          "question": "Як Angular захищає від XSS за замовчуванням, і коли цей захист можна випадково обійти?",
+          "answer": "Angular автоматично санітизує значення, що потрапляють у DOM через інтерполяцію/байндинги, екрануючи потенційно небезпечний HTML. Захист обходиться, коли розробник свідомо використовує <code>[innerHTML]</code> з несанітизованим вводом користувача або явно викликає <code>bypassSecurityTrustHtml</code> — це знімає вбудований захист і перекладає відповідальність за санітизацію на розробника."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -1069,6 +1229,12 @@ export const angularContent: TopicContent = {
     {
       "id": "ssr-hydration-server-side-rendering-deep-dive",
       "title": "🌍 SSR & Hydration — Server-Side Rendering Deep-Dive",
+      interviewQuestions: [
+        {
+          "question": "Що таке hydration mismatch в Angular SSR, і чому він виникає?",
+          "answer": "Mismatch виникає, коли HTML, згенерований на сервері, не збігається зі структурою, яку клієнтський Angular очікує побудувати при гідратації — наприклад, через використання <code>Date.now()</code> чи <code>Math.random()</code> прямо в шаблоні (різне значення на сервері й клієнті), або доступ до <code>window</code> під час серверного рендеру. Non-destructive hydration (з v16) значно знизила вартість таких помилок, повторно використовуючи існуючий DOM замість повного перерендеру, але сама причина mismatch залишається помилкою в коді."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -1133,6 +1299,12 @@ export const angularContent: TopicContent = {
     {
       "id": "cicd-environments-deploy-pipeline",
       "title": "🚀 CI/CD & Environments — Deploy Pipeline",
+      interviewQuestions: [
+        {
+          "question": "Які кроки типового CI/CD pipeline для Angular-застосунку ти вважаєш обов'язковими перед деплоєм у прод?",
+          "answer": "Лінтинг і type-check, юніт-тести, білд у production-режимі (з AOT-компіляцією й tree-shaking), опційно e2e-тести на стейджингу, і перевірка розміру бандла (budget) — щоб випадкова важка залежність не «роздула» продакшн-збірку непомітно для команди."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -1179,6 +1351,12 @@ export const angularContent: TopicContent = {
     {
       "id": "linters-formatters-якість-і-стиль-коду",
       "title": "🔍 Linters & Formatters — якість і стиль коду",
+      interviewQuestions: [
+        {
+          "question": "Навіщо в команді потрібні єдині налаштування ESLint/Prettier для Angular-проєкту, а не «кожен пише як звик»?",
+          "answer": "Єдиний стиль знижує когнітивне навантаження при рев'ю (diff показує реальні зміни логіки, а не форматування) і ловить типові Angular-специфічні помилки (наприклад, порушення правил незалежних компонентів, забуті <code>OnPush</code>) ще на етапі редагування, а не в рантаймі чи на code review."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -1270,6 +1448,12 @@ export const angularContent: TopicContent = {
     {
       "id": "monorepo-nx-масштабування-кодової-бази",
       "title": "📦 Monorepo (Nx) — Масштабування кодової бази",
+      interviewQuestions: [
+        {
+          "question": "Яку проблему вирішує Nx-монорепозиторій порівняно з кількома окремими Angular-репозиторіями для різних команд?",
+          "answer": "Nx дає спільні бібліотеки коду (UI-kit, утиліти, типи) без публікації окремих npm-пакетів на кожну зміну, разом із інкрементальними білдами/тестами лише для змінених проєктів (affected-граф) — це різко скорочує час CI на великих кодових базах порівняно з тим, коли кожен репозиторій білдиться повністю незалежно."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -1325,6 +1509,12 @@ export const angularContent: TopicContent = {
     {
       "id": "microfrontends-незалежні-команди-та-деплої",
       "title": "🧩 Microfrontends — Незалежні команди та деплої",
+      interviewQuestions: [
+        {
+          "question": "Коли мікрофронтенди виправдані для Angular-організації, а коли це передчасна складність?",
+          "answer": "Мікрофронтенди виправдані, коли кілька великих, незалежних команд мають різні цикли релізів і потребують деплоїти свої частини UI без координації з іншими командами. Для одної команди чи невеликого застосунку це додає суттєву інфраструктурну складність (версіонування спільних залежностей, узгодження дизайн-системи, runtime-інтеграція) без реальної потреби в незалежному деплої."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
@@ -1371,6 +1561,12 @@ export const angularContent: TopicContent = {
     {
       "id": "refactoring-як-senior-лідить-процес",
       "title": "🛠️ Refactoring — Як Senior лідить процес",
+      interviewQuestions: [
+        {
+          "question": "Як сеньйор підходить до масштабного рефакторингу legacy Angular-коду (наприклад, міграція з NgModule на standalone) так, щоб не заблокувати команду на тижні?",
+          "answer": "Інкрементально: спершу автоматична схематика (<code>ng generate @angular/core:standalone</code>) там, де можливо, потім поступова міграція фіча за фічею з паралельною роботою старого й нового підходів (обидва співіснують у Angular), тести на кожному кроці як страховка, і чіткі проміжні контрольні точки замість одного гігантського PR, який неможливо якісно рев'юнути."
+        },
+      ],
       "blocks": [
         {
           "kind": "paragraph",
