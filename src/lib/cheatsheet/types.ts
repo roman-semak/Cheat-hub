@@ -160,6 +160,7 @@ export interface QuickRefEntry {
   term: string
   desc?: string // HTML string (dangerouslySetInnerHTML), may contain inline <b>/<code>
   inline?: boolean // true = term/desc on one line; stacked otherwise
+  chips?: string[] // small pill badges under the entry, e.g. call signature or timing
 }
 
 export interface QuickRefGroup {
@@ -168,6 +169,7 @@ export interface QuickRefGroup {
 }
 
 export interface QuickRefChipRow {
+  label?: string // small uppercase label above the chip row, e.g. "Map"
   chips: string[] // rendered as pill chips, may contain inline <b>/<code>
 }
 

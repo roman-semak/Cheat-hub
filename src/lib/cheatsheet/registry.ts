@@ -105,7 +105,7 @@ export const TOPICS: TopicMeta[] = [
     title: 'Шпаргалка',
     icon: '⚡',
     blurb:
-      'Компактний крос-тематичний quick-reference: React, TypeScript, JavaScript та Event Loop/RxJS на одному екрані.',
+      'Компактний крос-тематичний quick-reference: React, TypeScript, JavaScript, Event Loop/RxJS та Angular на одному екрані.',
     accent: 'pink',
     formats: ['extended'],
   },
