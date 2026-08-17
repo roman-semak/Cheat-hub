@@ -5,7 +5,7 @@ import { FlashcardsBlock } from './FlashcardsBlock'
 
 // Renders the block model used by prose topics. Most prose is preserved as
 // sanitized HTML (styled by .cheat-prose); code blocks get the interactive
-// CodeBlock treatment (collapsible + copy).
+// CodeBlock treatment (click to open in a popup + copy).
 export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
   return (
     <div className="cheat-prose">
@@ -18,7 +18,6 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
                 code={block.code}
                 language={block.language}
                 summary={block.caption ?? `Код (${block.language})`}
-                defaultOpen
               />
             )
           case 'paragraph':

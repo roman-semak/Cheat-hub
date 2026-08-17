@@ -73,7 +73,7 @@ export const TOPICS: TopicMeta[] = [
     icon: '⚙️',
     blurb: 'JavaScript і TypeScript для senior-рівня співбесід.',
     accent: 'amber',
-    formats: ['extended', 'cheatsheet', 'quiz'],
+    formats: ['extended', 'cheatsheet', 'links', 'quiz'],
   },
   {
     slug: 'git',
@@ -100,6 +100,15 @@ export const TOPICS: TopicMeta[] = [
     formats: ['extended'],
     badges: ['VS Code', 'Cursor', 'WebStorm'],
   },
+  {
+    slug: 'quickref',
+    title: 'Шпаргалка',
+    icon: '⚡',
+    blurb:
+      'Компактний крос-тематичний quick-reference: React, TypeScript, JavaScript та Event Loop/RxJS на одному екрані.',
+    accent: 'pink',
+    formats: ['extended'],
+  },
 ]
 
 export function getTopic(slug: TopicSlug): TopicMeta | undefined {
@@ -112,6 +121,7 @@ export const FORMAT_LABELS: Record<string, string> = {
   quiz: 'Квіз',
   practice: 'LeetCode',
   tasks: 'Практичні завдання',
+  links: 'Посилання',
 }
 
 // Path for a topic format. practice -> /problems (shared editor), extended ->
@@ -208,5 +218,12 @@ export const ACCENT: Record<
     ring: 'ring-slate-300/40',
     gradient: 'from-slate-500 to-slate-700',
     dot: 'bg-slate-300',
+  },
+  pink: {
+    text: 'text-pink-400',
+    border: 'hover:border-pink-400/60',
+    ring: 'ring-pink-400/40',
+    gradient: 'from-pink-500 to-rose-700',
+    dot: 'bg-pink-400',
   },
 }

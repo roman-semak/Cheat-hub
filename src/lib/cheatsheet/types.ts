@@ -15,8 +15,9 @@ export type TopicSlug =
   | 'ide'
   | 'algorithms'
   | 'fullstack'
+  | 'quickref'
 
-export type TopicFormat = 'extended' | 'cheatsheet' | 'quiz' | 'practice' | 'tasks'
+export type TopicFormat = 'extended' | 'cheatsheet' | 'quiz' | 'practice' | 'tasks' | 'links'
 
 export type Accent =
   | 'indigo'
@@ -30,6 +31,7 @@ export type Accent =
   | 'teal'
   | 'fuchsia'
   | 'slate'
+  | 'pink'
 
 export interface TopicMeta {
   slug: TopicSlug
@@ -150,6 +152,38 @@ export interface TopicContent {
   slug: TopicSlug
   intro?: ContentBlock[]
   sections: TopicSection[]
+}
+
+/* ---------- Quick reference (dense cross-topic grid) ---------- */
+
+export interface QuickRefEntry {
+  term: string
+  desc?: string // HTML string (dangerouslySetInnerHTML), may contain inline <b>/<code>
+  inline?: boolean // true = term/desc on one line; stacked otherwise
+}
+
+export interface QuickRefGroup {
+  label?: string // small uppercase label above a group, e.g. "Hooks"
+  entries: QuickRefEntry[]
+}
+
+export interface QuickRefChipRow {
+  chips: string[] // rendered as pill chips, may contain inline <b>/<code>
+}
+
+export type QuickRefBlock = QuickRefGroup | QuickRefChipRow
+
+export interface QuickRefColumn {
+  id: string
+  title: string
+  accentHex: string // muted custom color, independent of the app's ACCENT palette
+  blocks: QuickRefBlock[]
+}
+
+export interface QuickRefContent {
+  title: string
+  subtitle?: string
+  columns: QuickRefColumn[]
 }
 
 /* ---------- Quiz ---------- */

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>React + JS/TS</title>
+<style>
+  :root{
+    --bg:#101319; --card:#171b23; --chip:#1f242e; --ink:#e6e9ef; --muted:#8f97a5;
+    --line:#252b36;
+    /* приглушені, не неонові акценти */
+    --react:#6db3d0; --js:#d0b06a; --ts:#8b96c9; --rx:#b98cc4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;
+    line-height:1.28; overflow:hidden; letter-spacing:-.1px;
+  }
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace; letter-spacing:-.3px}
+
+  .wrap{
+    height:100dvh; width:100%;
+    padding:max(8px,env(safe-area-inset-top)) clamp(8px,1.2vw,16px) max(8px,env(safe-area-inset-bottom));
+    display:grid; grid-template-rows:auto 1fr; gap:6px;
+  }
+  .title{display:flex; align-items:baseline; gap:9px; padding:0 2px}
+  .title h1{font-size:clamp(13px,1.7vh,17px); font-weight:700}
+  .title h1 b{color:var(--react)}
+  .title .sub{font-size:clamp(9px,1.15vh,11px); color:var(--muted)}
+
+  /* the whole sheet: 4 theme columns */
+  .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(6px,.8vw,11px); min-height:0}
+  .col{background:var(--card); border:1px solid var(--line); border-radius:9px;
+       padding:clamp(7px,1vh,11px) clamp(8px,.8vw,12px);
+       display:flex; flex-direction:column; gap:clamp(5px,.75vh,8px); overflow:hidden}
+  .col > h2{font-size:clamp(11px,1.4vh,14px); font-weight:700; letter-spacing:-.2px;
+            padding-bottom:4px; border-bottom:2px solid}
+  .col.r > h2{color:var(--react); border-color:var(--react)}
+  .col.j > h2{color:var(--js); border-color:var(--js)}
+  .col.t > h2{color:var(--ts); border-color:var(--ts)}
+  .col.x > h2{color:var(--rx); border-color:var(--rx)}
+
+  .lbl{font-size:clamp(8.5px,1.05vh,10px); font-weight:700; text-transform:uppercase;
+       letter-spacing:.5px; color:var(--muted); margin-top:2px}
+
+  .item{font-size:clamp(10.5px,1.28vh,12.5px); line-height:1.26}
+  .item .n{font-weight:650}
+  .item.inline{display:flex; gap:6px; align-items:baseline; justify-content:space-between}
+  .item.inline .d{color:var(--muted); font-size:.94em; text-align:right}
+  .item.stack .d{color:var(--muted); font-size:.9em; margin-top:1px}
+  .item .d b{color:var(--ink); font-weight:600}
+  .r .item .n{color:var(--react)} .j .item .n{color:var(--js)}
+  .t .item .n{color:var(--ts)} .x .item .n{color:var(--rx)}
+  .rowset{display:flex; flex-direction:column; gap:clamp(3px,.5vh,5px)}
+
+  code{background:var(--chip); padding:0 4px; border-radius:3px; font-size:.9em}
+  b{font-weight:650}
+
+  .map{display:flex; flex-wrap:wrap; gap:4px; font-size:clamp(9px,1.1vh,11px)}
+  .map span{background:var(--chip); border-radius:5px; padding:2px 6px; color:var(--muted)}
+  .map span b{color:var(--ink)}
+
+  /* ---------- ADAPTIVE ---------- */
+  /* iPad portrait & small landscape: 4 → 2 columns, allow vertical scroll */
+  @media (max-width:1000px){
+    body{overflow:auto}
+    .wrap{height:auto; min-height:100dvh}
+    .grid{grid-template-columns:1fr 1fr}
+  }
+  /* phone: single column */
+  @media (max-width:560px){
+    .grid{grid-template-columns:1fr}
+    .item.inline{justify-content:flex-start}
+    .item.inline .d{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="title"><h1><b>React</b> + JS / TS</h1><span class="sub">interview cheatsheet</span></div>
+
+  <div class="grid">
+
+    <!-- REACT -->
+    <div class="col r">
+      <h2>React</h2>
+      <div class="rowset">
+        <div class="item stack"><span class="n mono">Reconciliation</span><div class="d">diffing нового Virtual DOM зі старим</div></div>
+        <div class="item stack"><span class="n mono">key</span><div class="d">стабільна ідентичність у списку</div></div>
+        <div class="item stack"><span class="n mono">Derived state</span><div class="d">рахуй зі state/props, не зберігай</div></div>
+        <div class="item stack"><span class="n mono">Suspense</span><div class="d">fallback поки діти не готові</div></div>
+      </div>
+      <div class="lbl">Lifecycle</div>
+      <div class="rowset">
+        <div class="item inline"><span class="n mono">render</span><span class="d">reconcile</span></div>
+        <div class="item stack"><span class="n mono">useLayoutEffect</span><div class="d">синхр. <b>до</b> paint, вимір DOM</div></div>
+        <div class="item stack"><span class="n mono">useEffect</span><div class="d">асинхр. <b>після</b> paint; cleanup</div></div>
+      </div>
+      <div class="lbl">Hooks</div>
+      <div class="rowset">
+        <div class="item inline"><span class="n mono">useState</span><span class="d">стан</span></div>
+        <div class="item inline"><span class="n mono">useReducer</span><span class="d">reducer</span></div>
+        <div class="item inline"><span class="n mono">useMemo</span><span class="d">кеш значення</span></div>
+        <div class="item inline"><span class="n mono">useCallback</span><span class="d">кеш ф-ї</span></div>
+        <div class="item stack"><span class="n mono">useRef</span><div class="d">мутабельне, <b>не</b> тригерить render</div></div>
+        <div class="item inline"><span class="n mono">useContext</span><span class="d">Provider</span></div>
+      </div>
+      <div class="lbl">useEffect deps</div>
+      <div class="map"><span><b>—</b> кожен</span><span><b>[]</b> mount</span><span><b>[dep]</b> зміна</span><span><b>return</b> cleanup</span></div>
+      <div class="lbl">Rerender ⟵</div>
+      <div class="map"><span>state</span><span>props</span><span>батько</span><span>context</span></div>
+    </div>
+
+    <!-- TYPESCRIPT -->
+    <div class="col t">
+      <h2>TypeScript</h2>
+      <div class="lbl">Спец-типи</div>
+      <div class="rowset">
+        <div class="item stack"><span class="n mono">unknown</span><div class="d">звузити перед використанням</div></div>
+        <div class="item stack"><span class="n mono">any</span><div class="d">вимикає перевірку — уникай</div></div>
+        <div class="item stack"><span class="n mono">never</span><div class="d">немає значень: throw / недосяжне</div></div>
+      </div>
+      <div class="lbl">Utility types</div>
+      <div class="rowset">
+        <div class="item inline"><span class="n mono">Partial&lt;T&gt;</span><span class="d">опційні</span></div>
+        <div class="item inline"><span class="n mono">Required&lt;T&gt;</span><span class="d">обов'язкові</span></div>
+        <div class="item inline"><span class="n mono">Readonly&lt;T&gt;</span><span class="d">read-only</span></div>
+        <div class="item inline"><span class="n mono">Pick&lt;T,K&gt;</span><span class="d">вибрати K</span></div>
+        <div class="item inline"><span class="n mono">Omit&lt;T,K&gt;</span><span class="d">виключити K</span></div>
+        <div class="item stack"><span class="n mono">Record&lt;K,V&gt;</span><div class="d">словник <code>&lt;"admin"|"user",V&gt;</code></div></div>
+      </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <div class="col j">
+      <h2>JavaScript</h2>
+      <div class="lbl">Core</div>
+      <div class="rowset">
+        <div class="item stack"><span class="n mono">Hoisting</span><div class="d">оголошення підняті вгору scope</div></div>
+        <div class="item stack"><span class="n mono">Closure</span><div class="d">доступ до батьк. scope після завершення</div></div>
+      </div>
+      <div class="lbl">this</div>
+      <div class="rowset">
+        <div class="item stack"><span class="n mono">.call</span><div class="d">this + аргументи по одному</div></div>
+        <div class="item stack"><span class="n mono">.apply</span><div class="d">this + аргументи масивом</div></div>
+        <div class="item stack"><span class="n mono">.bind</span><div class="d">нова ф-я з this, <b>не</b> викликає</div></div>
+        <div class="item stack"><span class="n mono">Weak*</span><div class="d">Map/Set/Ref — не блокують GC</div></div>
+      </div>
+      <div class="lbl">Promise · P→F/R (Settled)</div>
+      <div class="rowset">
+        <div class="item stack"><span class="n mono">.all</span><div class="d">всі, падає на 1-му reject</div></div>
+        <div class="item stack"><span class="n mono">.allSettled</span><div class="d">всі, статус кожного</div></div>
+        <div class="item stack"><span class="n mono">.race</span><div class="d">1-й settled (fulfill/reject)</div></div>
+        <div class="item inline"><span class="n mono">.any</span><span class="d">1-й fulfilled</span></div>
+      </div>
+      <div class="map"><span><b>.then</b> onF,onR</span><span><b>.catch</b> onR</span><span><b>.finally</b> onS</span></div>
+    </div>
+
+    <!-- EVENT LOOP + RXJS -->
+    <div class="col x">
+      <h2>Loop &amp; RxJS</h2>
+      <div class="lbl">Event Loop · порядок</div>
+      <div class="rowset">
+        <div class="item inline"><span class="n mono">Call Stack</span><span class="d">синхр.</span></div>
+        <div class="item stack"><span class="n mono">Microtask Q</span><div class="d">Promise — <b>вищий пріоритет</b></div></div>
+        <div class="item stack"><span class="n mono">Macrotask Q</span><div class="d">setTimeout, події, I/O</div></div>
+      </div>
+      <div class="map"><span>Promise <b>раніше</b> за <code>setTimeout(0)</code></span></div>
+      <div class="lbl">RxJS · *Map</div>
+      <div class="rowset">
+        <div class="item stack"><span class="n mono">switchMap</span><div class="d">скасовує попередній — typeahead</div></div>
+        <div class="item stack"><span class="n mono">mergeMap</span><div class="d">усі паралельно</div></div>
+        <div class="item stack"><span class="n mono">concatMap</span><div class="d">послідовно, ORDER</div></div>
+        <div class="item stack"><span class="n mono">exhaustMap</span><div class="d">ігнорує нові поки активний</div></div>
+      </div>
+      <div class="lbl">Map</div>
+      <div class="map"><span>ключ будь-який</span><span>порядок</span><span class="mono">.get .has .delete</span></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
