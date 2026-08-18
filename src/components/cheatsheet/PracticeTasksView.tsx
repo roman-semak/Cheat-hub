@@ -9,7 +9,7 @@ import { highlight } from '@/lib/cheatsheet/highlight'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
 
-const TOPICS: PracticeTopic[] = ['RxJS', 'JS/TS', 'Async']
+const TOPICS: PracticeTopic[] = ['RxJS', 'JS/TS', 'Async', 'React']
 
 const LEVEL_STYLE: Record<string, string> = {
   Middle: 'bg-amber-500/15 text-amber-300 border-amber-500/30',

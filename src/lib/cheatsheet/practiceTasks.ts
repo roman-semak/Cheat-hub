@@ -382,4 +382,98 @@ class Counter {
       <li><strong>Обмеження:</strong> не працює коректно для аргументів-об'єктів (різний порядок ключів, функції, <code>undefined</code>), циклічних структур та дуже великих аргументів. Для об'єктів беруть <code>WeakMap</code> або кастомний key-resolver.</li>
     </ul>`,
   },
+  // ─────────────────────────── React ───────────────────────────
+  {
+    id: 'react-fetch-user-retry',
+    title: 'Fetch користувача з ретраями',
+    level: 'Middle',
+    topic: 'React',
+    tags: ['useEffect', 'useState', 'retry', 'error handling'],
+    language: 'tsx',
+    prompt: `<p><strong>Дано:</strong> функція <code>fetchUser()</code> — вона <em>рандомно</em> (через <code>setTimeout</code>) або резолвиться з даними користувача (<code>name</code>, <code>email</code>), або відхиляється з помилкою. Змінювати саму <code>fetchUser</code> не можна.</p>
+      <p><strong>Завдання:</strong> реалізуй компонент <code>UserProfile</code>, який:</p>
+      <ul class="list">
+        <li>при монтуванні викликає <code>fetchUser()</code>;</li>
+        <li>якщо запит <strong>успішний</strong> — показує ім'я та email користувача;</li>
+        <li>якщо <strong>перша</strong> спроба провалилась — показує проміжний текст (наприклад, «Не вдалося завантажити, повторюємо…») і <strong>повторює</strong> запит ще раз;</li>
+        <li>якщо провалилась і <strong>друга</strong> спроба (два фейли поспіль) — показує фінальний текст помилки і <strong>більше не робить запитів</strong> (без нескінченних ретраїв).</li>
+      </ul>`,
+    starterCode: `interface User {
+  name: string;
+  email: string;
+}
+
+// Задана функція — не змінювати. Рандомно (~40%) відхиляє проміс.
+function fetchUser(): Promise<User> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < 0.4) {
+        reject(new Error('Network error'));
+      } else {
+        resolve({ name: 'Іван Петренко', email: 'ivan@example.com' });
+      }
+    }, 500);
+  });
+}
+
+function UserProfile() {
+  // TODO:
+  // 1. Викликати fetchUser() при монтуванні компонента.
+  // 2. Якщо успіх — показати ім'я та email.
+  // 3. Якщо 1-ша спроба невдала — показати текст "Не вдалося завантажити, повторюємо…"
+  //    і повторити запит ще раз.
+  // 4. Якщо 2-га спроба теж невдала — показати текст "Не вдалося завантажити користувача"
+  //    і зупинитись (без подальших запитів).
+
+  return null;
+}`,
+    solution: `type Status = 'loading' | 'retrying' | 'success' | 'error';
+
+function UserProfile() {
+  const [status, setStatus] = useState<Status>('loading');
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const data = await fetchUser();
+          if (!cancelled) {
+            setUser(data);
+            setStatus('success');
+          }
+          return; // успіх — далі не пробуємо
+        } catch {
+          if (cancelled) return;
+          setStatus(attempt === 1 ? 'retrying' : 'error');
+        }
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true; // не робити setState після unmount
+    };
+  }, []);
+
+  if (status === 'loading') return <p>Завантаження…</p>;
+  if (status === 'retrying') return <p>Не вдалося завантажити, повторюємо…</p>;
+  if (status === 'error') return <p>Не вдалося завантажити користувача</p>;
+
+  return (
+    <div>
+      <p>{user!.name}</p>
+      <p>{user!.email}</p>
+    </div>
+  );
+}`,
+    explanation: `<ul class="list">
+      <li><code>for</code>-цикл з <code>await fetchUser()</code> усередині <code>useEffect</code> — просте й читабельне обмеження кількості спроб: 1 початкова + 1 ретрай, без рекурсії чи бібліотек.</li>
+      <li>Статус — це <strong>одна</strong> змінна-«машина станів» (<code>'loading' | 'retrying' | 'success' | 'error'</code>), а не набір окремих boolean-прапорців (<code>isLoading</code>, <code>isError</code>, ...) — так неможливо потрапити в суперечливий стан («і завантаження, і помилка одночасно»).</li>
+      <li><code>cancelled</code>-прапорець у cleanup-функції ефекту захищає від класичної помилки: <code>setState</code> викликається вже після того, як компонент розмонтувався (запит все ще "летить").</li>
+      <li>Порожній масив залежностей <code>[]</code> — запит запускається рівно один раз при монтуванні, ретраї відбуваються <em>всередині</em> цього самого виклику ефекту, а не через повторний рендер/ефект.</li>
+    </ul>`,
+  },
 ]

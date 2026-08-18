@@ -77,7 +77,7 @@ export interface LeetcodeData {
 /* ---------- Practice tasks (interview-style exercises) ---------- */
 
 export type PracticeLevel = 'Middle' | 'Senior'
-export type PracticeTopic = 'RxJS' | 'JS/TS' | 'Async'
+export type PracticeTopic = 'RxJS' | 'JS/TS' | 'Async' | 'React'
 
 export interface PracticeTask {
   id: string // stable key, e.g. 'promise-to-observable'

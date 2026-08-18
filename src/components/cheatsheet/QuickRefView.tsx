@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import type { QuickRefBlock, QuickRefColumn, QuickRefContent, QuickRefGroup } from '@/lib/cheatsheet/types'
 import { cn } from '@/lib/utils'
@@ -8,6 +8,44 @@ import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
 import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
 
 const STORAGE_KEY = 'quickrefCollapsedColumns'
+const CARD_GAP_PX = 12 // matches gap-3
+
+// Greedy masonry: walk cards in order, always dropping the next one into the
+// column that's currently shortest — so a short column's slack gets used by
+// later cards instead of being stranded by a table-like fixed-row layout
+// (which is all CSS Grid/flex-wrap can do once a row wraps).
+function assignColumns(columns: QuickRefColumn[], heights: number[], count: number): string[][] {
+  const buckets: string[][] = Array.from({ length: count }, () => [])
+  const bucketHeights = new Array(count).fill(0)
+  columns.forEach((col, i) => {
+    const shortest = bucketHeights.indexOf(Math.min(...bucketHeights))
+    buckets[shortest].push(col.id)
+    bucketHeights[shortest] += (heights[i] ?? 0) + CARD_GAP_PX
+  })
+  return buckets
+}
+
+// Tracks the current column count for the 1/2/3/5 breakpoints below.
+function useColumnCount(): number {
+  const [count, setCount] = useState(1)
+
+  useEffect(() => {
+    const queries: [MediaQueryList, number][] = [
+      [window.matchMedia('(min-width: 1536px)'), 5],
+      [window.matchMedia('(min-width: 1024px)'), 3],
+      [window.matchMedia('(min-width: 640px)'), 2],
+    ]
+    const update = () => {
+      const match = queries.find(([mq]) => mq.matches)
+      setCount(match ? match[1] : 1)
+    }
+    update()
+    queries.forEach(([mq]) => mq.addEventListener('change', update))
+    return () => queries.forEach(([mq]) => mq.removeEventListener('change', update))
+  }, [])
+
+  return count
+}
 
 function isChipRow(block: QuickRefBlock): block is Extract<QuickRefBlock, { chips: string[] }> {
   return 'chips' in block
@@ -93,13 +131,16 @@ function QuickRefColumnCard({
   column,
   collapsed,
   onToggle,
+  cardRef,
 }: {
   column: QuickRefColumn
   collapsed: boolean
   onToggle: () => void
+  cardRef: (el: HTMLDivElement | null) => void
 }) {
   return (
     <div
+      ref={cardRef}
       className="glass-subtle flex flex-col gap-2.5 rounded-2xl border-t-2 p-4"
       style={{ borderTopColor: column.accentHex }}
     >
@@ -130,6 +171,9 @@ function QuickRefColumnCard({
 
 export function QuickRefView({ content }: { content: QuickRefContent }) {
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  const columnCount = useColumnCount()
+  const cardEls = useRef<Map<string, HTMLDivElement>>(new Map())
+  const [buckets, setBuckets] = useState<string[][]>(() => [content.columns.map((c) => c.id)])
 
   // Read persisted collapse state after mount to avoid hydration mismatch,
   // same pattern as HubShell's sidebar collapse.
@@ -138,6 +182,15 @@ export function QuickRefView({ content }: { content: QuickRefContent }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (stored) setCollapsed(new Set(JSON.parse(stored)))
   }, [])
+
+  // Re-pack the masonry whenever the column count, a card's collapsed state,
+  // or the content itself changes — card heights only depend on their (fixed)
+  // column width, not on which bucket they land in, so measuring whatever was
+  // rendered last is always representative of the true height.
+  useLayoutEffect(() => {
+    const heights = content.columns.map((c) => cardEls.current.get(c.id)?.offsetHeight ?? 0)
+    setBuckets(assignColumns(content.columns, heights, columnCount))
+  }, [columnCount, collapsed, content.columns])
 
   const toggle = (id: string) => {
     setCollapsed((prev) => {
@@ -149,16 +202,30 @@ export function QuickRefView({ content }: { content: QuickRefContent }) {
     })
   }
 
+  const byId = new Map(content.columns.map((c) => [c.id, c]))
+
   return (
     <div className="px-6 py-8 md:px-10">
-      <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
-        {content.columns.map((column) => (
-          <QuickRefColumnCard
-            key={column.id}
-            column={column}
-            collapsed={collapsed.has(column.id)}
-            onToggle={() => toggle(column.id)}
-          />
+      <div className="flex items-start gap-3">
+        {buckets.map((bucket, i) => (
+          <div key={i} className="flex flex-1 flex-col gap-3">
+            {bucket.map((id) => {
+              const column = byId.get(id)
+              if (!column) return null
+              return (
+                <QuickRefColumnCard
+                  key={id}
+                  column={column}
+                  collapsed={collapsed.has(id)}
+                  onToggle={() => toggle(id)}
+                  cardRef={(el) => {
+                    if (el) cardEls.current.set(id, el)
+                    else cardEls.current.delete(id)
+                  }}
+                />
+              )
+            })}
+          </div>
         ))}
       </div>
     </div>
