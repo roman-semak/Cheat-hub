@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, User } from 'lucide-react'
-import { TOPICS, FORMAT_LABELS, formatHref, topicHref, ACCENT } from '@/lib/cheatsheet/registry'
+import { TOPICS, FORMAT_LABELS, formatHref, topicHref, ACCENT, getTopic } from '@/lib/cheatsheet/registry'
+import { QUICKREF_TOPICS } from '@/lib/cheatsheet/quickref'
 import { useUserStore } from '@/lib/userStore'
 import { cn } from '@/lib/utils'
 
@@ -75,25 +76,48 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
 
                 {!collapsed && isActive && (
                   <ul className="mb-1 ml-7 mt-0.5 flex flex-col gap-0.5 border-l border-white/10 pl-2">
-                    {topic.formats.map((format) => {
-                      const href = formatHref(topic.slug, format)
-                      const formatActive = pathname === href
-                      return (
-                        <li key={format}>
-                          <Link
-                            href={href}
-                            className={cn(
-                              'block rounded px-2 py-1 text-xs transition-colors',
-                              formatActive
-                                ? cn('font-medium', accent.text)
-                                : 'text-slate-400 hover:text-slate-200',
-                            )}
-                          >
-                            {FORMAT_LABELS[format]}
-                          </Link>
-                        </li>
-                      )
-                    })}
+                    {topic.slug === 'quickref'
+                      ? QUICKREF_TOPICS.map((slug) => {
+                          const subTopic = getTopic(slug)
+                          if (!subTopic) return null
+                          const href = `/quickref/${slug}`
+                          const subActive = pathname === href
+                          return (
+                            <li key={slug}>
+                              <Link
+                                href={href}
+                                className={cn(
+                                  'flex items-center gap-1.5 rounded px-2 py-1 text-xs transition-colors',
+                                  subActive
+                                    ? cn('font-medium', accent.text)
+                                    : 'text-slate-400 hover:text-slate-200',
+                                )}
+                              >
+                                <span>{subTopic.icon}</span>
+                                <span className="truncate">{subTopic.title}</span>
+                              </Link>
+                            </li>
+                          )
+                        })
+                      : topic.formats.map((format) => {
+                          const href = formatHref(topic.slug, format)
+                          const formatActive = pathname === href
+                          return (
+                            <li key={format}>
+                              <Link
+                                href={href}
+                                className={cn(
+                                  'block rounded px-2 py-1 text-xs transition-colors',
+                                  formatActive
+                                    ? cn('font-medium', accent.text)
+                                    : 'text-slate-400 hover:text-slate-200',
+                                )}
+                              >
+                                {FORMAT_LABELS[format]}
+                              </Link>
+                            </li>
+                          )
+                        })}
                   </ul>
                 )}
               </li>

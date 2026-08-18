@@ -40,17 +40,23 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
   const [topic, setTopic] = useState<PracticeTopic | 'all'>('all')
   const [selectedId, setSelectedId] = useState<string>(tasks[0]?.id ?? '')
 
-  const filtered = useMemo(() => {
+  const groups = useMemo(() => {
     const term = search.trim().toLowerCase()
-    return tasks.filter((t) => {
-      if (topic !== 'all' && t.topic !== topic) return false
-      if (!term) return true
-      const haystack = [t.title, t.topic, t.level, ...(t.tags ?? [])]
-        .join(' ')
-        .toLowerCase()
-      return haystack.includes(term)
-    })
+    return TOPICS.map((t) => ({
+      topic: t,
+      tasks: tasks.filter((task) => {
+        if (topic !== 'all' && task.topic !== topic) return false
+        if (task.topic !== t) return false
+        if (!term) return true
+        const haystack = [task.title, task.topic, task.level, ...(task.tags ?? [])]
+          .join(' ')
+          .toLowerCase()
+        return haystack.includes(term)
+      }),
+    })).filter((g) => g.tasks.length > 0)
   }, [tasks, search, topic])
+
+  const filtered = useMemo(() => groups.flatMap((g) => g.tasks), [groups])
 
   // Keep a valid selection whenever the filter changes.
   useEffect(() => {
@@ -99,45 +105,54 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(240px,320px)_1fr]">
-        {/* Master: task list */}
-        <ul className="flex flex-col gap-2">
+        {/* Master: task list, grouped by topic */}
+        <div className="flex flex-col gap-4">
           {filtered.length === 0 && (
-            <li className="text-sm text-slate-500">Нічого не знайдено.</li>
+            <p className="text-sm text-slate-500">Нічого не знайдено.</p>
           )}
-          {filtered.map((task) => (
-            <li key={task.id}>
-              <button
-                onClick={() => setSelectedId(task.id)}
-                className={`w-full rounded-xl border p-3 text-left transition-colors ${
-                  task.id === selectedId
-                    ? 'border-orange-400/50 bg-orange-500/10'
-                    : 'border-white/10 bg-black/20 hover:border-orange-400/30'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <span className="text-sm font-semibold text-slate-100">
-                    {task.title}
-                  </span>
-                  <span
-                    className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold ${
-                      LEVEL_STYLE[task.level]
-                    }`}
-                  >
-                    {task.level}
-                  </span>
-                </div>
-                <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
-                  <span className="rounded bg-white/5 px-1.5 py-0.5 font-medium text-slate-400">
-                    {task.topic}
-                  </span>
-                  {task.tags?.slice(0, 3).map((tag) => (
-                    <span key={tag}>#{tag}</span>
-                  ))}
-                </div>
-              </button>
-            </li>
+          {groups.map((group) => (
+            <div key={group.topic} className="flex flex-col gap-2">
+              <div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                {group.topic} ({group.tasks.length})
+              </div>
+              <ul className="flex flex-col gap-2">
+                {group.tasks.map((task) => (
+                  <li key={task.id}>
+                    <button
+                      onClick={() => setSelectedId(task.id)}
+                      className={`w-full rounded-xl border p-3 text-left transition-colors ${
+                        task.id === selectedId
+                          ? 'border-orange-400/50 bg-orange-500/10'
+                          : 'border-white/10 bg-black/20 hover:border-orange-400/30'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-sm font-semibold text-slate-100">
+                          {task.title}
+                        </span>
+                        <span
+                          className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold ${
+                            LEVEL_STYLE[task.level]
+                          }`}
+                        >
+                          {task.level}
+                        </span>
+                      </div>
+                      <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
+                        <span className="rounded bg-white/5 px-1.5 py-0.5 font-medium text-slate-400">
+                          {task.topic}
+                        </span>
+                        {task.tags?.slice(0, 3).map((tag) => (
+                          <span key={tag}>#{tag}</span>
+                        ))}
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
 
         {/* Detail: selected task */}
         {selected && <TaskDetail key={selected.id} task={selected} />}

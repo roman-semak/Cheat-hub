@@ -47,7 +47,7 @@ export const TOPICS: TopicMeta[] = [
     icon: '⚛️',
     blurb: 'Хуки, рендеринг, стан і патерни сучасного React — від основ до Senior.',
     accent: 'cyan',
-    formats: ['extended', 'cheatsheet', 'quiz'],
+    formats: ['extended', 'quiz'],
   },
   {
     slug: 'nextjs',
@@ -65,7 +65,7 @@ export const TOPICS: TopicMeta[] = [
     icon: '🅰️',
     blurb: 'Компоненти, DI, RxJS, сигнали та екосистема Angular.',
     accent: 'rose',
-    formats: ['extended', 'cheatsheet', 'quiz'],
+    formats: ['extended', 'quiz'],
   },
   {
     slug: 'javascript',
@@ -73,7 +73,7 @@ export const TOPICS: TopicMeta[] = [
     icon: '⚙️',
     blurb: 'JavaScript і TypeScript для senior-рівня співбесід.',
     accent: 'amber',
-    formats: ['extended', 'cheatsheet', 'links', 'quiz'],
+    formats: ['extended', 'links', 'quiz'],
   },
   {
     slug: 'git',
@@ -105,7 +105,7 @@ export const TOPICS: TopicMeta[] = [
     title: 'Шпаргалка',
     icon: '⚡',
     blurb:
-      'Компактний крос-тематичний quick-reference: React, TypeScript, JavaScript, Event Loop/RxJS та Angular на одному екрані.',
+      'Компактні quick-reference шпаргалки по темах: обери React, JS/TS чи Angular з меню.',
     accent: 'pink',
     formats: ['extended'],
   },

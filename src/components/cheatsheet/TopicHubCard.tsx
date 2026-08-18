@@ -44,20 +44,22 @@ export function TopicHubCard({ topic }: { topic: TopicMeta }) {
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3">
-        {topic.formats.map((format) => (
-          <Link
-            key={format}
-            href={formatHref(topic.slug, format)}
-            className={cn(
-              'rounded-lg px-2.5 py-1 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10',
-              format === topic.formats[0] && accent.text,
-            )}
-          >
-            {FORMAT_LABELS[format]}
-          </Link>
-        ))}
-      </div>
+      {topic.slug !== 'quickref' && (
+        <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3">
+          {topic.formats.map((format) => (
+            <Link
+              key={format}
+              href={formatHref(topic.slug, format)}
+              className={cn(
+                'rounded-lg px-2.5 py-1 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10',
+                format === topic.formats[0] && accent.text,
+              )}
+            >
+              {FORMAT_LABELS[format]}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

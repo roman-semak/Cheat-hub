@@ -1,6 +1,6 @@
-import { quickRefContent } from '@/lib/cheatsheet/quickref'
-import { QuickRefView } from '@/components/cheatsheet/QuickRefView'
+import { redirect } from 'next/navigation'
+import { QUICKREF_TOPICS } from '@/lib/cheatsheet/quickref'
 
 export default function Page() {
-  return <QuickRefView content={quickRefContent} />
+  redirect(`/quickref/${QUICKREF_TOPICS[0]}`)
 }
