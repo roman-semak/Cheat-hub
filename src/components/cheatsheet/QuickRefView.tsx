@@ -151,7 +151,7 @@ export function QuickRefView({ content }: { content: QuickRefContent }) {
 
   return (
     <div className="px-6 py-8 md:px-10">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+      <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
         {content.columns.map((column) => (
           <QuickRefColumnCard
             key={column.id}
