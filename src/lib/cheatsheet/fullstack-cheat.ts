@@ -181,17 +181,7 @@ docker exec -it <id> sh`,
       blocks: [
         {
           kind: 'paragraph',
-          html: `<div class="interview-tips">
-              <ol>
-                <li><strong>Вимоги</strong> — функціональні + нефункціональні (scale, latency, availability)</li>
-                <li><strong>Оцінки</strong> — DAU, RPS, обсяг даних, read/write ratio</li>
-                <li><strong>API</strong> — ключові ендпоінти</li>
-                <li><strong>Дані</strong> — модель + SQL/NoSQL і чому</li>
-                <li><strong>High-level</strong> — клієнт → LB → сервіси → БД/кеш/черга</li>
-                <li><strong>Bottlenecks</strong> — кеш, шардинг, репліки, CDN, черги, trade-offs</li>
-              </ol>
-            </div>
-            <div class="alert good"><strong>Згадай:</strong> load balancing · horizontal/stateless · caching+інвалідація · CAP/eventual consistency · черги · idempotency/retries · graceful degradation. Проговорюй trade-offs вголос.</div>`,
+          html: `<div class="alert good"><strong>Згадай:</strong> load balancing · horizontal/stateless · caching+інвалідація · CAP/eventual consistency · черги · idempotency/retries · graceful degradation. Проговорюй trade-offs вголос.</div>`,
         },
       ],
     },

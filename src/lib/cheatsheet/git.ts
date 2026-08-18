@@ -109,6 +109,18 @@ export const gitContent: TopicContent = {
           "question": "Чим Trunk-Based Development відрізняється від GitFlow, і чому багато сучасних команд з CI/CD переходять саме на trunk-based?",
           "answer": "GitFlow тримає довгоживучі гілки (develop, release, feature) з рідкими злиттями — це створює великі, ризиковані merge'і й затримує інтеграцію. Trunk-Based Development тримає короткоживучі feature-гілки (дні, не тижні) і часто зливає в main — менші, простіші для рев'ю diff'и, швидший feedback loop, що узгоджується з continuous deployment, де кожен merge потенційно одразу йде в прод."
         },
+        {
+          question: `Чому у твоєї команди Git Flow, а не GitHub Flow (або навпаки)?`,
+          answer: `Вибір прив'язаний до релізного циклу й розміру команди: Git Flow виправданий для versioned-релізів з довгим stabilization-періодом і великих команд; GitHub Flow / trunk-based — коли є continuous deployment, малі команди й потрібна швидка ітерація без довгоживучих гілок.`,
+        },
+        {
+          question: `Merge чи rebase — що обираєш і чому?`,
+          answer: `Залежить від стратегії: у Git Flow типово merge (--no-ff), щоб зберегти історію по фічах і полегшити рев'ю release-гілки; у trunk-based частіше rebase перед злиттям, щоб тримати лінійну історію main і уникати зайвих merge-комітів.`,
+        },
+        {
+          question: `Як ти верифікуєш PR перед merge?`,
+          answer: `Обов'язкові статус-чеки (тести, лінтер, білд) через branch protection, code review щонайменше від одного ревʼюера (за потреби — CODEOWNERS для авто-призначення), і лише після зеленого CI — merge у цільову гілку.`,
+        },
       ],
       "blocks": [
         {
@@ -140,7 +152,7 @@ export const gitContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<p style=\"font-size: 12px; color: #8b949e;\"><strong>Timeline:</strong> Features merge до release branch → stabilization period (bug fixes only) → release day → merge back до main.</p><div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">💡 На інтерв'ю</div>\n            <ul>\n              <li><strong>Поясни вибір:</strong> Чому у вашої компанії Git Flow, а не GitHub Flow? (Релізні цикли, розмір команди)</li>\n              <li><strong>Merge vs Rebase:</strong> Що ви обираєте? Чому? (Git Flow → merge; trunk-based → rebase)</li>\n              <li><strong>PR review culture:</strong> Як вірифікуєте PR перед merge? (Testing, linting, code review)</li>\n            </ul>\n          </div>"
+          "html": "<p style=\"font-size: 12px; color: #8b949e;\"><strong>Timeline:</strong> Features merge до release branch → stabilization period (bug fixes only) → release day → merge back до main.</p>"
         }
       ]
     },

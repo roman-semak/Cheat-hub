@@ -223,6 +223,14 @@ export default class ComponentName extends Component {
           question: 'Чому в React не можна повертати два JSX-елементи без обгортки, і які варіанти обгортки є найдешевшими?',
           answer: 'JSX-вираз повинен резолвитись в один <code>React.createElement</code>-виклик (одне значення), тому кілька сусідніх елементів без спільного кореня — синтаксична помилка. Найдешевший варіант — <code>&lt;&gt;...&lt;/&gt;</code> (Fragment): не створює зайвого DOM-вузла й не впливає на CSS-селектори на кшталт <code>:nth-child</code>, на відміну від обгортки в <code>&lt;div&gt;</code>.',
         },
+        {
+          question: `Чим element tree відрізняється від Fiber tree?`,
+          answer: `element tree перестворюється щорендеру (дешеві плейн-обʼєкти), Fiber tree персистентна і зберігає стан між рендерами — саме її React diff'ить.`,
+        },
+        {
+          question: `Чому <code>&lt;&gt;...&lt;/&gt;</code> іноді не підходить у <code>.map()</code>?`,
+          answer: `коротка форма не приймає <code>key</code>, а список без key ламає reconciliation (Block 1) — потрібен повний <code>&lt;React.Fragment key={...}&gt;</code>.`,
+        },
       ],
       blocks: [
         {
@@ -291,13 +299,7 @@ React.<span class="fn">createElement</span>(
   <span class="jsx">&lt;/React.Fragment&gt;</span>
 ))}</pre>
   </div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Чим element tree відрізняється від Fiber tree? → element tree перестворюється щорендеру (дешеві плейн-обʼєкти), Fiber tree персистентна і зберігає стан між рендерами — саме її React diff'ить.</li>
-      <li>Чому <code>&lt;&gt;...&lt;/&gt;</code> іноді не підходить у <code>.map()</code>? → коротка форма не приймає <code>key</code>, а список без key ламає reconciliation (Block 1) — потрібен повний <code>&lt;React.Fragment key={...}&gt;</code>.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -485,6 +487,18 @@ export function Button({ children }: { children: React.ReactNode }) {
           question: 'Чому <code>onClick={handleClick()}</code> — це баг, а <code>onClick={handleClick}</code> — правильний варіант?',
           answer: '<code>onClick={handleClick()}</code> викликає функцію одразу під час рендеру і передає обробнику <em>результат</em> виклику (часто <code>undefined</code>), а не саму функцію — тобто клік ніколи не спрацює так, як очікувалось, а <code>handleClick</code> виконається на кожному рендері. Правильно передавати посилання на функцію: <code>onClick={handleClick}</code>, або стрілкову функцію <code>onClick={() => handleClick(arg)}</code>, якщо потрібні аргументи.',
         },
+        {
+          question: `Чому <code>console.log(count)</code> одразу після <code>setCount</code> показує старе значення?`,
+          answer: `setState асинхронний відносно поточної функції — планує рендер, не мутує змінну зараз.`,
+        },
+        {
+          question: `Чим props відрізняються від state?`,
+          answer: `props — ззовні, read-only, дитина не міняє; state — внутрішній, змінюваний через свій setter.`,
+        },
+        {
+          question: `Навіщо потрібен <code>children</code>?`,
+          answer: `композиція — компонент-обгортка не знає вміст, просто рендерить те, що передали.`,
+        },
       ],
       blocks: [
         {
@@ -545,14 +559,7 @@ export function Button({ children }: { children: React.ReactNode }) {
 <span class="jsx">&lt;input</span> value={text} onChange={e =&gt; <span class="fn">setText</span>(e.target.value)} <span class="jsx">/&gt;</span>
 <span class="cmt">// value з React-стану = React "керує" тим, що показано в полі —</span>
 <span class="cmt">// це і є "controlled". Без value — DOM сам тримає своє значення (uncontrolled).</span></pre>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Чому <code>console.log(count)</code> одразу після <code>setCount</code> показує старе значення? → "setState асинхронний відносно поточної функції — планує рендер, не мутує змінну зараз".</li>
-      <li>Чим props відрізняються від state? → "props — ззовні, read-only, дитина не міняє; state — внутрішній, змінюваний через свій setter".</li>
-      <li>Навіщо потрібен <code>children</code>? → "композиція — компонент-обгортка не знає вміст, просто рендерить те, що передали".</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -567,6 +574,14 @@ export function Button({ children }: { children: React.ReactNode }) {
         {
           question: 'Які проблеми може створити рендер великих списків без віртуалізації, і як їх діагностувати?',
           answer: 'Рендер тисяч DOM-вузлів одразу збільшує час первинного рендеру, споживання пам\'яті та вартість кожного наступного reconciliation-проходу (навіть якщо змінився один елемент, React усе одно проходить по всьому дереву при перевірці). Діагностика — React DevTools Profiler покаже аномально довгий commit; рішення — віртуалізація (<code>react-window</code>/<code>@tanstack/react-virtual</code>), що рендерить лише видимі елементи.',
+        },
+        {
+          question: `Чому не можна <code>key={Math.random()}</code>?`,
+          answer: `новий key щорендеру = React вважає елемент новим щоразу — знищує й пересоздає DOM-вузол, втрачає стан/фокус.`,
+        },
+        {
+          question: `Що виведе <code>{'{'}0 &amp;&amp; &lt;Badge/&gt;{'}'}</code>?`,
+          answer: `"0" в DOM — типова пастка з fallback-through значеннями в JSX.`,
         },
       ],
       blocks: [
@@ -608,13 +623,7 @@ export function Button({ children }: { children: React.ReactNode }) {
     <span class="jsx">&lt;/form&gt;</span>
   );
 }</pre>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Чому не можна <code>key={Math.random()}</code>? → "новий key щорендеру = React вважає елемент новим щоразу — знищує й пересоздає DOM-вузол, втрачає стан/фокус".</li>
-      <li>Що виведе <code>{'{'}0 &amp;&amp; &lt;Badge/&gt;{'}'}</code>? → "0" в DOM — типова пастка з fallback-through значеннями в JSX.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -634,6 +643,22 @@ export function Button({ children }: { children: React.ReactNode }) {
         {
           question: 'Чи можна сказати, що Virtual DOM завжди швидший за пряму роботу з реальним DOM? Обґрунтуй.',
           answer: 'Ні. Для поодиноких точкових мутацій пряма робота з DOM може бути швидшою — VDOM додає накладні витрати на створення об\'єктів і diffing. Перевага VDOM проявляється при <em>множинних, складно скоординованих</em> оновленнях: React батчить їх в один прохід і застосовує мінімальний набір реальних DOM-операцій, замість того щоб розробнику вручну відстежувати, що саме змінилось.',
+        },
+        {
+          question: `Що таке Virtual DOM насправді?`,
+          answer: `не технологія прискорення сама по собі — це JS-структура даних, що дозволяє порахувати мінімальний diff перед тим, як чіпати повільний реальний DOM.`,
+        },
+        {
+          question: `Virtual DOM завжди швидший за прямі DOM-операції?`,
+          answer: `ні, точковий vanilla-JS може обігнати React в мікробенчмарку; реальна вигода — батчинг і декларативність, не сира швидкість.`,
+        },
+        {
+          question: `Чому diffing — O(n), а не точний O(n³) edit distance?`,
+          answer: `React жертвує рідкісними edge-кейсами (переїзд піддерева між рівнями) заради швидкості, порівнюючи лише в межах одного рівня.`,
+        },
+        {
+          question: `Чим небезпечний <code>key={index}</code>?`,
+          answer: `конкретний приклад з інпутами/чекбоксами, що "перестрибують" значення при реордері.`,
         },
       ],
       blocks: [
@@ -688,15 +713,7 @@ list = [B, C],   keys = [0,1]
 <span class="cmt">// вузли idB/idC — той самий key → перевикористані як є</span></pre></div>
   </div>
   <div class="alert good"><span class="icon">✅</span><span><code>key={index}</code> прийнятний, <strong>лише</strong> якщо список статичний (ніколи не сортується/фільтрується/не змінює порядок) і без стану в елементах.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Що таке Virtual DOM насправді? → "не технологія прискорення сама по собі — це JS-структура даних, що дозволяє порахувати мінімальний diff перед тим, як чіпати повільний реальний DOM".</li>
-      <li>Virtual DOM завжди швидший за прямі DOM-операції? → ні, точковий vanilla-JS може обігнати React в мікробенчмарку; реальна вигода — батчинг і декларативність, не сира швидкість.</li>
-      <li>Чому diffing — O(n), а не точний O(n³) edit distance? → React жертвує рідкісними edge-кейсами (переїзд піддерева між рівнями) заради швидкості, порівнюючи лише в межах одного рівня.</li>
-      <li>Чим небезпечний <code>key={index}</code>? → конкретний приклад з інпутами/чекбоксами, що "перестрибують" значення при реордері.</li>
-    </ul>
-  </div>`,
+  `,
         },
         {
           kind: 'paragraph',
@@ -782,6 +799,18 @@ list = [B, C],   keys = [0,1]
         {
           question: 'Навіщо потрібен <code>StrictMode</code> і чому в ньому компоненти рендеряться двічі в dev-режимі?',
           answer: '<code>StrictMode</code> навмисно подвоює виклик рендер-функцій та деяких ефектів у dev-режимі, щоб виявити неідемпотентні побічні ефекти в тілі компонента чи витоки в ефектах без cleanup — речі, які стануть реальними багами в concurrent-режимі, де React теж може повторно викликати рендер. У production-збірці подвійний виклик відсутній.',
+        },
+        {
+          question: `Назви 4 причини ре-рендеру компонента`,
+          answer: `власний state, ре-рендер батька, зміна Context, force update через useReducer.`,
+        },
+        {
+          question: `Що змінилось у batching в React 18?`,
+          answer: `раніше батчинг лише в React-обробниках подій, тепер — всюди (таймери, проміси, нативні листенери).`,
+        },
+        {
+          question: `StrictMode впливає на прод-білд?`,
+          answer: `ні, лише dev, подвійні виклики — щоб виявити нечисті ефекти заздалегідь.`,
         },
       ],
       blocks: [
@@ -880,14 +909,7 @@ useEffect(() => {
         },
         {
           kind: 'paragraph',
-          html: `<div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Назви 4 причини ре-рендеру компонента → власний state, ре-рендер батька, зміна Context, force update через useReducer.</li>
-      <li>Що змінилось у batching в React 18? → раніше батчинг лише в React-обробниках подій, тепер — всюди (таймери, проміси, нативні листенери).</li>
-      <li>StrictMode впливає на прод-білд? → ні, лише dev, подвійні виклики — щоб виявити нечисті ефекти заздалегідь.</li>
-    </ul>
-  </div>`,
+          html: ``,
         },
       ],
     },
@@ -948,6 +970,14 @@ useEffect(() => {
           question: 'Як обійти ситуацію, коли за бізнес-логікою хук потрібно викликати «умовно» (наприклад, лише для одного з варіантів UI)?',
           answer: 'Хук викликається завжди, безумовно, а <em>умовною</em> робиться логіка всередині нього або використання результату: наприклад, завжди викликати <code>useEffect</code>, але саму підписку/запит обгорнути в <code>if</code> усередині callback\'а; або розбити компонент на два (умовний рендер компонента-обгортки, а не умовний виклик хука).',
         },
+        {
+          question: `Що станеться, якщо викликати useState всередині if?`,
+          answer: `наведи приклад із конкретним "зсувом" значень між слотами, а не просто "так не можна".`,
+        },
+        {
+          question: `Чим ловиться порушення Rules of Hooks до рантайму?`,
+          answer: `eslint-plugin-react-hooks, правило rules-of-hooks.`,
+        },
       ],
       blocks: [
         {
@@ -991,13 +1021,7 @@ function Profile({ userId }: Props) {
           kind: 'paragraph',
           html: `<div class="alert good"><span class="icon">✅</span><span>Ловиться до рантайму: <code>eslint-plugin-react-hooks</code> (правило <code>rules-of-hooks</code>) — вже в рекомендованому наборі розширення ES7+ Snippets (розділ "React + VS Code" вище). Друге правило того ж плагіна, <code>exhaustive-deps</code>, стежить за коректністю dependency-масивів <code>useEffect</code>/<code>useMemo</code>/<code>useCallback</code>.</span></div>
   <div class="alert warn"><span class="icon">⚠️</span><span>React Compiler (розділ "React 19 / майбутнє" вище) автоматизує мемоізацію, але <strong>не скасовує</strong> ці два правила — виклик хука досі мусить бути передбачуваним і на верхньому рівні, компілятор аналізує код статично й не "зрозуміє" динамічний порядок хуків.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Що станеться, якщо викликати useState всередині if? → наведи приклад із конкретним "зсувом" значень між слотами, а не просто "так не можна".</li>
-      <li>Чим ловиться порушення Rules of Hooks до рантайму? → eslint-plugin-react-hooks, правило rules-of-hooks.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -1113,6 +1137,22 @@ fastSquare(5); // з кешу, миттєво — той самий "ключ" (
           question: 'У чому різниця між <code>useMemo</code> і <code>useCallback</code>, і коли передчасна мемоізація шкодить більше, ніж допомагає?',
           answer: '<code>useMemo</code> мемоізує <em>значення</em>, <code>useCallback</code> — <em>посилання на функцію</em> (по суті, <code>useCallback(fn, deps)</code> еквівалентний <code>useMemo(() => fn, deps)</code>). Обидва самі по собі не безкоштовні — порівняння залежностей і зберігання кешу теж коштує. Мемоізація виправдана, коли обчислення справді важке або коли стабільність посилання критична (проп до <code>React.memo</code>-компонента, залежність іншого хука) — інакше вона додає складність без вимірної користі.',
         },
+        {
+          question: `Що таке stale closure і як його уникнути?`,
+          answer: `приклад з setInterval + functional update / useRef.`,
+        },
+        {
+          question: `Коли useReducer краще за useState?`,
+          answer: `коли наступний стан залежить від попереднього складним чином, або переходи станів треба тестувати ізольовано від UI.`,
+        },
+        {
+          question: `Чи можна покладатись на useMemo для коректності коду (не лише продуктивності)?`,
+          answer: `ні, React може відкинути кеш у будь-який момент — це підказка (hint), не гарантія.`,
+        },
+        {
+          question: `useCallback обгортає функцію — референс точно стабільний?`,
+          answer: `лише якщо стабільні всі deps; нестабільна залежність все одно дає нову функцію щорендеру.`,
+        },
       ],
       blocks: [
         {
@@ -1184,15 +1224,7 @@ valueRef.current = value;
 <span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, initialCount, init);
 <span class="cmt">// без цього довелось би рахувати початковий стан щорендеру назовні хука</span></pre>
   <div class="alert warn"><span class="icon">⚠️</span><span><strong>useCallback не "чинить" сам себе <span class="tag tag-pit">PITFALL</span>:</strong> референс функції лишається стабільним, лише якщо стабільні ВСІ значення в її dependency array. Якщо один з deps — новий обʼєкт/масив щорендеру (Block 3, referential stability), <code>useCallback</code> все одно поверне нову функцію — сама наявність <code>useCallback</code> нічого не гарантує без стабільності залежностей.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Що таке stale closure і як його уникнути? → приклад з setInterval + functional update / useRef.</li>
-      <li>Коли useReducer краще за useState? → коли наступний стан залежить від попереднього складним чином, або переходи станів треба тестувати ізольовано від UI.</li>
-      <li>Чи можна покладатись на useMemo для коректності коду (не лише продуктивності)? → ні, React може відкинути кеш у будь-який момент — це підказка (hint), не гарантія.</li>
-      <li>useCallback обгортає функцію — референс точно стабільний? → лише якщо стабільні всі deps; нестабільна залежність все одно дає нову функцію щорендеру.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -1339,6 +1371,18 @@ valueRef.current = value;
           question: 'Чому в класових компонентах було легко випадково створити нескінченний цикл оновлень у <code>componentDidUpdate</code>, і як хуки цьому запобігають?',
           answer: '<code>componentDidUpdate</code> викликає <code>setState</code> без умови порівняння — і кожен <code>setState</code> знову тригерить <code>componentDidUpdate</code>, тому розробник мусив вручну звіряти <code>prevProps</code>/<code>prevState</code>. У <code>useEffect</code> це вирішується декларативно масивом залежностей — ефект перезапускається лише коли значення в масиві реально змінились (за <code>Object.is</code>), а не при кожному ре-рендері.',
         },
+        {
+          question: `Який єдиний lifecycle-метод обов'язковий у класовому компоненті?`,
+          answer: `<code>render</code>.`,
+        },
+        {
+          question: `Чим один <code>useEffect</code> кращий за пару <code>componentDidMount</code>/<code>componentDidUpdate</code>?`,
+          answer: `не дублює логіку, dependency array сама вирішує "mount чи update" замість ручного порівняння <code>prevProps</code>.`,
+        },
+        {
+          question: `Що з lifecycle досі не має хук-еквівалента?`,
+          answer: `<code>componentDidCatch</code>/<code>getDerivedStateFromError</code> (Error Boundary, Block 5).`,
+        },
       ],
       blocks: [
         {
@@ -1441,14 +1485,7 @@ function UserProfile({ userId }: Props) {
     </table>
   </div>
   <div class="alert good"><span class="icon">✅</span><span>Головна практична перевага хуків тут — <code>componentDidMount</code>/<code>componentDidUpdate</code> у класі часто дублювали один і той самий код (як у прикладі вище), бо логіку "зробити X при mount і при зміні Y" доводилось писати двічі. Один <code>useEffect(fn, [dep])</code> покриває обидва випадки за визначенням залежностей.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Який єдиний lifecycle-метод обов'язковий у класовому компоненті? → <code>render</code>.</li>
-      <li>Чим один <code>useEffect</code> кращий за пару <code>componentDidMount</code>/<code>componentDidUpdate</code>? → не дублює логіку, dependency array сама вирішує "mount чи update" замість ручного порівняння <code>prevProps</code>.</li>
-      <li>Що з lifecycle досі не має хук-еквівалента? → <code>componentDidCatch</code>/<code>getDerivedStateFromError</code> (Error Boundary, Block 5).</li>
-    </ul>
-  </div>`,
+  `,
         },
         {
           kind: 'flashcards',
@@ -1493,6 +1530,14 @@ function UserProfile({ userId }: Props) {
         {
           question: 'Які інструменти чи техніки ти використаєш, щоб знайти реальну причину зайвих ре-рендерів у великому додатку, а не гадати?',
           answer: 'React DevTools Profiler з увімкненим «Highlight updates» покаже, які компоненти й чому ре-рендерились (порівняння props/state/hooks у деталях коміту); для продакшн-профілювання — <code>&lt;Profiler&gt;</code> API з колбеком <code>onRender</code>. Гадати за симптомами («здається, тут щось повільне») — типова помилка джуна, тоді як сеньйор спершу вимірює.',
+        },
+        {
+          question: `memo не допоміг — з чого почнеш дебаг?`,
+          answer: `спершу Profiler + Why did this render, а не здогадки; типова причина — новий референс пропу.`,
+        },
+        {
+          question: `Коли virtualization справді потрібна?`,
+          answer: `списки в сотні-тисячі DOM-вузлів; для 20-50 елементів — зайва складність.`,
         },
       ],
       blocks: [
@@ -1608,13 +1653,7 @@ function BigList({ items }: { items: Item[] }) {
       <tr><td><strong>INP</strong></td><td>Затримка відгуку на взаємодію (замінив FID)</td><td>Важкі синхронні обробники, великий JS bundle, довгі рендери</td><td><code>useTransition</code>, дебаунс, розбиття важкої роботи, memo/virtualization</td></tr>
     </table>
   </div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>memo не допоміг — з чого почнеш дебаг? → "спершу Profiler + Why did this render, а не здогадки; типова причина — новий референс пропу".</li>
-      <li>Коли virtualization справді потрібна? → списки в сотні-тисячі DOM-вузлів; для 20-50 елементів — зайва складність.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -1625,6 +1664,14 @@ function BigList({ items }: { items: Item[] }) {
         {
           question: 'Що конкретно показує вкладка Profiler у React DevTools, і як за нею відрізнити «повільний рендер» від «зайвого рендеру»?',
           answer: 'Profiler фіксує кожен коміт: тривалість рендеру кожного компонента та причину його ре-рендеру (зміна props/state/hooks/батько-компонент). «Повільний рендер» — компонент рендериться довго, бо всередині важкі обчислення; «зайвий рендер» — компонент рендериться швидко, але <em>занадто часто</em>, хоча його вихід не змінюється. Це дві різні проблеми з різними рішеннями (мемоізація обчислень vs мемоізація компонента/props).',
+        },
+        {
+          question: `Як швидко перевірити гіпотезу "цей компонент ре-рендериться забагато" без Profiler?`,
+          answer: `"Highlight updates when components render" у Components tab — візуальна рамка на кожен рендер.`,
+        },
+        {
+          question: `Що показує "Why did this render?"`,
+          answer: `точну причину конкретного ре-рендеру: зміна props, зміна хука, чи просто ре-рендер батька.`,
         },
       ],
       blocks: [
@@ -1652,13 +1699,7 @@ function BigList({ items }: { items: Item[] }) {
     <div class="card green"><h4>4. Виправити й перевірити</h4><p><code>memo</code>/стабілізація референсу/віртуалізація (Block 3) → знову Profile → порівняй тривалість до/після, а не "здається швидше".</p></div>
   </div>
   <div class="alert good"><span class="icon">✅</span><span>Interactions-трекінг у Profiler (запис конкретної взаємодії, а не всієї сесії) дає чистіший вимір — записуй одну дію (клік, ввід), а не хвилину довільного скролу.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Як швидко перевірити гіпотезу "цей компонент ре-рендериться забагато" без Profiler? → "Highlight updates when components render" у Components tab — візуальна рамка на кожен рендер.</li>
-      <li>Що показує "Why did this render?" → точну причину конкретного ре-рендеру: зміна props, зміна хука, чи просто ре-рендер батька.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -1812,6 +1853,14 @@ const useStore = create(
           question: 'Як TanStack Query вирішує проблему «водоспаду запитів» (waterfall) і гонки застарілих даних (race condition) при швидкій зміні параметрів запиту?',
           answer: 'Кешування за <code>queryKey</code> дозволяє паралельно ініціювати незалежні запити замість послідовних <code>await</code>-ланцюжків. Race condition при швидкій зміні параметрів (наприклад, пошуковий інпут) вирішується автоматично: бібліотека ігнорує відповідь застарілого запиту, якщо <code>queryKey</code> вже змінився і стартував новий запит — це знімає з розробника ручне відстеження «чи цей запит ще актуальний».',
         },
+        {
+          question: `Чим кеш TanStack Query відрізняється від Redux/Zustand стору?`,
+          answer: `це не клієнтський стан, а кеш серверних даних зі своїм життєвим циклом (stale/fresh, invalidate, refetch) — тримати серверні дані у Zustand означає вручну реалізовувати те, що Query дає з коробки.`,
+        },
+        {
+          question: `Що робить staleTime: 0 за замовчуванням?`,
+          answer: `кожен новий mount/фокус вікна триггерить background refetch, навіть якщо дані в кеші є — UI показує кешовані одразу, потім оновлює.`,
+        },
       ],
       blocks: [
         {
@@ -1885,13 +1934,7 @@ queryClient.invalidateQueries({ queryKey: ['users'] });`,
       <tr><td><code>placeholderData</code></td><td>—</td><td>Дані-заглушка поки завантажується (keepPreviousData — без "миготіння" при пагінації)</td></tr>
     </table>
   </div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Чим кеш TanStack Query відрізняється від Redux/Zustand стору? → "це не клієнтський стан, а кеш серверних даних зі своїм життєвим циклом (stale/fresh, invalidate, refetch) — тримати серверні дані у Zustand означає вручну реалізовувати те, що Query дає з коробки".</li>
-      <li>Що робить staleTime: 0 за замовчуванням? → кожен новий mount/фокус вікна триггерить background refetch, навіть якщо дані в кеші є — UI показує кешовані одразу, потім оновлює.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -1950,6 +1993,10 @@ const results = useObservable(results$, []);
         {
           question: 'Чим Render Props відрізняється від сучасного підходу через custom hooks для повторного використання логіки, і чому хуки здебільшого витіснили цей патерн?',
           answer: 'Render Props передає функцію-рендерер як prop (<code>&lt;DataProvider render={data =&gt; ...}&gt;</code>), щоб надати доступ до внутрішнього стану провайдера — але це додає рівень вкладеності в дереві компонентів («wrapper hell» при комбінуванні кількох). Custom hooks дають ту саму повторно використовувану логіку без обгортки в дереві — просто виклик функції всередині компонента, тому Render Props сьогодні застосовують рідко, переважно в legacy-коді або бібліотеках із до-хукової епохи.',
+        },
+        {
+          question: `Чому немає хука для Error Boundary?`,
+          answer: `потребує lifecycle-методів рендер-фази (getDerivedStateFromError), яких у функціональній моделі хуків немає — рендер компонента не може "зловити" помилку самого себе.`,
         },
       ],
       blocks: [
@@ -2023,12 +2070,7 @@ function Profile() {
         },
         {
           kind: 'paragraph',
-          html: `<div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Чому немає хука для Error Boundary? → потребує lifecycle-методів рендер-фази (getDerivedStateFromError), яких у функціональній моделі хуків немає — рендер компонента не може "зловити" помилку самого себе.</li>
-    </ul>
-  </div>`,
+          html: ``,
         },
       ],
     },
@@ -2043,6 +2085,14 @@ function Profile() {
         {
           question: 'Чому бібліотеки на кшталт React Hook Form віддають перевагу uncontrolled-підходу за замовчуванням?',
           answer: 'Uncontrolled-підхід уникає ре-рендеру батьківського компонента форми на кожне натискання клавіші в кожному полі — React Hook Form підписує поля через <code>ref</code> і керує валідацією/станом поза React-рендер-циклом, синхронізуючи назад у React лише коли це реально потрібно (сабміт, показ помилки). Це дає суттєвий виграш у продуктивності на великих формах порівняно з повністю controlled-підходом.',
+        },
+        {
+          question: `Чому controlled input ніколи не "відстає" від того, що друкує користувач?`,
+          answer: `React перезаписує DOM-значення власним станом щорендеру — немає окремого "справжнього" браузерного значення, з яким можна розійтись.`,
+        },
+        {
+          question: `Чому input[type="file"] не можна зробити controlled?`,
+          answer: `безпека браузера: JS не може програмно підставити довільний файл у value файлового інпуту.`,
         },
       ],
       blocks: [
@@ -2085,13 +2135,7 @@ function Profile() {
     </table>
   </div>
   <div class="alert good"><span class="icon">✅</span><span><strong>Вердикт:</strong> маленька форма (1-5 полів) з живою валідацією/умовним UI → controlled, просто й достатньо. Велика форма, форма з файлами, або продуктивність під питанням → uncontrolled (найчастіше — через react-hook-form, розділ "Нативний підхід vs бібліотеки" нижче), а не ручні refs на кожне поле.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Чому controlled input ніколи не "відстає" від того, що друкує користувач? → React перезаписує DOM-значення власним станом щорендеру — немає окремого "справжнього" браузерного значення, з яким можна розійтись.</li>
-      <li>Чому input[type="file"] не можна зробити controlled? → безпека браузера: JS не може програмно підставити довільний файл у value файлового інпуту.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -2152,6 +2196,14 @@ function Profile() {
           question: 'Як показати помилки валідації користувачу так, щоб форма не «сіпалась» (не втрачала фокус/значення полів) при кожному ре-рендері?',
           answer: 'Стан помилок варто зберігати окремо від значень полів (наприклад, <code>errors</code> у форматі <code>{ fieldName: message }</code>) і оновлювати лише той запис, що змінився, а не пересобирати весь об\'єкт форми. Бібліотеки на кшталт React Hook Form ізолюють ре-рендер конкретного поля через підписку по імені поля, тому помилка в одному інпуті не викликає ре-рендер усієї форми і не збиває фокус користувача.',
         },
+        {
+          question: `onChange чи onBlur для валідації email?`,
+          answer: `onBlur — не заважає вводу, дає фідбек після завершення поля; onChange для миттєвих індикаторів (сила пароля).`,
+        },
+        {
+          question: `Навіщо aria-invalid/aria-describedby на полі з помилкою?`,
+          answer: `зв'язує поле з текстом помилки для screen reader — без цього невізуальний користувач не отримає фідбек про помилку взагалі.`,
+        },
       ],
       blocks: [
         {
@@ -2199,13 +2251,7 @@ function Profile() {
         {
           kind: 'paragraph',
           html: `<div class="alert warn"><span class="icon">⚠️</span><span>Перенесення фокуса на перше невалідне поле після невдалого сабміту — не косметика, а очікувана a11y-поведінка (користувачі screen reader/клавіатурної навігації інакше не дізнаються, де саме помилка). Легко забути, бо форма "технічно працює" й без цього.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>onChange чи onBlur для валідації email? → onBlur — не заважає вводу, дає фідбек після завершення поля; onChange для миттєвих індикаторів (сила пароля).</li>
-      <li>Навіщо aria-invalid/aria-describedby на полі з помилкою? → зв'язує поле з текстом помилки для screen reader — без цього невізуальний користувач не отримає фідбек про помилку взагалі.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -2414,6 +2460,14 @@ function EditUser() {
           question: 'Що таке React Server Components і чим вони принципово відрізняються від SSR, який існував і до RSC?',
           answer: 'SSR лише виконує рендер на сервері для <em>початкового</em> HTML, після чого весь код все одно потрапляє в клієнтський бандл для гідратації. RSC — компоненти, які виконуються <strong>виключно на сервері</strong> й ніколи не потрапляють у клієнтський JS-бандл: їхній код (і залежності) взагалі не завантажується браузером, що дає суттєве зменшення розміру бандла для частин UI, яким не потрібна інтерактивність.',
         },
+        {
+          question: `SSR і RSC — це одне й те саме?`,
+          answer: `ні: SSR — коли рендериться HTML; RSC — де взагалі виконується компонент (сервер, ніколи не в бандлі клієнта).`,
+        },
+        {
+          question: `Чому не можна передати onClick з Server у Client Component як проп у зворотньому напрямку (Client`,
+          answer: `Server)? → пропи серіалізуються, функції не серіалізуються — сервер не може отримати посилання на клієнтську функцію.`,
+        },
       ],
       blocks: [
         {
@@ -2451,13 +2505,7 @@ export default function Page() {
           kind: 'paragraph',
           html: `<div class="alert warn"><span class="icon">⚠️</span><span><strong>Hydration mismatch:</strong> якщо серверний і клієнтський рендер відрізняються (<code>Date.now()</code>, <code>window</code>, <code>Math.random()</code> у рендері) — React лається на mismatch. Фікс: <code>suppressHydrationWarning</code> на конкретному вузлі або перенести browser-only контент у <code>useEffect</code>.</span></div>
   <div class="alert warn"><span class="icon">⚠️</span><span><strong>Bundle leak:</strong> <code>"use client"</code> на "корені" фічі тягне за собою у клієнтський бандл усі дочірні модулі-імпорти. Client Component може отримати Server Component лише через <code>children</code>-проп, ніколи через прямий <code>import</code>.</span></div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>SSR і RSC — це одне й те саме? → ні: SSR — коли рендериться HTML; RSC — де взагалі виконується компонент (сервер, ніколи не в бандлі клієнта).</li>
-      <li>Чому не можна передати onClick з Server у Client Component як проп у зворотньому напрямку (Client → Server)? → пропи серіалізуються, функції не серіалізуються — сервер не може отримати посилання на клієнтську функцію.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -2473,6 +2521,14 @@ export default function Page() {
         {
           question: 'Що означає директива <code>\'use client\'</code>, і чи означає вона, що весь піддерево під нею більше не рендериться на сервері?',
           answer: '<code>\'use client\'</code> позначає межу — усе, що <em>імпортується</em> з цього файлу, стає частиною клієнтського бандла і гідратується в браузері. Але це не означає повну відмову від серверного рендерингу: клієнтський компонент все одно рендериться на сервері один раз для генерації початкового HTML (SSR), а потім гідратується на клієнті — «client component» стосується бандлінгу й інтерактивності, а не відсутності серверного рендеру взагалі.',
+        },
+        {
+          question: `Що заважає забути перевірити авторизацію в Server Action?`,
+          answer: `нічого, це відповідальність розробника — Action виглядає як звичайна функція, але викликається з клієнта як ендпоінт.`,
+        },
+        {
+          question: `4 рівні кешування Next.js — назви й різницю`,
+          answer: `Request Memoization / Data Cache / Full Route Cache / Router Cache, сервер vs клієнт, per-request vs persistent.`,
         },
       ],
       blocks: [
@@ -2552,13 +2608,7 @@ export default function Page() {
       <tr><td><strong>Router Cache</strong></td><td>Клієнт, in-memory</td><td>RSC payload відвіданих роутів для миттєвої back/forward навігації</td><td>Хард-рефреш, <code>router.refresh()</code></td></tr>
     </table>
   </div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Що заважає забути перевірити авторизацію в Server Action? → нічого, це відповідальність розробника — Action виглядає як звичайна функція, але викликається з клієнта як ендпоінт.</li>
-      <li>4 рівні кешування Next.js — назви й різницю → Request Memoization / Data Cache / Full Route Cache / Router Cache, сервер vs клієнт, per-request vs persistent.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
@@ -2574,6 +2624,14 @@ export default function Page() {
         {
           question: 'Чим React 19 Actions (<code>useActionState</code>, <code>useOptimistic</code>) спрощують роботу з формами порівняно з ручним керуванням через <code>useState</code> + <code>try/catch</code>?',
           answer: '<code>useActionState</code> об\'єднує стан форми, статус pending і обробку помилок в один хук навколо async-функції (Server Action чи звичайної), автоматично керуючи прогресивним посиленням (форма працює навіть без JS через нативний <code>action</code>). <code>useOptimistic</code> дозволяє миттєво показати очікуваний результат мутації до підтвердження сервером і автоматично відкотити його при помилці — без ручного дублювання стану «оптимістичний vs підтверджений».',
+        },
+        {
+          question: `Чим use() відрізняється від await у Server Component?`,
+          answer: `use() можна викликати умовно і в Client Components (для Context/переданого Promise), await у Server Component — ні для Client.`,
+        },
+        {
+          question: `React Compiler означає "більше не треба знати useMemo"?`,
+          answer: `ні — для співбесіди й для дебагу edge-case'ів розуміння ручної мемоізації лишається обов'язковим.`,
         },
       ],
       blocks: [
@@ -2623,13 +2681,7 @@ const [state, formAction, isPending] = useActionState(submitAction, initialState
 <span class="kw">const</span> cookieStore = <span class="kw">await</span> <span class="fn">cookies</span>();</pre></div>
     <div class="card yellow"><h4>Дефолт кешування змінився</h4><p><code>fetch</code> та GET Route Handlers <strong>більше не кешуються за замовчуванням</strong> (раніше — force-cache). Явно вмикай через <code>cache: 'force-cache'</code> там, де кешування дійсно потрібне.</p></div>
   </div>
-  <div class="interview-tips">
-    <div class="interview-tips-title">🎤 На співбесіді часто запитують</div>
-    <ul>
-      <li>Чим use() відрізняється від await у Server Component? → use() можна викликати умовно і в Client Components (для Context/переданого Promise), await у Server Component — ні для Client.</li>
-      <li>React Compiler означає "більше не треба знати useMemo"? → ні — для співбесіди й для дебагу edge-case'ів розуміння ручної мемоізації лишається обов'язковим.</li>
-    </ul>
-  </div>`,
+  `,
         },
       ],
     },
