@@ -4,11 +4,25 @@ import { useEffect, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import type { QuickRefBlock, QuickRefColumn, QuickRefContent, QuickRefGroup } from '@/lib/cheatsheet/types'
 import { cn } from '@/lib/utils'
+import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
+import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
 
 const STORAGE_KEY = 'quickrefCollapsedColumns'
 
 function isChipRow(block: QuickRefBlock): block is Extract<QuickRefBlock, { chips: string[] }> {
   return 'chips' in block
+}
+
+function isLifecycleBlock(
+  block: QuickRefBlock,
+): block is Extract<QuickRefBlock, { phases: unknown[] }> {
+  return 'phases' in block
+}
+
+function isHooksCatalogBlock(
+  block: QuickRefBlock,
+): block is Extract<QuickRefBlock, { hooks: unknown[] }> {
+  return 'hooks' in block
 }
 
 function ChipList({ chips, className }: { chips: string[]; className?: string }) {
@@ -104,13 +118,12 @@ function QuickRefColumnCard({
         />
       </button>
       {!collapsed &&
-        column.blocks.map((block, i) =>
-          isChipRow(block) ? (
-            <QuickRefChipRowBlock key={i} block={block} />
-          ) : (
-            <QuickRefGroupBlock key={i} group={block} />
-          ),
-        )}
+        column.blocks.map((block, i) => {
+          if (isLifecycleBlock(block)) return <QuickRefLifecycleDiagram key={i} block={block} />
+          if (isHooksCatalogBlock(block)) return <QuickRefHooksCatalog key={i} block={block} />
+          if (isChipRow(block)) return <QuickRefChipRowBlock key={i} block={block} />
+          return <QuickRefGroupBlock key={i} group={block} />
+        })}
     </div>
   )
 }
@@ -138,13 +151,6 @@ export function QuickRefView({ content }: { content: QuickRefContent }) {
 
   return (
     <div className="px-6 py-8 md:px-10">
-      <header className="mb-6">
-        <h1 className="bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-3xl font-bold text-transparent">
-          {content.title}
-        </h1>
-        {content.subtitle && <p className="mt-2 text-slate-400">{content.subtitle}</p>}
-      </header>
-
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
         {content.columns.map((column) => (
           <QuickRefColumnCard

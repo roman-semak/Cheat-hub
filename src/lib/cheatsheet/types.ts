@@ -173,7 +173,37 @@ export interface QuickRefChipRow {
   chips: string[] // rendered as pill chips, may contain inline <b>/<code>
 }
 
-export type QuickRefBlock = QuickRefGroup | QuickRefChipRow
+export interface QuickRefLifecyclePhase {
+  phase: string // 'Mount'
+  desc: string // 'Перший рендер в DOM'
+  hooks: string[] // ['useState(init)', 'useEffect(fn, [])']
+  classic: string // '= componentDidMount'
+  accentHex: string
+}
+
+export interface QuickRefLifecycleBlock {
+  label?: string
+  phases: QuickRefLifecyclePhase[]
+}
+
+export interface QuickRefHookRow {
+  hook: string
+  when: string // lifecycle state(s) it fires in, e.g. 'Mount + Update'
+  why: string
+  example: string // short usage code snippet, shown in a popup
+  exampleLanguage?: string // defaults to 'tsx'
+}
+
+export interface QuickRefHooksCatalogBlock {
+  label?: string
+  hooks: QuickRefHookRow[]
+}
+
+export type QuickRefBlock =
+  | QuickRefGroup
+  | QuickRefChipRow
+  | QuickRefLifecycleBlock
+  | QuickRefHooksCatalogBlock
 
 export interface QuickRefColumn {
   id: string

@@ -40,22 +40,157 @@ export const quickRefContent: QuickRefContent = {
           ],
         },
         {
-          label: 'Hooks',
+          label: 'Рендер: 4 стадії',
           entries: [
-            { term: 'useState', desc: 'стан', inline: true, chips: ['render'] },
-            { term: 'useReducer', desc: 'reducer', inline: true, chips: ['render'] },
-            { term: 'useMemo', desc: 'кеш значення', inline: true, chips: ['render, deps'] },
-            { term: 'useCallback', desc: 'кеш ф-ї', inline: true, chips: ['render, deps'] },
+            { term: 'Trigger', desc: 'зміна state/props/parent/context' },
             {
-              term: 'useRef',
-              desc: 'мутабельне, <b>не</b> тригерить render',
-              chips: ['без re-render'],
+              term: 'Render',
+              desc: 'React викликає ф-ю компонента, будує новий Fiber tree — чисто, переривне',
+            },
+            { term: 'Reconcile', desc: 'diffing нового Fiber tree зі старим (alternate)' },
+            {
+              term: 'Commit',
+              desc:
+                'синхронно застосовує зміни в DOM; layout effects → paint → passive effects',
+            },
+          ],
+        },
+        {
+          label: 'Virtual DOM & дерева',
+          entries: [
+            {
+              term: 'Virtual DOM',
+              desc:
+                "легкий JS-об'єкт, що описує UI («віртуалізація»); React оновлює в реальному DOM лише різницю",
+            },
+            { term: 'Element tree', desc: 'результат createElement/JSX — яким UI МАЄ бути' },
+            {
+              term: 'Fiber tree',
+              desc: 'внутрішня work-in-progress структура (child/sibling/return) — для планування й переривання',
+            },
+            { term: 'DOM tree', desc: 'реальні вузли браузера — оновлюються лише на commit' },
+          ],
+        },
+        {
+          label: 'Lifecycle: Mount → Update → Unmount',
+          phases: [
+            {
+              phase: 'Mount',
+              desc: 'перший рендер в DOM',
+              hooks: ['useState(init)', 'useReducer(init)', 'useRef(init)', 'useMemo — 1й раз', 'useEffect(fn, [])'],
+              classic: '= componentDidMount',
+              accentHex: '#5fae86',
             },
             {
-              term: 'useContext',
-              desc:
-                "підписка на найближчий <code>Provider</code> вище по дереву; ре-рендер при <b>кожній</b> зміні value, навіть без memo",
-              chips: ['на зміну value'],
+              phase: 'Update',
+              desc: 'state/props змінились',
+              hooks: ['useEffect(fn, [deps])', 'useLayoutEffect', 'useMemo(fn, [deps])', 'useCallback(fn, [deps])', 're-run на зміні deps'],
+              classic: '= componentDidUpdate',
+              accentHex: '#6b9bd1',
+            },
+            {
+              phase: 'Unmount',
+              desc: 'видалення з DOM',
+              hooks: ['return () => {...}', 'всередині useEffect', 'cleanup: відписки, clearInterval, abort'],
+              classic: '= componentWillUnmount',
+              accentHex: '#c2785f',
+            },
+          ],
+        },
+        {
+          label: 'Повний каталог хуків',
+          hooks: [
+            {
+              hook: 'useState',
+              when: 'Mount + Update',
+              why: 'Локальний стан, незалежні прості значення',
+              example: 'const [count, setCount] = useState(0);',
+            },
+            {
+              hook: 'useReducer',
+              when: 'Mount + Update',
+              why: 'Складний повʼязаний стан, явні action-переходи',
+              example: 'const [state, dispatch] = useReducer(reducer, initial);',
+            },
+            {
+              hook: 'useEffect',
+              when: 'Update (після paint) + Unmount (cleanup)',
+              why: 'Side-effects після paint: fetch, підписки',
+              example:
+                'useEffect(() => {\n  const id = setInterval(tick, 1000);\n  return () => clearInterval(id);\n}, []);',
+            },
+            {
+              hook: 'useLayoutEffect',
+              when: 'Update (до paint) + Unmount (cleanup)',
+              why: 'Синхронне читання/зміна layout перед фарбуванням',
+              example: 'useLayoutEffect(() => {\n  el.current.style.opacity = "1";\n}, []);',
+            },
+            {
+              hook: 'useInsertionEffect',
+              when: 'До useLayoutEffect',
+              why: 'Вставка <style> — лише для CSS-in-JS бібліотек',
+              example: 'useInsertionEffect(() => {\n  insertStyleRule(rule);\n}, [rule]);',
+            },
+            {
+              hook: 'useRef',
+              when: 'Будь-коли, без re-render',
+              why: 'DOM-ref або мутабельне значення без ре-рендеру',
+              example: 'const inputRef = useRef<HTMLInputElement>(null);',
+            },
+            {
+              hook: 'useImperativeHandle',
+              when: 'Mount + Update, з forwardRef',
+              why: 'Кастомізує імперативний API компонента через ref',
+              example:
+                'useImperativeHandle(ref, () => ({\n  focus: () => inputRef.current?.focus(),\n}));',
+            },
+            {
+              hook: 'useMemo',
+              when: 'Render, якщо змінились deps',
+              why: 'Кешує дороге обчислення / стабільний референс',
+              example: 'const sorted = useMemo(() => sort(list), [list]);',
+            },
+            {
+              hook: 'useCallback',
+              when: 'Render, якщо змінились deps',
+              why: 'Кешує посилання на функцію',
+              example: 'const onClick = useCallback(() => doThing(id), [id]);',
+            },
+            {
+              hook: 'useContext',
+              when: 'На зміну value у Provider',
+              why: 'Читає значення найближчого Provider вище по дереву',
+              example: 'const theme = useContext(ThemeContext);',
+            },
+            {
+              hook: 'useTransition',
+              when: 'Update (неурочна дія)',
+              why: 'Позначає оновлення як low-priority, не блокує UI',
+              example: 'const [isPending, startTransition] = useTransition();',
+            },
+            {
+              hook: 'useDeferredValue',
+              when: 'Update (неурочне значення)',
+              why: 'Відкладає ре-рендер важкого дерева',
+              example: 'const deferred = useDeferredValue(query);',
+            },
+            {
+              hook: 'useId',
+              when: 'Mount (стабільний SSR/CSR)',
+              why: "Унікальний id для <label htmlFor>/ARIA — без hydration mismatch",
+              example: 'const id = useId();',
+            },
+            {
+              hook: 'useSyncExternalStore',
+              when: 'Mount + на кожну зміну store',
+              why: 'Tearing-safe підписка на зовнішнє (поза-React) джерело стану',
+              example: 'const state = useSyncExternalStore(subscribe, getSnapshot);',
+            },
+            {
+              hook: 'useDebugValue',
+              when: 'Лише в custom hooks (DX)',
+              why: 'Підписує custom hook міткою в React DevTools',
+              example: "useDebugValue(isOnline ? 'Online' : 'Offline');",
             },
           ],
         },

@@ -18,6 +18,34 @@ export const javascriptContent: TopicContent = {
           "question": "Що таке structural typing в TypeScript, і чим це принципово відрізняється від nominal typing (наприклад, у Java)?",
           "answer": "TypeScript порівнює типи за <strong>формою</strong> (набором полів і їхніх типів), а не за іменем оголошення — два різні інтерфейси з однаковими полями взаємозамінні. У nominal typing два класи з ідентичною структурою, але різними іменами, несумісні без явного успадкування. Це дає TypeScript гнучкість, але й ризик випадкової сумісності типів, які концептуально не мають бути взаємозамінними."
         },
+        {
+          question: `Interface vs abstract class?`,
+          answer: `interface = compile-time форма, стирається, кілька через implements; abstract class = runtime, з реалізацією/станом/конструктором, один через extends, не інстанціюється.`,
+        },
+        {
+          question: `В чому різниця unknown і any?`,
+          answer: `unknown потребує перевірки типу, any ні. Use unknown у catch блоках (TS 4.0+).`,
+        },
+        {
+          question: `Як ти використовуєш discriminated unions?`,
+          answer: `Структури (status + data) для type narrowing без type guards.`,
+        },
+        {
+          question: `Коли використовуєш satisfies?`,
+          answer: `Коли потрібна перевірка типу, але збереження точного літерального типу значення.`,
+        },
+        {
+          question: `Поясни type narrowing.`,
+          answer: `typeof/instanceof для розпізнання типу всередину if/else, потім TS звужує тип.`,
+        },
+        {
+          question: `Що таке type predicate (is)?`,
+          answer: `Custom функція, яка повертає boolean і говорить TS-у про результуючий тип.`,
+        },
+        {
+          question: `Як структурувати API response типи?`,
+          answer: `Discriminated unions з status полем + type predicate функції для парсингу.`,
+        },
       ],
       "blocks": [
         {
@@ -71,7 +99,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li><strong>Interface vs abstract class?</strong> — interface = compile-time форма, стирається, кілька через implements; abstract class = runtime, з реалізацією/станом/конструктором, один через extends, не інстанціюється.</li>\n              <li><strong>В чому різниця unknown і any?</strong> — unknown потребує перевірки типу, any ні. Use unknown у catch блоках (TS 4.0+).</li>\n              <li><strong>Як ти використовуєш discriminated unions?</strong> — Структури (status + data) для type narrowing без type guards.</li>\n              <li><strong>Коли використовуєш satisfies?</strong> — Коли потрібна перевірка типу, але збереження точного літерального типу значення.</li>\n              <li><strong>Поясни type narrowing.</strong> — typeof/instanceof для розпізнання типу всередину if/else, потім TS звужує тип.</li>\n              <li><strong>Що таке type predicate (is)?</strong> — Custom функція, яка повертає boolean і говорить TS-у про результуючий тип.</li>\n              <li><strong>Як структурувати API response типи?</strong> — Discriminated unions з status полем + type predicate функції для парсингу.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у TS 6+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Runtime type reflection, enum deprecation, better type narrowing</span></div></div>"
+          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у TS 6+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Runtime type reflection, enum deprecation, better type narrowing</span></div></div>"
         }
       ]
     },
@@ -86,6 +114,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Яка класична помилка з <code>var</code> у циклі й замиканнях, і чому <code>let</code> її вирішує без додаткового коду?",
           "answer": "<code>var</code> має функціональну область видимості — всі ітерації циклу ділять одну й ту саму змінну, тому асинхронні колбеки (наприклад, у <code>setTimeout</code>) бачать її фінальне значення після завершення циклу, а не значення на момент своєї ітерації. <code>let</code> створює нову прив'язку змінної на кожну ітерацію блоку, тому кожне замикання захоплює власну копію."
+        },
+        {
+          question: `Поясни hoisting.`,
+          answer: `Function declarations підіймаються повністю, var — undefined, let/const — TDZ error.`,
+        },
+        {
+          question: `Що таке closure?`,
+          answer: `Функція + доступ до батьківської області. Утримує дані в пам'яті. Memory leak ризик.`,
+        },
+        {
+          question: `Чому IIFE?`,
+          answer: `Ізоляція змінних, module pattern, уникнення забруднення global scope.`,
+        },
+        {
+          question: `Overloading у TS: як це працює?`,
+          answer: `Multiple signatures для type checking, одна implementation для runtime.`,
+        },
+        {
+          question: `Currying vs partial application?`,
+          answer: `Currying = все аргументи по одному, partial = кілька за раз.`,
+        },
+        {
+          question: `Як запобігти memory leaks у closures?`,
+          answer: `Явно очисти посилання (= null), використовуй WeakMap для кешу.`,
         },
       ],
       "blocks": [
@@ -145,7 +197,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li><strong>Поясни hoisting.</strong> — Function declarations підіймаються повністю, var — undefined, let/const — TDZ error.</li>\n              <li><strong>Що таке closure?</strong> — Функція + доступ до батьківської області. Утримує дані в пам'яті. Memory leak ризик.</li>\n              <li><strong>Чому IIFE?</strong> — Ізоляція змінних, module pattern, уникнення забруднення global scope.</li>\n              <li><strong>Overloading у TS: як це працює?</strong> — Multiple signatures для type checking, одна implementation для runtime.</li>\n              <li><strong>Currying vs partial application?</strong> — Currying = все аргументи по одному, partial = кілька за раз.</li>\n              <li><strong>Як запобігти memory leaks у closures?</strong> — Явно очисти посилання (= null), використовуй WeakMap для кешу.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Partial application syntax (potential), pipe operator, better function composition</span></div></div>"
+          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Partial application syntax (potential), pipe operator, better function composition</span></div></div>"
         }
       ]
     },
@@ -160,6 +212,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "У чому різниця між <code>call</code>, <code>apply</code> і <code>bind</code>?",
           "answer": "Усі три явно задають <code>this</code> для виклику функції. <code>call(thisArg, arg1, arg2)</code> викликає функцію одразу з аргументами через кому; <code>apply(thisArg, [args])</code> — те саме, але аргументи масивом; <code>bind(thisArg)</code> не викликає функцію одразу, а повертає <strong>нову</strong> функцію з назавжди зафіксованим <code>this</code>, яку можна викликати пізніше."
+        },
+        {
+          question: `Яка різниця між call, apply, bind?`,
+          answer: `call/apply одразу, apply з масивом, bind пізніше з partial app.`,
+        },
+        {
+          question: `Поясни this binding priorities.`,
+          answer: `new > call/apply/bind > arrow > method call > global.`,
+        },
+        {
+          question: `Arrow functions і this: чому вони різні?`,
+          answer: `Arrow використовує батьківський this лексично, regular функції — динамічна.`,
+        },
+        {
+          question: `Як це використовується у React?`,
+          answer: `this.method.bind(this) у constructor, або arrow fields для auto-binding.`,
+        },
+        {
+          question: `Lost context при callback?`,
+          answer: `Метод втрачає this коли передається як callback. Розв'язання: bind, arrow field, або bind() на місці.`,
+        },
+        {
+          question: `Function binding у class libraries (jQuery)?`,
+          answer: `$.proxy(), _.bindAll(), або стрілки для сучасного коду.`,
         },
       ],
       "blocks": [
@@ -183,7 +259,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Common Pitfalls</h3><p><strong>Що це:</strong> Найчастіші помилки з this: забути bind. Очікувати window як this у strict mode. Передавати method без контексту. <strong>Навіщо:</strong> Знати типичні pitfalls для уникнення runtime errors.</p><div class=\"grid2\">\n            <div class=\"card red\">\n              <h4>❌ Lost context</h4>\n              <pre><span class=\"kw\">const</span> obj = {\n  name: <span class=\"str\">\"Alice\"</span>,\n  <span class=\"fn\">greet</span>() {\n    <span class=\"kw\">return</span> <span class=\"kw\">this</span>.name;\n  }\n};\n<span class=\"kw\">const</span> fn = obj.greet;\n<span class=\"fn\">fn</span>();\n<span class=\"cmt\">// undefined!</span>\n<span class=\"cmt\">// this = global</span></pre>\n            </div>\n            <div class=\"card green\">\n              <h4>✅ Preserved context</h4>\n              <pre><span class=\"kw\">const</span> obj = {\n  name: <span class=\"str\">\"Alice\"</span>,\n  <span class=\"fn\">greet</span>() {\n    <span class=\"kw\">return</span> <span class=\"kw\">this</span>.name;\n  }\n};\n<span class=\"kw\">const</span> fn = obj.greet.<span class=\"fn\">bind</span>(obj);\n<span class=\"fn\">fn</span>();\n<span class=\"cmt\">// \"Alice\"</span></pre>\n            </div>\n          </div><div class=\"alert warn\">\n            <span class=\"icon\">⚠️</span>\n            <span><strong>Interview Trap:</strong> Arrow functions НЕ мають своїх call/apply/bind — вони завжди використовують батьківський this. Це ЧАСТО питання на інтерв'ю.</span>\n          </div><div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li><strong>Яка різниця між call, apply, bind?</strong> — call/apply одразу, apply з масивом, bind пізніше з partial app.</li>\n              <li><strong>Поясни this binding priorities.</strong> — new > call/apply/bind > arrow > method call > global.</li>\n              <li><strong>Arrow functions і this: чому вони різні?</strong> — Arrow використовує батьківський this лексично, regular функції — динамічна.</li>\n              <li><strong>Як це використовується у React?</strong> — this.method.bind(this) у constructor, або arrow fields для auto-binding.</li>\n              <li><strong>Lost context при callback?</strong> — Метод втрачає this коли передається як callback. Розв'язання: bind, arrow field, або bind() на місці.</li>\n              <li><strong>Function binding у class libraries (jQuery)?</strong> — $.proxy(), _.bindAll(), або стрілки для сучасного коду.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Potential \"this\" improvements, better error messages for this type parameters</span></div></div>"
+          "html": "<h3 class=\"topic\">Common Pitfalls</h3><p><strong>Що це:</strong> Найчастіші помилки з this: забути bind. Очікувати window як this у strict mode. Передавати method без контексту. <strong>Навіщо:</strong> Знати типичні pitfalls для уникнення runtime errors.</p><div class=\"grid2\">\n            <div class=\"card red\">\n              <h4>❌ Lost context</h4>\n              <pre><span class=\"kw\">const</span> obj = {\n  name: <span class=\"str\">\"Alice\"</span>,\n  <span class=\"fn\">greet</span>() {\n    <span class=\"kw\">return</span> <span class=\"kw\">this</span>.name;\n  }\n};\n<span class=\"kw\">const</span> fn = obj.greet;\n<span class=\"fn\">fn</span>();\n<span class=\"cmt\">// undefined!</span>\n<span class=\"cmt\">// this = global</span></pre>\n            </div>\n            <div class=\"card green\">\n              <h4>✅ Preserved context</h4>\n              <pre><span class=\"kw\">const</span> obj = {\n  name: <span class=\"str\">\"Alice\"</span>,\n  <span class=\"fn\">greet</span>() {\n    <span class=\"kw\">return</span> <span class=\"kw\">this</span>.name;\n  }\n};\n<span class=\"kw\">const</span> fn = obj.greet.<span class=\"fn\">bind</span>(obj);\n<span class=\"fn\">fn</span>();\n<span class=\"cmt\">// \"Alice\"</span></pre>\n            </div>\n          </div><div class=\"alert warn\">\n            <span class=\"icon\">⚠️</span>\n            <span><strong>Interview Trap:</strong> Arrow functions НЕ мають своїх call/apply/bind — вони завжди використовують батьківський this. Це ЧАСТО питання на інтерв'ю.</span>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Potential \"this\" improvements, better error messages for this type parameters</span></div></div>"
         },
         {
           "kind": "paragraph",
@@ -202,6 +278,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чим <code>async/await</code> відрізняється від ланцюжка <code>.then()</code> лише синтаксично, чи є семантичні відмінності?",
           "answer": "Синтаксично <code>async/await</code> — це цукор над промісами (транспілюється у стан-машину на generator'ах або еквівалент), семантика виконання та сама. Практична відмінність — обробка помилок: <code>try/catch</code> навколо <code>await</code> природно ловить і синхронні, і асинхронні помилки в одному місці, тоді як з <code>.then()</code> потрібен окремий <code>.catch()</code>, і легше пропустити обробку помилки в середині ланцюжка."
+        },
+        {
+          question: `Поясни Event Loop.`,
+          answer: `Call Stack → Microtasks (Promise, queueMicrotask) → Macrotasks (setTimeout) → Repeat. Microtasks ЗАВЖДИ раньше!`,
+        },
+        {
+          question: `Якого порядку виконання? console.log, Promise, setTimeout?`,
+          answer: `Sync → Microtasks → Macrotasks. Classic interview question!`,
+        },
+        {
+          question: `Promise.all vs allSettled?`,
+          answer: `all() fails на першій помилці, allSettled() чекає всі й повертає {status, value/reason}.`,
+        },
+        {
+          question: `Promise.race для timeout?`,
+          answer: `race([fetch, timeout promise]) для обмеження часу очікування.`,
+        },
+        {
+          question: `Async/await під капотом?`,
+          answer: `Syntactic sugar над Promise. await приймає Promise й паузує execution поки не resolve.`,
+        },
+        {
+          question: `Top-level await?`,
+          answer: `Доступна тільки в modules (type: module), не у scripts. Потребує .js/.mjs файлів.`,
         },
       ],
       "blocks": [
@@ -234,7 +334,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li><strong>Поясни Event Loop.</strong> — Call Stack → Microtasks (Promise, queueMicrotask) → Macrotasks (setTimeout) → Repeat. Microtasks ЗАВЖДИ раньше!</li>\n              <li><strong>Якого порядку виконання? console.log, Promise, setTimeout?</strong> — Sync → Microtasks → Macrotasks. Classic interview question!</li>\n              <li><strong>Promise.all vs allSettled?</strong> — all() fails на першій помилці, allSettled() чекає всі й повертає {status, value/reason}.</li>\n              <li><strong>Promise.race для timeout?</strong> — race([fetch, timeout promise]) для обмеження часу очікування.</li>\n              <li><strong>Async/await під капотом?</strong> — Syntactic sugar над Promise. await приймає Promise й паузує execution поки не resolve.</li>\n              <li><strong>Top-level await?</strong> — Доступна тільки в modules (type: module), не у scripts. Потребує .js/.mjs файлів.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Top-level await improvements, AbortSignal enhancements, structured concurrency</span></div></div>"
+          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Top-level await improvements, AbortSignal enhancements, structured concurrency</span></div></div>"
         }
       ]
     },
@@ -249,6 +349,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чому <code>Object.create(null)</code> іноді використовують замість <code>{}</code> для об'єктів-словників?",
           "answer": "<code>{}</code> успадковує <code>Object.prototype</code> з методами на кшталт <code>toString</code>, <code>hasOwnProperty</code>, <code>constructor</code> — якщо об'єкт використовується як довільний словник із ключами від користувача, ключ на кшталт <code>\"toString\"</code> може конфліктувати зі спадкованим методом. <code>Object.create(null)</code> створює об'єкт без прототипу взагалі — чистий словник без ризику таких колізій."
+        },
+        {
+          question: `Поясни prototype chain.`,
+          answer: `obj → [[Prototype]] → Proto.prototype → Object.prototype → null. Lookup йде вгору по chain.`,
+        },
+        {
+          question: `Class vs Constructor Function?`,
+          answer: `Class — синтаксичний цукор. Під капотом те ж саме, але cleaner API.`,
+        },
+        {
+          question: `Super у constructor?`,
+          answer: `ОБОВ'ЯЗКОВО у extends класі! super(args) це заклик батьківського constructor.`,
+        },
+        {
+          question: `Private fields vs методи?`,
+          answer: `#field приватна, _method конвенція (не реально приватна). Use # для інкапсуляції.`,
+        },
+        {
+          question: `Object.create для inheritance?`,
+          answer: `Встановлює [[Prototype]]. Розв'язує reference sharing проблеми у prototype assignment.`,
+        },
+        {
+          question: `instanceof як працює?`,
+          answer: `Перевіряє, чи obj.[[Prototype]] chain містить Constructor.prototype.`,
         },
       ],
       "blocks": [
@@ -290,7 +414,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li><strong>Поясни prototype chain.</strong> — obj → [[Prototype]] → Proto.prototype → Object.prototype → null. Lookup йде вгору по chain.</li>\n              <li><strong>Class vs Constructor Function?</strong> — Class — синтаксичний цукор. Під капотом те ж саме, але cleaner API.</li>\n              <li><strong>Super у constructor?</strong> — ОБОВ'ЯЗКОВО у extends класі! super(args) це заклик батьківського constructor.</li>\n              <li><strong>Private fields vs методи?</strong> — #field приватна, _method конвенція (не реально приватна). Use # для інкапсуляції.</li>\n              <li><strong>Object.create для inheritance?</strong> — Встановлює [[Prototype]]. Розв'язує reference sharing проблеми у prototype assignment.</li>\n              <li><strong>instanceof як працює?</strong> — Перевіряє, чи obj.[[Prototype]] chain містить Constructor.prototype.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Records/Tuples (potential), decorator improvements, better private field optimization</span></div></div>"
+          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Records/Tuples (potential), decorator improvements, better private field optimization</span></div></div>"
         }
       ]
     },
@@ -305,6 +429,38 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Що таке циклічна залежність між модулями, і чим вона по-різному поводиться в ESM і CJS?",
           "answer": "У CJS циклічна залежність повертає <strong>частково заповнений</strong> об'єкт module.exports на момент циклу (модуль, що імпортує, отримує лише те, що вже було експортовано до циклічного require). У ESM завдяки live bindings (посилання на змінну, а не копія значення) циклічні залежності часто працюють коректніше — значення «доганяє» реальне після повного виконання обох модулів, за умови, що воно не використовується одразу під час ініціалізації."
+        },
+        {
+          question: `CommonJS vs ESM?`,
+          answer: `CJS синхронна, ESM асинхронна. CJS у Node, ESM browser-первая й стандартна.`,
+        },
+        {
+          question: `Tree-shaking працює тільки з ESM?`,
+          answer: `Так! CommonJS динамічна, ESM статична (bundlers аналізують код).`,
+        },
+        {
+          question: `Circular dependencies у ESM?`,
+          answer: `ESM обробляє вони краще через deferred evaluation. CJS може мати проблеми.`,
+        },
+        {
+          question: `Dynamic import як практичне використання?`,
+          answer: `Code splitting, lazy loading. Async, returns Promise з module exports.`,
+        },
+        {
+          question: `import.meta для чого?`,
+          answer: `Metadata про модуль (URL, main flag). У Node: dirname, filename через import.meta.url.`,
+        },
+        {
+          question: `Top-level await як обмеження?`,
+          answer: `Тільки у ESM modules, потребує await import() у non-module контексті.`,
+        },
+        {
+          question: `Loader vs Plugin у Webpack?`,
+          answer: `Loader трансформує окремий файл перед бандлингом (per-file); Plugin втручається у весь процес збірки (напр. генерація HTML, extract CSS, оптимізація).`,
+        },
+        {
+          question: `Чим pnpm відрізняється від npm/yarn?`,
+          answer: `Спільний content-addressable store + symlinks замість копій файлів у кожен проєкт — швидше, менше місця на диску, і сувора структура node_modules унеможливлює phantom dependencies.`,
         },
       ],
       "blocks": [
@@ -355,7 +511,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"interview-tips\">\n            <div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div>\n            <ul>\n              <li><strong>CommonJS vs ESM?</strong> — CJS синхронна, ESM асинхронна. CJS у Node, ESM browser-первая й стандартна.</li>\n              <li><strong>Tree-shaking працює тільки з ESM?</strong> — Так! CommonJS динамічна, ESM статична (bundlers аналізують код).</li>\n              <li><strong>Circular dependencies у ESM?</strong> — ESM обробляє вони краще через deferred evaluation. CJS може мати проблеми.</li>\n              <li><strong>Dynamic import як практичне використання?</strong> — Code splitting, lazy loading. Async, returns Promise з module exports.</li>\n              <li><strong>import.meta для чого?</strong> — Metadata про модуль (URL, main flag). У Node: dirname, filename через import.meta.url.</li>\n              <li><strong>Top-level await як обмеження?</strong> — Тільки у ESM modules, потребує await import() у non-module контексті.</li>\n              <li><strong>Loader vs Plugin у Webpack?</strong> — Loader трансформує окремий файл перед бандлингом (per-file); Plugin втручається у весь процес збірки (напр. генерація HTML, extract CSS, оптимізація).</li>\n              <li><strong>Чим pnpm відрізняється від npm/yarn?</strong> — Спільний content-addressable store + symlinks замість копій файлів у кожен проєкт — швидше, менше місця на диску, і сувора структура node_modules унеможливлює phantom dependencies.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Import attributes (with JSON), module federation standards, better interop</span></div></div>"
+          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Import attributes (with JSON), module federation standards, better interop</span></div></div>"
         }
       ]
     },
@@ -366,6 +522,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Навіщо потрібні generics, якщо можна просто типізувати параметр як <code>any</code> чи <code>unknown</code>?",
           "answer": "<code>any</code> вимикає перевірку типів взагалі — компілятор нічого не гарантує про зв'язок між вхідним і вихідним значенням. Generic (<code>function identity&lt;T&gt;(x: T): T</code>) зберігає цей зв'язок: TypeScript знає, що результат — той самий тип, що й вхід, і виявить помилку, якщо код спробує використати результат неправильно. <code>unknown</code> безпечніший за <code>any</code>, але вимагає звуження типу перед використанням і не зберігає зв'язок між входом/виходом функції."
+        },
+        {
+          question: `Поясни Generics у TS.`,
+          answer: `Type-параметри для перевикористовуваного коду. T розв'язується з аргументу, constraints — через extends.`,
+        },
+        {
+          question: `Keyof як працює?`,
+          answer: `Отримує union всіх ключів типу. keyof { name, age } = "name" | "age".`,
+        },
+        {
+          question: `Conditional types для чого?`,
+          answer: `T extends U ? A : B — типове розгалуження на основі умови.`,
+        },
+        {
+          question: `Infer у conditional types?`,
+          answer: `Ключове слово <code>infer</code> усередині conditional type дозволяє «захопити» й іменувати частину типу для використання у гілці true. Наприклад, <code>type ReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never</code> — <code>infer R</code> захоплює тип результату функції.`,
+        },
+        {
+          question: `Mapped types як їх використати?`,
+          answer: `Трансформувати кожне поле типу: { [K in keyof T]: T[K] }, з додаванням prefix/suffix.`,
+        },
+        {
+          question: `Generic defaults (TS 5.0)?`,
+          answer: `&lt;T = string&gt; встановлює default тип, якщо не передано явно.`,
         },
       ],
       "blocks": [
@@ -416,7 +596,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"interview-tips-title\">🎤 На співбесіді часто запитують</div><li><strong>Поясни Generics у TS.</strong> — Type параметри для перевикористовуваного коду. T розв'язується з аргументу. constraints з extends.</li><li><strong>Keyof як працює?</strong> — Отримує union всіх ключів типу. keyof { name, age } = \"name\" | \"age\".</li><li><strong>Conditional types для чого?</strong> — T extends U ? A : B. Типова розгалуження на основі умови.</li><strong>Infer у conditional types?</strong><li><strong>Mapped types як їх використати?</strong> — Трансформувати кожне поле типу. { [K in keyof T]: T[K] }, додавання prefix/suffix.</li><li><strong>Generic defaults (TS 5.0)?</strong> — &lt;T = string&gt; встановлює default тип якщо не передано явно.</li><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у TS 6+</div><div class=\"changelog-row\"><span class=\"chver\">TS 6</span><span class=\"changelog-text\">Generic constraint inference, pattern matching for types</span></div></div>"
+          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у TS 6+</div><div class=\"changelog-row\"><span class=\"chver\">TS 6</span><span class=\"changelog-text\">Generic constraint inference, pattern matching for types</span></div></div>"
         }
       ]
     },
@@ -431,6 +611,38 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Як побудований <code>Pick&lt;T, K&gt;</code> «під капотом» через mapped types?",
           "answer": "<code>Pick&lt;T, K extends keyof T&gt;</code> реалізований приблизно як <code>{ [P in K]: T[P] }</code> — mapped type, що ітерується по union-типу ключів <code>K</code> і для кожного бере відповідний тип поля з <code>T</code>. Розуміння цього патерну дозволяє писати власні utility types (наприклад, <code>Nullable&lt;T&gt;</code> чи <code>DeepPartial&lt;T&gt;</code>) замість покладання лише на вбудовані."
+        },
+        {
+          question: `Поясни Partial та Required.`,
+          answer: `Partial робить поля optional (?), Required робить обов'язковими. Inverse операції.`,
+        },
+        {
+          question: `Як Pick відрізняється від Omit?`,
+          answer: `Pick: вибрати поля. Omit: вилучити поля. Обернені операції.`,
+        },
+        {
+          question: `Exclude vs Extract у union?`,
+          answer: `Exclude видаляє членів, Extract залишає членів. Фільтрування union типів.`,
+        },
+        {
+          question: `Record vs Map — що обрати?`,
+          answer: `Record/object: фіксована форма, JSON-серіалізація, читання за відомим ключем. Map: часті add/delete, не-string ключі, .size та ітерація. Record&lt;Union, V&gt; ще й перевіряє повноту ключів.`,
+        },
+        {
+          question: `Record&lt;string, V&gt; чи index signature?`,
+          answer: `Це те саме (Record — цукор над mapped type). Обережно: доступ за неіснуючим ключем дає V, а не undefined — рятує noUncheckedIndexedAccess.`,
+        },
+        {
+          question: `ReturnType для function overloads?`,
+          answer: `ReturnType ловить першу перевантаження. Для всіх потрібна це/типів.`,
+        },
+        {
+          question: `DeepReadonly для API contracts?`,
+          answer: `Рекурсивно readonly всі вложені поля. Для immutable data structures.`,
+        },
+        {
+          question: `Template Literal Types у генерації ключів?`,
+          answer: `Капіталізація, префікси/суфікси. Сетери/гетери автоматично.`,
         },
       ],
       "blocks": [
@@ -481,7 +693,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Оптимізація:</strong> Використовуй Utility Types щоб уникнути дублювання. Pick/Omit краще за ручне переписування типів.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Поясни Partial та Required.</strong> — Partial робить поля optional (?), Required робить обов'язковими. Inverse операції.</li>\n              <li><strong>Як Pick відрізняється від Omit?</strong> — Pick: вибрати поля. Omit: вилучити поля. Обернені операції.</li>\n              <li><strong>Exclude vs Extract у union?</strong> — Exclude видаляє членів, Extract залишає членів. Фільтрування union типів.</li>\n              <li><strong>Record vs Map — що обрати?</strong> — Record/object: фіксована форма, JSON-серіалізація, читання за відомим ключем. Map: часті add/delete, не-string ключі, .size та ітерація. Record&lt;Union, V&gt; ще й перевіряє повноту ключів.</li>\n              <li><strong>Record&lt;string, V&gt; чи index signature?</strong> — Це те саме (Record — цукор над mapped type). Обережно: доступ за неіснуючим ключем дає V, а не undefined — рятує noUncheckedIndexedAccess.</li>\n              <li><strong>ReturnType для function overloads?</strong> — ReturnType ловить першу перевантаження. Для всіх потрібна це/типів.</li>\n              <li><strong>DeepReadonly для API contracts?</strong> — Рекурсивно readonly всі вложені поля. Для immutable data structures.</li>\n              <li><strong>Template Literal Types у генерації ключів?</strong> — Капіталізація, префікси/суфікси. Сетери/гетери автоматично.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у TS 6+</div><div class=\"changelog-row\"><span class=\"chver\">TS 6</span><span class=\"changelog-text\">Better Utility Type inference, stricter template literal types</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Оптимізація:</strong> Використовуй Utility Types щоб уникнути дублювання. Pick/Omit краще за ручне переписування типів.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у TS 6+</div><div class=\"changelog-row\"><span class=\"chver\">TS 6</span><span class=\"changelog-text\">Better Utility Type inference, stricter template literal types</span></div></div>"
         }
       ]
     },
@@ -496,6 +708,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чи виконується блок <code>finally</code>, якщо в <code>try</code> стався <code>return</code>, а в <code>catch</code> — ще один <code>return</code>?",
           "answer": "Так, <code>finally</code> виконується завжди — навіть якщо <code>try</code> чи <code>catch</code> вже викликали <code>return</code>. Якщо <code>finally</code> сам містить <code>return</code>, він <strong>перекриє</strong> будь-яке значення, повернуте з <code>try</code>/<code>catch</code> — тонкий і небезпечний edge case, тому <code>return</code> у <code>finally</code> вважається антипатерном."
+        },
+        {
+          question: `Різниця try/catch та Promise.catch?`,
+          answer: `try/catch для синхронного коду і async/await. Promise.catch для Promise chains.`,
+        },
+        {
+          question: `Для чого finally блок?`,
+          answer: `Cleanup код що виконується завжди. Закриття файлів, відпуск ресурсів, clear timers.`,
+        },
+        {
+          question: `Як перехопити throw у catch?`,
+          answer: `instanceof для type checking. Розрізняй Error types (TypeError, RangeError).`,
+        },
+        {
+          question: `Error.cause для чого потрібен?`,
+          answer: `Chain контекст помилок. Оригінальна помилка у причині для логування.`,
+        },
+        {
+          question: `unknown vs any у catch?`,
+          answer: `unknown безпечніше. Не можеш звертатись до properties без type guard.`,
+        },
+        {
+          question: `Custom Error класи у production?`,
+          answer: `Так! Розрізняй ValidationError, NotFoundError, DatabaseError для lepшої обробки.`,
         },
       ],
       "blocks": [
@@ -537,7 +773,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> catch binding у JS/TS теоретично може ловити not-Error об'єкти. Завжди перевіри instanceof Error перед доступом до properties.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Різниця try/catch та Promise.catch?</strong> — try/catch для синхронного коду і async/await. Promise.catch для Promise chains.</li>\n              <li><strong>Для чого finally блок?</strong> — Cleanup код що виконується завжди. Закриття файлів, відпуск ресурсів, clear timers.</li>\n              <li><strong>Як перехопити throw у catch?</strong> — instanceof для type checking. Розрізняй Error types (TypeError, RangeError).</li>\n              <li><strong>Error.cause для чого потрібен?</strong> — Chain контекст помилок. Оригінальна помилка у причині для логування.</li>\n              <li><strong>unknown vs any у catch?</strong> — unknown безпечніше. Не можеш звертатись до properties без type guard.</li>\n              <li><strong>Custom Error класи у production?</strong> — Так! Розрізняй ValidationError, NotFoundError, DatabaseError для lepшої обробки.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Better error stack traces, Error.stackTraceLimit improvements</span></div></div>"
+          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> catch binding у JS/TS теоретично може ловити not-Error об'єкти. Завжди перевіри instanceof Error перед доступом до properties.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Better error stack traces, Error.stackTraceLimit improvements</span></div></div>"
         }
       ]
     },
@@ -552,6 +788,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чим генератор (<code>function*</code>) простіший за ручну реалізацію ітератора через <code>Symbol.iterator</code>?",
           "answer": "Генератор автоматично реалізує весь протокол ітератора — виклик <code>yield</code> призупиняє виконання й повертає значення, а стан функції (локальні змінні, позиція виконання) зберігається між викликами <code>next()</code> без ручного відстеження прапорців чи індексів, які довелось би писати вручну при реалізації <code>next()</code> напряму."
+        },
+        {
+          question: `Iterator protocol та Symbol.iterator?`,
+          answer: `Об'єкт з [Symbol.iterator]() повинен мати .next() метод. for...of використовує це.`,
+        },
+        {
+          question: `Функція generator відрізняється від звичайної?`,
+          answer: `function* з yield. Повертає iterator, не результат. Лінива передача значень.`,
+        },
+        {
+          question: `yield.send() як працює?`,
+          answer: `Передача значень у generator. g.next(5) встановлює a = 5 для yield a.`,
+        },
+        {
+          question: `Async generators для чого?`,
+          answer: `Потокова обробка async операцій. for await...of замість while + Promise.`,
+        },
+        {
+          question: `yield* для делегування?`,
+          answer: `Yields всі значення іншого generator. Композиція generators.`,
+        },
+        {
+          question: `Generator.throw() та return()?`,
+          answer: `throw вкидає помилку. return() завершує generator та return значення.`,
         },
       ],
       "blocks": [
@@ -584,7 +844,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Використання:</strong> Generators для лінивого обчислення, async generators для потокової обробки даних від API.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Iterator protocol та Symbol.iterator?</strong> — Об'єкт з [Symbol.iterator]() повинен мати .next() метод. for...of використовує це.</li>\n              <li><strong>Функція generator відрізняється від звичайної?</strong> — function* з yield. Повертає iterator, не результат. Лінива передача значень.</li>\n              <li><strong>yield.send() як працює?</strong> — Передача значень у generator. g.next(5) встановлює a = 5 для yield a.</li>\n              <li><strong>Async generators для чого?</strong> — Потокова обробка async операцій. for await...of замість while + Promise.</li>\n              <li><strong>yield* для делегування?</strong> — Yields всі значення іншого generator. Композиція generators.</li>\n              <li><strong>Generator.throw() та return()?</strong> — throw вкидає помилку. return() завершує generator та return значення.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Pipeline operator for generators, better async iterator composition</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Використання:</strong> Generators для лінивого обчислення, async generators для потокової обробки даних від API.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Pipeline operator for generators, better async iterator composition</span></div></div>"
         }
       ]
     },
@@ -595,6 +855,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Як деструктуризація з дефолтними значеннями допомагає уникнути перевірок <code>undefined</code> для параметрів функції?",
           "answer": "<code>function fn({ limit = 10, offset = 0 } = {})</code> одразу задає значення за замовчуванням для кожного поля об'єкта-параметра і для самого об'єкта (якщо функцію викликали взагалі без аргументів) — це замінює кілька рядків ручних перевірок <code>if (options.limit === undefined) ...</code> одним декларативним виразом у сигнатурі функції."
+        },
+        {
+          question: `Array destructuring та пропуск елементів?`,
+          answer: `Пусті комами: [a, , c]. Пропускає другий елемент.`,
+        },
+        {
+          question: `Rest properties (...rest) в об'єктах?`,
+          answer: `Зібрати решту ключів. { id, ...rest } = user: rest має все крім id.`,
+        },
+        {
+          question: `Rename при destructuring?`,
+          answer: `{ name: nameAlias } = obj. nameAlias = obj.name (переім'яновування).`,
+        },
+        {
+          question: `Default values та undefined?`,
+          answer: `{ x = 10 } = { x: undefined }; x = 10 (undefined активує default).`,
+        },
+        {
+          question: `Nested destructuring синтаксис?`,
+          answer: `{ user: { name, address: { city } } } = data. Глибокі pattern matching.`,
+        },
+        {
+          question: `Function params із destructuring?`,
+          answer: `function({name, age = 25}) {}. API clarity, можна помилитись параметри.`,
         },
       ],
       "blocks": [
@@ -627,7 +911,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> Використовуй destructuring у function params для API clarity. Явне показує які поля очікуються.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Array destructuring та пропуск елементів?</strong> — Пусті комами: [a, , c]. Пропускає другий елемент.</li>\n              <li><strong>Rest properties (...rest) в об'єктах?</strong> — Зібрати решту ключів. { id, ...rest } = user: rest має все крім id.</li>\n              <li><strong>Rename при destructuring?</strong> — { name: nameAlias } = obj. nameAlias = obj.name (переім'яновування).</li>\n              <li><strong>Default values та undefined?</strong> — { x = 10 } = { x: undefined }; x = 10 (undefined активує default).</li>\n              <li><strong>Nested destructuring синтаксис?</strong> — { user: { name, address: { city } } } = data. Глибокі pattern matching.</li>\n              <li><strong>Function params із destructuring?</strong> — function({name, age = 25}) {}. API clarity, можна помилитись параметри.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Pattern matching improvements, better nested destructuring</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> Використовуй destructuring у function params для API clarity. Явне показує які поля очікуються.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Pattern matching improvements, better nested destructuring</span></div></div>"
         }
       ]
     },
@@ -642,6 +926,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чому Singleton вважається антипатерном у сучасному фронтенд-коді, попри свою простоту?",
           "answer": "Singleton створює приховану глобальну залежність, яку важко замінити в тестах (мокнути) чи ізолювати між кількома незалежними інстансами застосунку (наприклад, у SSR, де кожен запит має отримати власний стан, а не ділити один глобальний об'єкт між усіма користувачами). Явна ін'єкція залежності (через DI-контейнер чи просто параметр) дає той самий «єдиний екземпляр там, де треба», але без прихованого глобального стану."
+        },
+        {
+          question: `Observer pattern для чого?`,
+          answer: `Decoupling. Subject не знає деталей observers. Сповіщення при зміні.`,
+        },
+        {
+          question: `Factory vs Constructor?`,
+          answer: `Factory може логіку створення, вибір підкласів. Для складного об'єктного створення.`,
+        },
+        {
+          question: `Singleton antipattern?`,
+          answer: `Так, ускладнює тестування. Для logger/config ок, для бізнес-логіки - краще DI.`,
+        },
+        {
+          question: `Strategy pattern для чого?`,
+          answer: `Runtime вибір алгоритму. Платежні системи, сортування, compression.`,
+        },
+        {
+          question: `Decorator vs Inheritance?`,
+          answer: `Decorator більш гнучкий, дозволяє composition. Динамічне додання функціональності.`,
+        },
+        {
+          question: `Proxy для валідації/логування?`,
+          answer: `Так! Перехоплення set/get. Validation proxy, logging proxy, caching proxy.`,
         },
       ],
       "blocks": [
@@ -683,7 +991,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Практика:</strong> Observer для event handling, Factory для об'єктного створення, Singleton для shared resources (БД, Logger).\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Observer pattern для чого?</strong> — Decoupling. Subject не знає деталей observers. Сповіщення при зміні.</li>\n              <li><strong>Factory vs Constructor?</strong> — Factory може логіку створення, вибір підкласів. Для складного об'єктного створення.</li>\n              <li><strong>Singleton antipattern?</strong> — Так, ускладнює тестування. Для logger/config ок, для бізнес-логіки - краще DI.</li>\n              <li><strong>Strategy pattern для чого?</strong> — Runtime вибір алгоритму. Платежні системи, сортування, compression.</li>\n              <li><strong>Decorator vs Inheritance?</strong> — Decorator більш гнучкий, дозволяє composition. Динамічне додання функціональності.</li>\n              <li><strong>Proxy для валідації/логування?</strong> — Так! Перехоплення set/get. Validation proxy, logging proxy, caching proxy.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Better pattern matching syntax, advanced decorator proposals</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Практика:</strong> Observer для event handling, Factory для об'єктного створення, Singleton для shared resources (БД, Logger).\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Better pattern matching syntax, advanced decorator proposals</span></div></div>"
         }
       ]
     },
@@ -698,6 +1006,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чим <code>Set</code> корисний для дедуплікації масиву, і чи зберігає він порядок елементів?",
           "answer": "<code>[...new Set(array)]</code> — найкоротший спосіб отримати унікальні значення масиву, бо <code>Set</code> за визначенням не допускає дублікатів (порівняння через SameValueZero, схоже на <code>===</code>, але <code>NaN</code> вважається рівним <code>NaN</code>). Порядок ітерації зберігається — це порядок вставки, тобто перше входження кожного унікального значення."
+        },
+        {
+          question: `Map vs Object у JS?`,
+          answer: `Map: будь-які ключі, .size, ітерована. Object: швидше для малих, String/Symbol ключі.`,
+        },
+        {
+          question: `WeakMap для чого?`,
+          answer: `Слабкі посилання. Приватні дані в class (WeakMap для private fields), caching з GC.`,
+        },
+        {
+          question: `Object.keys() для об'єкта vs Map.keys()?`,
+          answer: `Object.keys повертає масив. Map.keys() повертає iterator.`,
+        },
+        {
+          question: `Array.flatMap vs map+flat?`,
+          answer: `flatMap ефективніше, один проход. flat для багаторівневого nesting.`,
+        },
+        {
+          question: `Object.assign shallow vs deep clone?`,
+          answer: `Object.assign shallow copy. Для deep clone: structuredClone() або JSON.parse(stringify()).`,
+        },
+        {
+          question: `JSON.stringify з replacer?`,
+          answer: `Filter поля при серіалізації. (key, value) => value.secret ? undefined : value.`,
         },
       ],
       "blocks": [
@@ -739,7 +1071,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Object.assign не робить deep clone. Використовуй structuredClone() або lodash.cloneDeep() для глибокого клонування.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Map vs Object у JS?</strong> — Map: будь-які ключі, .size, ітерована. Object: швидше для малих, String/Symbol ключі.</li>\n              <li><strong>WeakMap для чого?</strong> — Слабкі посилання. Приватні дані в class (WeakMap для private fields), caching з GC.</li>\n              <li><strong>Object.keys() для об'єкта vs Map.keys()?</strong> — Object.keys повертає масив. Map.keys() повертає iterator.</li>\n              <li><strong>Array.flatMap vs map+flat?</strong> — flatMap ефективніше, один проход. flat для багаторівневого nesting.</li>\n              <li><strong>Object.assign shallow vs deep clone?</strong> — Object.assign shallow copy. Для deep clone: structuredClone() або JSON.parse(stringify()).</li>\n              <li><strong>JSON.stringify з replacer?</strong> — Filter поля при серіалізації. (key, value) => value.secret ? undefined : value.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Record and Tuple types (immutable collections), better Map/Set composition</span></div></div>"
+          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Object.assign не робить deep clone. Використовуй structuredClone() або lodash.cloneDeep() для глибокого клонування.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Record and Tuple types (immutable collections), better Map/Set composition</span></div></div>"
         }
       ]
     },
@@ -754,6 +1086,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чим <code>IntersectionObserver</code> кращий за ручне відстеження скролу (<code>scroll</code>-подія + обчислення <code>getBoundingClientRect</code>) для lazy-loading чи infinite scroll?",
           "answer": "<code>IntersectionObserver</code> асинхронний і не блокує головний потік — браузер сам ефективно обчислює перетин елемента з viewport, замість того щоб JS-код синхронно рахував геометрію на кожен <code>scroll</code>-івент (який може спрацьовувати десятки разів за секунду й змушувати layout thrashing при читанні <code>getBoundingClientRect</code>)."
+        },
+        {
+          question: `Fetch vs XMLHttpRequest?`,
+          answer: `Fetch Promise-based, cleaner API, краще з async/await. XHR legacy.`,
+        },
+        {
+          question: `AbortController для чого?`,
+          answer: `Скасування in-flight requests. Race conditions, cleanup при unmount (React).`,
+        },
+        {
+          question: `requestAnimationFrame vs setTimeout?`,
+          answer: `rAF синхронізує з refresh rate браузера. Для анімацій краще rAF.`,
+        },
+        {
+          question: `IntersectionObserver performance?`,
+          answer: `Ефективніше за scroll listener. Нативно оптимізовано браузером.`,
+        },
+        {
+          question: `Web Workers для фонових операцій?`,
+          answer: `Так! Важкі обчислення, сортування великих масивів не блокують UI.`,
+        },
+        {
+          question: `CORS та Fetch?`,
+          answer: `Fetch слідує CORS policy. credentials: 'include' для cookies, mode: 'cors' для cross-origin.`,
         },
       ],
       "blocks": [
@@ -786,7 +1142,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> Fetch + AbortController для запитів, requestAnimationFrame для анімацій, IntersectionObserver для спостереження видимості.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Fetch vs XMLHttpRequest?</strong> — Fetch Promise-based, cleaner API, краще з async/await. XHR legacy.</li>\n              <li><strong>AbortController для чого?</strong> — Скасування in-flight requests. Race conditions, cleanup при unmount (React).</li>\n              <li><strong>requestAnimationFrame vs setTimeout?</strong> — rAF синхронізує з refresh rate браузера. Для анімацій краще rAF.</li>\n              <li><strong>IntersectionObserver performance?</strong> — Ефективніше за scroll listener. Нативно оптимізовано браузером.</li>\n              <li><strong>Web Workers для фонових операцій?</strong> — Так! Важкі обчислення, сортування великих масивів не блокують UI.</li>\n              <li><strong>CORS та Fetch?</strong> — Fetch слідує CORS policy. credentials: 'include' для cookies, mode: 'cors' для cross-origin.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025+</span><span class=\"changelog-text\">Service Worker improvements, Fetch Priority API, better concurrent fetches</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> Fetch + AbortController для запитів, requestAnimationFrame для анімацій, IntersectionObserver для спостереження видимості.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025+</span><span class=\"changelog-text\">Service Worker improvements, Fetch Priority API, better concurrent fetches</span></div></div>"
         }
       ]
     },
@@ -801,6 +1157,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чим мокання (<code>vi.mock</code>/<code>jest.mock</code>) модуля відрізняється від мокання окремої функції через spy, і коли що застосовувати?",
           "answer": "Мок модуля підміняє <strong>увесь</strong> імпортований модуль (усі його експорти) — корисно, коли тестований код звертається до зовнішньої залежності (API-клієнт, файлова система), яку в юніт-тесті не можна викликати по-справжньому. Spy на окремій функції (<code>vi.spyOn</code>) підміняє чи відстежує виклики конкретного методу, зберігаючи решту модуля реальною — точніший інструмент, коли потрібно замокати лише одну поведінку, не чіпаючи інші."
+        },
+        {
+          question: `Jest vs Vitest?`,
+          answer: `Vitest швидше, ESM support, Vite-native. Jest хороший для legacy projects.`,
+        },
+        {
+          question: `jest.fn() vs jest.spyOn()?`,
+          answer: `fn() створює mock. spyOn() шпигує на існуючий метод, зберігаючи оригінал.`,
+        },
+        {
+          question: `Mock модуля правильно?`,
+          answer: `jest.mock перед import. mockResolvedValue для async, mockReturnValue для sync.`,
+        },
+        {
+          question: `Async тести як писати?`,
+          answer: `return Promise або async/await. Jest чекає resolution.`,
+        },
+        {
+          question: `Snapshots для чого?`,
+          answer: `Перевірити output не змінився. Для UI, API responses. Потребує review при оновленні.`,
+        },
+        {
+          question: `Code coverage target?`,
+          answer: `Aim for 80%+ coverage. Critical paths 100%, utilities 70%.`,
         },
       ],
       "blocks": [
@@ -833,7 +1213,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> Пиши тести біля коду (*.test.js). Mock external API. Використовуй describe для групування. Async/await для читаємості.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Jest vs Vitest?</strong> — Vitest швидше, ESM support, Vite-native. Jest хороший для legacy projects.</li>\n              <li><strong>jest.fn() vs jest.spyOn()?</strong> — fn() створює mock. spyOn() шпигує на існуючий метод, зберігаючи оригінал.</li>\n              <li><strong>Mock модуля правильно?</strong> — jest.mock перед import. mockResolvedValue для async, mockReturnValue для sync.</li>\n              <li><strong>Async тести як писати?</strong> — return Promise або async/await. Jest чекає resolution.</li>\n              <li><strong>Snapshots для чого?</strong> — Перевірити output не змінився. Для UI, API responses. Потребує review при оновленні.</li>\n              <li><strong>Code coverage target?</strong> — Aim for 80%+ coverage. Critical paths 100%, utilities 70%.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Better snapshot diffing, improved watch mode, faster initialization</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> Пиши тести біля коду (*.test.js). Mock external API. Використовуй describe для групування. Async/await для читаємості.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Better snapshot diffing, improved watch mode, faster initialization</span></div></div>"
         }
       ]
     },
@@ -844,6 +1224,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Що таке hidden classes у V8, і чому непослідовне створення об'єктів однієї «форми» шкодить продуктивності?",
           "answer": "V8 оптимізує доступ до властивостей об'єктів, групуючи об'єкти з однаковим набором і порядком властивостей у «прихований клас» — доступ до властивості такого об'єкта компілюється в швидкий офсет-доступ, схожий на статично типізовані мови. Якщо однотипні об'єкти створюються з різним порядком полів або поля додаються динамічно після створення, V8 не може перевикористати той самий hidden class, і оптимізація деградує до повільнішого dictionary-mode доступу."
+        },
+        {
+          question: `V8 JIT compilation як працює?`,
+          answer: `Ignition интерпретує. Hot code → TurboFan оптимізує. Deoptimize при type mismatch.`,
+        },
+        {
+          question: `Hidden classes для чого?`,
+          answer: `Fast property access. V8 групує об'єкти з однаковою структурою. Порядок полів важливий!`,
+        },
+        {
+          question: `Як мінімізувати deoptimization?`,
+          answer: `Consistentні типи у функціях. Уникай dinamichen property assignment.`,
+        },
+        {
+          question: `Memory leak closure для чого?`,
+          answer: `Closure утримує scope. Grandes data у listeners = memory leak. removeEventListener або null assign.`,
+        },
+        {
+          question: `Performance.now() vs Date.now()?`,
+          answer: `now() мікросекунди, Date.now() мілісекунди. now() для точних бенчмарків.`,
+        },
+        {
+          question: `DevTools Profiling як користуватись?`,
+          answer: `Performance tab → record → do action → stop. Подивись за Long Tasks, layout thrashing.`,
         },
       ],
       "blocks": [
@@ -885,7 +1289,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Deoptimization неправильних типів може убити performance. Тримай consistentні типи у функціях. Профільний реальний код у DevTools, не вгадуй!\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>V8 JIT compilation як працює?</strong> — Ignition интерпретує. Hot code → TurboFan оптимізує. Deoptimize при type mismatch.</li>\n              <li><strong>Hidden classes для чого?</strong> — Fast property access. V8 групує об'єкти з однаковою структурою. Порядок полів важливий!</li>\n              <li><strong>Як мінімізувати deoptimization?</strong> — Consistentні типи у функціях. Уникай dinamichen property assignment.</li>\n              <li><strong>Memory leak closure для чого?</strong> — Closure утримує scope. Grandes data у listeners = memory leak. removeEventListener або null assign.</li>\n              <li><strong>Performance.now() vs Date.now()?</strong> — now() мікросекунди, Date.now() мілісекунди. now() для точних бенчмарків.</li>\n              <li><strong>DevTools Profiling як користуватись?</strong> — Performance tab → record → do action → stop. Подивись за Long Tasks, layout thrashing.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у V8 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025+</span><span class=\"changelog-text\">Maglev further optimizations, faster TurboFan, better GC latency</span></div></div>"
+          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Deoptimization неправильних типів може убити performance. Тримай consistentні типи у функціях. Профільний реальний код у DevTools, не вгадуй!\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у V8 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025+</span><span class=\"changelog-text\">Maglev further optimizations, faster TurboFan, better GC latency</span></div></div>"
         }
       ]
     },
@@ -900,6 +1304,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Наведи типовий приклад витоку пам'яті в SPA, пов'язаний із замиканнями чи глобальними колекціями.",
           "answer": "Кешування DOM-елементів чи даних компонента в глобальному <code>Map</code>/масиві без видалення запису при знищенні компонента — посилання в глобальній колекції тримає весь об'єкт (і все, на що він посилається через замикання) живим у пам'яті навіть після того, як компонент видалено з DOM і логічно мав би бути зібраний garbage collector'ом."
+        },
+        {
+          question: `Чи <code>delete obj.prop</code> одразу звільняє пам'ять?`,
+          answer: `Ні. <code>delete</code> лише прибирає властивість з об'єкта; саме значення звільниться, тільки якщо на нього більше немає інших посилань, і то не миттєво, а коли до нього дійде GC.`,
+        },
+        {
+          question: `<code>for (var i...)</code> vs <code>for (let i...)</code> у замиканнях всередині циклу з <code>setTimeout</code> — яка різниця для пам'яті?`,
+          answer: `<code>var</code> створює одну спільну змінну на весь цикл (усі замикання ділять один heap-слот); <code>let</code> створює нове лексичне зв'язування на кожну ітерацію — N окремих (маленьких) об'єктів-оточень замість одного спільного.`,
+        },
+        {
+          question: `Чи <code>WeakRef</code> + <code>FinalizationRegistry</code> гарантують, коли спрацює callback?`,
+          answer: `Ні, специфікація свідомо не гарантує ні коли, ні чи взагалі спрацює finalizer (рушій може не викликати його, якщо процес завершується раніше) — для логіки, критичної для коректності, покладатись на це не можна, лише для допоміжного clean-up/діагностики.`,
+        },
+        {
+          question: `Чи звільняється замикання, якщо воно посилається лише на одну змінну з великого scope?`,
+          answer: `У сучасних рушіях (V8) — частково оптимізовано: якщо аналіз показує, що замикання використовує лише частину змінних оточення, невикористані інколи звільняються раніше. Але покладатись на це не варто — краще явно «звузити» захоплення (див. приклад «Замикання захоплює зайве» вище).`,
+        },
+        {
+          question: `Чи <code>structuredClone</code> копіює прототип об'єкта?`,
+          answer: `Ні, результат — plain object (втрачається прототипний ланцюг і клас); для класів/кастомних прототипів потрібне ручне клонування.`,
+        },
+        {
+          question: `Чи можна отримати memory leak із самим WeakMap?`,
+          answer: `Так, якщо значення (не ключ!) містить сильне посилання назад на щось довгоживуче — сам WeakMap лише робить слабким посилання на ключ, а не на все, що зберігається у значенні.`,
         },
       ],
       "blocks": [
@@ -1046,7 +1474,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Каверзні питання <span class=\"tag tag-pit\">PIT</span></h3><div class=\"interview-tips\">\n            <div><strong>🎤 Що люблять питати senior-інтерв'юери:</strong></div>\n            <ul>\n              <li><strong>Чи <code>delete obj.prop</code> одразу звільняє пам'ять?</strong> — Ні. <code>delete</code> лише прибирає властивість з об'єкта; саме значення звільниться, тільки якщо на нього більше немає інших посилань, і то не миттєво, а коли до нього дійде GC.</li>\n              <li><strong><code>for (var i...)</code> vs <code>for (let i...)</code> у замиканнях всередині циклу з <code>setTimeout</code> — яка різниця для пам'яті?</strong> — <code>var</code> створює одну спільну змінну на весь цикл (усі замикання ділять один heap-слот); <code>let</code> створює нове лексичне зв'язування на кожну ітерацію — N окремих (маленьких) об'єктів-оточень замість одного спільного.</li>\n              <li><strong>Чи <code>WeakRef</code> + <code>FinalizationRegistry</code> гарантують, коли спрацює callback?</strong> — Ні, специфікація свідомо не гарантує ні коли, ні чи взагалі спрацює finalizer (рушій може не викликати його, якщо процес завершується раніше) — для логіки, критичної для коректності, покладатись на це не можна, лише для допоміжного clean-up/діагностики.</li>\n              <li><strong>Чи звільняється замикання, якщо воно посилається лише на одну змінну з великого scope?</strong> — У сучасних рушіях (V8) — частково оптимізовано: якщо аналіз показує, що замикання використовує лише частину змінних оточення, невикористані інколи звільняються раніше. Але покладатись на це не варто — краще явно «звузити» захоплення (див. приклад «Замикання захоплює зайве» вище).</li>\n              <li><strong>Чи <code>structuredClone</code> копіює прототип об'єкта?</strong> — Ні, результат — plain object (втрачається прототипний ланцюг і клас); для класів/кастомних прототипів потрібне ручне клонування.</li>\n              <li><strong>Чи можна отримати memory leak із самим WeakMap?</strong> — Так, якщо значення (не ключ!) містить сильне посилання назад на щось довгоживуче — сам WeakMap лише робить слабким посилання на ключ, а не на все, що зберігається у значенні.</li>\n            </ul>\n          </div>"
+          "html": "<h3 class=\"topic\">Каверзні питання <span class=\"tag tag-pit\">PIT</span></h3>"
         }
       ]
     },
@@ -1057,6 +1485,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Навіщо потрібен тип <code>Symbol</code>, якщо для унікальних ключів можна використовувати рядки?",
           "answer": "<code>Symbol()</code> завжди створює <strong>гарантовано унікальне</strong> значення, навіть якщо опис (перший аргумент) збігається з іншим символом — на відміну від рядка, де колізія ключів (<code>\"id\"</code> від двох різних бібліотек) можлива й непередбачувана. Symbols також не перелічуються в звичайному <code>for...in</code>/<code>Object.keys</code>, що робить їх зручними для «прихованих» службових властивостей об'єкта, які не мають заважати серіалізації чи ітерації."
+        },
+        {
+          question: `Symbol унікальність как це працює?`,
+          answer: `Кожен Symbol('id') унікальний, навіть при однаковій description.`,
+        },
+        {
+          question: `Symbol.iterator для чого?`,
+          answer: `Робить об'єкт iterable. for...of використовує це. Необхідно для custom collections.`,
+        },
+        {
+          question: `Symbol vs private fields (#)?`,
+          answer: `Symbol не бачиться Object.keys(). # більш зручно у class. Обидва скривають properties.`,
+        },
+        {
+          question: `Symbol.toStringTag для чого?`,
+          answer: `Кастомізувати [object Type]. Для ідентифікації custom classes в Object.prototype.toString().`,
+        },
+        {
+          question: `Symbol.hasInstance для instanceof?`,
+          answer: `Custom instanceof поведення. obj instanceof MyClass викликає MyClass[Symbol.hasInstance]().`,
+        },
+        {
+          question: `Symbol.toPrimitive для coercion?`,
+          answer: `hint = 'number'/'string'/'default'. Контролює як об'єкт конвертується у примітив.`,
         },
       ],
       "blocks": [
@@ -1080,7 +1532,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Use Case:</strong> Symbols для приватних властивостей (альтернатива # приватним полям). Custom iterables для specialization.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Symbol унікальність как це працює?</strong> — Кожен Symbol('id') унікальний, навіть при однаковій description.</li>\n              <li><strong>Symbol.iterator для чого?</strong> — Робить об'єкт iterable. for...of використовує це. Необхідно для custom collections.</li>\n              <li><strong>Symbol vs private fields (#)?</strong> — Symbol не бачиться Object.keys(). # більш зручно у class. Обидва скривають properties.</li>\n              <li><strong>Symbol.toStringTag для чого?</strong> — Кастомізувати [object Type]. Для ідентифікації custom classes в Object.prototype.toString().</li>\n              <li><strong>Symbol.hasInstance для instanceof?</strong> — Custom instanceof поведення. obj instanceof MyClass викликає MyClass[Symbol.hasInstance]().</li>\n              <li><strong>Symbol.toPrimitive для coercion?</strong> — hint = 'number'/'string'/'default'. Контролює як об'єкт конвертується у примітив.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Symbol.dispose for async cleanup, better Symbol introspection</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Use Case:</strong> Symbols для приватних властивостей (альтернатива # приватним полям). Custom iterables для specialization.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Symbol.dispose for async cleanup, better Symbol introspection</span></div></div>"
         }
       ]
     },
@@ -1091,6 +1543,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Чим named capturing groups (<code>(?&lt;year&gt;\\d{4})</code>) кращі за звичайні нумеровані групи для читабельності коду?",
           "answer": "Іменована група дозволяє звертатись до результату через <code>match.groups.year</code> замість <code>match[1]</code> — код одразу самодокументований і не ламається, якщо порядок груп у регулярному виразі згодом зміниться (нумеровані індекси довелось би перераховувати вручну)."
+        },
+        {
+          question: `Flags для чого? g, i, m різниця?`,
+          answer: `g (global, всі матчі), i (ignore case), m (multiline, ^ $ для кожної лінії).`,
+        },
+        {
+          question: `exec vs match vs test?`,
+          answer: `test (boolean), match (масив матчів), exec (детальна інформація з groups).`,
+        },
+        {
+          question: `Lookahead (?=...) vs lookbehind?`,
+          answer: `Lookahead: матч якщо наступне. Lookbehind: матч якщо попереднє.`,
+        },
+        {
+          question: `Named groups для чого?`,
+          answer: `Читаємість. groups.year замість [1]. Для складних patterns з багатьма групами.`,
+        },
+        {
+          question: `matchAll для чого?`,
+          answer: `Отримати ВСІ матчі з groups за один виклик. for...of для ітерації.`,
+        },
+        {
+          question: `Чому regex з прапорцем g у циклі іноді пропускає збіги?`,
+          answer: `lastIndex зберігається на об'єкті між викликами; свіжий regex-літерал на кожну ітерацію або скидання lastIndex=0 вирішує це.`,
         },
       ],
       "blocks": [
@@ -1123,7 +1599,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Regex може бути дорогим для продуктивності. Уникай backreferences і complex quantifiers. Профілюй regex на великих inputs.\n          </div><div class=\"alert alert-warn\"><strong>⚠️ lastIndex та ReDoS:</strong> при прапорці <code>g</code> рушій зберігає <code>lastIndex</code> НА САМОМУ regex-об'єкті між викликами <code>test()</code>/<code>exec()</code> — повторний виклик того самого regex шукає з позиції, де зупинився минулого разу, а не з початку рядка; типове джерело хитрих багів у циклах. Окремо: catastrophic backtracking (вкладені квантифікатори на кшталт <code>(a+)+</code>) може призвести до ReDoS — експоненційного часу виконання й зависання на певних вхідних рядках.</div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>Flags для чого? g, i, m різниця?</strong> — g (global, всі матчі), i (ignore case), m (multiline, ^ $ для кожної лінії).</li>\n              <li><strong>exec vs match vs test?</strong> — test (boolean), match (масив матчів), exec (детальна інформація з groups).</li>\n              <li><strong>Lookahead (?=...) vs lookbehind?</strong> — Lookahead: матч якщо наступне. Lookbehind: матч якщо попереднє.</li>\n              <li><strong>Named groups для чого?</strong> — Читаємість. groups.year замість [1]. Для складних patterns з багатьма групами.</li>\n              <li><strong>matchAll для чого?</strong> — Отримати ВСІ матчі з groups за один виклик. for...of для ітерації.</li>\n              <li><strong>Чому regex з прапорцем g у циклі іноді пропускає збіги?</strong> — lastIndex зберігається на об'єкті між викликами; свіжий regex-літерал на кожну ітерацію або скидання lastIndex=0 вирішує це.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Unicode property escapes expansion, better backtracking prevention</span></div></div>"
+          "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Regex може бути дорогим для продуктивності. Уникай backreferences і complex quantifiers. Профілюй regex на великих inputs.\n          </div><div class=\"alert alert-warn\"><strong>⚠️ lastIndex та ReDoS:</strong> при прапорці <code>g</code> рушій зберігає <code>lastIndex</code> НА САМОМУ regex-об'єкті між викликами <code>test()</code>/<code>exec()</code> — повторний виклик того самого regex шукає з позиції, де зупинився минулого разу, а не з початку рядка; типове джерело хитрих багів у циклах. Окремо: catastrophic backtracking (вкладені квантифікатори на кшталт <code>(a+)+</code>) може призвести до ReDoS — експоненційного часу виконання й зависання на певних вхідних рядках.</div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Unicode property escapes expansion, better backtracking prevention</span></div></div>"
         }
       ]
     },
@@ -1138,6 +1614,30 @@ export const javascriptContent: TopicContent = {
         {
           "question": "Що дає <code>Promise.withResolvers()</code> порівняно зі старим патерном ручного створення «зовнішнього» проміса?",
           "answer": "До цього методу, щоб отримати <code>resolve</code>/<code>reject</code> поза виконавчою функцією проміса, доводилось створювати проміжні змінні й присвоювати їх усередині колбека конструктора (<code>new Promise((res, rej) => { resolve = res; reject = rej })</code>) — незручно й легко переплутати. <code>Promise.withResolvers()</code> одразу повертає <code>{ promise, resolve, reject }</code> одним викликом, без обхідного патерну."
+        },
+        {
+          question: `debounce vs throttle?`,
+          answer: `debounce: чекай кінця (search). throttle: максимум раз за N ms (scroll).`,
+        },
+        {
+          question: `TaskQueue для чого?`,
+          answer: `Послідовне виконання async. Уникай race conditions. Request limit (одночасно 1).`,
+        },
+        {
+          question: `Promise.withResolvers() преимущество?`,
+          answer: `Cleaner API. resolve/reject поза конструктором. Нижче callback hell.`,
+        },
+        {
+          question: `Promise.all vs allSettled?`,
+          answer: `all: fail на першій помилці. allSettled: чекай всіх (handle partial failures).`,
+        },
+        {
+          question: `Promise.race для чого?`,
+          answer: `Timeout реалізація. Перша завершена вигравань. Race умови контролю.`,
+        },
+        {
+          question: `Як запобігти callback hell в chains?`,
+          answer: `async/await замість .then chains. Более читаємо, лінійно.`,
         },
       ],
       "blocks": [
@@ -1170,7 +1670,7 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> debounce для search/input, throttle для scroll/resize. TaskQueue для послідовного виконання. Promise.allSettled для всіх результатів без fail.\n          </div><div class=\"interview-tips\">\n            <div><strong>🎤 На співбесіді часто запитують:</strong></div>\n            <ul>\n              <li><strong>debounce vs throttle?</strong> — debounce: чекай кінця (search). throttle: максимум раз за N ms (scroll).</li>\n              <li><strong>TaskQueue для чого?</strong> — Послідовне виконання async. Уникай race conditions. Request limit (одночасно 1).</li>\n              <li><strong>Promise.withResolvers() преимущество?</strong> — Cleaner API. resolve/reject поза конструктором. Нижче callback hell.</li>\n              <li><strong>Promise.all vs allSettled?</strong> — all: fail на першій помилці. allSettled: чекай всіх (handle partial failures).</li>\n              <li><strong>Promise.race для чого?</strong> — Timeout реалізація. Перша завершена вигравань. Race умови контролю.</li>\n              <li><strong>Як запобігти callback hell в chains?</strong> — async/await замість .then chains. Более читаємо, лінійно.</li>\n            </ul>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Async context managers, better Promise pooling primitives</span></div></div>"
+          "html": "<div class=\"alert alert-good\">\n            <strong>Best Practice:</strong> debounce для search/input, throttle для scroll/resize. TaskQueue для послідовного виконання. Promise.allSettled для всіх результатів без fail.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Async context managers, better Promise pooling primitives</span></div></div>"
         }
       ]
     },
