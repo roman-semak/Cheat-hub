@@ -506,64 +506,22 @@ export const angularContent: TopicContent = {
       "title": "🌊 RxJS — Core Operators EXPANDED",
       interviewQuestions: [
         {
-          "question": "Чим <code>switchMap</code> відрізняється від <code>mergeMap</code>/<code>concatMap</code>, і чому вибір неправильного оператора — типова причина race condition у продакшні?",
-          "answer": "<code>switchMap</code> скасовує попередній внутрішній потік при появі нового значення з джерела — ідеально для пошуку-по-вводу, де потрібна лише остання відповідь. <code>mergeMap</code> запускає всі внутрішні потоки паралельно без скасування, <code>concatMap</code> — послідовно, чекаючи завершення попереднього. Використання <code>mergeMap</code> замість <code>switchMap</code> для запитів, що залежать від останнього вводу користувача, може призвести до того, що застаріла відповідь прийде <em>після</em> свіжої й перезапише її."
-        },
-        {
           "question": "Навіщо потрібен оператор <code>takeUntilDestroyed()</code>, і яку проблему він вирішує порівняно з ручним <code>ngOnDestroy</code> + <code>Subject</code>?",
           "answer": "Без явного ansubscribe підписка на Observable, що живе довше за компонент (HTTP-полінг, WebSocket, RxJS-стор), продовжує викликати колбек і після знищення компонента — витік пам'яті й спроби оновити знищений стан. <code>takeUntilDestroyed()</code> автоматично прив'язується до <code>DestroyRef</code> поточного injection context і відписується сам, без boilerplate'у з <code>Subject</code> + <code>ngOnDestroy</code>."
-        },
-        {
-          question: `Observable vs Promise?`,
-          answer: `Observable lazy, multiple values, cancellable; Promise eager, single value.`,
-        },
-        {
-          question: `catchError що має повертати?`,
-          answer: `Observable: of(fallback) для відновлення, EMPTY щоб проковтнути, throwError щоб перекинути далі.`,
-        },
-        {
-          question: `catchError всередині switchMap vs у кінці pipe?`,
-          answer: `Всередині — виживає зовнішній стрім; у кінці — перша помилка вбиває весь потік.`,
-        },
-        {
-          question: `Hot vs Cold?`,
-          answer: `Cold restarts each subscribe; hot shares execution. fromEvent = hot, interval = cold.`,
-        },
-        {
-          question: `switchMap vs mergeMap?`,
-          answer: `switchMap cancels prev (search); mergeMap parallel (uploads).`,
         },
         {
           question: `Memory leak in RxJS?`,
           answer: `Unsubscribed observables keep running. Fix: takeUntilDestroyed, async pipe.`,
         },
-        {
-          question: `BehaviorSubject vs Subject?`,
-          answer: `BehaviorSubject remembers last value; Subject doesn't.`,
-        },
       ],
       "blocks": [
         {
           "kind": "paragraph",
-          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-15\">RxJS 7</span>\n            <span class=\"ver ver-17\">v17 with signals</span>\n            <span class=\"ver ver-19\">v19 toObservable ✦</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Еволюція</div>\n            <div class=\"changelog-row\"><span class=\"chver\">RxJS 4-5</span><span class=\"changelog-text\">Legacy operators, class-based</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">RxJS 7</span><span class=\"changelog-text\">Current, pipeable operators</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v19 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> RxJS optional, Signals-first, but still powerful</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Observable:</strong> Колекція значень у часі. Лінивий (холодний) за замовчуванням, async за природою.</p>\n            <p><strong>pipe():</strong> Композиція операторів. Кожен оператор трансформує потік.</p>\n            <p><strong>Operators:</strong> Функції, які беруть Observable і повертають новий Observable з трансформацією.</p>\n          </div><h3 class=\"topic\">Observable vs Promise</h3><p><strong>Що це:</strong> Observable — потік подій у часі, ліниво (не починає до підписки), може видати 0+ значень. Promise — одне значення, запускається одразу. <strong>Навіщо:</strong> Observable краще для HTTP streams, user events, WebSocket. Promise для однократних async операцій.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Feature</th><th>Observable</th><th>Promise</th></tr>\n              <tr><td>Lazy/Eager</td><td>Lazy (subscribes triggers)</td><td>Eager (execute immediately)</td></tr>\n              <tr><td>Single/Multiple</td><td>Multiple values</td><td>Single value</td></tr>\n              <tr><td>Cancellation</td><td>unsubscribe()</td><td>No native support</td></tr>\n              <tr><td>Sync/Async</td><td>Both</td><td>Always async</td></tr>\n              <tr><td>Operators</td><td>Rich ecosystem</td><td>then/catch limited</td></tr>\n            </table>\n          </div><h3 class=\"topic\">Hot vs Cold + share()</h3><p><strong>Що це:</strong> Cold Observable — кожен підписник отримує свій власний потік (нові HTTP запити). Hot Observable — один потік для всіх підписників. share() перетворює Cold на Hot. <strong>Навіщо:</strong> Уникнути дублювання запитів. Важливо для performance.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// Cold Observable — each subscriber gets own execution\nconst cold$ = interval(1000); // Each subscribe restarts counter\n\ncold$.subscribe(v => console.log('A', v)); // A: 0, 1, 2...\ncold$.subscribe(v => console.log('B', v)); // B: 0, 1, 2... (separate)\n\n// Hot Observable — single execution, all subscribers share\nconst hot$ = fromEvent(button, 'click');\nhot$.subscribe(v => console.log('A')); // Both see same click\nhot$.subscribe(v => console.log('B'));\n\n// Convert cold to hot\nconst shared$ = interval(1000).pipe(share()); // Multicast"
+          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-15\">RxJS 7</span>\n            <span class=\"ver ver-17\">v17 with signals</span>\n            <span class=\"ver ver-19\">v19 toObservable ✦</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Еволюція</div>\n            <div class=\"changelog-row\"><span class=\"chver\">RxJS 4-5</span><span class=\"changelog-text\">Legacy operators, class-based</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">RxJS 7</span><span class=\"changelog-text\">Current, pipeable operators</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v19 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> RxJS optional, Signals-first, but still powerful</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Observable:</strong> Колекція значень у часі. Лінивий (холодний) за замовчуванням, async за природою.</p>\n            <p><strong>pipe():</strong> Композиція операторів. Кожен оператор трансформує потік.</p>\n            <p><strong>Operators:</strong> Функції, які беруть Observable і повертають новий Observable з трансформацією.</p>\n          </div>"
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Flattening Operators — Decision Matrix</h3><strong>Що це:</strong><strong>Навіщо:</strong><div class=\"table-wrap\">\n            <table>\n              <tr><th>Operator</th><th>Behavior</th><th>Use Case</th><th>Example</th></tr>\n              <tr><td>switchMap</td><td>Cancel prev, emit latest inner</td><td>Search, autocomplete, route change</td><td>input → API search</td></tr>\n              <tr><td>mergeMap</td><td>Parallel inner observables</td><td>Upload files, concurrent requests</td><td>items → parallel POST</td></tr>\n              <tr><td>concatMap</td><td>Queue (one at a time)</td><td>Sequential operations, ordering matters</td><td>form submissions queue</td></tr>\n              <tr><td>exhaustMap</td><td>Ignore new while executing</td><td>Login button (prevent double-submit)</td><td>click → POST (ignore clicks during)</td></tr>\n            </table>\n          </div><h3 class=\"topic\">Subject Variants</h3><p><strong>Що це:</strong> Subject — Observable+Observer одночасно. BehaviorSubject зберігає останнє значення. ReplaySubject буферизує N значень. AsyncSubject видає тільки останнє при завершенні. <strong>Навіщо:</strong> Разні сценарії multicast: UI state, форми, кеш.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// Subject — broadcast to multiple subscribers\nconst subject = new Subject<string>();\nsubject.next('hello'); // Push value\nsubject.subscribe(v => console.log(v)); // Late subscriber: nothing (hot)\n\n// BehaviorSubject — remember last value\nconst behavior = new BehaviorSubject('initial');\nbehavior.next('new');\nbehavior.subscribe(v => console.log(v)); // 'new' (late subscriber gets latest)\n\n// ReplaySubject — replay N values\nconst replay = new ReplaySubject(3); // Buffer 3 values\nreplay.next(1); replay.next(2); replay.next(3); replay.next(4);\nreplay.subscribe(v => console.log(v)); // 2, 3, 4 (last 3)\n\n// AsyncSubject — emit only last value on complete\nconst async = new AsyncSubject();\nasync.next(1); async.next(2); async.complete();\nasync.subscribe(v => console.log(v)); // 2"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Common Operators by Category</h3><p><strong>Creation:</strong> <code>of()</code>, <code>from()</code>, <code>interval()</code>, <code>timer()</code>, <code>fromEvent()</code>, <code>combineLatest()</code>, <code>forkJoin()</code></p><p><strong>Filtering:</strong> <code>filter()</code>, <code>take()</code>, <code>takeUntil()</code>, <code>takeUntilDestroyed()</code>, <code>skip()</code>, <code>distinctUntilChanged()</code>, <code>debounceTime()</code>, <code>throttleTime()</code></p><p><strong>Transformation:</strong> <code>map()</code>, <code>switchMap()</code>, <code>mergeMap()</code>, <code>concatMap()</code>, <code>exhaustMap()</code>, <code>scan()</code>, <code>reduce()</code></p><p><strong>Error Handling:</strong> <code>catchError()</code>, <code>retry()</code>, <code>retryWhen()</code>, <code>throwError()</code>, <code>EMPTY</code></p><p><strong>Utility:</strong> <code>tap()</code>, <code>delay()</code>, <code>finalize()</code>, <code>share()</code>, <code>shareReplay()</code></p><h3 class=\"topic\">Memory Leaks & takeUntilDestroyed</h3><p><strong>Що це:</strong> Найчастіша memory leak в Angular — невідписана підписка на Observable. Компонент знищений, але підписка тримає reference. takeUntilDestroyed автоматично відписує при DestroyRef. <strong>Навіщо:</strong> Запобігти memory leaks і повторно запущеним запитам.</p>"
+          "html": "<h3 class=\"topic\">Memory Leaks & takeUntilDestroyed</h3><p><strong>Що це:</strong> Найчастіша memory leak в Angular — невідписана підписка на Observable. Компонент знищений, але підписка тримає reference. takeUntilDestroyed автоматично відписує при DestroyRef. <strong>Навіщо:</strong> Запобігти memory leaks і повторно запущеним запитам.</p>"
         },
         {
           "kind": "code",
@@ -572,27 +530,8 @@ export const angularContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Оператори — що робить кожен <span class=\"tag tag-key\">KEY</span></h3><p>Довідник найуживаніших операторів з коротким поясненням. Деталі flattening (<code>switchMap</code>/<code>mergeMap</code>/<code>concatMap</code>/<code>exhaustMap</code>) — див. «Flattening Operators» вище.</p><p><strong>Creation — створюють Observable:</strong></p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Оператор</th><th>Що робить</th></tr>\n              <tr><td><code>of(a, b)</code></td><td>Емітить передані значення по черзі, тоді complete</td></tr>\n              <tr><td><code>from(arr | promise | iterable)</code></td><td>Перетворює масив/Promise/ітерабельне на потік</td></tr>\n              <tr><td><code>fromEvent(el, 'click')</code></td><td>Потік DOM-подій (hot)</td></tr>\n              <tr><td><code>interval(ms)</code> / <code>timer(delay, period)</code></td><td>Числа за таймером; timer — із затримкою старту</td></tr>\n              <tr><td><code>EMPTY</code></td><td>Одразу complete без жодного значення</td></tr>\n              <tr><td><code>throwError(() => err)</code></td><td>Потік, що одразу падає з помилкою</td></tr>\n              <tr><td><code>defer(fn)</code></td><td>Створює Observable ліниво — на кожну підписку заново</td></tr>\n            </table>\n          </div><p><strong>Transformation — змінюють значення:</strong></p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Оператор</th><th>Що робить</th></tr>\n              <tr><td><code>map(fn)</code></td><td>Трансформує кожне значення</td></tr>\n              <tr><td><code>scan(fn, seed)</code></td><td>Як reduce, але емітить проміжний акумулятор на кожному кроці</td></tr>\n              <tr><td><code>reduce(fn, seed)</code></td><td>Акумулює й емітить ОДИН результат при complete</td></tr>\n              <tr><td><code>toArray()</code></td><td>Збирає всі значення в масив (при complete)</td></tr>\n              <tr><td><code>pluck('a','b')</code></td><td>Дістає вкладене поле (застаріле → <code>map(x => x.a.b)</code>)</td></tr>\n            </table>\n          </div><p><strong>Filtering — пропускають/відкидають:</strong></p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Оператор</th><th>Що робить</th></tr>\n              <tr><td><code>filter(pred)</code></td><td>Пропускає лише ті, що проходять умову</td></tr>\n              <tr><td><code>take(n)</code> / <code>first()</code> / <code>last()</code></td><td>Перші n / перше / останнє, тоді complete</td></tr>\n              <tr><td><code>takeUntil(notifier$)</code></td><td>Емітить, доки notifier не спрацює (класична відписка)</td></tr>\n              <tr><td><code>takeWhile(pred)</code></td><td>Емітить, доки умова true</td></tr>\n              <tr><td><code>skip(n)</code></td><td>Пропускає перші n значень</td></tr>\n              <tr><td><code>debounceTime(ms)</code></td><td>Емітить лише після паузи (search-input)</td></tr>\n              <tr><td><code>throttleTime(ms)</code></td><td>Не частіше, ніж раз на ms</td></tr>\n              <tr><td><code>distinctUntilChanged()</code></td><td>Ігнорує підряд однакові значення</td></tr>\n              <tr><td><code>distinctUntilKeyChanged('id')</code></td><td>Те саме, але порівнює за полем</td></tr>\n            </table>\n          </div><p><strong>Combination — комбінують кілька потоків:</strong></p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Оператор</th><th>Що робить</th></tr>\n              <tr><td><code>combineLatest([a$, b$])</code></td><td>Останні значення всіх — на будь-яку зміну</td></tr>\n              <tr><td><code>forkJoin([a$, b$])</code></td><td>Останні значення, але лише коли ВСІ complete (як Promise.all)</td></tr>\n              <tr><td><code>merge(a$, b$)</code></td><td>Зливає потоки паралельно, у порядку надходження</td></tr>\n              <tr><td><code>concat(a$, b$)</code></td><td>Послідовно: b$ лише після complete a$</td></tr>\n              <tr><td><code>zip(a$, b$)</code></td><td>Парує значення за індексом</td></tr>\n              <tr><td><code>withLatestFrom(b$)</code></td><td>На кожен a$ додає ПОТОЧНЕ b$</td></tr>\n              <tr><td><code>startWith(v)</code></td><td>Емітить v першим, до решти</td></tr>\n            </table>\n          </div><p><strong>Utility & Multicasting:</strong></p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Оператор</th><th>Що робить</th></tr>\n              <tr><td><code>tap(fn)</code></td><td>Side-effect (лог, дебаг) — не змінює значення</td></tr>\n              <tr><td><code>delay(ms)</code></td><td>Затримує всі емісії</td></tr>\n              <tr><td><code>finalize(fn)</code></td><td>Викликається при complete АБО error (cleanup, spinner off)</td></tr>\n              <tr><td><code>timeout(ms)</code></td><td>Падає з помилкою, якщо немає емісії за ms</td></tr>\n              <tr><td><code>share()</code> / <code>shareReplay(n)</code></td><td>cold → hot; shareReplay кешує n останніх для нових підписників</td></tr>\n            </table>\n          </div>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Error Handling — catchError, retry, throwError <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> у потоці помилка — <em>термінальна</em> подія: після <code>error</code> Observable завершується й більше нічого не емітить. <code>catchError</code> перехоплює її й дає відновитись. <strong>Навіщо:</strong> не дати одному фейлу «вбити» весь потік (пошук, polling), показати fallback, зробити retry.</p><ul class=\"list\">\n            <li><strong>catchError МУСИТЬ повернути Observable</strong> — він стає продовженням потоку після помилки. Варіанти: <code>of(fallback)</code> (відновитись значенням), <code>EMPTY</code> (тихо завершити), <code>throwError(() => err)</code> (перекинути далі), або <code>return caught</code> (перепідписатись — обережно, ризик нескінченного циклу).</li>\n            <li><strong>Місце важливе.</strong> <code>catchError</code> <em>всередині</em> <code>switchMap</code> ловить помилку лише внутрішнього запиту — зовнішній потік (поле пошуку) живе далі. <code>catchError</code> <em>в кінці</em> pipe ловить будь-що, але після нього весь потік мертвий.</li>\n            <li><strong>retry</strong> перепідписується на джерело при помилці: <code>retry(3)</code> або <code>retry({ count, delay })</code> (RxJS 7.5+) для backoff; <code>retryWhen</code> — стара гнучка форма.</li>\n            <li><strong>finalize</strong> спрацьовує і на complete, і на error — ідеально для <code>loading = false</code>.</li>\n            <li>В Angular помилка <code>HttpClient</code> — це <code>HttpErrorResponse</code>; остання лінія оборони — глобальний <code>ErrorHandler</code> або HTTP-interceptor.</li>\n          </ul>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "import { of, EMPTY, throwError, timer } from 'rxjs';\nimport { catchError, retry, switchMap, finalize } from 'rxjs/operators';\n\n// 1) Відновлення значенням — потік живе далі\nthis.http.get<User>('/api/user').pipe(\n  catchError((err: HttpErrorResponse) => {\n    console.error(err.status);\n    return of(GUEST_USER); // ✅ fallback; тип має збігатися з потоком\n  })\n);\n\n// 2) Тихо проковтнути (нічого не емітити) → EMPTY\nsource$.pipe(catchError(() => EMPTY));\n\n// 3) Перекинути далі (обгорнути помилку)\nsource$.pipe(\n  catchError(err => throwError(() => new AppError('load failed', err)))\n);\n\n// 4) Місце catchError: ВСЕРЕДИНІ switchMap — поле пошуку не «вмирає»\nthis.search.valueChanges.pipe(\n  switchMap(q =>\n    this.api.search(q).pipe(\n      catchError(() => of([])) // помилка запиту → порожній результат, стрім живий\n    )\n  )\n);\n// ❌ Якби catchError стояв у кінці pipe — перша помилка вбила б увесь valueChanges\n\n// 5) Retry з backoff + гарантований cleanup\nthis.http.get('/api/data').pipe(\n  retry({ count: 3, delay: (_err, i) => timer(2 ** i * 500) }), // 0.5s, 1s, 2s\n  catchError(() => of(null)),\n  finalize(() => this.loading.set(false)) // і на успіх, і на помилку\n);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">forkJoin замість Promise.all <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> <code>forkJoin({ a: a$, b: b$ })</code> чекає, поки <em>всі</em> джерела завершаться (<code>complete</code>), і одноразово емітить останні значення кожного — так само, як <code>Promise.all([a, b])</code> чекає всі проміси. <strong>Навіщо:</strong> паралельно завантажити кілька незалежних ресурсів (профіль + налаштування + права) і відрендерити компонент одразу з усіма даними, без вкладених підписок.</p><div class=\"grid2\">\n            <div class=\"card blue\"><h4>Promise.all</h4><p>Приймає масив Promise. Один reject → весь <code>Promise.all</code> одразу reject.</p></div>\n            <div class=\"card purple\"><h4>forkJoin</h4><p>Приймає масив/об'єкт Observable. Джерело, що НЕ завершується (напр. <code>interval()</code> без <code>take</code>, або <code>BehaviorSubject</code>), «підвішує» forkJoin назавжди — complete критичний.</p></div>\n          </div><div class=\"alert alert-bad\">\n            <strong>Типова пастка:</strong> <code>forkJoin</code> із <code>BehaviorSubject</code>/нескінченним потоком ніколи не емітить, бо той ніколи не complete. Додай <code>take(1)</code> до такого джерела, або візьми <code>combineLatest</code>, якщо потрібні саме поточні значення без очікування complete.</div>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// forkJoin — паралельно, чекає ВСІХ, як Promise.all\nforkJoin({\n  profile: this.api.getProfile(),   // HttpClient сам завершується\n  settings: this.api.getSettings(),\n  perms: this.api.getPermissions(),\n}).subscribe(({ profile, settings, perms }) => {\n  // усі три готові одночасно\n});\n\n// Еквівалент на Promise.all\nconst [profile, settings, perms] = await Promise.all([\n  fetch('/api/profile').then(r => r.json()),\n  fetch('/api/settings').then(r => r.json()),\n  fetch('/api/permissions').then(r => r.json()),\n]);\n\n// ❌ Пастка: джерело без complete підвішує forkJoin\nforkJoin({\n  user: this.userSubject,        // BehaviorSubject — ніколи не complete!\n  data: this.api.getData(),\n}).subscribe(() => {}); // ніколи не спрацює\n\n// ✅ Фікс — гарантувати complete\nforkJoin({\n  user: this.userSubject.pipe(take(1)),\n  data: this.api.getData(),\n}).subscribe(() => {});"
-        },
-        
+          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><span>Повний розбір операторів RxJS (switchMap/mergeMap/concatMap/exhaustMap decision matrix, Subject/BehaviorSubject/ReplaySubject/AsyncSubject, Hot vs Cold, combination-оператори, catchError/retry, forkJoin vs Promise.all) — див. розділ «RxJS у React» в React. Тут — лише те, що специфічне саме для Angular: <code>takeUntilDestroyed()</code>/<code>DestroyRef</code> замість ручного unsubscribe.</span></div>"
+        }
       ]
     },
     {
@@ -1596,14 +1535,6 @@ export const angularContent: TopicContent = {
           question: `When NgRx?`,
           answer: `Complex async logic, multiple features, large team standardization.`,
         },
-        {
-          question: `localStorage vs IndexedDB?`,
-          answer: `localStorage simple string storage; IndexedDB for structured data + offline.`,
-        },
-        {
-          question: `Persist state?`,
-          answer: `Save to localStorage/IndexedDB on change, restore on app init.`,
-        },
       ],
       "blocks": [
         {
@@ -1617,7 +1548,7 @@ export const angularContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Browser Storage (localStorage, IndexedDB)</h3><p><strong>Що це:</strong> localStorage (постійне сховище, 5MB), sessionStorage (до закриття вкладки), IndexedDB (GB, структуровані дані), Cookies (серверна доступність). <strong>Навіщо:</strong> Зберігти state між сесіями. Персистенція без backend.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Storage</th><th>Size</th><th>Type</th><th>Persistence</th><th>Use Case</th></tr>\n              <tr><td>localStorage</td><td>~5-10 MB</td><td>String</td><td>Forever</td><td>User preferences, themes</td></tr>\n              <tr><td>sessionStorage</td><td>~5-10 MB</td><td>String</td><td>Until tab close</td><td>Temp data per session</td></tr>\n              <tr><td>IndexedDB</td><td>~50+ MB</td><td>Structured</td><td>Forever</td><td>Large datasets, offline</td></tr>\n              <tr><td>Cookies</td><td>~4 KB</td><td>String</td><td>Configurable</td><td>HTTP headers, auth tokens</td></tr>\n            </table>\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Signal Store matures, NgRx evolves with signals</span></div></div>"
+          "html": "<div class=\"alert good\">Порівняння localStorage/sessionStorage/IndexedDB/Cookies (розмір, персистентність, use case) — у розділі «Fullstack» → «Автентифікація та авторизація».</div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Signal Store matures, NgRx evolves with signals</span></div></div>"
         }
       ]
     },
@@ -1907,12 +1838,7 @@ export const angularContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">GitHub Actions Pipeline Example</h3><p><strong>Що це:</strong> CI/CD pipeline: лінтинг → тести → build → deploy при кожному push. GitHub Actions — вбудований CI/CD. <strong>Навіщо:</strong> Автоматизація. Запобігнення broken code в production. Consistency.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "# .github/workflows/deploy.yml\nname: Deploy\non:\n  push:\n    branches: [main]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - uses: actions/setup-node@v3\n        with:\n          node-version: '18'\n      - run: npm ci\n      - run: npm run lint\n      - run: npm run test\n      - run: npm run build -- --configuration production\n      - name: Deploy\n        run: |\n          npm install -g firebase-tools\n          firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}"
+          "html": "<h3 class=\"topic\">GitHub Actions Pipeline</h3><p>Загальна структура lint → test → build → deploy на GitHub Actions (і поряд — той самий pipeline на GitLab CI для порівняння) — у розділі «Fullstack» → «DevOps та інфраструктура». Для Angular єдина відмінність — крок білда: <code>npm run build -- --configuration production</code> (AOT + tree-shaking) замість звичайного <code>npm run build</code>, і деплой зазвичай через Firebase Hosting/Netlify/Vercel-CLI з токеном у secrets.</p>"
         },
         {
           "kind": "paragraph",
@@ -1938,14 +1864,6 @@ export const angularContent: TopicContent = {
           "answer": "Єдиний стиль знижує когнітивне навантаження при рев'ю (diff показує реальні зміни логіки, а не форматування) і ловить типові Angular-специфічні помилки (наприклад, порушення правил незалежних компонентів, забуті <code>OnPush</code>) ще на етапі редагування, а не в рантаймі чи на code review."
         },
         {
-          question: `ESLint vs Prettier — хто за що?`,
-          answer: `ESLint — якість/логіка/баги та правила; Prettier — суто форматування (вигляд). Це різні задачі, тому використовують обидва.`,
-        },
-        {
-          question: `Як прибрати конфлікт ESLint ↔ Prettier?`,
-          answer: `Поставити <code>eslint-config-prettier</code> останнім у конфіг — він вимикає форматувальні правила ESLint, щоб форматом керував лише Prettier.`,
-        },
-        {
           question: `Навіщо lint-staged, а не лінтити весь репо?`,
           answer: `Перевіряє лише staged-файли на pre-commit — швидко і релевантно; повний лінт лишається для CI.`,
         },
@@ -1968,10 +1886,6 @@ export const angularContent: TopicContent = {
         {
           question: `Навіщо <code>--max-warnings 0</code> у CI?`,
           answer: `Щоб warnings не накопичувались мовчки; будь-яке порушення валить pipeline.`,
-        },
-        {
-          question: `SonarQube vs ESLint — навіщо обидва?`,
-          answer: `ESLint — швидкий локальний лінт на pre-commit/CI; SonarQube — проєктні метрики (complexity, дублювання, coverage), історія трендів і Quality Gate, що блокує merge.`,
         },
       ],
       "blocks": [
@@ -2004,30 +1918,7 @@ export const angularContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><strong>На співбесіді:</strong> старі проєкти ще на <code>.eslintrc.json</code> — варто знати обидва формати й що міграція робиться через <code>@eslint/migrate-config</code> або вручну.</div><h3 class=\"topic\">Prettier — форматування</h3><p><strong>Що це:</strong> opinionated-форматер: переписує код за мінімальним набором опцій, прибираючи дискусії про стиль. Конфіг — <code>.prettierrc</code>. <strong>Навіщо:</strong> увесь код виглядає однаково незалежно від автора; форматування «на збереженні» + у pre-commit hook.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// .prettierrc\n{\n  \"printWidth\": 100,\n  \"singleQuote\": true,\n  \"semi\": true,\n  \"trailingComma\": \"all\",\n  \"bracketSpacing\": true\n}\n\n# Команди\nnpx prettier --write .     # відформатувати все\nnpx prettier --check .     # лише перевірити (для CI)"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// .vscode/settings.json — формат на збереженні\n{\n  \"editor.formatOnSave\": true,\n  \"editor.defaultFormatter\": \"esbenp.prettier-vscode\"\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">ESLint + Prettier разом без конфліктів <span class=\"tag tag-key\">PITFALL</span></h3><p><strong>Що це:</strong> у ESLint є власні форматувальні правила (<code>quotes</code>, <code>indent</code>, <code>semi</code>), які <em>сваряться</em> з Prettier — один хоче так, інший інакше. <strong>Навіщо знати:</strong> класичне інтерв'ю-питання. Рішення — віддати все форматування Prettier, а ESLint лишити тільки про якість коду.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// Вимкнути всі форматувальні правила ESLint, що конфліктують з Prettier\nnpm i -D eslint-config-prettier\n\n// eslint.config.js — додати ОСТАННІМ у масив, щоб перекрив решту\nconst prettier = require(\"eslint-config-prettier\");\nmodule.exports = [ ...angular.configs.tsRecommended, prettier ];"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><strong>Два підходи:</strong> (1) запускати їх <em>окремо</em> — ESLint для якості, Prettier для формату (рекомендовано, швидше). (2) <code>eslint-plugin-prettier</code> — ганяти Prettier <em>як</em> ESLint-правило: зручно одним <code>--fix</code>, але повільніше і «шумить» помилками форматування серед логічних. У будь-якому разі потрібен <code>eslint-config-prettier</code>, щоб прибрати дублювання.</div><h3 class=\"topic\">Stylelint & EditorConfig</h3><div class=\"grid2\">\n            <div>\n              <p><strong>Stylelint</strong> — лінтер для CSS/SCSS (порядок властивостей, заборона <code>!important</code>, дублікати, невідомі одиниці). Конфіг <code>.stylelintrc</code>.</p>\n              <pre><span class=\"cmt\">// .stylelintrc.json</span>\n{ <span class=\"str\">\"extends\"</span>: <span class=\"str\">\"stylelint-config-standard-scss\"</span> }</pre>\n            </div>\n            <div>\n              <p><strong>EditorConfig</strong> — рівень нижче лінтера: узгоджує базові налаштування IDE для всіх (відступи, charset, кінці рядків), незалежно від редактора.</p>\n              <pre><span class=\"cmt\"># .editorconfig</span>\nroot = true\n[*]\nindent_style = space\nindent_size = 2\nend_of_line = lf\ncharset = utf-8\ninsert_final_newline = true</pre>\n            </div>\n          </div><h3 class=\"topic\">Автоматизація: husky + lint-staged</h3><p><strong>Що це:</strong> Git-hook (pre-commit) через <strong>husky</strong>, який запускає <strong>lint-staged</strong> — лінт і формат <em>лише на staged-файлах</em>, а не на всьому репо. <strong>Навіщо:</strong> поганий код не потрапляє в коміт; швидко, бо перевіряються тільки змінені файли.</p>"
+          "html": "<div class=\"alert warn\"><strong>На співбесіді:</strong> старі проєкти ще на <code>.eslintrc.json</code> — варто знати обидва формати й що міграція робиться через <code>@eslint/migrate-config</code> або вручну.</div><div class=\"alert good\">Загальний розбір Prettier (<code>.prettierrc</code>, VS Code налаштування, конфлікт з ESLint через <code>eslint-config-prettier</code>), Stylelint, EditorConfig і SonarQube (Bugs/Vulnerabilities/Code Smells, Quality Gate) — у розділі «IDE» → «Лінтери, форматери та якість коду». Тут — лише Angular-специфічне: <code>angular-eslint</code>, <code>ng lint</code>.</div><h3 class=\"topic\">Автоматизація: husky + lint-staged</h3><p><strong>Що це:</strong> Git-hook (pre-commit) через <strong>husky</strong>, який запускає <strong>lint-staged</strong> — лінт і формат <em>лише на staged-файлах</em>, а не на всьому репо. <strong>Навіщо:</strong> поганий код не потрапляє в коміт; швидко, бо перевіряються тільки змінені файли.</p>"
         },
         {
           "kind": "code",
@@ -2045,20 +1936,7 @@ export const angularContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">SonarQube — якість коду в CI <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> SonarQube — платформа статичного аналізу, що працює <em>поверх</em> ESLint/Prettier, а не замість них: рахує технічний борг, тримає історію метрик у часі й може заблокувати merge через <strong>Quality Gate</strong>. Класифікує знахідки на <strong>Bugs</strong> (ймовірно зламана логіка), <strong>Vulnerabilities</strong> (security-ризики) і <strong>Code Smells</strong> (погана підтримуваність — не баг, але ускладнює зміни). <strong>Навіщо:</strong> ESLint ловить локальні проблеми файлу на pre-commit/CI; SonarQube додає метрики на рівні всього проєкту — cyclomatic complexity, дублювання коду, покриття тестами (інтегрується з <code>lcov</code>-звітом Jest/Karma) — і тренд цих метрик у часі.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// sonar-project.properties\nsonar.projectKey=my-angular-app\nsonar.sources=src\nsonar.tests=src\nsonar.test.inclusions=**/*.spec.ts\nsonar.javascript.lcov.reportPaths=coverage/lcov.info\nsonar.exclusions=**/*.spec.ts,**/node_modules/**\n\n# .github/workflows/ci.yml (фрагмент) — крок аналізу після тестів\n- run: npm run test -- --code-coverage\n- name: SonarQube Scan\n  uses: sonarsource/sonarqube-scan-action@v2\n  env:\n    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><strong>Quality Gate:</strong> набір порогів (напр. coverage on new code ≥ 80%, 0 нових Bugs/Vulnerabilities, duplication &lt; 3%), які PR має пройти, щоб merge був дозволений — це і є «останній бар'єр» окремо від ESLint-гейту в CI. <strong>SonarQube vs ESLint:</strong> ESLint — швидкий локальний лінт одного файлу на pre-commit; SonarQube — проєктний аналіз з історією трендів, дашбордом і гейтом на PR.</div>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><strong>Чому <code>--max-warnings 0</code>?</strong> Інакше warnings накопичуються й ігноруються. Нуль-толерантність тримає кодову базу чистою. Для швидкості додають кеш: <code>eslint --cache</code>.</div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Flat config як єдиний стандарт, типізовані lint-правила за замовчуванням, тісніша інтеграція angular-eslint з Angular CLI, швидші лінтери (Biome/oxlint) як альтернатива ESLint+Prettier</span></div></div>"
+          "html": "<div class=\"alert good\">SonarQube (Bugs/Vulnerabilities/Code Smells, Quality Gate, <code>sonar-project.properties</code>) — у розділі «IDE» → «Лінтери, форматери та якість коду».</div><div class=\"alert warn\"><strong>Чому <code>--max-warnings 0</code>?</strong> Інакше warnings накопичуються й ігноруються. Нуль-толерантність тримає кодову базу чистою. Для швидкості додають кеш: <code>eslint --cache</code>.</div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Flat config як єдиний стандарт, типізовані lint-правила за замовчуванням, тісніша інтеграція angular-eslint з Angular CLI, швидші лінтери (Biome/oxlint) як альтернатива ESLint+Prettier</span></div></div>"
         }
       ]
     },

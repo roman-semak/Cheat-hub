@@ -50,13 +50,17 @@ export function TopicPanel({
                       ),
                 )}
               >
-                <button
-                  onClick={() => onJump(item.id)}
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onJump(item.id)
+                  }}
                   className="flex min-w-0 flex-1 items-center gap-2 py-2 pl-3 text-left"
                 >
                   {item.emoji && <span className="shrink-0">{item.emoji}</span>}
                   <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                </button>
+                </a>
                 {onToggleState && (
                   <button
                     type="button"

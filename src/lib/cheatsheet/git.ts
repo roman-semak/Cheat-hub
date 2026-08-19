@@ -121,6 +121,10 @@ export const gitContent: TopicContent = {
           question: `Як ти верифікуєш PR перед merge?`,
           answer: `Обов'язкові статус-чеки (тести, лінтер, білд) через branch protection, code review щонайменше від одного ревʼюера (за потреби — CODEOWNERS для авто-призначення), і лише після зеленого CI — merge у цільову гілку.`,
         },
+        {
+          question: `У якому порядку сеньйор-рев'ювер зазвичай розставляє пріоритети зауважень у код-рев'ю?`,
+          answer: `Correctness (баги) → дизайн/підтримуваність → покриття тестами → стиль. Стиль в ідеалі взагалі не мав би бути предметом коментаря — його забезпечує лінтер/форматер у CI.`,
+        },
       ],
       "blocks": [
         {
@@ -153,8 +157,93 @@ export const gitContent: TopicContent = {
         {
           "kind": "paragraph",
           "html": "<p style=\"font-size: 12px; color: #8b949e;\"><strong>Timeline:</strong> Features merge до release branch → stabilization period (bug fixes only) → release day → merge back до main.</p>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"alert good\">💡 <strong>Пріоритети код-рев'ю (зверху вниз):</strong> 1) <strong>Correctness</strong> — чи є баги, чи код взагалі робить те, що заявлено. 2) <strong>Дизайн/maintainability</strong> — чи впишеться зміна в архітектуру. 3) <strong>Покриття тестами</strong> — чи є тест на нову поведінку й edge-кейси. 4) <strong>Стиль</strong> — має бути автоматизований лінтером/форматером, а не предметом коментарів. Сеньйор-рев'ювер витрачає бюджет коментарів згори вниз, а не знизу вгору.</div>"
         }
       ]
+    },
+    {
+      id: 'github-platform',
+      title: '🐙 GitHub — платформа поверх Git',
+      interviewQuestions: [
+        {
+          question: 'У чому принципова різниця між Git і GitHub, яку часто плутають новачки?',
+          answer: 'Git — це <strong>розподілена система контролю версій</strong>, консольний інструмент/протокол, що працює повністю локально й не потребує жодного зовнішнього сервісу (можна ганяти <code>git init</code>/<code>commit</code>/<code>log</code> без інтернету). GitHub — <strong>хмарна платформа-хостинг</strong> для Git-репозиторіїв поверх цього протоколу, що додає веб-інтерфейс, соціальні/командні фічі (Issues, Pull Requests, code review UI), CI/CD (Actions) і керування доступом. Аналоги — GitLab, Bitbucket: різні платформи можуть хостити той самий Git-репозиторій.',
+        },
+        {
+          question: 'Чим Pull Request на GitHub відрізняється від простого <code>git merge</code> у консолі?',
+          answer: 'Технічно PR — це запит на злиття однієї гілки в іншу, але сам факт злиття виконує GitHub (кнопкою Merge), а не голий <code>git merge</code>. Головна цінність PR — усе, що GitHub додає навколо цього злиття: diff для рев\'ю по рядках з інлайн-коментарями, обов\'язкові статус-чеки (CI має бути зеленим), вимога апрувів від рев\'юерів, автоматичне закриття пов\'язаних Issues за ключовим словом у описі (<code>Closes #42</code>), і історія обговорення, прив\'язана до конкретного набору змін.',
+        },
+        {
+          question: 'Що таке branch protection rules і CODEOWNERS, і яку проблему вони вирішують разом?',
+          answer: '<strong>Branch protection rules</strong> — налаштування на рівні репозиторію, що забороняють прямий push у захищену гілку (напр. <code>main</code>) в обхід PR, вимагають проходження статус-чеків і мінімум N апрувів перед merge. <strong>CODEOWNERS</strong> — файл, що зіставляє шляхи в репозиторії з людьми/командами, чий апрув обов\'язковий для змін у цих шляхах (напр. зміни в <code>/infra/</code> вимагають апруву DevOps-команди) — GitHub автоматично призначає їх ревʼюерами на PR. Разом вони гарантують, що критичний код не потрапить у прод без перегляду саме тих, хто в ньому компетентний.',
+        },
+        {
+          question: 'Чим GitHub Actions відрізняється від зовнішнього CI (напр. Jenkins), і що таке "workflow" у цьому контексті?',
+          answer: 'GitHub Actions — CI/CD, вбудований прямо в платформу: конфігурація — YAML-файли в <code>.github/workflows/</code>, що описують <strong>workflow</strong> (послідовність <em>jobs</em> із <em>steps</em>), який запускається на GitHub-події (push, PR, реліз, за розкладом). На відміну від Jenkins (окремий сервер, який треба хостити й адмініструвати самому), Actions керується самим GitHub — runner-и (віртуальні машини) надаються хмарою, і немає окремої інфраструктури для підтримки, хоча можна підключити й self-hosted runner.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Git vs GitHub <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>Git</h4><p>Розподілена система контролю версій — консольний інструмент/протокол, працює локально, без інтернету. Той самий репозиторій можна хостити на будь-якій платформі.</p></div>
+    <div class="card green"><h4>GitHub</h4><p>Хмарний хостинг Git-репозиторіїв + веб-інтерфейс + командні інструменти поверх (Issues, PR, Actions, Projects). Конкуренти: GitLab, Bitbucket.</p></div>
+  </div>
+  <h3 class="topic">Issues — трекінг задач і багів</h3>
+  <p>Картка з заголовком/описом/лейблами (<code>bug</code>, <code>enhancement</code>)/призначеним виконавцем. Прив\'язується до PR через ключові слова в описі коміту чи PR — <code>Closes #42</code>, <code>Fixes #17</code> — при мерджі такого PR issue закривається автоматично.</p>
+  <h3 class="topic">Pull Request — рев'ю поверх git merge</h3>
+  <p>PR — не просто <code>git merge</code> кнопкою: diff для рев'ю по рядках з інлайн-коментарями, обов\'язкові статус-чеки (CI), вимога апрувів, draft-PR для роботи в процесі. Merge-стратегії з UI: <strong>Merge commit</strong> (зберігає повну історію гілки), <strong>Squash and merge</strong> (усі коміти PR — в один, чистіша історія <code>main</code>), <strong>Rebase and merge</strong> (лінійна історія без merge-коміту).</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Branch protection + CODEOWNERS <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Без branch protection ніщо не заважає будь-кому запушити напряму в <code>main</code>, обійшовши рев'ю. Правило захищає гілку: заборона прямого push, обов'язкові статус-чеки, мінімум N апрувів. <code>CODEOWNERS</code> автоматично призначає потрібних людей рев'юерами за шляхом файлу.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'bash',
+          caption: '.github/CODEOWNERS',
+          code: `# Формат: <шлях> <власники>
+*                   @team-frontend
+/infra/             @team-devops
+/src/api/            @team-backend @jane-doe
+*.md                 @docs-team`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">GitHub Actions — CI/CD, вбудований у платформу</h3>
+  <p>Конфігурація — YAML у <code>.github/workflows/</code>: <strong>workflow</strong> запускається на подію (push, PR, розклад через <code>cron</code>) і складається з <strong>jobs</strong> (виконуються паралельно за замовчуванням), кожен job — послідовність <strong>steps</strong>. На відміну від Jenkins, інфраструктуру (runners) надає сам GitHub — нічого не треба хостити самому.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'yaml',
+          caption: '.github/workflows/ci.yml',
+          code: `name: CI
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Projects — канбан поверх Issues/PR</h3>
+  <p><strong>GitHub Projects</strong> — канбан-дошка (To do / In progress / Done), що автоматично синхронізується зі станом Issues й PR у репозиторії (напр. злитий PR автоматично переносить пов'язаний Issue в колонку Done) — заміна окремому таск-трекеру для команд, що вже живуть у GitHub.</p>`,
+        },
+      ],
     },
     {
       "id": "merge-strategies-key",

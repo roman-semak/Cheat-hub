@@ -50,6 +50,16 @@ export const TOPICS: TopicMeta[] = [
     formats: ['extended', 'quiz'],
   },
   {
+    slug: 'react-native',
+    title: 'React Native',
+    icon: '📱',
+    blurb:
+      'Expo, навігація, нативні API та продуктивність — мобільний React від основ до Senior.',
+    accent: 'blue',
+    formats: ['extended'],
+    badges: ['Expo', 'React Navigation', 'Hermes'],
+  },
+  {
     slug: 'nextjs',
     title: 'Next.js',
     icon: '▲',
@@ -155,6 +165,13 @@ export const ACCENT: Record<
     ring: 'ring-cyan-400/40',
     gradient: 'from-cyan-500 to-blue-600',
     dot: 'bg-cyan-400',
+  },
+  blue: {
+    text: 'text-blue-400',
+    border: 'hover:border-blue-400/60',
+    ring: 'ring-blue-400/40',
+    gradient: 'from-blue-500 to-blue-700',
+    dot: 'bg-blue-400',
   },
   violet: {
     text: 'text-violet-400',

@@ -1,6 +1,6 @@
 ---
 name: cheatsheet-interview-questions
-description: Ensure every section added or substantially edited in a cheatsheet Теорія (extended) topic file — react.ts, angular.ts, javascript.ts, nextjs.ts, fullstack.ts, architecture.ts, git.ts, ai.ts, algorithms.ts, ide.ts — carries a populated interviewQuestions array, so its end-of-section interview-questions popup always renders. Use when the user asks to add a new cheatsheet section, expand an existing one, or add interview questions to a topic.
+description: Ensure every section added or substantially edited in a cheatsheet Теорія (extended) topic file — react.ts, react-native.ts, angular.ts, javascript.ts, nextjs.ts, fullstack.ts, architecture.ts, git.ts, ai.ts, algorithms.ts, ide.ts — carries a populated interviewQuestions array, so its end-of-section interview-questions popup always renders. Use when the user asks to add a new cheatsheet section, expand an existing one, or add interview questions to a topic.
 tools: Read, Write, Edit, Grep, Glob
 ---
 
@@ -26,6 +26,7 @@ src/components/cheatsheet/ProseTopicView.tsx             # renders it after Cont
 
 src/lib/cheatsheet/
   react.ts        -> reactContent (Теорія, needs the field) / reactCheat (Шпаргалка, must NOT get it)
+  react-native.ts -> reactNativeContent (extended-only, no Cheat)
   angular.ts      -> angularContent / angularCheat
   javascript.ts   -> javascriptContent / javascriptCheat
   nextjs.ts       -> nextjsContent / nextjsCheat

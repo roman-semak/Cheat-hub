@@ -540,6 +540,14 @@ await prisma.$transaction([
           question: 'Чому JWT для автентифікації в браузері рекомендують зберігати в httpOnly cookie, а не в localStorage?',
           answer: 'localStorage доступний з JavaScript, тому будь-який XSS на сторінці може вкрасти токен. httpOnly cookie взагалі недоступна з JS-коду (браузер сам додає її до запитів), тому XSS не може її прочитати — залишається ризик CSRF, який закривається окремо (SameSite-атрибут, CSRF-токен).',
         },
+        {
+          question: 'localStorage чи IndexedDB — коли що?',
+          answer: 'localStorage — простий рядковий стор до ~5-10MB, синхронний API, зручний для дрібних налаштувань (тема, мова). IndexedDB — структурована БД у браузері на десятки+ MB, асинхронний API, підходить для великих датасетів і офлайн-режиму (кеш списків, файли).',
+        },
+        {
+          question: 'Як персистити стан застосунку між сесіями без бекенда?',
+          answer: 'Зберігати в localStorage/IndexedDB при зміні (напр. підписка на store) і відновлювати при ініціалізації застосунку. Для чутливих даних (токени) — лише httpOnly cookie, ніколи localStorage/IndexedDB.',
+        },
       ],
       blocks: [
         {
@@ -560,6 +568,20 @@ await prisma.$transaction([
           kind: 'note',
           tone: 'warn',
           html: `<div class="alert warn"><strong>🍪 Cookies для токенів.</strong> Зберігай токен у <code>HttpOnly</code> cookie (JS не дістане → захист від XSS-крадіжки), <code>Secure</code> (лише HTTPS), <code>SameSite=Lax/Strict</code> (захист від CSRF). Зберігання JWT у <code>localStorage</code> вразливе до XSS — поширена помилка.</div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Де саме зберігати дані в браузері</h3>
+            <p>localStorage (постійне сховище, ~5-10MB), sessionStorage (до закриття вкладки), IndexedDB (десятки+ MB, структуровані дані), Cookies (єдине, що автоматично йде на сервер).</p>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Storage</th><th>Розмір</th><th>Тип</th><th>Персистентність</th><th>Use Case</th></tr>
+                <tr><td>localStorage</td><td>~5-10 MB</td><td>String</td><td>Назавжди</td><td>Налаштування, тема</td></tr>
+                <tr><td>sessionStorage</td><td>~5-10 MB</td><td>String</td><td>До закриття вкладки</td><td>Тимчасові дані сесії</td></tr>
+                <tr><td>IndexedDB</td><td>50+ MB</td><td>Структуровані дані</td><td>Назавжди</td><td>Великі датасети, офлайн</td></tr>
+                <tr><td>Cookies</td><td>~4 KB</td><td>String</td><td>Налаштовується</td><td>HTTP-заголовки, auth-токени</td></tr>
+              </table>
+            </div>`,
         },
         {
           kind: 'paragraph',
@@ -728,6 +750,10 @@ await prisma.$transaction([
           question: 'Чим XSS відрізняється від CSRF, і які захисти закривають кожну з цих загроз?',
           answer: 'XSS — впровадження зловмисного JavaScript у сторінку (через несанітизований ввід користувача), що виконується в контексті довіреного сайту; захист — санітизація виводу/CSP-заголовки. CSRF — змушування браузера користувача виконати небажану дію на сайті, де він вже автентифікований (через сторонню форму/запит); захист — SameSite cookies, CSRF-токени, перевірка Origin/Referer заголовків.',
         },
+        {
+          question: 'Чому санітизація потрібна навіть коли контент вже пройшов через "довірений" бекенд?',
+          answer: 'dangerouslySetInnerHTML рендерить будь-який переданий HTML напряму в DOM без екранування — якщо хоч десь у ланцюжку (коментар, CMS-поле, імпорт зі стороннього джерела) потрапив несанітизований ввід користувача, це пряма XSS-діра. DOMPurify.sanitize() перед рендером — обов\'язковий крок незалежно від "довіри" до джерела.',
+        },
       ],
       blocks: [
         {
@@ -761,6 +787,11 @@ await prisma.$transaction([
           kind: 'note',
           tone: 'warn',
           html: `<div class="alert warn"><strong>🌐 CORS — часто плутають із безпекою.</strong> CORS не «захищає твій сервер» — це механізм <em>браузера</em>, що дозволяє/забороняє JS з іншого origin читати відповідь. Сервер лише оголошує дозволені origins. Ставити <code>Access-Control-Allow-Origin: *</code> на приватний API з credentials — помилка. CSRF — інша загроза (зловмисний сайт робить запит від імені користувача); захист — SameSite-cookies + токени.</div>`,
+        },
+        {
+          kind: 'note',
+          tone: 'warn',
+          html: `<div class="alert warn"><strong>🧼 dangerouslySetInnerHTML — ніколи без санітизації.</strong> Якщо потрібно відрендерити HTML, згенерований користувачем, — ніколи не передавай його в <code>dangerouslySetInnerHTML</code> у сирому вигляді (пряма діра для XSS). Спочатку прожени через <code>DOMPurify.sanitize(userHtml)</code> і передавай у розмітку лише санітизований результат.</div>`,
         },
       ],
     },
@@ -809,6 +840,10 @@ await prisma.$transaction([
         {
           question: 'Навіщо потрібна контейнеризація (Docker), якщо застосунок і так можна задеплоїти на сервер напряму?',
           answer: 'Контейнер пакує застосунок разом з усіма залежностями й точною версією рантайму в ізольований, відтворюваний артефакт — усуває проблему «у мене працює» через різницю в оточенні між dev/staging/prod. Це також спрощує горизонтальне масштабування (однаковий контейнер запускається на будь-якій кількості вузлів) і відкат (попередній образ завжди доступний для миттєвого повернення).',
+        },
+        {
+          question: 'Чим Lighthouse CI відрізняється від разового Lighthouse-аудиту в DevTools?',
+          answer: '<code>@lhci/cli</code> запускає ті самі перевірки автоматично в CI-пайплайні на кожен PR/деплой і порівнює результат із заданим бюджетом (<code>lighthouserc.json</code>) — падіння Core Web Vitals нижче порогу провалює білд, тоді як ручний аудит у DevTools — лише одноразовий знімок.',
         },
       ],
       blocks: [
@@ -894,6 +929,62 @@ deploy:
   environment: production
   only:
     - main`,
+        },
+        {
+          kind: 'code',
+          language: 'yaml',
+          caption: '.github/workflows/ci.yml — той самий pipeline на GitHub Actions',
+          code: `name: CI
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test -- --coverage
+      - run: npm run build
+      - name: Deploy
+        run: echo "deploy dist/ to production"`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Lighthouse CI — автоматичний перфоманс-гейт</h3>
+  <p>Ручний Lighthouse-аудит у DevTools — разовий знімок. <strong>Lighthouse CI</strong> (<code>@lhci/cli</code>) вбудовує ті самі перевірки в pipeline: запускається на кожен PR/деплой, порівнює метрики з попереднім прогоном і <strong>провалює білд</strong>, якщо Core Web Vitals чи performance-скор впали нижче заданого бюджету.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'bash',
+          caption: 'Lighthouse CI у pipeline',
+          code: `npm install --save-dev @lhci/cli
+
+# запуск: білдить, піднімає, аудитить, порівнює з бюджетом
+lhci autorun`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          caption: 'lighthouserc.json — мінімальний перформанс-бюджет',
+          code: `{
+  "ci": {
+    "collect": { "numberOfRuns": 3, "url": ["http://localhost:3000/"] },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.9 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }]
+      }
+    },
+    "upload": { "target": "temporary-public-storage" }
+  }
+}`,
         },
       ],
     },

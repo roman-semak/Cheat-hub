@@ -6,6 +6,7 @@
 export type TopicSlug =
   | 'architecture'
   | 'react'
+  | 'react-native'
   | 'nextjs'
   | 'angular'
   | 'javascript'
@@ -32,6 +33,7 @@ export type Accent =
   | 'fuchsia'
   | 'slate'
   | 'pink'
+  | 'blue'
 
 export interface TopicMeta {
   slug: TopicSlug
@@ -77,7 +79,7 @@ export interface LeetcodeData {
 /* ---------- Practice tasks (interview-style exercises) ---------- */
 
 export type PracticeLevel = 'Middle' | 'Senior'
-export type PracticeTopic = 'RxJS' | 'JS/TS' | 'Async' | 'React'
+export type PracticeTopic = 'RxJS' | 'JS/TS' | 'Async' | 'React' | 'Angular' | 'React Native'
 
 export interface PracticeTask {
   id: string // stable key, e.g. 'promise-to-observable'

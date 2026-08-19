@@ -462,6 +462,14 @@ export const javascriptContent: TopicContent = {
           question: `Чим pnpm відрізняється від npm/yarn?`,
           answer: `Спільний content-addressable store + symlinks замість копій файлів у кожен проєкт — швидше, менше місця на диску, і сувора структура node_modules унеможливлює phantom dependencies.`,
         },
+        {
+          question: `Чим SWC відрізняється від Babel, і чим він НЕ є (попри те, що часто називають 'бандлером')?`,
+          answer: `SWC — компілятор на Rust (транспіляція TS/JSX/нового синтаксису в сумісний JS), а не бандлер — він не будує граф залежностей і не пакує файли разом. Він конкурує з Babel, а не з Webpack/Vite/esbuild-як-бандлерами; Next.js використовує SWC замість Babel для транспіляції.`,
+        },
+        {
+          question: `З яких етапів складається типовий production build pipeline, окрім бандлінгу?`,
+          answer: `Послідовно: поліфіли за browserslist → транспіляція (Babel/SWC) → tree-shaking → мінізфікація/mangling (Terser) → source maps → gzip/brotli-компресія. Пропуск будь-якого етапу — типова причина або зайвого ваги бандла, або несумісності зі старими браузерами.`,
+        },
       ],
       "blocks": [
         {
@@ -502,12 +510,16 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<p><strong>Сучасні альтернативи:</strong> Webpack лишається найгнучкішим і найпоширенішим у legacy/enterprise проєктах (Angular CLI досі підтримує його поряд з esbuild), але нові проєкти дедалі частіше обирають швидші інструменти на основі native-бінарників.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Інструмент</th><th>Мова рушія</th><th>Швидкість dev-старту</th><th>Де типово</th></tr>\n              <tr><td>Webpack</td><td>JS</td><td>Повільніше (особливо на великих проєктах)</td><td>Enterprise, CRA-legacy, кастомна конфігурація</td></tr>\n              <tr><td>Vite</td><td>esbuild (Go) + Rollup для build</td><td>Дуже швидко (native ESM у dev)</td><td>React/Vue SPA, нові проєкти</td></tr>\n              <tr><td>esbuild</td><td>Go</td><td>Найшвидший бандлер</td><td>Angular CLI application builder</td></tr>\n              <tr><td>Turbopack</td><td>Rust</td><td>Швидко, інкрементальний кеш</td><td>Next.js (з v13+, дефолт у v15+)</td></tr>\n            </table>\n          </div><h3 class=\"topic\">Package Managers — npm vs yarn vs pnpm</h3><p><strong>Що це:</strong> усі три встановлюють залежності з <code>package.json</code>, але по-різному зберігають <code>node_modules</code>. <strong>npm/yarn classic</strong> копіюють кожен пакет у <code>node_modules</code> кожного проєкту (дублювання на диску) і історично «сплющували» дерево залежностей — звідси <em>phantom dependencies</em> (пакет доступний у коді, хоч і не вказаний у власному <code>package.json</code>, бо його підняв інший пакет). <strong>pnpm</strong> зберігає всі версії пакетів в одному <strong>content-addressable store</strong> на диску і лінкує їх у <code>node_modules</code> через symlinks/hardlinks — економія диска й швидша установка, а суворіша (non-flat) структура <code>node_modules</code> унеможливлює phantom dependencies. <strong>Навіщо:</strong> pnpm особливо виграє в монорепо (<strong>workspaces</strong>) — спільний store для всіх пакетів репозиторію.</p>"
+          "html": "<p><strong>Сучасні альтернативи:</strong> Webpack лишається найгнучкішим і найпоширенішим у legacy/enterprise проєктах (Angular CLI досі підтримує його поряд з esbuild), але нові проєкти дедалі частіше обирають швидші інструменти на основі native-бінарників.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Інструмент</th><th>Мова рушія</th><th>Швидкість dev-старту</th><th>Де типово</th></tr>\n              <tr><td>Webpack</td><td>JS</td><td>Повільніше (особливо на великих проєктах)</td><td>Enterprise, CRA-legacy, кастомна конфігурація</td></tr>\n              <tr><td>Vite</td><td>esbuild (Go) + Rollup для build</td><td>Дуже швидко (native ESM у dev)</td><td>React/Vue SPA, нові проєкти</td></tr>\n              <tr><td>esbuild</td><td>Go</td><td>Найшвидший бандлер</td><td>Angular CLI application builder</td></tr>\n              <tr><td>Turbopack</td><td>Rust</td><td>Швидко, інкрементальний кеш</td><td>Next.js (з v13+, дефолт у v15+)</td></tr>\n              <tr><td>SWC</td><td>Rust</td><td>Дуже швидкий (компілятор, не бандлер)</td><td>Заміна Babel у Next.js; плагін для Vite/Webpack</td></tr>\n            </table>\n          </div><h3 class=\"topic\">Package Managers — npm vs yarn vs pnpm</h3><p><strong>Що це:</strong> усі три встановлюють залежності з <code>package.json</code>, але по-різному зберігають <code>node_modules</code>. <strong>npm/yarn classic</strong> копіюють кожен пакет у <code>node_modules</code> кожного проєкту (дублювання на диску) і історично «сплющували» дерево залежностей — звідси <em>phantom dependencies</em> (пакет доступний у коді, хоч і не вказаний у власному <code>package.json</code>, бо його підняв інший пакет). <strong>pnpm</strong> зберігає всі версії пакетів в одному <strong>content-addressable store</strong> на диску і лінкує їх у <code>node_modules</code> через symlinks/hardlinks — економія диска й швидша установка, а суворіша (non-flat) структура <code>node_modules</code> унеможливлює phantom dependencies. <strong>Навіщо:</strong> pnpm особливо виграє в монорепо (<strong>workspaces</strong>) — спільний store для всіх пакетів репозиторію.</p>"
         },
         {
           "kind": "code",
           "language": "typescript",
           "code": "# npm — копіює пакети в node_modules кожного проєкту\nnpm install\n\n# pnpm — лінкує з єдиного content-addressable store\npnpm install\n\n# pnpm workspaces (монорепо) — pnpm-workspace.yaml\npackages:\n  - 'apps/*'\n  - 'packages/*'\n\n# Встановити залежність лише в один workspace-пакет\npnpm --filter @myorg/web add axios"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Повний build pipeline — послідовність етапів</h3><p>Tree-shaking (вище) — лише один із кроків. Типовий production-білд проходить послідовно кілька перетворень:</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>#</th><th>Етап</th><th>Що робить</th></tr>\n              <tr><td>1</td><td>Поліфіли (core-js + browserslist)</td><td><code>browserslist</code> визначає цільові браузери → підключаються лише потрібні поліфіли</td></tr>\n              <tr><td>2</td><td>Транспіляція (Babel/SWC)</td><td>Новий синтаксис (TS, JSX, останній ES) → сумісний JS для цільових браузерів</td></tr>\n              <tr><td>3</td><td>Tree-shaking</td><td>Видалення невикористаного експортованого коду (лише для ESM)</td></tr>\n              <tr><td>4</td><td>Мініфікація (Terser)</td><td>Видалення пробілів/коментарів, mangling — коротші імена змінних</td></tr>\n              <tr><td>5</td><td>Source maps</td><td>Карта відповідності мінікоду → оригінального джерела для дебагу</td></tr>\n              <tr><td>6</td><td>Компресія (gzip/brotli)</td><td>Стиснення для передачі по мережі</td></tr>\n            </table>\n          </div>"
         },
         {
           "kind": "paragraph",
@@ -951,6 +963,10 @@ export const javascriptContent: TopicContent = {
           question: `Proxy для валідації/логування?`,
           answer: `Так! Перехоплення set/get. Validation proxy, logging proxy, caching proxy.`,
         },
+        {
+          question: `Чому Singleton і React Context часто плутають, хоча вони вирішують різні задачі?`,
+          answer: `Обидва здаються способом уникнути 'prop drilling'. Але Singleton — гарантія РІВНО одного інстансу на модульному рівні (прихована залежність, важко тестувати ізольовано). Context — лише механізм розповсюдження значення деревом компонентів; можна змонтувати кілька <code>&lt;Provider&gt;</code> з різними значеннями одночасно.`,
+        },
       ],
       "blocks": [
         {
@@ -970,6 +986,10 @@ export const javascriptContent: TopicContent = {
           "kind": "code",
           "language": "typescript",
           "code": "// Factory: функція/метод для створення об'єктів\nclass DatabaseFactory {\n  static create(type) {\n    switch (type) {\n      case 'mysql': return new MySQLDB();\n      case 'mongo': return new MongoDB();\n      default: throw new Error('Unknown DB');\n    }\n  }\n}\nconst db = DatabaseFactory.create('mysql');\n\n// Singleton: тільки один instance\nclass Database {\n  static #instance = null;\n  constructor() {\n    if (Database.#instance) return Database.#instance;\n    Database.#instance = this;\n  }\n  static getInstance() {\n    return Database.#instance || new Database();\n  }\n}\nconst db1 = Database.getInstance();\nconst db2 = Database.getInstance();\nconsole.log(db1 === db2); // true"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"alert alert-warn\"><span class=\"icon\">⚠️</span><span><strong>Singleton ≠ React Context.</strong> Singleton гарантує РІВНО один інстанс на весь застосунок (модульний рівень, прихована глобальна залежність, важко мокати в тестах). React Context — механізм <em>розповсюдження</em> значення деревом компонентів, а не сам по собі механізм єдиного інстансу: можна змонтувати кілька <code>&lt;Provider&gt;</code> з РІЗНИМИ значеннями одночасно в різних піддеревах. Їх плутають, бо обидва «уникають прокидання пропів по всьому дереву», але вирішують різні задачі.</span></div>"
         },
         {
           "kind": "paragraph",
@@ -1074,6 +1094,252 @@ export const javascriptContent: TopicContent = {
           "html": "<div class=\"alert alert-warn\">\n            <strong>Обережно:</strong> Object.assign не робить deep clone. Використовуй structuredClone() або lodash.cloneDeep() для глибокого клонування.\n          </div><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у ES2025+</div><div class=\"changelog-row\"><span class=\"chver\">ES2025</span><span class=\"changelog-text\">Record and Tuple types (immutable collections), better Map/Set composition</span></div></div>"
         }
       ]
+    },
+    {
+      id: 'web-app-architectures',
+      title: '🏗️ SPA vs MPA vs PWA',
+      interviewQuestions: [
+        {
+          question: 'У чому фундаментальна різниця між SPA та MPA на рівні того, що відбувається при переході між "сторінками"?',
+          answer: 'MPA (Multi-Page Application) — кожен перехід це повний запит на сервер, сервер повертає новий готовий HTML-документ, браузер повністю перезавантажує сторінку (весь JS/CSS стан втрачається, повторно виконується парсинг/рендер із нуля). SPA (Single-Page Application) — початково завантажується один HTML-документ, а подальша "навігація" відбувається клієнтським JS: підвантажуються лише дані (JSON через fetch), DOM оновлюється точково через віртуальний DOM/фреймворк, URL міняється через History API без реального запиту сторінки — стан застосунку (відкриті модалки, скрол, форми) зберігається між "переходами".',
+        },
+        {
+          question: 'Які конкретні недоліки SPA-підходу, через які MPA чи гібридні рішення (SSR/Next.js) досі актуальні?',
+          answer: 'Перше завантаження SPA повільніше — браузер має завантажити й виконати весь JS-бандл <em>перед</em> тим, як з\'явиться змістовний контент (порожній <code>&lt;div id="root"&gt;</code> до гідратації). SEO історично страждало — пошукові боти, що не виконують JS, бачили порожню сторінку (сучасні Google-краулери JS виконують, але не всі боти й соцмережеві прев\'ю це вміють). Це і привело до SSR/SSG-гібридів (Next.js App Router — розділ нижче), які поєднують серверний перший рендер зі SPA-подібною клієнтською навігацією після гідратації.',
+        },
+        {
+          question: 'Що технічно перетворює звичайний SPA/MPA-сайт на PWA (Progressive Web App), і які можливості це відкриває?',
+          answer: 'Два обов\'язкові технічні елементи: <strong>Web App Manifest</strong> (JSON-файл з іконками, назвою, кольором теми — дозволяє "встановити" сайт на домашній екран як застосунок) і <strong>Service Worker</strong> (окремий JS-потік, що перехоплює мережеві запити й може кешувати відповіді — звідси офлайн-доступ і швидший повторний візит). Разом вони дають: роботу без мережі (кешовані ресурси/дані), push-сповіщення, встановлення без App Store/Google Play, іконку на домашньому екрані — при цьому це все ще звичайний вебсайт, доступний за URL.',
+        },
+        {
+          question: 'Чи є SPA і PWA взаємовиключними поняттями, чи їх можна поєднувати — і як?',
+          answer: 'Ні, це ортогональні виміри: SPA/MPA — про <em>модель навігації</em> (де рендериться контент при переході), PWA — про <em>набір можливостей поверх готового сайту</em> (офлайн, встановлюваність, push). Більшість реальних PWA — це SPA з доданими manifest.json + service worker (React/Vue SPA, який додатково кешує ресурси й реєструє service worker), хоча технічно й MPA-сайт може стати PWA, якщо додати ті самі два елементи.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">MPA — Multi-Page Application (класична модель)</h3>
+  <p>Кожен клік по посиланню = новий HTTP-запит на сервер → сервер рендерить і повертає повний HTML-документ → браузер повністю перезавантажує сторінку. Простіше для SEO (боту доступний готовий HTML одразу), але кожен перехід "з нуля" — весь клієнтський JS-стан втрачається.</p>
+  <h3 class="topic">SPA — Single-Page Application <span class="tag tag-key">KEY</span></h3>
+  <p>Один HTML-документ завантажується один раз; подальша навігація — клієнтський JS підвантажує лише дані (JSON) і точково оновлює DOM, URL змінюється через <strong>History API</strong> (<code>pushState</code>) без реального запиту сторінки. Швидша навігація після першого завантаження, стан застосунку не втрачається — ціна: важче перше завантаження і SEO вимагає додаткових рішень (SSR).</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Порівняння</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>MPA</th><th>SPA</th></tr>
+      <tr><td>Перехід між "сторінками"</td><td>Повний HTTP-запит + перезавантаження</td><td>Клієнтський JS, без перезавантаження</td></tr>
+      <tr><td>Перше завантаження</td><td>Швидше (готовий HTML одразу)</td><td>Повільніше (спершу весь JS-бандл)</td></tr>
+      <tr><td>Навігація після першого завантаження</td><td>Повільніше (кожен раз з нуля)</td><td>Швидше (лише дані, DOM не з нуля)</td></tr>
+      <tr><td>SEO "з коробки"</td><td>✅ Готовий HTML для будь-якого бота</td><td>⚠️ Потребує SSR/SSG для надійного SEO</td></tr>
+      <tr><td>Стан застосунку між переходами</td><td>Втрачається щоразу</td><td>Зберігається (React-стан, скрол, модалки)</td></tr>
+      <tr><td>Приклад</td><td>Класичний Wordpress-сайт, Django SSR</td><td>Gmail, Trello, React SPA</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">PWA — Progressive Web App</h3>
+  <p>Не альтернатива SPA/MPA, а <strong>набір можливостей поверх</strong> готового сайту: офлайн-доступ, встановлюваність на домашній екран, push-сповіщення. Два обов'язкові елементи:</p>
+  <div class="grid2">
+    <div class="card"><h4>Web App Manifest</h4><p>JSON з назвою, іконками, кольором теми, <code>display: standalone</code> — дозволяє браузеру запропонувати "встановити" сайт як застосунок.</p></div>
+    <div class="card"><h4>Service Worker</h4><p>Окремий JS-потік, що перехоплює мережеві запити й може відповідати з кешу — звідси офлайн-режим і швидший повторний візит.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          caption: 'manifest.json — мінімальний набір для встановлюваності',
+          code: `{
+  "name": "My App",
+  "short_name": "App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }]
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'Реєстрація service worker + базове кешування',
+          code: `// main.ts — реєстрація
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
+// sw.js — перехоплення запитів, кеш "спершу мережа, потім кеш при офлайні"
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request)),
+  );
+});`,
+        },
+      ],
+    },
+    {
+      id: 'dom-events-traversal',
+      title: '🌳 DOM — навігація, події, делегування',
+      interviewQuestions: [
+        {
+          question: 'Чим <code>event.target</code> відрізняється від <code>event.currentTarget</code> в обробнику події, навішеному на елемент-контейнер?',
+          answer: '<code>event.target</code> — конкретний DOM-елемент, на якому подія реально сталась (напр. кнопка всередині списку, по якій клікнули), незмінний протягом усього спливання. <code>event.currentTarget</code> — елемент, на якому <em>саме зараз виконується</em> обробник (той, на якому викликали <code>addEventListener</code>), і його значення різне залежно від того, на якому рівні спливання виконується код. Для делегування подій (обробник на батьку, клік десь усередині) саме <code>event.target</code> каже, який конкретно дочірній елемент викликав подію.',
+        },
+        {
+          question: 'Що таке делегування подій (event delegation), і чому воно ефективніше за навішування окремого обробника на кожен елемент списку?',
+          answer: 'Замість <code>addEventListener</code> на кожному з N елементів списку, один обробник вішається на спільного батька (напр. <code>&lt;ul&gt;</code>) — оскільки події спливають (<em>bubbling</em>) від дочірнього елемента вгору по дереву, батьківський обробник ловить клік по будь-якому <code>&lt;li&gt;</code> й визначає конкретний елемент через <code>event.target.closest(\'li\')</code>. Переваги: 1 слухач замість N (менше пам\'яті), автоматично працює для елементів, доданих у DOM <em>пізніше</em> (динамічний список) — без делегування довелось би вручну підписувати кожен новододаний елемент.',
+        },
+        {
+          question: 'У чому різниця між фазами capturing і bubbling у моделі DOM-подій, і як явно підписатись на фазу занурення?',
+          answer: 'Подія проходить дерево в три фази: <strong>capturing</strong> (від <code>window</code> униз до цільового елемента), потім <strong>target</strong> (на самому елементі), потім <strong>bubbling</strong> (від елемента вгору до <code>window</code>) — за замовчуванням <code>addEventListener</code> підписується на фазу bubbling. Щоб перехопити подію на фазі занурення (раніше за дочірні обробники), треба передати третій аргумент <code>true</code> (або <code>{ capture: true }</code>) — рідко потрібно на практиці, але типове питання на розуміння моделі.',
+        },
+        {
+          question: 'Чим <code>childNodes</code> відрізняється від <code>children</code>, і чому це часте джерело багів при обході DOM?',
+          answer: '<code>node.childNodes</code> повертає <strong>усі</strong> дочірні вузли, включно з текстовими вузлами (пробіли/переноси рядків між тегами в розмітці — теж окремі текстові вузли) й коментарями. <code>node.children</code> повертає лише дочірні елементи (теги), ігноруючи текстові вузли й коментарі. Код, що очікує лише елементи, але використовує <code>childNodes</code>, часто ламається на "порожніх" текстових вузлах, яких розробник не очікував побачити в колекції.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Навігація по DOM-дереву</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Властивість/метод</th><th>Що повертає</th></tr>
+      <tr><td><code>parentElement</code> / <code>parentNode</code></td><td>Батьківський елемент / вузол (може бути не-елементом, напр. <code>document</code>)</td></tr>
+      <tr><td><code>children</code></td><td>Лише дочірні <strong>елементи</strong> (без текстових вузлів/коментарів)</td></tr>
+      <tr><td><code>childNodes</code></td><td>Усі дочірні вузли, включно з текстовими й коментарями</td></tr>
+      <tr><td><code>nextElementSibling</code> / <code>previousElementSibling</code></td><td>Сусідній елемент того ж рівня</td></tr>
+      <tr><td><code>closest(selector)</code></td><td>Найближчий предок (або сам елемент), що збігається з селектором</td></tr>
+      <tr><td><code>querySelector(selector)</code> / <code>querySelectorAll</code></td><td>Перший / усі нащадки за CSS-селектором</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          code: `const list = document.querySelector('.todo-list')!;
+
+// Створення й вставка вузла
+const item = document.createElement('li');
+item.textContent = 'Купити молоко';
+list.appendChild(item);
+// list.insertBefore(item, list.firstChild) — вставити на початок
+// item.remove() — видалити елемент
+
+// Навігація
+item.parentElement;              // <ul class="todo-list">
+item.closest('.todo-list');      // найближчий предок за селектором (сам себе теж перевіряє)
+list.children.length;            // кількість <li> (без текстових вузлів)
+list.childNodes.length;          // зазвичай БІЛЬШЕ — текстові вузли переносів рядків теж рахуються`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Bubbling, capturing, делегування подій <span class="tag tag-key">KEY</span></h3>
+  <p>Подія проходить три фази: <strong>capturing</strong> (зверху вниз до цілі) → <strong>target</strong> → <strong>bubbling</strong> (знизу вгору від цілі). <code>addEventListener</code> за замовчуванням слухає bubbling-фазу.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'Делегування — 1 обробник замість N, працює й для елементів, доданих пізніше',
+          code: `// ❌ Наївно: обробник на кожен <li> — не спрацює на нові елементи, додані пізніше
+document.querySelectorAll('.todo-item').forEach((el) =>
+  el.addEventListener('click', handleClick),
+);
+
+// ✅ Делегування: 1 обробник на контейнері, спрацьовує завдяки bubbling
+list.addEventListener('click', (event) => {
+  const item = (event.target as HTMLElement).closest('.todo-item');
+  if (!item) return; // клік був не по todo-item (напр. по проміжку)
+  console.log('Клікнутий елемент:', item.dataset.id);
+});
+// Працює навіть для .todo-item, доданих через appendChild ПІСЛЯ підписки —
+// делегування не залежить від того, коли елемент з'явився в DOM
+
+// Capturing-фаза — явно, третім аргументом
+container.addEventListener('click', handler, { capture: true });`,
+        },
+      ],
+    },
+    {
+      id: 'bom-storage-history',
+      title: '🪟 BOM — window, storage, History API',
+      interviewQuestions: [
+        {
+          question: 'Чим localStorage відрізняється від sessionStorage і від cookies за часом життя, обсягом і тим, чи дані відправляються на сервер?',
+          answer: '<code>localStorage</code> — переживає закриття браузера, дані видаляються лише явно (JS-кодом чи користувачем); обсяг ~5-10MB; НЕ відправляється на сервер автоматично. <code>sessionStorage</code> — той самий API, але живе лише в межах однієї вкладки і зникає при її закритті (навіть та сама сторінка в новій вкладці отримує порожній sessionStorage). <code>cookies</code> — набагато менший обсяг (~4KB), час життя задається явно (<code>expires</code>/<code>max-age</code>), і головна відмінність — cookie <strong>автоматично додається до кожного HTTP-запиту</strong> на відповідний домен, тому саме cookies (а не localStorage) використовують для даних, які має бачити сервер (сесія, auth).',
+        },
+        {
+          question: 'Чому localStorage вважається небезпечним місцем для зберігання чутливих токенів?',
+          answer: 'localStorage доступний із будь-якого JS, що виконується на сторінці, — включно зі шкідливим скриптом, впровадженим через XSS-вразливість. На відміну від <code>HttpOnly</code>-cookie (недоступного з JS взагалі), будь-який успішний XSS на сторінці може прочитати <code>localStorage.getItem(\'token\')</code> і вкрасти сесію користувача.',
+        },
+        {
+          question: 'Що таке BOM (Browser Object Model), і чим він принципово відрізняється від DOM?',
+          answer: 'DOM — це представлення структури <em>документа</em> (HTML-дерева) як об\'єктів, з яким працюють через <code>document</code>. BOM — ширше поняття, об\'єкти, що представляють сам <em>браузер</em> як середовище: <code>window</code> (глобальний об\'єкт, батько всього іншого, включно з <code>document</code>), <code>navigator</code> (інформація про браузер/пристрій), <code>location</code> (поточний URL), <code>history</code> (стек навігації), <code>screen</code>. DOM технічно є частиною BOM (<code>window.document</code>), але на співбесіді їх розділяють: DOM — "про контент сторінки", BOM — "про сам браузер/вкладку".',
+        },
+        {
+          question: 'Як <code>history.pushState()</code> дозволяє SPA міняти URL без перезавантаження сторінки, і чим це відрізняється від зміни <code>window.location.href</code>?',
+          answer: '<code>window.location.href = url</code> ініціює справжню навігацію — браузер робить новий HTTP-запит і повністю перезавантажує сторінку. <code>history.pushState(state, \'\', url)</code> лише додає новий запис в стек історії браузера й міняє видимий URL у адресному рядку, <strong>без</strong> запиту на сервер і без перезавантаження — саме на цьому побудовані React Router/будь-який SPA-роутер (<code>createBrowserRouter</code>, розділ React Router вище). Кнопка "назад" браузера після цього викликає подію <code>popstate</code>, яку роутер слухає, щоб відповідно оновити UI без перезавантаження.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Browser Storage — localStorage vs sessionStorage vs cookies <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>localStorage</th><th>sessionStorage</th><th>cookie</th></tr>
+      <tr><td>Час життя</td><td>Назавжди (до явного видалення)</td><td>До закриття вкладки</td><td>Задається явно (<code>expires</code>)</td></tr>
+      <tr><td>Обсяг</td><td>~5-10MB</td><td>~5-10MB</td><td>~4KB</td></tr>
+      <tr><td>Надсилається на сервер</td><td>❌ Ні</td><td>❌ Ні</td><td>✅ Автоматично з кожним запитом на домен</td></tr>
+      <tr><td>Доступ з JS</td><td>Так</td><td>Так</td><td>Так, якщо немає <code>HttpOnly</code></td></tr>
+      <tr><td>Типове застосування</td><td>Налаштування UI, кеш даних клієнта</td><td>Дані одного кроку/вкладки (майстер форм)</td><td>Auth-сесія, дані для сервера</td></tr>
+    </table>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Чутливі токени (auth) не варто класти в <code>localStorage</code> — доступний будь-якому XSS-скрипту. <code>HttpOnly</code>-cookie безпечніший саме тому, що взагалі не читається з JS (детальніше — розділ "Fetch, axios та автентифікація" вище).</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          code: `// localStorage / sessionStorage — однаковий API, різне "час життя"
+localStorage.setItem('theme', 'dark');
+localStorage.getItem('theme');   // 'dark'
+localStorage.removeItem('theme');
+localStorage.setItem('user', JSON.stringify({ id: 1 })); // тільки рядки — об'єкти серіалізувати самому
+
+// Cookie — низькорівневий рядковий API (без окремих методів get/set)
+document.cookie = 'theme=dark; max-age=3600; path=/; SameSite=Lax';
+console.log(document.cookie); // 'theme=dark; otherCookie=...' — усі cookie одним рядком`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">window, navigator, location — Browser Object Model</h3>
+  <p><strong>BOM</strong> — об'єкти, що представляють сам браузер (не документ): <code>window</code> — глобальний об'єкт-контейнер для всього іншого; <code>navigator</code> — інформація про браузер/пристрій; <code>location</code> — поточний URL; <code>history</code> — стек навігації.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          code: `window.innerWidth, window.innerHeight;      // розмір viewport
+navigator.userAgent;                          // рядок ідентифікації браузера (ненадійний для feature-detection)
+navigator.onLine;                             // чи є мережа
+navigator.clipboard.writeText('текст');       // Clipboard API
+
+location.href;         // повний поточний URL
+location.pathname;     // '/users/42'
+location.search;       // '?tab=posts'
+new URLSearchParams(location.search).get('tab'); // 'posts' — правильний спосіб парсити query-параметри
+
+// History API — основа клієнтського роутингу SPA
+history.pushState({ page: 1 }, '', '/users/42'); // новий запис в історії, URL міняється, БЕЗ перезавантаження
+history.replaceState({}, '', '/users/43');       // замінює поточний запис (без нового в стеку)
+window.addEventListener('popstate', (e) => {
+  // спрацьовує на кнопку "назад/вперед" браузера — SPA-роутер тут оновлює UI
+  console.log('Навігація на:', location.pathname, e.state);
+});`,
+        },
+      ],
     },
     {
       "id": "browser-apis-fetch-abortcontroller-intersectionobserver",
@@ -1182,6 +1448,14 @@ export const javascriptContent: TopicContent = {
           question: `Code coverage target?`,
           answer: `Aim for 80%+ coverage. Critical paths 100%, utilities 70%.`,
         },
+        {
+          question: `Чому React Testing Library рекомендує getByRole понад getByTestId?`,
+          answer: `Порядок пріоритету запитів RTL слідує за тим, як реальний користувач (включно з тими, хто покладається на screen reader чи клавіатуру) сприймає сторінку. <code>data-testid</code> — деталь розмітки, невидима нікому, крім тесту, тому це запасний варіант лише для випадків, де немає доступного способу однозначно знайти елемент.`,
+        },
+        {
+          question: `У чому реальна перевага MSW над jest.mock() для тестування компонента, що робить fetch?`,
+          answer: `MSW перехоплює запит на мережевому рівні — компонент виконує справжній <code>fetch</code>/<code>axios</code>-виклик і отримує замокану відповідь так, ніби вона прийшла з мережі. <code>jest.mock()</code> підміняє модуль цілком, обходячи мережевий рівень — швидше, але не перевіряє інтеграцію з реальним HTTP-клієнтом.`,
+        },
       ],
       "blocks": [
         {
@@ -1210,6 +1484,19 @@ export const javascriptContent: TopicContent = {
           "kind": "code",
           "language": "typescript",
           "code": "// Async тести з async/await\ntest('fetches user', async () => {\n  const user = await fetchUser(1);\n  expect(user.name).toBe('John');\n});\n\n// Обробка Promise rejection\ntest('rejects on error', async () => {\n  await expect(failingFn()).rejects.toThrow();\n});\n\n// Snapshots для UI/API responses\ntest('component renders', () => {\n  const tree = render(<Component />);\n  expect(tree).toMatchSnapshot();\n  // Порівнює з попереднім snapshot\n});"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">React Testing Library — query за пріоритетом <span class=\"tag tag-key\">KEY</span></h3><p>Філософія RTL: <strong>тести мають нагадувати, як користувач взаємодіє з UI, а не перевіряти внутрішній стан компонента</strong> — тому немає прямого доступу до state/props, лише до DOM, яким користувач насправді бачить сторінку.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Пріоритет</th><th>Query</th><th>Чому саме так</th></tr>\n              <tr><td>1</td><td><code>getByRole</code></td><td>Найближче до того, як сторінку сприймає screen reader / клавіатурна навігація — accessibility-first</td></tr>\n              <tr><td>2</td><td><code>getByLabelText</code></td><td>Форми — так само, як лейбл асоціюється з полем для користувача</td></tr>\n              <tr><td>3</td><td><code>getByText</code></td><td>Видимий текст — те, що бачить користувач, не деталі розмітки</td></tr>\n              <tr><td>4</td><td><code>getByTestId</code></td><td>Останній засіб — <code>data-testid</code> нічого не каже про доступність, лише «милиця» для складних кейсів</td></tr>\n            </table>\n          </div><h3 class=\"topic\">getBy / queryBy / findBy</h3><div class=\"table-wrap\">\n            <table>\n              <tr><th></th><th>Якщо не знайдено</th><th>0 / 1 / багато</th><th>Sync/Async</th><th>Коли</th></tr>\n              <tr><td><code>getBy...</code></td><td>Кидає помилку</td><td>1 — інакше throw</td><td>Sync</td><td>Елемент вже має бути в DOM</td></tr>\n              <tr><td><code>queryBy...</code></td><td>Повертає <code>null</code></td><td>0 або 1</td><td>Sync</td><td>Перевірити, що елемента НЕМАЄ</td></tr>\n              <tr><td><code>findBy...</code></td><td>Кидає помилку (після timeout)</td><td>1</td><td>Async (Promise)</td><td>Елемент з'явиться пізніше (після фетчу/анімації)</td></tr>\n            </table>\n          </div><div class=\"alert alert-good\">\n            <strong>userEvent vs fireEvent:</strong> <code>userEvent</code> симулює <em>реалістичну</em> послідовність подій (click = pointerdown+mousedown+focus+mouseup+click), тому виявляє баги, яких одна подія не покаже — обирай його за замовчуванням. <code>fireEvent</code> диспатчить один сирий DOM-event напряму — швидше, але не відповідає тому, що насправді робить браузер при взаємодії користувача.\n          </div>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "import { render, screen } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\n\ntest('submits the form with entered name', async () => {\n  const user = userEvent.setup();\n  render(<SignupForm onSubmit={mockSubmit} />);\n\n  // getByRole — доступний спосіб знайти поле й кнопку\n  await user.type(screen.getByRole('textbox', { name: /name/i }), 'Alice');\n  await user.click(screen.getByRole('button', { name: /submit/i }));\n\n  expect(mockSubmit).toHaveBeenCalledWith({ name: 'Alice' });\n});"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">jsdom — де насправді виконуються ці тести</h3><p><code>jsdom</code> симулює DOM у Node.js (без реального браузера) — <code>document</code>, <code>window</code>, події існують, але <strong>немає реального layout/рендерингу</strong> (розміри елементів, справжній CSS-каскад, анімації не рахуються по-справжньому). Тому unit/integration-тести на RTL+jsdom швидкі й дешеві, але для впевненості, що застосунок реально працює у справжньому браузері, потрібен E2E на Playwright/Cypress з реальним браузерним рушієм.</p><h3 class=\"topic\">MSW vs jest.mock()</h3><div class=\"alert alert-warn\">\n            <strong>MSW (Mock Service Worker)</strong> перехоплює запити на рівні мережі (Service Worker у браузері / interceptor у Node) — код застосунку робить справжній <code>fetch</code>/<code>axios</code>-виклик, і не знає, що відповідь замокана. Реалістичніше, працює однаково незалежно від того, яким клієнтом іде запит. <code>jest.mock()</code>/<code>vi.mock()</code> натомість підміняє <strong>цілий модуль</strong> у графі імпортів — швидше й простіше для ізольованих юніт-тестів, але тестує вже не той код, що піде в проді.\n          </div>"
         },
         {
           "kind": "paragraph",

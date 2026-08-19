@@ -5,6 +5,7 @@ import type { TopicContent, TopicMeta } from '@/lib/cheatsheet/types'
 import { ACCENT } from '@/lib/cheatsheet/registry'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
+import { useRestoreSectionScroll, useSectionHashSync } from '@/lib/cheatsheet/useSectionHash'
 import { useUserStore, cycleReadState } from '@/lib/userStore'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
@@ -39,6 +40,8 @@ export function ProseTopicView({
   )
   const activeId = useScrollSpy(ids, scrollRef)
   useReadTracking(content.slug, ids, scrollRef)
+  useRestoreSectionScroll(ids, scrollRef)
+  useSectionHashSync(activeId)
 
   const jump = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })

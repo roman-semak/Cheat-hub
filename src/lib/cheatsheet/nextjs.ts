@@ -471,6 +471,10 @@ if (!post) notFound();`,
           question: 'Які вбудовані оптимізації Next.js реально впливають на Core Web Vitals у продакшні, і за які метрики вони відповідають?',
           answer: '<code>next/image</code> — автоматичний lazy-loading, правильні розміри й сучасні формати (впливає на LCP і CLS через явні розміри, що запобігають зсуву макета). <code>next/font</code> — self-hosting шрифтів без зовнішнього запиту й запобігання FOUT/CLS від пізнього завантаження шрифту. Автоматичний code-splitting по маршрутах зменшує обсяг JS на початкове завантаження, покращуючи TTI/INP.',
         },
+        {
+          question: 'Навіщо @next/bundle-analyzer, якщо код-сплітінг у Next.js вже автоматичний?',
+          answer: 'Автоматичний код-сплітінг по маршрутах не рятує від того, що ОДИН конкретний маршрут підтягнув важку залежність (напр. повний moment.js заради форматування однієї дати). <code>@next/bundle-analyzer</code> показує treemap реального вмісту кожного чанку — так знаходять таких "важких пасажирів" і замінюють легшими tree-shakeable альтернативами.',
+        },
       ],
       blocks: [
         {
@@ -513,6 +517,29 @@ export const runtime = 'edge';                   // або 'nodejs' (default)`,
     <div class="card"><h4>Node.js (default)</h4><p>Повний Node API, npm-пакети, важчий cold start. Для DB-доступу, fs, важкої логіки.</p></div>
     <div class="card blue"><h4>Edge</h4><p>Дуже швидкий cold start, ближче до користувача, обмежений API (немає нативного fs). Для middleware, легких API.</p></div>
   </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Аналіз бандла та важкі залежності</h3>
+  <div class="card blue"><h4>@next/bundle-analyzer</h4>
+    <p>Візуалізує, що саме роздуває клієнтський бандл (treemap за розміром модулів) — типово знаходить забуту важку бібліотеку, підключену лише заради однієї функції.</p>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// next.config.js
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+module.exports = withBundleAnalyzer({ /* ...решта конфігу... */ });
+
+// запуск: ANALYZE=true next build
+// відкриє treemap-звіт клієнтського і server-бандлів у браузері
+
+// Типова заміна важкої залежності — moment (≈70KB) → date-fns (tree-shakeable)
+import { format } from 'date-fns';         // ✅ у бандл потрапляє лише format()
+// import moment from 'moment';            // ❌ весь пакет + локалі, навіть якщо треба одна функція`,
         },
       ],
     },
