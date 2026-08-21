@@ -27,6 +27,10 @@ export function TaskCard({ task }: { task: TaskCardData }) {
         </div>
       )}
 
+      {task.complexity && !task.code && (
+        <p className="mt-2 text-xs text-slate-500">⏱ {task.complexity}</p>
+      )}
+
       {task.code && (
         <CodeBlock
           code={task.code}
