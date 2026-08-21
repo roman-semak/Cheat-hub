@@ -25,13 +25,13 @@ function HookRow({ row }: { row: QuickRefHookRow }) {
           type="button"
           className="flex w-full flex-col gap-0.5 rounded-md px-1.5 py-1 text-left transition-colors hover:bg-white/5"
         >
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="font-mono text-xs font-semibold text-slate-200">{row.hook}</span>
-            <span className="shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-slate-400">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <span className="font-mono text-sm font-semibold text-slate-200">{row.hook}</span>
+            <span className="shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-slate-400">
               {row.when}
             </span>
           </div>
-          <div className="text-[11px] text-slate-400">{row.why}</div>
+          <div className="mt-0.5 text-xs text-slate-400">{row.why}</div>
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl p-0">
@@ -57,11 +57,9 @@ function HookRow({ row }: { row: QuickRefHookRow }) {
 
 export function QuickRefHooksCatalog({ block }: { block: QuickRefHooksCatalogBlock }) {
   return (
-    <div className="flex flex-col gap-1.5 rounded-lg border border-white/5 bg-white/[0.03] p-2">
+    <div className="flex flex-col gap-2 rounded-lg border border-white/5 bg-white/[0.03] p-3">
       {block.label && (
-        <div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
-          {block.label}
-        </div>
+        <div className="text-xs font-bold uppercase tracking-wide text-slate-500">{block.label}</div>
       )}
       <div className="flex flex-col gap-0.5">
         {block.hooks.map((row) => (

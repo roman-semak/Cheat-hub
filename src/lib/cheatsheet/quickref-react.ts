@@ -6,6 +6,8 @@ import type { QuickRefBlock } from './types'
 // same compact style rather than ported 1:1.
 export const reactQuickRefBlocks: QuickRefBlock[] = [
   {
+    label: 'Основи',
+    icon: '🧬',
     entries: [
       { term: 'Reconciliation', desc: 'diffing нового Virtual DOM зі старим' },
       { term: 'key', desc: 'стабільна ідентичність у списку' },
@@ -15,8 +17,9 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Lifecycle',
+    icon: '⏱️',
     entries: [
-      { term: 'render', desc: 'reconcile', inline: true, chips: ['синхронно'] },
+      { term: 'render', desc: 'reconcile', chips: ['синхронно'] },
       {
         term: 'useLayoutEffect',
         desc: 'синхр. <b>до</b> paint, вимір DOM',
@@ -31,6 +34,7 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Рендер: 4 стадії',
+    icon: '🔁',
     entries: [
       { term: 'Trigger', desc: 'зміна state/props/parent/context' },
       {
@@ -46,6 +50,7 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Virtual DOM & дерева',
+    icon: '🌳',
     entries: [
       {
         term: 'Virtual DOM',
@@ -62,6 +67,7 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Lifecycle: Mount → Update → Unmount',
+    icon: '📍',
     phases: [
       {
         phase: 'Mount',
@@ -100,6 +106,7 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Повний каталог хуків',
+    icon: '🎣',
     hooks: [
       {
         hook: 'useState',
@@ -197,35 +204,37 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'useEffect: масив залежностей',
+    icon: '📦',
     entries: [
-      { term: '(немає масиву)', desc: 'ефект виконується <b>після кожного</b> рендеру', inline: true },
-      { term: '[]', desc: 'лише один раз, при <b>mount</b>', inline: true },
-      { term: '[dep]', desc: 'повторно при зміні <code>dep</code>', inline: true },
+      { term: '(немає масиву)', desc: 'ефект виконується <b>після кожного</b> рендеру' },
+      { term: '[]', desc: 'лише один раз, при <b>mount</b>' },
+      { term: '[dep]', desc: 'повторно при зміні <code>dep</code>' },
       {
         term: 'return fn',
         desc: 'cleanup — перед наступним запуском ефекту або при <b>unmount</b>',
-        inline: true,
       },
     ],
   },
   {
     label: 'Що тригерить re-render ⟵',
+    icon: '⚡',
     chips: ['змінився state', 'змінились props', 'рендериться батько (parent)', 'змінився context'],
   },
   {
     label: 'Мемоізація: одна ідея, 3 механізми',
+    icon: '🧠',
     entries: [
-      { term: 'useMemo', desc: 'кеш <b>значення</b>, ключ — deps-масив', inline: true },
+      { term: 'useMemo', desc: 'кеш <b>значення</b>, ключ — deps-масив' },
       {
         term: 'useCallback',
         desc: 'кеш <b>посилання на функцію</b> — окремий випадок useMemo',
-        inline: true,
       },
-      { term: 'React.memo', desc: 'кеш <b>результату рендеру</b> компонента, ключ — props', inline: true },
+      { term: 'React.memo', desc: 'кеш <b>результату рендеру</b> компонента, ключ — props' },
     ],
   },
   {
     label: 'Правила хуків',
+    icon: '📏',
     chips: [
       'лише на <b>верхньому рівні</b> (не в if/циклах)',
       'лише з компонентів або custom hooks',
@@ -234,6 +243,7 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Патерни',
+    icon: '🧩',
     chips: [
       'Compound components (спільний стан через Context)',
       'Render props / HOC — <b>legacy</b>, хуки замінили ~95%',
@@ -243,6 +253,7 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Controlled vs Uncontrolled inputs',
+    icon: '🎛️',
     entries: [
       {
         term: 'Controlled',
@@ -256,6 +267,7 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Екосистема',
+    icon: '🌐',
     entries: [
       {
         term: 'Zustand',

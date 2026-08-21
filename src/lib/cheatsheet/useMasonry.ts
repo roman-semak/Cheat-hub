@@ -5,8 +5,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 const GAP_PX = 12 // matches gap-3
 
 const BREAKPOINTS: [minWidth: number, count: number][] = [
-  [1536, 5],
-  [1024, 3],
+  [1536, 4],
+  [1280, 3],
   [640, 2],
 ]
 

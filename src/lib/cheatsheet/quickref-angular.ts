@@ -6,6 +6,7 @@ import type { QuickRefBlock } from './types'
 export const angularQuickRefBlocks: QuickRefBlock[] = [
   {
     label: 'Change Detection',
+    icon: '🔍',
     entries: [
       {
         term: 'Zone.js',
@@ -24,6 +25,7 @@ export const angularQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'DI & Services',
+    icon: '💉',
     entries: [
       {
         term: "@Injectable({providedIn:'root'})",
@@ -39,6 +41,7 @@ export const angularQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Lifecycle hooks',
+    icon: '⏱️',
     entries: [
       { term: 'ngOnChanges', desc: 'на зміну будь-якого @Input', chips: ['перед ngOnInit'] },
       { term: 'ngOnInit', desc: 'один раз, після першого ngOnChanges', chips: ['mount'] },
@@ -52,6 +55,7 @@ export const angularQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Signals & RxJS в Angular',
+    icon: '📡',
     entries: [
       {
         term: 'signal()',
@@ -70,6 +74,7 @@ export const angularQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'RxJS: Hot vs Cold, Subjects',
+    icon: '🌊',
     entries: [
       {
         term: 'Cold Observable',
@@ -79,16 +84,17 @@ export const angularQuickRefBlocks: QuickRefBlock[] = [
         term: 'Hot Observable',
         desc: 'один спільний producer — Subject, fromEvent, WebSocket',
       },
-      { term: 'Subject', desc: 'без initial value; нові підписники не бачать минулих значень', inline: true },
+      { term: 'Subject', desc: 'без initial value; нові підписники не бачать минулих значень' },
       {
         term: 'BehaviorSubject(init)',
         desc: 'зберігає останнє значення, віддає одразу новим — <b>найчастіший для state</b>',
       },
-      { term: 'ReplaySubject(n)', desc: 'replay n останніх значень новим підписникам', inline: true },
+      { term: 'ReplaySubject(n)', desc: 'replay n останніх значень новим підписникам' },
     ],
   },
   {
     label: 'Forms',
+    icon: '📝',
     entries: [
       {
         term: 'Reactive Forms',
@@ -107,6 +113,7 @@ export const angularQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Testing',
+    icon: '🧪',
     entries: [
       {
         term: 'TestBed',

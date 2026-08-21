@@ -8,6 +8,7 @@ import type { QuickRefBlock } from './types'
 export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   {
     label: 'Спец-типи',
+    icon: '🏷️',
     entries: [
       { term: 'unknown', desc: 'приймає будь-що, але треба <b>звузити</b> перед використанням' },
       { term: 'any', desc: 'вимикає перевірку типів — уникай, «заражає» сусідній код' },
@@ -16,22 +17,24 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Utility types · від найважливіших',
+    icon: '🛠️',
     entries: [
-      { term: 'Partial<T>', desc: 'усі поля <b>опційні</b>', inline: true },
-      { term: 'Pick<T,K>', desc: 'новий тип лише з полів K', inline: true },
-      { term: 'Omit<T,K>', desc: 'новий тип без полів K', inline: true },
-      { term: 'Required<T>', desc: "усі поля <b>обов'язкові</b>", inline: true },
-      { term: 'Readonly<T>', desc: 'усі поля <b>read-only</b>', inline: true },
-      { term: 'Record<K,V>', desc: 'словник <code>{[key: K]: V}</code>', inline: true },
+      { term: 'Partial<T>', desc: 'усі поля <b>опційні</b>' },
+      { term: 'Pick<T,K>', desc: 'новий тип лише з полів K' },
+      { term: 'Omit<T,K>', desc: 'новий тип без полів K' },
+      { term: 'Required<T>', desc: "усі поля <b>обов'язкові</b>" },
+      { term: 'Readonly<T>', desc: 'усі поля <b>read-only</b>' },
+      { term: 'Record<K,V>', desc: 'словник <code>{[key: K]: V}</code>' },
       { term: 'ReturnType<T>', desc: 'тип значення, яке повертає функція <code>T</code>' },
       { term: 'Parameters<T>', desc: 'тип кортежу аргументів функції <code>T</code>' },
       { term: 'Exclude<T,U>', desc: 'прибрати з union типи, що входять у <code>U</code>' },
       { term: 'Extract<T,U>', desc: 'залишити з union лише типи, що входять у <code>U</code>' },
-      { term: 'NonNullable<T>', desc: 'прибрати <code>null</code> і <code>undefined</code>', inline: true },
+      { term: 'NonNullable<T>', desc: 'прибрати <code>null</code> і <code>undefined</code>' },
     ],
   },
   {
     label: 'Generics (TS)',
+    icon: '🧬',
     entries: [
       {
         term: '<T>',
@@ -47,6 +50,7 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Core',
+    icon: '📚',
     entries: [
       {
         term: 'Hoisting',
@@ -62,6 +66,7 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'this: call / apply / bind',
+    icon: '🎯',
     entries: [
       {
         term: '.call',
@@ -87,6 +92,7 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Prototype chain',
+    icon: '🔗',
     entries: [
       {
         term: '[[Prototype]]',
@@ -99,12 +105,12 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
       {
         term: 'class',
         desc: 'синтаксичний цукор над prototype-ланцюжком, не нова модель успадкування',
-        inline: true,
       },
     ],
   },
   {
     label: 'Modules: ESM vs CJS',
+    icon: '📦',
     chips: [
       '<b>ESM</b> import/export — static, tree-shakable, top-level await',
       '<b>CJS</b> require/module.exports — dynamic, важко tree-shake',
@@ -112,6 +118,7 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Промic · P→F/R (Settled)',
+    icon: '🤝',
     entries: [
       { term: '.all', desc: '<b>усі</b> fulfilled → масив значень; перший reject → одразу reject' },
       { term: '.allSettled', desc: 'чекає <b>всіх</b>, повертає статус кожного (fulfilled/rejected)' },
@@ -121,10 +128,12 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Проміс-методи',
+    icon: '⛓️',
     chips: ['<b>.then</b> onFulfilled, onRejected', '<b>.catch</b> onRejected', '<b>.finally</b> onSettled (завжди)'],
   },
   {
     label: 'debounce vs throttle',
+    icon: '🐢',
     entries: [
       {
         term: 'debounce',
@@ -140,6 +149,7 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Патерни проєктування',
+    icon: '🧩',
     chips: [
       '<b>Observer</b> — subject сповіщає підписників (DOM events, RxJS, Redux)',
       '<b>Factory</b> — ф-я приховує логіку створення обʼєктів',
@@ -149,8 +159,9 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Event Loop · порядок',
+    icon: '🔄',
     entries: [
-      { term: 'Call Stack', desc: 'синхронний код, LIFO', inline: true },
+      { term: 'Call Stack', desc: 'синхронний код, LIFO' },
       {
         term: 'Microtask Q',
         desc: 'вищий пріоритет — виконується <b>повністю</b> перед наступним macrotask',
@@ -164,10 +175,13 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
     ],
   },
   {
+    label: 'Порядок виконання',
+    icon: '⏳',
     chips: ['Promise <b>раніше</b> за <code>setTimeout(0)</code>'],
   },
   {
     label: 'RxJS · *Map',
+    icon: '🌊',
     entries: [
       {
         term: 'switchMap',
@@ -193,6 +207,7 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
   },
   {
     label: 'Map (структура даних)',
+    icon: '🗺️',
     chips: ['ключ будь-якого типу', 'зберігає порядок вставки', '<code>.get .has .delete .size</code>'],
   },
 ]

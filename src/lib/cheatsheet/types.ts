@@ -161,17 +161,18 @@ export interface TopicContent {
 export interface QuickRefEntry {
   term: string
   desc?: string // HTML string (dangerouslySetInnerHTML), may contain inline <b>/<code>
-  inline?: boolean // true = term/desc on one line; stacked otherwise
-  chips?: string[] // small pill badges under the entry, e.g. call signature or timing
+  chips?: string[] // small pill badges right after the term, e.g. call signature or timing
 }
 
 export interface QuickRefGroup {
   label?: string // small uppercase label above a group, e.g. "Hooks"
+  icon?: string // emoji shown in the compact section-nav row
   entries: QuickRefEntry[]
 }
 
 export interface QuickRefChipRow {
   label?: string // small uppercase label above the chip row, e.g. "Map"
+  icon?: string // emoji shown in the compact section-nav row
   chips: string[] // rendered as pill chips, may contain inline <b>/<code>
 }
 
@@ -185,6 +186,7 @@ export interface QuickRefLifecyclePhase {
 
 export interface QuickRefLifecycleBlock {
   label?: string
+  icon?: string // emoji shown in the compact section-nav row
   phases: QuickRefLifecyclePhase[]
 }
 
@@ -198,6 +200,7 @@ export interface QuickRefHookRow {
 
 export interface QuickRefHooksCatalogBlock {
   label?: string
+  icon?: string // emoji shown in the compact section-nav row
   hooks: QuickRefHookRow[]
 }
 
