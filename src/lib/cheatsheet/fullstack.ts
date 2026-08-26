@@ -258,10 +258,10 @@ export class UsersController {
               <div class="card">
                 <h4>Статус-коди</h4>
                 <ul>
-                  <li><strong>2xx</strong> — успіх (200 OK, 201 Created, 204 No Content)</li>
-                  <li><strong>3xx</strong> — редірект (301, 304 Not Modified)</li>
-                  <li><strong>4xx</strong> — помилка клієнта (400, 401, 403, 404, 409, 422, 429)</li>
-                  <li><strong>5xx</strong> — помилка сервера (500, 502, 503, 504)</li>
+                  <li><strong>2xx</strong> — запит успішно оброблено: <code>200 OK</code> (є тіло відповіді), <code>201 Created</code> (щось створено, зазвичай + <code>Location</code>-заголовок), <code>204 No Content</code> (успіх без тіла, типово для DELETE)</li>
+                  <li><strong>3xx</strong> — потрібна ще одна дія клієнта: <code>301</code> (постійний редірект, кешується), <code>302</code> (тимчасовий), <code>304 Not Modified</code> (кеш клієнта досі валідний — тіло не передається)</li>
+                  <li><strong>4xx</strong> — помилка на боці клієнта: <code>400</code> (невалідний запит), <code>401</code> (не автентифікований), <code>403</code> (автентифікований, але без прав), <code>404</code> (ресурс не знайдено), <code>409</code> (конфлікт стану, напр. дублікат), <code>422</code> (синтаксично валідно, але не пройшло бізнес-валідацію), <code>429</code> (перевищено rate limit)</li>
+                  <li><strong>5xx</strong> — помилка на боці сервера: <code>500</code> (непередбачена помилка), <code>502</code> (проксі/gateway отримав невалідну відповідь від апстріму), <code>503</code> (сервіс тимчасово недоступний, напр. перевантажений), <code>504</code> (апстрім не відповів вчасно)</li>
                 </ul>
               </div>
             </div>`,
@@ -278,10 +278,66 @@ export class UsersController {
               <li><strong>Ресурси, не дії:</strong> <code>/users/123/orders</code>, а не <code>/getUserOrders</code>. Іменники в множині.</li>
               <li><strong>Стейтлес:</strong> кожен запит самодостатній; сервер не тримає сесійний стан між запитами (масштабованість).</li>
               <li><strong>Версіонування:</strong> <code>/api/v1/...</code> або через заголовок <code>Accept</code>.</li>
-              <li><strong>Пагінація:</strong> cursor-based (стабільна для великих даних) vs offset-based (просто, але «дрейфує»).</li>
+              <li><strong>Пагінація:</strong> cursor-based (стабільна для великих даних) vs offset-based (просто, але «дрейфує») — детальніше в розділі «📄 Пагінація» нижче.</li>
               <li><strong>Фільтри/сортування:</strong> через query-параметри: <code>?status=active&amp;sort=-createdAt&amp;limit=20</code>.</li>
               <li><strong>Узгоджені помилки:</strong> єдина форма тіла помилки (<code>{ error, code, details }</code>) на весь API.</li>
             </ul>`,
+        },
+      ],
+    },
+
+    /* ============ Пагінація ============ */
+    {
+      id: 'pagination',
+      title: '📄 Пагінація',
+      interviewQuestions: [
+        {
+          question: 'Чому offset-based пагінація «дрейфує» під конкурентними записами, і як cursor/keyset пагінація цю проблему вирішує?',
+          answer: 'OFFSET рахує рядки з початку вибірки заново на кожен запит: якщо між сторінками хтось вставив або видалив рядок, зсув усіх наступних елементів на 1 означає, що клієнт або пропустить елемент, або побачить дублікат. Cursor/keyset пагінація натомість запам\'ятовує не позицію, а значення сортувального ключа останнього побаченого елемента (напр. `created_at, id`) і фільтрує `WHERE (created_at, id) < (?, ?)` — результат стабільний незалежно від того, скільки рядків додали чи видалили раніше у вибірці.',
+        },
+        {
+          question: 'Чому keyset-пагінація швидша за offset на великих зсувах, хоча обидві зрештою повертають одну сторінку даних?',
+          answer: '`OFFSET N LIMIT M` змушує БД прочитати й відкинути перші N рядків при кожному запиті — на глибоких сторінках (offset у сотні тисяч) це повний скан, що росте лінійно з N. Keyset-запит натомість використовує індекс на сортувальному ключі для прямого «стрибка» (index seek) до потрібної точки — час виконання не залежить від того, яка це сторінка за рахунком.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Пагінація обмежує розмір і час відповіді API, коли колекція даних велика — без неї один запит міг би повернути мільйони рядків. Три основні підходи, від найпростішого до найбільш production-ready:</p>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Підхід</th><th>Як працює</th><th>Стабільність під записами</th><th>Jump to page N</th><th>Продуктивність на глибоких сторінках</th></tr>
+                <tr><td><strong>Offset-based</strong></td><td><code>?page=3&amp;limit=20</code> → <code>OFFSET 40 LIMIT 20</code></td><td>❌ дрейфує при вставках/видаленнях</td><td>✅ так</td><td>❌ деградує лінійно (full scan перших N рядків)</td></tr>
+                <tr><td><strong>Cursor-based</strong></td><td><code>?cursor=eyJpZCI6...&amp;limit=20</code> — opaque-курсор кодує останній побачений сортувальний ключ</td><td>✅ стабільна</td><td>❌ лише вперед/назад</td><td>✅ швидко (index seek)</td></tr>
+                <tr><td><strong>Keyset / seek</strong></td><td><code>WHERE (created_at, id) &lt; (?, ?) ORDER BY created_at DESC, id DESC LIMIT 20</code></td><td>✅ стабільна</td><td>❌ лише вперед/назад</td><td>✅ найшвидша — це і є механізм під cursor-based на рівні БД</td></tr>
+              </table>
+            </div>
+            <div class="alert warn"><strong>⚠️ Коли offset все ж ок.</strong> Невеликі, рідко змінювані набори даних (довідники, адмінки з тисячами, не мільйонами рядків) — де простота й підтримка "jump to page N" важливіші за крайову стабільність.</div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'Cursor-based відповідь API — курсор кодує останній ключ сортування',
+          code: `// GET /orders?limit=20&cursor=eyJjcmVhdGVkQXQiOiIyMDI2LTAxLTAxIiwiaWQiOiI0MiJ9
+
+interface Page<T> {
+  items: T[];
+  nextCursor: string | null; // null → більше немає сторінок
+}
+
+function encodeCursor(row: { createdAt: string; id: string }) {
+  return Buffer.from(JSON.stringify(row)).toString('base64url');
+}
+
+function decodeCursor(cursor: string) {
+  return JSON.parse(Buffer.from(cursor, 'base64url').toString());
+}
+
+// SQL за курсором (keyset):
+// SELECT * FROM orders
+// WHERE (created_at, id) < (:cursorCreatedAt, :cursorId)
+// ORDER BY created_at DESC, id DESC
+// LIMIT :limit + 1  -- +1, щоб дізнатись, чи є наступна сторінка`,
         },
       ],
     },
@@ -584,6 +640,31 @@ await prisma.$transaction([
             </div>`,
         },
         {
+          kind: 'note',
+          tone: 'info',
+          html: `<div class="alert"><strong>💾 IndexedDB — не просто «більший localStorage».</strong> Це повноцінна асинхронна транзакційна NoSQL-подібна БД у браузері: дані організовані в <strong>object stores</strong> (не одна пласка мапа рядків), можна створювати <strong>індекси</strong> для швидкого пошуку за полем, зберігати структуровані об'єкти й бінарні дані (Blob/File) без ручної серіалізації в JSON, і версіонувати схему через <code>onupgradeneeded</code> при зростанні версії БД. Саме тому це основа офлайн-кешів (service worker + IndexedDB) та великих локальних датасетів.</div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'IndexedDB — мінімальний приклад: відкрити БД, створити store, записати й прочитати',
+          code: `const request = indexedDB.open('my-app-db', 1);
+
+request.onupgradeneeded = () => {
+  const db = request.result;
+  db.createObjectStore('todos', { keyPath: 'id' }); // схема створюється/оновлюється лише тут
+};
+
+request.onsuccess = () => {
+  const db = request.result;
+  const tx = db.transaction('todos', 'readwrite');
+  tx.objectStore('todos').put({ id: '1', text: 'Buy milk', done: false });
+
+  const getReq = tx.objectStore('todos').get('1');
+  getReq.onsuccess = () => console.log(getReq.result);
+};`,
+        },
+        {
           kind: 'paragraph',
           html: `<div class="grid2">
               <div class="card">
@@ -763,22 +844,22 @@ await prisma.$transaction([
               <div class="card red">
                 <h4>🎯 Ключові вразливості</h4>
                 <ul>
-                  <li><strong>Injection</strong> (SQLi) — параметризовані запити / ORM, ніколи не конкатенуй ввід</li>
-                  <li><strong>XSS</strong> — екранування виводу, CSP, не довіряй <code>innerHTML</code></li>
-                  <li><strong>CSRF</strong> — SameSite-cookies, CSRF-токени</li>
-                  <li><strong>Broken Auth</strong> — сесії/токени, MFA, rate limit на логін</li>
-                  <li><strong>Broken Access Control</strong> — перевірка прав на сервері для КОЖНОГО ресурсу</li>
+                  <li><strong>Injection</strong> (SQLi) — зловмисник дописує SQL через несанітизований ввід (напр. поле логіну); захист — параметризовані запити / ORM, ніколи не конкатенуй ввід у запит рядком</li>
+                  <li><strong>XSS</strong> — чужий JS виконується в контексті твого сайту через несанітизований ввід у розмітці; захист — екранування виводу, CSP-заголовки, не довіряй <code>innerHTML</code>/<code>dangerouslySetInnerHTML</code></li>
+                  <li><strong>CSRF</strong> — сторонній сайт змушує браузер жертви виконати запит від її імені, використовуючи вже автентифіковану сесію; захист — SameSite-cookies, CSRF-токени</li>
+                  <li><strong>Broken Auth</strong> — слабкі/вкрадені сесії чи токени дають доступ під чужим обліковим записом; захист — надійні сесії/токени, MFA, rate limit на логін проти брутфорсу</li>
+                  <li><strong>Broken Access Control</strong> — користувач дістає доступ до чужих даних, підмінивши id в URL/запиті; захист — перевірка прав на сервері для КОЖНОГО ресурсу, а не лише приховування кнопки в UI</li>
                 </ul>
               </div>
               <div class="card green">
                 <h4>✅ Базова гігієна</h4>
                 <ul>
-                  <li>Валідація та санітизація всього вводу (напр. <code>zod</code>)</li>
-                  <li>HTTPS/TLS усюди, HSTS</li>
-                  <li>Секрети — в env/secret manager, НЕ в git</li>
-                  <li>Принцип найменших привілеїв (least privilege)</li>
-                  <li>Rate limiting та захист від брутфорсу</li>
-                  <li>Оновлення залежностей (<code>npm audit</code>, Dependabot)</li>
+                  <li>Валідація та санітизація всього вводу на сервері (напр. <code>zod</code>) — клієнтська валідація лише для UX, не є захистом</li>
+                  <li>HTTPS/TLS усюди, HSTS — щоб трафік не читався/не підмінювався по дорозі (MITM)</li>
+                  <li>Секрети — в env/secret manager, НЕ в git — коміт з ключем живе в історії репозиторію назавжди</li>
+                  <li>Принцип найменших привілеїв (least privilege) — сервіс/юзер має лише ті права, без яких не може виконати свою задачу</li>
+                  <li>Rate limiting та захист від брутфорсу — обмеж кількість спроб логіну/запитів з одного IP чи акаунта</li>
+                  <li>Оновлення залежностей (<code>npm audit</code>, Dependabot) — більшість реальних інцидентів іде через відому вразливість у застарілому пакеті</li>
                 </ul>
               </div>
             </div>`,
@@ -1107,6 +1188,11 @@ lhci autorun`,
             </div>`,
         },
         {
+          kind: 'note',
+          tone: 'info',
+          html: `<div class="alert"><strong>⚖️ Що таке load balancer.</strong> Проксі перед пулом однакових інстансів застосунку, що розподіляє вхідні запити між ними за одним з алгоритмів: <strong>round-robin</strong> (по черзі), <strong>least connections</strong> (туди, де зараз менше активних з'єднань), <strong>IP hash</strong> (той самий клієнт → той самий інстанс, sticky sessions). Працює на <strong>L4</strong> (TCP-рівень, швидко, не бачить HTTP) або <strong>L7</strong> (HTTP-рівень — може маршрутизувати за шляхом/заголовками, робити SSL-термінацію). Постійно опитує інстанси <strong>health-check</strong>-ендпоінтом і виключає з ротації ті, що не відповідають — так падіння одного інстансу не валить весь сервіс.</div>`,
+        },
+        {
           kind: 'paragraph',
           html: `<h3 class="topic">Типові вузькі місця та як шукати</h3>
             <ul>
@@ -1170,29 +1256,6 @@ lhci autorun`,
               </div>
             </div>
             <div class="alert"><strong>💬 Головне.</strong> Веди діалог, проговорюй trade-offs, не мовчи. Немає «єдино правильної» архітектури — є обґрунтовані компроміси під вимоги. Почни просто, ускладнюй на вимогу інтерв'юера.</div>`,
-        },
-      ],
-    },
-
-    /* ============ 20. Чеклист співбесіди ============ */
-    {
-      id: 'interview-checklist',
-      title: '✅ Senior-чеклист співбесіди',
-      interviewQuestions: [
-        {
-          question: 'Що інтерв\'юер сеньйорського рівня оцінює насамперед у відповіді кандидата — правильну фінальну відповідь чи хід міркувань?',
-          answer: 'Хід міркувань цінується вище за єдину «правильну» відповідь, особливо в system design і відкритих технічних питаннях — інтерв\'юера цікавить, чи кандидат уточнює вимоги, розглядає трейд-оффи, вміє аргументувати вибір і визнає обмеження свого рішення, а не просто відтворює завчену відповідь без розуміння контексту.',
-        },
-        {
-          question: 'Який мінімальний чекліст тем варто освіжити перед senior fullstack-співбесідою?',
-          answer: 'Три блоки. <strong>Backend-фундамент:</strong> HTTP-методи, статус-коди, ідемпотентність, REST-принципи; event loop у Node (чому однопотоковий і коли блокується); SQL vs NoSQL — коли що й чому, ACID, рівні ізоляції, CAP; індекси, EXPLAIN, проблема N+1; транзакції та узгодженість даних. <strong>Системні аспекти:</strong> кешування (рівні, стратегії, інвалідація, stampede); черги (навіщо, at-least-once, ідемпотентність, DLQ); auth (sessions vs JWT, OAuth2/OIDC, RBAC, cookie-флаги); безпека (OWASP Top 10, XSS/CSRF/SQLi, CORS); масштабування (horizontal/stateless, replicas, sharding, LB). <strong>Інженерна зрілість:</strong> тестова піраміда, contract-тести, детермінізм; Docker, CI/CD, IaC, 12-factor; observability (logs/metrics/traces, перцентилі, алерти); каркас відповіді для system design з trade-offs вголос; поведінкові приклади (рішення, наслідки, менторство, вплив).',
-        },
-      ],
-      blocks: [
-        {
-          kind: 'note',
-          tone: 'good',
-          html: `<div class="alert good"><strong>🎯 Підхід Senior.</strong> На більшість питань правильна відповідь починається з <em>«залежить від…»</em> і завершується конкретним вибором з обґрунтуванням trade-off. Демонструй не енциклопедію, а <strong>інженерне судження</strong>: вимоги → варіанти → компроміс → рішення. Це й відрізняє Senior від Middle.</div>`,
         },
       ],
     },

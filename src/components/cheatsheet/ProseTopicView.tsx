@@ -6,7 +6,9 @@ import { ACCENT } from '@/lib/cheatsheet/registry'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
 import { useRestoreSectionScroll, useSectionHashSync } from '@/lib/cheatsheet/useSectionHash'
-import { useUserStore, cycleReadState } from '@/lib/userStore'
+import { useUserStore, cycleReadState, resetReadStateForTopic } from '@/lib/userStore'
+import { RotateCcw } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
 import { ContentBlocks } from './ContentBlocks'
@@ -66,10 +68,25 @@ export function ProseTopicView({
         <MobileSectionNav items={items} activeId={activeId} onJump={jump} />
 
         <header className="border-b border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent px-6 py-8 md:px-10">
-          <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-100">
-            <span>{meta.icon}</span> {meta.title}
-          </h1>
-          <p className="mt-2 max-w-2xl text-slate-400">{meta.blurb}</p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-100">
+                <span>{meta.icon}</span> {meta.title}
+              </h1>
+              <p className="mt-2 max-w-2xl text-slate-400">{meta.blurb}</p>
+            </div>
+            <Button
+              onClick={() => {
+                if (confirm(`Скинути всі позначки прочитаного в «${meta.title}»?`)) {
+                  resetReadStateForTopic(content.slug)
+                }
+              }}
+              variant="ghost"
+              className="inline-flex shrink-0 items-center gap-2 text-red-300"
+            >
+              <RotateCcw size={16} /> Скинути прогрес
+            </Button>
+          </div>
         </header>
 
         {content.sections.map((section) => (

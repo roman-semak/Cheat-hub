@@ -283,4 +283,18 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
       },
     ],
   },
+  {
+    label: 'Продуктивність',
+    icon: '⚡',
+    entries: [
+      {
+        term: 'Virtualization',
+        desc: 'рендер лише видимих елементів списку (<code>react-window</code> / <code>react-virtuoso</code>) — DOM лишається ~20-30 вузлів незалежно від розміру списку',
+      },
+      {
+        term: 'Масштабування застосунку',
+        desc: 'feature-based структура → lazy loading / code splitting по routes → TanStack Query (server state) + Zustand (client state) → memo/селектори де виміряно потрібно → virtualization для великих списків → monorepo (Turborepo), якщо кілька apps',
+      },
+    ],
+  },
 ]

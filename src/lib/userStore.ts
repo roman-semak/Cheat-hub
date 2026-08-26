@@ -277,6 +277,18 @@ export function markReadIfUnset(key: string) {
   })
 }
 
+// Clears read/review state for every section of one topic, leaving other
+// topics' and quizzes' progress untouched.
+export function resetReadStateForTopic(topicSlug: string) {
+  update((d) => {
+    const prefix = `${topicSlug}:`
+    const readState = Object.fromEntries(
+      Object.entries(d.readState).filter(([key]) => !key.startsWith(prefix)),
+    )
+    return { ...d, readState }
+  })
+}
+
 export function resetData() {
   persist(emptyData())
   schedulePush()
