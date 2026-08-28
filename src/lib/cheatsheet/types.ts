@@ -79,17 +79,37 @@ export interface LeetcodeData {
 /* ---------- Practice tasks (interview-style exercises) ---------- */
 
 export type PracticeLevel = 'Middle' | 'Senior'
-export type PracticeTopic = 'RxJS' | 'JS/TS' | 'Async' | 'React' | 'Angular' | 'React Native'
+export type PracticeTopic =
+  | 'JS Utilities'
+  | 'Arrays & Strings'
+  | 'Async'
+  | 'React Components'
+  | 'React Hooks'
+  | 'React Debugging'
+  | 'DOM'
+  | 'System Design'
+  | 'RxJS'
+  | 'Angular'
+  | 'React Native'
+
+// 'discussion' cards hide the code editor and render `solution` as HTML prose
+// (system-design style questions — the "answer" is talking points, not code).
+export type PracticeFormat = 'code' | 'discussion'
+
+// Mirrors the 🔴/🟡/🟢 priority markers from the interview-prep checklist.
+export type PracticePriority = 'high' | 'mid' | 'low'
 
 export interface PracticeTask {
   id: string // stable key, e.g. 'promise-to-observable'
   title: string // 'Promise → Observable'
   level: PracticeLevel
   topic: PracticeTopic // used for grouping / filtering
+  format?: PracticeFormat // defaults to 'code'
+  priority?: PracticePriority // shown as a coloured dot in the master list
   tags?: string[] // ['switchMap', 'catchError'] — used for search
   prompt: string // task description (HTML, rendered via .cheat-prose)
-  starterCode: string // code shown in the editor (contains // TODO)
-  solution: string // reference solution
+  starterCode?: string // code shown in the editor (contains // TODO); omitted for 'discussion'
+  solution: string // reference solution (code, or HTML prose for 'discussion')
   explanation?: string // approach / why (HTML)
   language?: string // defaults to 'typescript'
 }
@@ -126,6 +146,7 @@ export type ContentBlock =
   | { kind: 'heading'; level: 2 | 3; text: string; tag?: BlockTag }
   | { kind: 'paragraph'; html: string }
   | { kind: 'code'; language: string; code: string; caption?: string }
+  | { kind: 'mermaid'; code: string; caption?: string } // Mermaid diagram source, rendered client-side
   | { kind: 'note'; tone: NoteTone; title?: string; html: string }
   | { kind: 'grid'; columns: 2 | 3; items: ContentBlock[] }
   | { kind: 'versionRow'; badges: { label: string; tone?: string }[] }

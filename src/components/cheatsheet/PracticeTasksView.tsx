@@ -9,11 +9,35 @@ import { highlight } from '@/lib/cheatsheet/highlight'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
 
-const TOPICS: PracticeTopic[] = ['RxJS', 'JS/TS', 'Async', 'React', 'Angular', 'React Native']
+const TOPICS: PracticeTopic[] = [
+  'JS Utilities',
+  'Arrays & Strings',
+  'Async',
+  'React Components',
+  'React Hooks',
+  'React Debugging',
+  'DOM',
+  'System Design',
+  'RxJS',
+  'Angular',
+  'React Native',
+]
 
 const LEVEL_STYLE: Record<string, string> = {
   Middle: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
   Senior: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+}
+
+// 🔴/🟡/🟢 priority markers from the interview-prep checklist.
+const PRIORITY_DOT: Record<string, string> = {
+  high: 'bg-rose-400',
+  mid: 'bg-amber-400',
+  low: 'bg-slate-500',
+}
+const PRIORITY_LABEL: Record<string, string> = {
+  high: 'Висока ймовірність на інтерв’ю',
+  mid: 'Середня ймовірність',
+  low: 'Низька ймовірність',
 }
 
 // Monaco compiler options — IntelliSense only (code is never executed here).
@@ -127,7 +151,15 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-sm font-semibold text-slate-100">
+                        <span className="flex items-start gap-1.5 text-sm font-semibold text-slate-100">
+                          {task.priority && (
+                            <span
+                              className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                                PRIORITY_DOT[task.priority]
+                              }`}
+                              title={PRIORITY_LABEL[task.priority]}
+                            />
+                          )}
                           {task.title}
                         </span>
                         <span
@@ -163,13 +195,14 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
 
 function TaskDetail({ task }: { task: PracticeTask }) {
   const language = task.language ?? 'typescript'
-  const [code, setCode] = useState(task.starterCode)
+  const isDiscussion = task.format === 'discussion'
+  const [code, setCode] = useState(task.starterCode ?? '')
   const [showSolution, setShowSolution] = useState(false)
   const [copied, setCopied] = useState(false)
 
   const solutionHtml = useMemo(
-    () => highlight(task.solution, language),
-    [task.solution, language],
+    () => (isDiscussion ? task.solution : highlight(task.solution, language)),
+    [task.solution, language, isDiscussion],
   )
 
   const copySolution = async () => {
@@ -207,25 +240,27 @@ function TaskDetail({ task }: { task: PracticeTask }) {
         dangerouslySetInnerHTML={{ __html: task.prompt }}
       />
 
-      {/* Editor (editable; not executed) */}
-      <GlassPanel className="h-[360px] overflow-hidden">
-        <Editor
-          height="100%"
-          language={language}
-          value={code}
-          onChange={(v) => setCode(v ?? '')}
-          theme="vs-dark"
-          beforeMount={beforeMount}
-          options={{
-            minimap: { enabled: false },
-            fontSize: 13,
-            fontFamily: 'JetBrains Mono, Menlo, Monaco, Courier New, monospace',
-            padding: { top: 16, bottom: 16 },
-            scrollBeyondLastLine: false,
-            tabCompletion: 'on',
-          }}
-        />
-      </GlassPanel>
+      {/* Editor (editable; not executed) — hidden for discussion cards */}
+      {!isDiscussion && (
+        <GlassPanel className="h-[360px] overflow-hidden">
+          <Editor
+            height="100%"
+            language={language}
+            value={code}
+            onChange={(v) => setCode(v ?? '')}
+            theme="vs-dark"
+            beforeMount={beforeMount}
+            options={{
+              minimap: { enabled: false },
+              fontSize: 13,
+              fontFamily: 'JetBrains Mono, Menlo, Monaco, Courier New, monospace',
+              padding: { top: 16, bottom: 16 },
+              scrollBeyondLastLine: false,
+              tabCompletion: 'on',
+            }}
+          />
+        </GlassPanel>
+      )}
 
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
@@ -236,14 +271,22 @@ function TaskDetail({ task }: { task: PracticeTask }) {
         >
           <span className="flex items-center gap-2">
             {showSolution ? <EyeOff size={16} /> : <Eye size={16} />}
-            {showSolution ? 'Сховати рішення' : 'Показати рішення'}
+            {showSolution
+              ? isDiscussion
+                ? 'Сховати відповідь'
+                : 'Сховати рішення'
+              : isDiscussion
+                ? 'Показати відповідь'
+                : 'Показати рішення'}
           </span>
         </Button>
-        <Button variant="outline" onClick={() => setCode(task.starterCode)}>
-          <span className="flex items-center gap-2">
-            <RotateCcw size={16} /> Скинути код
-          </span>
-        </Button>
+        {!isDiscussion && (
+          <Button variant="outline" onClick={() => setCode(task.starterCode ?? '')}>
+            <span className="flex items-center gap-2">
+              <RotateCcw size={16} /> Скинути код
+            </span>
+          </Button>
+        )}
       </div>
 
       {/* Solution + explanation */}
@@ -251,21 +294,32 @@ function TaskDetail({ task }: { task: PracticeTask }) {
         <div className="flex flex-col gap-4">
           <div className="relative">
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-emerald-300">Рішення</h3>
-              <button
-                onClick={copySolution}
-                className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
-                aria-label="Скопіювати рішення"
-              >
-                {copied ? <Check size={14} /> : <Copy size={14} />}
-              </button>
+              <h3 className="text-sm font-semibold text-emerald-300">
+                {isDiscussion ? 'Еталонна відповідь' : 'Рішення'}
+              </h3>
+              {!isDiscussion && (
+                <button
+                  onClick={copySolution}
+                  className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
+                  aria-label="Скопіювати рішення"
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                </button>
+              )}
             </div>
-            <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 text-[13px] leading-relaxed">
-              <code
-                className="hljs bg-transparent p-0 font-mono"
+            {isDiscussion ? (
+              <div
+                className="cheat-prose rounded-lg border border-white/10 bg-black/20 p-4 text-sm text-slate-300"
                 dangerouslySetInnerHTML={{ __html: solutionHtml }}
               />
-            </pre>
+            ) : (
+              <pre className="overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 text-[13px] leading-relaxed">
+                <code
+                  className="hljs bg-transparent p-0 font-mono"
+                  dangerouslySetInnerHTML={{ __html: solutionHtml }}
+                />
+              </pre>
+            )}
           </div>
 
           {task.explanation && (

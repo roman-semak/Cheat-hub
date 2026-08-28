@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xxd)",
+      "Bash(/usr/bin/curl -s -o /dev/null -w \"architecture: %{http_code}\\\\n\" http://localhost:5001/architecture)",
+      "Bash(/usr/bin/curl -s -o /dev/null -w \"fullstack: %{http_code}\\\\n\" http://localhost:5001/fullstack)",
+      "Bash(/usr/bin/curl -s -o /dev/null -w \"javascript: %{http_code}\\\\n\" http://localhost:5001/javascript)",
+      "Bash(/usr/bin/curl -s -o /dev/null -w \"quickref: %{http_code}\\\\n\" http://localhost:5001/quickref)",
+      "Bash(/usr/bin/curl -s http://localhost:5001/architecture)",
+      "Bash(/usr/bin/curl -s http://localhost:5001/fullstack)",
+      "Bash(/usr/bin/curl -sL http://localhost:5001/quickref)",
+      "Bash(/usr/bin/curl -s http://localhost:5001/javascript)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --dump-dom --virtual-time-budget=20000 http://localhost:5001/architecture)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --dump-dom --virtual-time-budget=15000 http://localhost:5001/architecture/cheatsheet)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --dump-dom --virtual-time-budget=30000 http://localhost:5001/architecture/cheatsheet)",
+      "Bash(tee /tmp/cheat.html)",
+      "Bash(git --no-pager diff --stat)"
+    ]
+  }
+}

@@ -27,9 +27,11 @@ export const TOPICS: TopicMeta[] = [
     slug: 'architecture',
     title: 'Architecture',
     icon: '🏗️',
-    blurb: 'Патерни проєктування, принципи та архітектурні підходи.',
+    blurb:
+      'Патерни, принципи, SOLID — і system design: high-level архітектура, рендеринг, real-time, кешування, масштабування, observability.',
     accent: 'violet',
     formats: ['extended', 'cheatsheet'],
+    badges: ['System Design', 'Патерни', 'Real-time'],
   },
   {
     slug: 'fullstack',

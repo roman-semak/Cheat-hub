@@ -7,7 +7,7 @@ import { PracticeTasksView } from '@/components/cheatsheet/PracticeTasksView'
 export const metadata: Metadata = {
   title: 'Практичні завдання — інтерв’ю',
   description:
-    'Інтерв’ю-стайл задачі рівня Middle/Senior: RxJS, async та JS/TS. Виправ або допиши код і звір із рішенням.',
+    'Інтерв’ю-стайл задачі рівня Middle/Senior: JS-утиліти, масиви та рядки, async/Promises, React-компоненти, кастомні хуки, дебаг React, DOM і frontend system design. Виправ або допиши код і звір із рішенням.',
 }
 
 export default function PracticeTasksPage() {
@@ -19,8 +19,9 @@ export default function PracticeTasksPage() {
             🧩 Практичні завдання
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Задачі рівня Middle/Senior зі співбесід: виправ або допиши код, потім
-            звір із рішенням.
+            Задачі рівня Middle/Senior зі співбесід за секціями чеклісту: JS-утиліти,
+            масиви й рядки, async, React-компоненти та хуки, дебаг, DOM, system design.
+            Виправ або допиши код, потім звір із рішенням.
           </p>
         </div>
         <Link

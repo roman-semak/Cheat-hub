@@ -1255,7 +1255,8 @@ lhci autorun`,
                 </ul>
               </div>
             </div>
-            <div class="alert"><strong>💬 Головне.</strong> Веди діалог, проговорюй trade-offs, не мовчи. Немає «єдино правильної» архітектури — є обґрунтовані компроміси під вимоги. Почни просто, ускладнюй на вимогу інтерв'юера.</div>`,
+            <div class="alert"><strong>💬 Головне.</strong> Веди діалог, проговорюй trade-offs, не мовчи. Немає «єдино правильної» архітектури — є обґрунтовані компроміси під вимоги. Почни просто, ускладнюй на вимогу інтерв'юера.</div>
+            <div class="alert good"><span class="icon">📐</span> <span><strong>Поглиблено з діаграмами</strong> (high-level архітектура, рендеринг, real-time, кешування, масштабування, observability, staff-рівень) — тема <strong>Architecture → System Design</strong> (<code>/architecture</code>).</span></div>`,
         },
       ],
     },

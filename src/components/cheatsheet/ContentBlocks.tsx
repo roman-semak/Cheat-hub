@@ -1,5 +1,6 @@
 import type { ContentBlock } from '@/lib/cheatsheet/types'
 import { CodeBlock } from './CodeBlock'
+import { MermaidBlock } from './MermaidBlock'
 import { LinksBlock } from './LinksBlock'
 import { FlashcardsBlock } from './FlashcardsBlock'
 
@@ -20,6 +21,8 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
                 summary={block.caption ?? `Код (${block.language})`}
               />
             )
+          case 'mermaid':
+            return <MermaidBlock key={i} code={block.code} caption={block.caption} />
           case 'paragraph':
           case 'note':
             return (
