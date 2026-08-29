@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Dumbbell } from 'lucide-react'
 import type { LeetcodeData } from '@/lib/cheatsheet/types'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
+import { useNewContent } from '@/lib/cheatsheet/useNewContent'
+import { markSeen } from '@/lib/userStore'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
 import { TaskCard } from './TaskCard'
@@ -12,12 +14,27 @@ import { TaskCard } from './TaskCard'
 export function LeetcodeView({ data }: { data: LeetcodeData }) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
+  const newKeys = useMemo(
+    () =>
+      data.sections.flatMap((s) => [
+        `leetcode:${s.id}`,
+        ...s.tasks.map((t) => `leetcode-task:${t.id}`),
+      ]),
+    [data.sections],
+  )
+  const { isNew } = useNewContent(newKeys)
+
   const items: TopicPanelItem[] = useMemo(
     () => [
       { id: 'cover', label: 'Зміст', emoji: '📋' },
-      ...data.sections.map((s) => ({ id: s.id, label: s.title, emoji: s.emoji })),
+      ...data.sections.map((s) => ({
+        id: s.id,
+        label: s.title,
+        emoji: s.emoji,
+        isNew: isNew(`leetcode:${s.id}`),
+      })),
     ],
-    [data.sections],
+    [data.sections, isNew],
   )
   const ids = useMemo(() => items.map((i) => i.id), [items])
   const activeId = useScrollSpy(ids, scrollRef)
@@ -30,7 +47,12 @@ export function LeetcodeView({ data }: { data: LeetcodeData }) {
 
   return (
     <div className="flex h-screen">
-      <TopicPanel items={items} activeId={activeId} onJump={jump} />
+      <TopicPanel
+        items={items}
+        activeId={activeId}
+        onJump={jump}
+        onDismissNew={(id) => markSeen(`leetcode:${id}`)}
+      />
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto scroll-smooth">
         <MobileSectionNav items={items} activeId={activeId} onJump={jump} />
@@ -72,7 +94,12 @@ export function LeetcodeView({ data }: { data: LeetcodeData }) {
               </h2>
               <div className="mt-5 flex flex-col gap-4">
                 {section.tasks.map((task) => (
-                  <TaskCard key={`${section.id}-${task.id}-${task.number}`} task={task} />
+                  <TaskCard
+                    key={`${section.id}-${task.id}-${task.number}`}
+                    task={task}
+                    isNew={isNew(`leetcode-task:${task.id}`)}
+                    onDismissNew={() => markSeen(`leetcode-task:${task.id}`)}
+                  />
                 ))}
               </div>
             </div>

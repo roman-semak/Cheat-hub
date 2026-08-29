@@ -3,12 +3,22 @@ import { ArrowRight } from 'lucide-react'
 import type { TaskCard as TaskCardData } from '@/lib/cheatsheet/types'
 import { DifficultyBadge } from './DifficultyBadge'
 import { CodeBlock } from './CodeBlock'
+import { NewDot } from './NewDot'
 
-export function TaskCard({ task }: { task: TaskCardData }) {
+export function TaskCard({
+  task,
+  isNew = false,
+  onDismissNew,
+}: {
+  task: TaskCardData
+  isNew?: boolean
+  onDismissNew?: () => void
+}) {
   return (
     <div className="glass-subtle rounded-xl border border-white/10 p-4 transition-colors hover:border-orange-400/40">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-semibold text-slate-100">
+        <h3 className="flex items-center gap-1.5 font-semibold text-slate-100">
+          {isNew && onDismissNew && <NewDot onDismiss={onDismissNew} />}
           {task.title}
           {task.number > 0 && (
             <span className="ml-2 text-xs font-normal text-slate-500">#{task.number}</span>

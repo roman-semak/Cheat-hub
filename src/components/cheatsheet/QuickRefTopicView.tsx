@@ -3,9 +3,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { QuickRefBlock, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
+import { quickRefBlockKeys } from '@/lib/cheatsheet/quickrefKeys'
+import { useNewContent } from '@/lib/cheatsheet/useNewContent'
 import { cn } from '@/lib/utils'
 import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
 import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
+import { NewDotStatic } from './NewDot'
 
 function isChipRow(block: QuickRefBlock): block is Extract<QuickRefBlock, { chips: string[] }> {
   return 'chips' in block
@@ -94,6 +97,14 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
   const { buckets, itemRef } = useMasonry(ids, columnCount)
   const [activeId, setActiveId] = useState(ids[0] ?? '')
 
+  // Per-block "new" tracking. Keys derived from block labels via the shared
+  // helper (same as the stamp-new-content script).
+  const trackKeys = useMemo(
+    () => quickRefBlockKeys(blocks).map((k) => `quickref:${meta.slug}:${k}`),
+    [blocks, meta.slug],
+  )
+  const { isNew, markSeen } = useNewContent(trackKeys)
+
   // Page scrolls at the window level here (no dedicated scroll container like
   // ProseTopicView has), so this observes the viewport directly rather than
   // reusing useScrollSpy (which requires a root element ref).
@@ -123,18 +134,25 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
       <nav className="sticky top-0 z-20 flex items-center gap-1 overflow-x-auto border-b border-white/10 bg-slate-950/90 px-3 py-1.5 backdrop-blur">
         {blocks.map((block, i) => {
           const id = String(i)
+          const blockIsNew = isNew(trackKeys[i])
           return (
             <button
               key={id}
               type="button"
               title={block.label ?? meta.title}
-              onClick={() => jump(id)}
+              onClick={() => {
+                jump(id)
+                if (blockIsNew) markSeen(trackKeys[i])
+              }}
               className={cn(
-                'shrink-0 rounded-md px-2 py-1 text-base leading-none transition-colors',
+                'relative shrink-0 rounded-md px-2 py-1 text-base leading-none transition-colors',
                 activeId === id ? 'bg-white/10' : 'hover:bg-white/5',
               )}
             >
               {block.icon ?? meta.icon}
+              {blockIsNew && (
+                <NewDotStatic className="absolute right-0.5 top-0.5 h-1.5 w-1.5" />
+              )}
             </button>
           )
         })}
@@ -147,8 +165,23 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
               {bucket.map((id) => {
                 const block = blocks[Number(id)]
                 if (!block) return null
+                const key = trackKeys[Number(id)]
                 return (
-                  <div key={id} id={blockAnchorId(id)} ref={itemRef(id)} className="scroll-mt-14">
+                  <div
+                    key={id}
+                    id={blockAnchorId(id)}
+                    ref={itemRef(id)}
+                    className="relative scroll-mt-14"
+                  >
+                    {isNew(key) && (
+                      <button
+                        type="button"
+                        onClick={() => markSeen(key)}
+                        aria-label="Нове — позначити як переглянуте"
+                        title="Нове на платформі — натисніть, щоб прибрати"
+                        className="absolute -right-1 -top-1 z-10 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-rose-500/25 transition-transform hover:scale-125"
+                      />
+                    )}
                     {renderBlock(block)}
                   </div>
                 )

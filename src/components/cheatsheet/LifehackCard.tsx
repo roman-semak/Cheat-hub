@@ -5,10 +5,19 @@ import { Check, Copy } from 'lucide-react'
 import 'highlight.js/styles/github-dark.css'
 import type { Lifehack } from '@/lib/cheatsheet/types'
 import { highlight } from '@/lib/cheatsheet/highlight'
+import { NewDot } from './NewDot'
 
 // One lifehack: title, tags, always-visible highlighted code with a copy button,
 // and an optional note (may contain inline <code>).
-export function LifehackCard({ hack }: { hack: Lifehack }) {
+export function LifehackCard({
+  hack,
+  isNew = false,
+  onDismissNew,
+}: {
+  hack: Lifehack
+  isNew?: boolean
+  onDismissNew?: () => void
+}) {
   const [copied, setCopied] = useState(false)
   const language = hack.language ?? 'typescript'
 
@@ -27,7 +36,10 @@ export function LifehackCard({ hack }: { hack: Lifehack }) {
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-white/10 bg-black/20 p-4 transition-colors hover:border-orange-400/40">
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-sm font-semibold text-slate-100">{hack.title}</h3>
+        <h3 className="flex items-center gap-1.5 text-sm font-semibold text-slate-100">
+          {isNew && onDismissNew && <NewDot onDismiss={onDismissNew} />}
+          {hack.title}
+        </h3>
         {hack.tags && hack.tags.length > 0 && (
           <div className="flex flex-wrap justify-end gap-1">
             {hack.tags.map((tag) => (

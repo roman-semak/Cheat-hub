@@ -2,12 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Editor, { type Monaco } from '@monaco-editor/react'
-import { Search, Check, Copy, Eye, EyeOff, RotateCcw } from 'lucide-react'
+import { Search, Check, Copy, Eye, EyeOff, RotateCcw, Sparkles } from 'lucide-react'
 import 'highlight.js/styles/github-dark.css'
 import type { PracticeTask, PracticeTopic } from '@/lib/cheatsheet/types'
 import { highlight } from '@/lib/cheatsheet/highlight'
+import { useNewContent } from '@/lib/cheatsheet/useNewContent'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
+import { NewDotStatic } from './NewDot'
 
 const TOPICS: PracticeTopic[] = [
   'JS Utilities',
@@ -94,6 +96,14 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
     [tasks, selectedId],
   )
 
+  const newKeys = useMemo(() => tasks.map((t) => `practice:${t.id}`), [tasks])
+  const { isNew, hasRecent, markSeen, markAllSeen } = useNewContent(newKeys)
+
+  const openTask = (id: string) => {
+    setSelectedId(id)
+    markSeen(`practice:${id}`) // opening a task counts as seeing it
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* Toolbar: search + topic filter */}
@@ -111,6 +121,15 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
             className="w-full rounded-lg border border-white/10 bg-black/20 py-2.5 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-500 focus:border-orange-400/50 focus:outline-none"
           />
         </div>
+        {hasRecent && (
+          <Button
+            onClick={markAllSeen}
+            variant="ghost"
+            className="inline-flex shrink-0 items-center gap-2 text-rose-300"
+          >
+            <Sparkles size={16} /> Позначити нове як переглянуте
+          </Button>
+        )}
         <div className="flex flex-wrap gap-1.5">
           {(['all', ...TOPICS] as const).map((t) => (
             <button
@@ -143,7 +162,7 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
                 {group.tasks.map((task) => (
                   <li key={task.id}>
                     <button
-                      onClick={() => setSelectedId(task.id)}
+                      onClick={() => openTask(task.id)}
                       className={`w-full rounded-xl border p-3 text-left transition-colors ${
                         task.id === selectedId
                           ? 'border-orange-400/50 bg-orange-500/10'
@@ -152,6 +171,9 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <span className="flex items-start gap-1.5 text-sm font-semibold text-slate-100">
+                          {isNew(`practice:${task.id}`) && (
+                            <NewDotStatic className="mt-1.5 h-1.5 w-1.5" />
+                          )}
                           {task.priority && (
                             <span
                               className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
