@@ -187,6 +187,16 @@ Located: `src/components/editor/CodeEditor.tsx`
 - Languages: JavaScript, TypeScript
 - Options: fontSize 13, minimap disabled, padding
 
+### Cheatsheet content: "new content" marker
+After adding/renaming any trackable content unit (prose `TopicSection`,
+LeetCode section/task, `PracticeTask`, `Lifehack`, quickref block), run
+`npm run stamp:new` to record its first-seen date in
+`src/lib/cheatsheet/contentManifest.generated.json` and commit the result.
+The red • dot next to the read-state check (TopicPanel / cards) shows for any
+unit dated on/after `newSince` that the user hasn't dismissed; dismissals live
+in `UserData.seenNew` (localStorage + `/api/sync`). `npm run stamp:new -- --check`
+fails if the manifest is stale.
+
 ## Known Limitations
 
 1. **Code Runner** - виконується локально на Node.js, не є sandboxed (для продакшну потрібен Judge0 або аналог)
