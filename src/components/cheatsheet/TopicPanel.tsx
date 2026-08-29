@@ -1,32 +1,27 @@
 'use client'
 
-import { Check, RotateCcw, Circle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { ReadState } from '@/lib/userStore'
-import { NewDot } from './NewDot'
+import { StatusMarker, type ContentStatus } from './StatusMarker'
 
 export interface TopicPanelItem {
   id: string
   label: string
   emoji?: string
-  state?: ReadState
-  isNew?: boolean
+  status?: ContentStatus
 }
 
 export function TopicPanel({
   items,
   activeId,
   onJump,
-  onToggleState,
-  onDismissNew,
+  onCycleStatus,
   accentText = 'text-orange-300',
   accentBorder = 'border-orange-400',
 }: {
   items: TopicPanelItem[]
   activeId: string
   onJump: (id: string) => void
-  onToggleState?: (id: string) => void
-  onDismissNew?: (id: string) => void
+  onCycleStatus?: (id: string) => void
   accentText?: string
   accentBorder?: string
 }) {
@@ -36,10 +31,10 @@ export function TopicPanel({
         {items.map((item) => {
           const active = item.id === activeId
           const stateBg =
-            item.state === 'read'
+            item.status === 'read'
               ? 'bg-emerald-500/10'
-              : item.state === 'review'
-                ? 'bg-amber-500/10'
+              : item.status === 'new'
+                ? 'bg-rose-500/10'
                 : ''
           return (
             <li key={item.id}>
@@ -65,40 +60,11 @@ export function TopicPanel({
                   {item.emoji && <span className="shrink-0">{item.emoji}</span>}
                   <span className="min-w-0 flex-1 truncate">{item.label}</span>
                 </a>
-                {item.isNew && onDismissNew && (
-                  <NewDot
-                    onDismiss={() => onDismissNew(item.id)}
-                    className="mr-0.5 h-2 w-2"
+                {onCycleStatus && (
+                  <StatusMarker
+                    status={item.status ?? 'unread'}
+                    onCycle={() => onCycleStatus(item.id)}
                   />
-                )}
-                {onToggleState && (
-                  <button
-                    type="button"
-                    aria-label={
-                      item.state === 'read'
-                        ? 'Позначити як таке, що потрібно перечитати'
-                        : item.state === 'review'
-                          ? 'Скинути позначку'
-                          : 'Позначити як прочитане'
-                    }
-                    onClick={() => onToggleState(item.id)}
-                    className={cn(
-                      'shrink-0 rounded p-0.5 hover:bg-white/10',
-                      item.state === 'read'
-                        ? 'text-emerald-400'
-                        : item.state === 'review'
-                          ? 'text-amber-400'
-                          : 'text-slate-600',
-                    )}
-                  >
-                    {item.state === 'read' ? (
-                      <Check size={13} />
-                    ) : item.state === 'review' ? (
-                      <RotateCcw size={13} />
-                    ) : (
-                      <Circle size={13} />
-                    )}
-                  </button>
                 )}
               </div>
             </li>

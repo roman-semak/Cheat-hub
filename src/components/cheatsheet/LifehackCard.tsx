@@ -5,18 +5,18 @@ import { Check, Copy } from 'lucide-react'
 import 'highlight.js/styles/github-dark.css'
 import type { Lifehack } from '@/lib/cheatsheet/types'
 import { highlight } from '@/lib/cheatsheet/highlight'
-import { NewDot } from './NewDot'
+import { StatusMarker, type ContentStatus } from './StatusMarker'
 
 // One lifehack: title, tags, always-visible highlighted code with a copy button,
 // and an optional note (may contain inline <code>).
 export function LifehackCard({
   hack,
-  isNew = false,
-  onDismissNew,
+  status,
+  onCycleStatus,
 }: {
   hack: Lifehack
-  isNew?: boolean
-  onDismissNew?: () => void
+  status?: ContentStatus
+  onCycleStatus?: () => void
 }) {
   const [copied, setCopied] = useState(false)
   const language = hack.language ?? 'typescript'
@@ -37,7 +37,9 @@ export function LifehackCard({
     <div className="flex flex-col gap-2 rounded-xl border border-white/10 bg-black/20 p-4 transition-colors hover:border-orange-400/40">
       <div className="flex items-start justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-sm font-semibold text-slate-100">
-          {isNew && onDismissNew && <NewDot onDismiss={onDismissNew} />}
+          {onCycleStatus && (
+            <StatusMarker status={status ?? 'unread'} onCycle={onCycleStatus} />
+          )}
           {hack.title}
         </h3>
         {hack.tags && hack.tags.length > 0 && (

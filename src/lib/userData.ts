@@ -14,10 +14,11 @@ export interface QuizProgress {
   answers: Record<number, number>
 }
 
-// Cheatsheet subsection read state. 'read' = scrolled through (or manually
-// confirmed), 'review' = manually flagged to re-read. Absent = unread.
-// Keyed by `${topicSlug}:${sectionId}`.
-export type ReadState = 'read' | 'review'
+// Cheatsheet subsection read state. 'read' = scrolled through or manually
+// confirmed; absent = unread. Keyed by `${topicSlug}:${sectionId}`.
+// Combined with `seenNew` this drives the 3-state marker: new → unread → read.
+// (The legacy 'review' value is migrated to 'read' on load — see normalizeReadState.)
+export type ReadState = 'read'
 
 export interface UserData {
   username: string
@@ -63,7 +64,8 @@ function normalizeReadState(value: unknown): Record<string, ReadState> {
   if (!value || typeof value !== 'object') return {}
   const out: Record<string, ReadState> = {}
   for (const [key, v] of Object.entries(value as Record<string, unknown>)) {
-    if (v === 'read' || v === 'review') out[key] = v
+    // 'review' is legacy — fold it into 'read' (the user had already read it).
+    if (v === 'read' || v === 'review') out[key] = 'read'
   }
   return out
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import type { TopicContent, TopicMeta } from '@/lib/cheatsheet/types'
 import { ACCENT, formatHref } from '@/lib/cheatsheet/registry'
 import { breadcrumbJsonLd } from '@/lib/seo'
@@ -8,8 +8,8 @@ import { JsonLd } from '@/components/JsonLd'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
 import { useRestoreSectionScroll, useSectionHashSync } from '@/lib/cheatsheet/useSectionHash'
-import { useUserStore, cycleReadState, resetReadStateForTopic, markSeen } from '@/lib/userStore'
-import { useNewContent } from '@/lib/cheatsheet/useNewContent'
+import { resetReadStateForTopic } from '@/lib/userStore'
+import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
 import { RotateCcw, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
@@ -35,7 +35,6 @@ export function ProseTopicView({
   const format =
     variant === 'cheat' ? 'cheatsheet' : variant === 'links' ? 'links' : 'extended'
   const path = formatHref(content.slug, format)
-  const { data } = useUserStore()
   const ns =
     variant === 'cheat'
       ? `${content.slug}-cheat`
@@ -43,38 +42,43 @@ export function ProseTopicView({
         ? `${content.slug}-links`
         : content.slug
 
-  // Kept independent of `data.readState` so its identity is stable across
-  // read-state changes — otherwise useReadTracking's effect would re-run on
-  // every toggle/auto-mark, re-observing already-visible sentinels and
-  // firing a spurious auto-read right after a manual toggle.
+  // Kept independent of read/seen state so its identity is stable — otherwise
+  // useReadTracking's effect would re-run on every status change, re-observing
+  // already-visible sentinels.
   const ids = useMemo(() => content.sections.map((s) => s.id), [content.sections])
 
-  const newKeys = useMemo(
-    () => content.sections.map((s) => `${ns}:${s.id}`),
-    [content.sections, ns],
+  const pairFor = useCallback(
+    (id: string) => ({ newKey: `${ns}:${id}`, readKey: `${content.slug}:${id}` }),
+    [ns, content.slug],
   )
-  const { isNew, hasRecent, markAllSeen } = useNewContent(newKeys)
+  const pairs = useMemo(
+    () => content.sections.map((s) => pairFor(s.id)),
+    [content.sections, pairFor],
+  )
+  const { statusOf, cycle, hasRecent, markAllSeen } = useContentStatus(pairs)
 
   const items: TopicPanelItem[] = useMemo(
     () =>
       content.sections.map((s) => ({
         id: s.id,
         label: s.title,
-        state: data.readState[`${content.slug}:${s.id}`],
-        isNew: isNew(`${ns}:${s.id}`),
+        status: statusOf(pairFor(s.id)),
       })),
-    [content.sections, content.slug, ns, data.readState, isNew],
+    [content.sections, statusOf, pairFor],
   )
   const activeId = useScrollSpy(ids, scrollRef)
-  useReadTracking(content.slug, ids, scrollRef)
+  const isNewId = useCallback(
+    (id: string) => statusOf(pairFor(id)) === 'new',
+    [statusOf, pairFor],
+  )
+  useReadTracking(content.slug, ids, scrollRef, isNewId)
   useRestoreSectionScroll(ids, scrollRef)
   useSectionHashSync(activeId)
 
   const jump = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
-  const toggleState = (id: string) => cycleReadState(`${content.slug}:${id}`)
-  const dismissNew = (id: string) => markSeen(`${ns}:${id}`)
+  const cycleStatus = (id: string) => cycle(pairFor(id))
 
   return (
     <>
@@ -89,8 +93,7 @@ export function ProseTopicView({
         items={items}
         activeId={activeId}
         onJump={jump}
-        onToggleState={toggleState}
-        onDismissNew={dismissNew}
+        onCycleStatus={cycleStatus}
         accentText={accent.text}
         accentBorder=""
       />

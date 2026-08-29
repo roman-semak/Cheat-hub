@@ -257,14 +257,13 @@ export function resetQuiz(quizId: string) {
   }))
 }
 
-// Cycles a cheatsheet subsection's read state: unread -> read -> review -> unread.
+// Toggles a cheatsheet subsection's read state: unread <-> read.
+// ("new" is a separate axis tracked in `seenNew`, not here.)
 export function cycleReadState(key: string) {
   update((d) => {
-    const current = d.readState[key]
-    const next = current === 'read' ? 'review' : current === 'review' ? undefined : 'read'
     const readState = { ...d.readState }
-    if (next) readState[key] = next
-    else delete readState[key]
+    if (d.readState[key] === 'read') delete readState[key]
+    else readState[key] = 'read'
     return { ...d, readState }
   })
 }

@@ -6,10 +6,14 @@ import { markReadIfUnset } from '@/lib/userStore'
 // Auto-marks a subsection as read once the sentinel at the end of its
 // content ("`${id}-end`") has scrolled well into view — i.e. the user has
 // scrolled past the whole block, not just glimpsed its heading.
+//
+// `isNewId` lets the caller exclude sections still flagged "new": scrolling
+// past a new section must NOT clear its marker (that's a deliberate click).
 export function useReadTracking(
   topicSlug: string,
   ids: string[],
   rootRef: RefObject<HTMLElement | null>,
+  isNewId?: (id: string) => boolean,
 ) {
   useEffect(() => {
     const root = rootRef.current
@@ -20,6 +24,7 @@ export function useReadTracking(
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return
           const id = entry.target.id.replace(/-end$/, '')
+          if (isNewId?.(id)) return // don't auto-read a section that's still "new"
           markReadIfUnset(`${topicSlug}:${id}`)
           observer.unobserve(entry.target)
         })
@@ -33,5 +38,5 @@ export function useReadTracking(
     })
 
     return () => observer.disconnect()
-  }, [topicSlug, ids, rootRef])
+  }, [topicSlug, ids, rootRef, isNewId])
 }

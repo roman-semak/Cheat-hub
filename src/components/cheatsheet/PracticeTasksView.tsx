@@ -6,10 +6,10 @@ import { Search, Check, Copy, Eye, EyeOff, RotateCcw, Sparkles } from 'lucide-re
 import 'highlight.js/styles/github-dark.css'
 import type { PracticeTask, PracticeTopic } from '@/lib/cheatsheet/types'
 import { highlight } from '@/lib/cheatsheet/highlight'
-import { useNewContent } from '@/lib/cheatsheet/useNewContent'
+import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
-import { NewDotStatic } from './NewDot'
+import { StatusMarker } from './StatusMarker'
 
 const TOPICS: PracticeTopic[] = [
   'JS Utilities',
@@ -96,12 +96,12 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
     [tasks, selectedId],
   )
 
-  const newKeys = useMemo(() => tasks.map((t) => `practice:${t.id}`), [tasks])
-  const { isNew, hasRecent, markSeen, markAllSeen } = useNewContent(newKeys)
+  const pairs = useMemo(() => tasks.map((t) => sameKey(`practice:${t.id}`)), [tasks])
+  const { statusOf, cycle, dismissNew, hasRecent, markAllSeen } = useContentStatus(pairs)
 
   const openTask = (id: string) => {
     setSelectedId(id)
-    markSeen(`practice:${id}`) // opening a task counts as seeing it
+    dismissNew(sameKey(`practice:${id}`)) // opening a task clears its "new" flag
   }
 
   return (
@@ -160,10 +160,16 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
               </div>
               <ul className="flex flex-col gap-2">
                 {group.tasks.map((task) => (
-                  <li key={task.id}>
+                  <li key={task.id} className="flex items-stretch gap-1.5">
+                    <div className="flex items-start pt-3">
+                      <StatusMarker
+                        status={statusOf(sameKey(`practice:${task.id}`))}
+                        onCycle={() => cycle(sameKey(`practice:${task.id}`))}
+                      />
+                    </div>
                     <button
                       onClick={() => openTask(task.id)}
-                      className={`w-full rounded-xl border p-3 text-left transition-colors ${
+                      className={`min-w-0 flex-1 rounded-xl border p-3 text-left transition-colors ${
                         task.id === selectedId
                           ? 'border-orange-400/50 bg-orange-500/10'
                           : 'border-white/10 bg-black/20 hover:border-orange-400/30'
@@ -171,9 +177,6 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <span className="flex items-start gap-1.5 text-sm font-semibold text-slate-100">
-                          {isNew(`practice:${task.id}`) && (
-                            <NewDotStatic className="mt-1.5 h-1.5 w-1.5" />
-                          )}
                           {task.priority && (
                             <span
                               className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${

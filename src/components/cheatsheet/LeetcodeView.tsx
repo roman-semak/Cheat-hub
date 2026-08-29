@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { Dumbbell } from 'lucide-react'
 import type { LeetcodeData } from '@/lib/cheatsheet/types'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
-import { useNewContent } from '@/lib/cheatsheet/useNewContent'
-import { markSeen } from '@/lib/userStore'
+import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
 import { TaskCard } from './TaskCard'
@@ -14,15 +13,15 @@ import { TaskCard } from './TaskCard'
 export function LeetcodeView({ data }: { data: LeetcodeData }) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const newKeys = useMemo(
+  const pairs = useMemo(
     () =>
       data.sections.flatMap((s) => [
-        `leetcode:${s.id}`,
-        ...s.tasks.map((t) => `leetcode-task:${t.id}`),
+        sameKey(`leetcode:${s.id}`),
+        ...s.tasks.map((t) => sameKey(`leetcode-task:${t.id}`)),
       ]),
     [data.sections],
   )
-  const { isNew } = useNewContent(newKeys)
+  const { statusOf, cycle } = useContentStatus(pairs)
 
   const items: TopicPanelItem[] = useMemo(
     () => [
@@ -31,10 +30,10 @@ export function LeetcodeView({ data }: { data: LeetcodeData }) {
         id: s.id,
         label: s.title,
         emoji: s.emoji,
-        isNew: isNew(`leetcode:${s.id}`),
+        status: statusOf(sameKey(`leetcode:${s.id}`)),
       })),
     ],
-    [data.sections, isNew],
+    [data.sections, statusOf],
   )
   const ids = useMemo(() => items.map((i) => i.id), [items])
   const activeId = useScrollSpy(ids, scrollRef)
@@ -51,7 +50,7 @@ export function LeetcodeView({ data }: { data: LeetcodeData }) {
         items={items}
         activeId={activeId}
         onJump={jump}
-        onDismissNew={(id) => markSeen(`leetcode:${id}`)}
+        onCycleStatus={(id) => cycle(sameKey(`leetcode:${id}`))}
       />
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto scroll-smooth">
@@ -97,8 +96,8 @@ export function LeetcodeView({ data }: { data: LeetcodeData }) {
                   <TaskCard
                     key={`${section.id}-${task.id}-${task.number}`}
                     task={task}
-                    isNew={isNew(`leetcode-task:${task.id}`)}
-                    onDismissNew={() => markSeen(`leetcode-task:${task.id}`)}
+                    status={statusOf(sameKey(`leetcode-task:${task.id}`))}
+                    onCycleStatus={() => cycle(sameKey(`leetcode-task:${task.id}`))}
                   />
                 ))}
               </div>

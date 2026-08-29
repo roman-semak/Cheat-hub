@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { Search, Sparkles } from 'lucide-react'
 import type { Lifehack, LifehackCategory } from '@/lib/cheatsheet/types'
-import { useNewContent } from '@/lib/cheatsheet/useNewContent'
+import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
 import { Button } from '@/components/ui/Button'
 import { LifehackCard } from './LifehackCard'
 
@@ -35,8 +35,8 @@ export function LifehacksView({
     [categories, filtered],
   )
 
-  const newKeys = useMemo(() => hacks.map((h) => `lifehack:${h.id}`), [hacks])
-  const { isNew, hasRecent, markSeen, markAllSeen } = useNewContent(newKeys)
+  const pairs = useMemo(() => hacks.map((h) => sameKey(`lifehack:${h.id}`)), [hacks])
+  const { statusOf, cycle, hasRecent, markAllSeen } = useContentStatus(pairs)
 
   return (
     <div className="flex flex-col gap-8">
@@ -79,8 +79,8 @@ export function LifehacksView({
                 <LifehackCard
                   key={hack.id}
                   hack={hack}
-                  isNew={isNew(`lifehack:${hack.id}`)}
-                  onDismissNew={() => markSeen(`lifehack:${hack.id}`)}
+                  status={statusOf(sameKey(`lifehack:${hack.id}`))}
+                  onCycleStatus={() => cycle(sameKey(`lifehack:${hack.id}`))}
                 />
               ))}
             </div>
