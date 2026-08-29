@@ -187,15 +187,16 @@ Located: `src/components/editor/CodeEditor.tsx`
 - Languages: JavaScript, TypeScript
 - Options: fontSize 13, minimap disabled, padding
 
-### Cheatsheet content: "new content" marker
-After adding/renaming any trackable content unit (prose `TopicSection`,
-LeetCode section/task, `PracticeTask`, `Lifehack`, quickref block), run
-`npm run stamp:new` to record its first-seen date in
-`src/lib/cheatsheet/contentManifest.generated.json` and commit the result.
-The red • dot next to the read-state check (TopicPanel / cards) shows for any
-unit dated on/after `newSince` that the user hasn't dismissed; dismissals live
-in `UserData.seenNew` (localStorage + `/api/sync`). `npm run stamp:new -- --check`
-fails if the manifest is stale.
+### Cheatsheet content: status marker (new / unread / read)
+Each trackable content unit (prose `TopicSection`, LeetCode section/task,
+`PracticeTask`, `Lifehack`, quickref block) carries one 3-state marker
+(`StatusMarker`, driven by `useContentStatus`): 🔴 new → ○ unread → ✓ read.
+After adding/renaming a unit, run `npm run stamp:new` to record its first-seen
+date in `src/lib/cheatsheet/contentManifest.generated.json` and commit it —
+units dated on/after `newSince` that the user hasn't dismissed show 🔴
+(`--check` fails the build if the manifest is stale). "new" clears only on
+click (scroll auto-read skips new sections); `read`/`seen` state lives in
+`UserData.readState` / `UserData.seenNew` (localStorage + `/api/sync`).
 
 ## Known Limitations
 
