@@ -13,7 +13,8 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "node prisma/seed.ts"
+    "prisma:seed": "node prisma/seed.ts",
+    "stamp:new": "tsx scripts/stamp-new-content.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.8.1",
