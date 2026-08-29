@@ -3,12 +3,14 @@
 import { Check, RotateCcw, Circle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ReadState } from '@/lib/userStore'
+import { NewDot } from './NewDot'
 
 export interface TopicPanelItem {
   id: string
   label: string
   emoji?: string
   state?: ReadState
+  isNew?: boolean
 }
 
 export function TopicPanel({
@@ -16,6 +18,7 @@ export function TopicPanel({
   activeId,
   onJump,
   onToggleState,
+  onDismissNew,
   accentText = 'text-orange-300',
   accentBorder = 'border-orange-400',
 }: {
@@ -23,6 +26,7 @@ export function TopicPanel({
   activeId: string
   onJump: (id: string) => void
   onToggleState?: (id: string) => void
+  onDismissNew?: (id: string) => void
   accentText?: string
   accentBorder?: string
 }) {
@@ -61,6 +65,12 @@ export function TopicPanel({
                   {item.emoji && <span className="shrink-0">{item.emoji}</span>}
                   <span className="min-w-0 flex-1 truncate">{item.label}</span>
                 </a>
+                {item.isNew && onDismissNew && (
+                  <NewDot
+                    onDismiss={() => onDismissNew(item.id)}
+                    className="mr-0.5 h-2 w-2"
+                  />
+                )}
                 {onToggleState && (
                   <button
                     type="button"

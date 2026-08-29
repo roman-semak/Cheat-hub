@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <ProseTopicView content={architectureCheat} meta={meta} />
+  return <ProseTopicView content={architectureCheat} meta={meta} variant="cheat" />
 }

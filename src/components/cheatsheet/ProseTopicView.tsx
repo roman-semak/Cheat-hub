@@ -6,24 +6,37 @@ import { ACCENT } from '@/lib/cheatsheet/registry'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
 import { useRestoreSectionScroll, useSectionHashSync } from '@/lib/cheatsheet/useSectionHash'
-import { useUserStore, cycleReadState, resetReadStateForTopic } from '@/lib/userStore'
-import { RotateCcw } from 'lucide-react'
+import { useUserStore, cycleReadState, resetReadStateForTopic, markSeen } from '@/lib/userStore'
+import { useNewContent } from '@/lib/cheatsheet/useNewContent'
+import { RotateCcw, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
 import { ContentBlocks } from './ContentBlocks'
 import { InterviewQuestionsBlock } from './InterviewQuestionsBlock'
 
+// prose/cheat/links share a `slug`, so the "new" tracking namespace is
+// suffixed for the non-primary variants to avoid key collisions.
+type ProseVariant = 'prose' | 'cheat' | 'links'
+
 export function ProseTopicView({
   content,
   meta,
+  variant = 'prose',
 }: {
   content: TopicContent
   meta: TopicMeta
+  variant?: ProseVariant
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const accent = ACCENT[meta.accent]
   const { data } = useUserStore()
+  const ns =
+    variant === 'cheat'
+      ? `${content.slug}-cheat`
+      : variant === 'links'
+        ? `${content.slug}-links`
+        : content.slug
 
   // Kept independent of `data.readState` so its identity is stable across
   // read-state changes — otherwise useReadTracking's effect would re-run on
@@ -31,14 +44,21 @@ export function ProseTopicView({
   // firing a spurious auto-read right after a manual toggle.
   const ids = useMemo(() => content.sections.map((s) => s.id), [content.sections])
 
+  const newKeys = useMemo(
+    () => content.sections.map((s) => `${ns}:${s.id}`),
+    [content.sections, ns],
+  )
+  const { isNew, hasRecent, markAllSeen } = useNewContent(newKeys)
+
   const items: TopicPanelItem[] = useMemo(
     () =>
       content.sections.map((s) => ({
         id: s.id,
         label: s.title,
         state: data.readState[`${content.slug}:${s.id}`],
+        isNew: isNew(`${ns}:${s.id}`),
       })),
-    [content.sections, content.slug, data.readState],
+    [content.sections, content.slug, ns, data.readState, isNew],
   )
   const activeId = useScrollSpy(ids, scrollRef)
   useReadTracking(content.slug, ids, scrollRef)
@@ -49,6 +69,7 @@ export function ProseTopicView({
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
   const toggleState = (id: string) => cycleReadState(`${content.slug}:${id}`)
+  const dismissNew = (id: string) => markSeen(`${ns}:${id}`)
 
   return (
     <div className="flex h-screen">
@@ -57,6 +78,7 @@ export function ProseTopicView({
         activeId={activeId}
         onJump={jump}
         onToggleState={toggleState}
+        onDismissNew={dismissNew}
         accentText={accent.text}
         accentBorder=""
       />
@@ -75,17 +97,28 @@ export function ProseTopicView({
               </h1>
               <p className="mt-2 max-w-2xl text-slate-400">{meta.blurb}</p>
             </div>
-            <Button
-              onClick={() => {
-                if (confirm(`Скинути всі позначки прочитаного в «${meta.title}»?`)) {
-                  resetReadStateForTopic(content.slug)
-                }
-              }}
-              variant="ghost"
-              className="inline-flex shrink-0 items-center gap-2 text-red-300"
-            >
-              <RotateCcw size={16} /> Скинути прогрес
-            </Button>
+            <div className="flex shrink-0 flex-wrap items-center gap-1">
+              {hasRecent && (
+                <Button
+                  onClick={markAllSeen}
+                  variant="ghost"
+                  className="inline-flex items-center gap-2 text-rose-300"
+                >
+                  <Sparkles size={16} /> Позначити нове як переглянуте
+                </Button>
+              )}
+              <Button
+                onClick={() => {
+                  if (confirm(`Скинути всі позначки прочитаного в «${meta.title}»?`)) {
+                    resetReadStateForTopic(content.slug)
+                  }
+                }}
+                variant="ghost"
+                className="inline-flex items-center gap-2 text-red-300"
+              >
+                <RotateCcw size={16} /> Скинути прогрес
+              </Button>
+            </div>
           </div>
         </header>
 

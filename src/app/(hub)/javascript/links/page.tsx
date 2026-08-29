@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return <ProseTopicView content={javascriptLinks} meta={meta} />
+  return <ProseTopicView content={javascriptLinks} meta={meta} variant="links" />
 }
