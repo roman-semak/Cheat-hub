@@ -78,6 +78,7 @@ function update(mutator: (draft: UserData) => UserData) {
     submissions: [...snapshot.submissions],
     quizzes: { ...snapshot.quizzes },
     readState: { ...snapshot.readState },
+    seenNew: { ...snapshot.seenNew },
   })
   next.updatedAt = new Date().toISOString()
   persist(next)
@@ -289,6 +290,49 @@ export function resetReadStateForTopic(topicSlug: string) {
   })
 }
 
+// ---- "new content" marker (red •) ----
+
+// Dismiss the "new" marker for one content key. Idempotent.
+export function markSeen(key: string) {
+  update((d) => {
+    if (d.seenNew[key]) return d
+    return { ...d, seenNew: { ...d.seenNew, [key]: true as const } }
+  })
+}
+
+// Dismiss many keys in a single store write (e.g. "mark all new as seen"
+// for a topic). No-op if nothing changes.
+export function markSeenMany(keys: string[]) {
+  update((d) => {
+    const missing = keys.filter((k) => !d.seenNew[k])
+    if (missing.length === 0) return d
+    const seenNew = { ...d.seenNew }
+    for (const k of missing) seenNew[k] = true
+    return { ...d, seenNew }
+  })
+}
+
+// Re-arm the "new" marker for one key (toggle back on).
+export function unmarkSeen(key: string) {
+  update((d) => {
+    if (!d.seenNew[key]) return d
+    const seenNew = { ...d.seenNew }
+    delete seenNew[key]
+    return { ...d, seenNew }
+  })
+}
+
+// Clears the "seen" flags for every key of one namespace/topic
+// (prefix match, mirrors resetReadStateForTopic).
+export function resetSeenForTopic(prefix: string) {
+  update((d) => {
+    const seenNew = Object.fromEntries(
+      Object.entries(d.seenNew).filter(([key]) => !key.startsWith(prefix)),
+    ) as Record<string, true>
+    return { ...d, seenNew }
+  })
+}
+
 export function resetData() {
   persist(emptyData())
   schedulePush()
@@ -335,6 +379,10 @@ export function useUserStore() {
     resetQuiz,
     cycleReadState,
     markReadIfUnset,
+    markSeen,
+    markSeenMany,
+    unmarkSeen,
+    resetSeenForTopic,
     resetData,
     exportJson,
     importJson,
