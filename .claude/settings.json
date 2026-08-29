@@ -17,7 +17,11 @@
       "Bash(git --no-pager diff --stat)",
       "Bash(curl -s localhost:5001/git/cheatsheet)",
       "Bash(curl -s -o /dev/null -w \"sitemap %{http_code}  robots %{http_code}\\\\n\" localhost:5001/sitemap.xml)",
-      "Bash(pkill -f \"next start\")"
+      "Bash(pkill -f \"next start\")",
+      "Bash(pkill -9 -f \"next\")",
+      "Bash(pkill -9 -f \"next-server\")",
+      "Bash(git restore *)",
+      "Bash(set -e)"
     ]
   }
 }
