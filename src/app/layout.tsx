@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_NAME, SITE_URL, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -13,17 +15,18 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://cheat-hub.vercel.app'),
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
   title: {
-    default: 'Cheat Hub',
-    template: '%s | Cheat Hub',
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
   description: 'Cheat Hub — шпаргалки та теорія для підготовки до співбесід: Architecture, React, Angular, JS/TS, Git, AI та практика LeetCode в редакторі коду.',
   keywords: ['cheatsheet', 'шпаргалка', 'співбесіда', 'interview', 'react', 'angular', 'javascript', 'typescript', 'git', 'ai', 'leetcode', 'algorithm', 'dsa', 'frontend'],
   authors: [
     {
-      name: 'Cheat Hub',
-      url: 'https://cheat-hub.vercel.app',
+      name: SITE_NAME,
+      url: SITE_URL,
     },
   ],
   creator: 'Roman Semak',
@@ -32,8 +35,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'uk_UA',
-    url: 'https://cheat-hub.vercel.app',
-    siteName: 'Cheat Hub',
+    url: SITE_URL,
+    siteName: SITE_NAME,
     title: 'Cheat Hub — шпаргалки та теорія для співбесід',
     description: 'Cheat Hub — шпаргалки та теорія для підготовки до співбесід: Architecture, React, Angular, JS/TS, Git, AI та практика LeetCode в редакторі коду.',
     images: [
@@ -54,14 +57,11 @@ export const metadata: Metadata = {
     description: 'Шпаргалки та теорія для підготовки до співбесід',
     images: ['/opengraph-image.png'],
   },
-  icons: {
-    icon: [{ rel: 'icon', url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><linearGradient id="g"><stop offset="0%25" stop-color="%234f46e5"/><stop offset="100%25" stop-color="%2306b6d4"/></linearGradient></defs><rect fill="url(%23g)" width="32" height="32" rx="6"/><text x="16" y="22" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="white">&lt;/&gt;</text></svg>' }],
-  },
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Cheat Hub',
+    title: SITE_NAME,
   },
   formatDetection: {
     telephone: false,
@@ -83,6 +83,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
@@ -96,23 +99,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="uk"
       className={`${inter.variable} ${mono.variable} h-full scroll-smooth`}
       suppressHydrationWarning
     >
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Cheat Hub" />
-        <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <link rel="canonical" href="https://cheat-hub.vercel.app" />
-      </head>
       <body className="min-h-full flex flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100">
+        <JsonLd data={[websiteJsonLd(), organizationJsonLd()]} />
         {children}
       </body>
     </html>

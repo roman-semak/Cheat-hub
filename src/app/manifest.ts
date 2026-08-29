@@ -14,23 +14,16 @@ export default function manifest(): MetadataRoute.Manifest {
     prefer_related_applications: false,
     icons: [
       {
-        src: '/icon.png',
-        sizes: '32x32',
-        type: 'image/png',
+        src: '/icon.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
         purpose: 'any',
       },
       {
-        src: '/apple-icon.png',
+        src: '/apple-icon',
         sizes: '180x180',
         type: 'image/png',
         purpose: 'any',
-      },
-    ],
-    screenshots: [
-      {
-        src: '/opengraph-image.png',
-        sizes: '1200x630',
-        type: 'image/png',
       },
     ],
     categories: ['education', 'productivity', 'reference'],

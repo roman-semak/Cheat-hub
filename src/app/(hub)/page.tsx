@@ -1,15 +1,13 @@
-import type { Metadata } from 'next'
 import { TOPICS } from '@/lib/cheatsheet/registry'
+import { pageMetadata } from '@/lib/seo'
 import { TopicHubCard } from '@/components/cheatsheet/TopicHubCard'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: { absolute: 'Cheat Hub — шпаргалки та теорія для співбесід' },
   description:
     'Шпаргалки та теорія для співбесід: Architecture, React, Angular, JS/TS, Git, AI та LeetCode з практикою в редакторі.',
-  alternates: {
-    canonical: 'https://cheat-hub.vercel.app',
-  },
-}
+  path: '/',
+})
 
 export default function HubHome() {
   return (

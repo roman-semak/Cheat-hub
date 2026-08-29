@@ -1,13 +1,14 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Dumbbell } from 'lucide-react'
 import { lifehacks, LIFEHACK_CATEGORIES } from '@/lib/cheatsheet/lifehacks'
+import { pageMetadata } from '@/lib/seo'
 import { LifehacksView } from '@/components/cheatsheet/LifehacksView'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'LeetCode — Шпаргалка',
   description: 'JS/TS лайфхаки та трюки роботи з методами мови для розв’язання задач.',
-}
+  path: '/leetcode/cheatsheet',
+})
 
 export default function LeetcodeCheatsheetPage() {
   return (

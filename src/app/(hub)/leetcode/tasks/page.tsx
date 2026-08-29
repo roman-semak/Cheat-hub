@@ -1,14 +1,15 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Dumbbell } from 'lucide-react'
 import { practiceTasks } from '@/lib/cheatsheet/practiceTasks'
+import { pageMetadata } from '@/lib/seo'
 import { PracticeTasksView } from '@/components/cheatsheet/PracticeTasksView'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Практичні завдання — інтерв’ю',
   description:
     'Інтерв’ю-стайл задачі рівня Middle/Senior: JS-утиліти, масиви та рядки, async/Promises, React-компоненти, кастомні хуки, дебаг React, DOM і frontend system design. Виправ або допиши код і звір із рішенням.',
-}
+  path: '/leetcode/tasks',
+})
 
 export default function PracticeTasksPage() {
   return (

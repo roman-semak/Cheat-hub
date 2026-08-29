@@ -2,9 +2,12 @@
 
 import { useMemo, useRef } from 'react'
 import { Check, X, ChevronDown, RotateCcw } from 'lucide-react'
-import type { QuizData } from '@/lib/cheatsheet/types'
+import type { QuizData, TopicSlug } from '@/lib/cheatsheet/types'
 import { useUserStore } from '@/lib/userStore'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
+import { getTopic } from '@/lib/cheatsheet/registry'
+import { breadcrumbJsonLd } from '@/lib/seo'
+import { JsonLd } from '@/components/JsonLd'
 import { cn } from '@/lib/utils'
 
 const RESULT_ID = 'quiz-result'
@@ -50,11 +53,20 @@ export function Quiz({ data, quizId }: { data: QuizData; quizId: string }) {
     scrollTo(data.questions[0]?.id ?? RESULT_ID)
   }
 
+  const topic = getTopic(quizId as TopicSlug)
+
   return (
     <div
       ref={scrollRef}
       className="h-[100dvh] snap-y snap-mandatory overflow-y-auto scroll-smooth"
     >
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Cheat Hub', path: '/' },
+          ...(topic ? [{ name: topic.title, path: `/${quizId}` }] : []),
+          { name: `${topic?.title ?? quizId} — Квіз`, path: `/${quizId}/quiz` },
+        ])}
+      />
       {/* Always-visible "calculator" HUD */}
       <aside className="glass-subtle fixed right-4 top-4 z-40 w-[190px] rounded-2xl border border-white/10 p-3 shadow-lg sm:w-[220px]">
         <div className="mb-2 flex items-baseline justify-between">

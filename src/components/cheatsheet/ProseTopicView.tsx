@@ -2,7 +2,9 @@
 
 import { useMemo, useRef } from 'react'
 import type { TopicContent, TopicMeta } from '@/lib/cheatsheet/types'
-import { ACCENT } from '@/lib/cheatsheet/registry'
+import { ACCENT, formatHref } from '@/lib/cheatsheet/registry'
+import { breadcrumbJsonLd } from '@/lib/seo'
+import { JsonLd } from '@/components/JsonLd'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
 import { useRestoreSectionScroll, useSectionHashSync } from '@/lib/cheatsheet/useSectionHash'
@@ -30,6 +32,9 @@ export function ProseTopicView({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const accent = ACCENT[meta.accent]
+  const format =
+    variant === 'cheat' ? 'cheatsheet' : variant === 'links' ? 'links' : 'extended'
+  const path = formatHref(content.slug, format)
   const { data } = useUserStore()
   const ns =
     variant === 'cheat'
@@ -72,8 +77,15 @@ export function ProseTopicView({
   const dismissNew = (id: string) => markSeen(`${ns}:${id}`)
 
   return (
-    <div className="flex h-screen">
-      <TopicPanel
+    <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Cheat Hub', path: '/' },
+          { name: meta.title, path },
+        ])}
+      />
+      <div className="flex h-screen">
+        <TopicPanel
         items={items}
         activeId={activeId}
         onJump={jump}
@@ -144,6 +156,7 @@ export function ProseTopicView({
 
         <div className="h-24" />
       </div>
-    </div>
+      </div>
+    </>
   )
 }

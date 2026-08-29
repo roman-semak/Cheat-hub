@@ -5,6 +5,8 @@ import type { QuickRefBlock, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/t
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
 import { quickRefBlockKeys } from '@/lib/cheatsheet/quickrefKeys'
 import { useNewContent } from '@/lib/cheatsheet/useNewContent'
+import { breadcrumbJsonLd } from '@/lib/seo'
+import { JsonLd } from '@/components/JsonLd'
 import { cn } from '@/lib/utils'
 import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
 import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
@@ -131,6 +133,13 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
 
   return (
     <div>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Cheat Hub', path: '/' },
+          { name: `${meta.title} — Шпаргалка`, path: `/quickref/${meta.slug}` },
+        ])}
+      />
+      <h1 className="sr-only">{meta.title} — Шпаргалка</h1>
       <nav className="sticky top-0 z-20 flex items-center gap-1 overflow-x-auto border-b border-white/10 bg-slate-950/90 px-3 py-1.5 backdrop-blur">
         {blocks.map((block, i) => {
           const id = String(i)

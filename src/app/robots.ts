@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { absoluteUrl, SITE_URL } from '@/lib/seo'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,6 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/api/',
     },
-    sitemap: 'https://cheat-hub.vercel.app/sitemap.xml',
+    sitemap: absoluteUrl('/sitemap.xml'),
+    host: SITE_URL,
   }
 }

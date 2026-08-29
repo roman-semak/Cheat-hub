@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { QUICKREF_TOPICS, QUICKREF_BLOCKS } from '@/lib/cheatsheet/quickref'
 import { getTopic } from '@/lib/cheatsheet/registry'
 import type { TopicSlug } from '@/lib/cheatsheet/types'
+import { pageMetadata } from '@/lib/seo'
 import { QuickRefTopicView } from '@/components/cheatsheet/QuickRefTopicView'
 
 export function generateStaticParams() {
@@ -22,12 +23,14 @@ export async function generateMetadata({
 }: {
   params: Promise<{ topic: string }>
 }): Promise<Metadata> {
-  const resolved = resolve((await params).topic)
+  const { topic } = await params
+  const resolved = resolve(topic)
   if (!resolved) return {}
-  return {
+  return pageMetadata({
     title: `${resolved.meta.title} — Шпаргалка`,
     description: resolved.meta.blurb,
-  }
+    path: `/quickref/${topic}`,
+  })
 }
 
 export default async function Page({ params }: { params: Promise<{ topic: string }> }) {

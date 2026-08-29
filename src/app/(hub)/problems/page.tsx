@@ -1,22 +1,15 @@
-import type { Metadata } from 'next'
 import { problems } from '@/data/problems'
 import { stripMarkdown } from '@/lib/utils'
+import { breadcrumbJsonLd, pageMetadata } from '@/lib/seo'
+import { JsonLd } from '@/components/JsonLd'
 import { ProblemsView } from '@/components/problems/ProblemsView'
 
-export const metadata: Metadata = {
-  title: 'Problems',
+export const metadata = pageMetadata({
+  title: 'Задачі',
   description:
-    'Browse and solve JavaScript and TypeScript coding challenges. All problems include detailed explanations, editorials, and premium solutions.',
-  openGraph: {
-    type: 'website',
-    title: 'Problems | Cheat Hub',
-    description:
-      'Browse and solve JavaScript and TypeScript coding challenges with editorials and solutions.',
-  },
-  alternates: {
-    canonical: 'https://cheat-hub.vercel.app/problems',
-  },
-}
+    'Каталог задач з алгоритмів на JavaScript та TypeScript: умова, підказки, розбір і рішення — розв’язуй прямо в редакторі коду.',
+  path: '/problems',
+})
 
 export default function ProblemsPage() {
   const list = problems.map((p) => ({
@@ -28,5 +21,15 @@ export default function ProblemsPage() {
     tags: JSON.parse(p.tags) as string[], // «що використати»
   }))
 
-  return <ProblemsView problems={list} />
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Головна', path: '/' },
+          { name: 'Задачі', path: '/problems' },
+        ])}
+      />
+      <ProblemsView problems={list} />
+    </>
+  )
 }
