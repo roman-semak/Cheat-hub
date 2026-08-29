@@ -277,8 +277,8 @@ export function markReadIfUnset(key: string) {
   })
 }
 
-// Clears read/review state for every section of one topic, leaving other
-// topics' and quizzes' progress untouched.
+// Clears read state for every section of one topic, leaving other topics'
+// and quizzes' progress untouched.
 export function resetReadStateForTopic(topicSlug: string) {
   update((d) => {
     const prefix = `${topicSlug}:`
@@ -287,6 +287,12 @@ export function resetReadStateForTopic(topicSlug: string) {
     )
     return { ...d, readState }
   })
+}
+
+// Clears every "read" marker across all topics. Leaves "new" markers
+// (seenNew), task progress and quizzes untouched.
+export function resetAllReadState() {
+  update((d) => ({ ...d, readState: {} }))
 }
 
 // ---- "new content" marker (red •) ----
@@ -382,6 +388,7 @@ export function useUserStore() {
     markSeenMany,
     unmarkSeen,
     resetSeenForTopic,
+    resetAllReadState,
     resetData,
     exportJson,
     importJson,

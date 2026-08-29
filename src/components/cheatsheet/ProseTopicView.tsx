@@ -8,7 +8,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
 import { useRestoreSectionScroll, useSectionHashSync } from '@/lib/cheatsheet/useSectionHash'
-import { resetReadStateForTopic } from '@/lib/userStore'
+import { resetReadStateForTopic, resetAllReadState } from '@/lib/userStore'
 import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
 import { RotateCcw, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -129,9 +129,22 @@ export function ProseTopicView({
                   }
                 }}
                 variant="ghost"
+                title="Лише поточний топік"
                 className="inline-flex items-center gap-2 text-red-300"
               >
                 <RotateCcw size={16} /> Скинути прогрес
+              </Button>
+              <Button
+                onClick={() => {
+                  if (confirm('Скинути позначки прочитаного в усіх топіках?')) {
+                    resetAllReadState()
+                  }
+                }}
+                variant="ghost"
+                title="Усі топіки"
+                className="inline-flex items-center gap-2 text-red-300"
+              >
+                <RotateCcw size={16} /> Скинути все
               </Button>
             </div>
           </div>
