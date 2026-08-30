@@ -20,7 +20,7 @@ export const TOPICS: TopicMeta[] = [
     blurb:
       'Практика коду: LeetCode-редактор, шпаргалка JS/TS та інтерв’ю-завдання рівня Middle/Senior.',
     accent: 'orange',
-    formats: ['practice', 'extended', 'cheatsheet', 'tasks'],
+    formats: ['practice', 'cheatsheet', 'tasks'],
     badges: ['LeetCode', 'Шпаргалка', 'Інтерв’ю'],
   },
   {

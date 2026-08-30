@@ -76,10 +76,7 @@ export default async function ProblemPage({ params }: PageProps) {
       />
       <GlassNavbar
         href="/problems"
-        links={[
-          { label: 'Усі задачі', href: '/problems' },
-          { label: 'Теорія', href: '/leetcode' },
-        ]}
+        links={[{ label: 'Усі задачі', href: '/problems' }]}
       />
       <main className="min-h-screen" lang="en">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -94,6 +91,7 @@ export default async function ProblemPage({ params }: PageProps) {
                 companies={companies}
                 editorial={problem.editorial}
                 solution={problem.solution}
+                approach={problem.approach}
               />
             </div>
 

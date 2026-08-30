@@ -81,15 +81,6 @@ async function enumerateKeys(dir) {
     }
   }
 
-  // LeetCode sections + tasks
-  const leet = await tryImport(dir, 'leetcode.ts')
-  for (const section of leet?.leetcodeData?.sections ?? []) {
-    if (section?.id) push(`leetcode:${section.id}`)
-    for (const task of section?.tasks ?? []) {
-      if (task?.id) push(`leetcode-task:${task.id}`)
-    }
-  }
-
   // Practice tasks (re-export shim; flat file at older refs — both export `practiceTasks`)
   const practice = await tryImport(dir, 'practiceTasks.ts')
   for (const task of practice?.practiceTasks ?? []) {

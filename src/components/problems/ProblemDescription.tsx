@@ -1,5 +1,6 @@
 'use client'
 
+import 'highlight.js/styles/github-dark.css'
 import { BookOpen, Lightbulb } from 'lucide-react'
 import { GlassCard } from '@/components/glass/GlassCard'
 import { Badge } from '@/components/ui/Badge'
@@ -11,6 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { highlight } from '@/lib/cheatsheet/highlight'
+import { cn } from '@/lib/utils'
 import MarkdownIt from 'markdown-it'
 
 const md = new MarkdownIt()
@@ -23,6 +26,7 @@ interface ProblemDescriptionProps {
   companies: string[]
   editorial?: string | null
   solution?: string | null
+  approach?: string | null
 }
 
 const difficultyColors = {
@@ -66,6 +70,7 @@ export function ProblemDescription({
   companies,
   editorial,
   solution,
+  approach,
 }: ProblemDescriptionProps) {
   const { main, examples, constraints } = parseDescription(description)
 
@@ -73,6 +78,8 @@ export function ProblemDescription({
   const examplesHtml = examples ? md.render(examples) : ''
   const constraintsHtml = constraints ? md.render(constraints) : ''
   const editorialHtml = editorial ? md.render(editorial) : ''
+  const approachHtml = approach ? md.render(approach) : ''
+  const solutionHtml = solution ? highlight(solution) : ''
 
   return (
     <div className="space-y-6">
@@ -101,22 +108,46 @@ export function ProblemDescription({
               </Dialog>
             )}
 
-            {solution && (
+            {(solution || approachHtml) && (
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="secondary" size="sm" className="inline-flex items-center gap-1.5">
                     <Lightbulb size={15} className="text-cyan-400" /> Solution
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-5xl">
                   <DialogHeader>
                     <DialogTitle>
                       <span className="text-cyan-400">💡</span> Solution
                     </DialogTitle>
                   </DialogHeader>
-                  <pre className="text-slate-200 text-sm overflow-x-auto custom-scrollbar">
-                    <code>{solution}</code>
-                  </pre>
+                  <div
+                    className={cn(
+                      'grid gap-6',
+                      approachHtml && solution && 'md:grid-cols-2',
+                    )}
+                  >
+                    {approachHtml && (
+                      <div className="min-w-0">
+                        <h3 className="mb-2 text-sm font-semibold text-cyan-300">Підхід</h3>
+                        <div
+                          className="prose prose-invert max-w-none text-slate-200"
+                          dangerouslySetInnerHTML={{ __html: approachHtml }}
+                        />
+                      </div>
+                    )}
+                    {solution && (
+                      <div className="min-w-0">
+                        <h3 className="mb-2 text-sm font-semibold text-cyan-300">Код</h3>
+                        <pre className="overflow-x-auto custom-scrollbar rounded-lg border border-white/10 bg-black/40 p-3 text-[13px] leading-relaxed">
+                          <code
+                            className="hljs bg-transparent p-0 font-mono"
+                            dangerouslySetInnerHTML={{ __html: solutionHtml }}
+                          />
+                        </pre>
+                      </div>
+                    )}
+                  </div>
                 </DialogContent>
               </Dialog>
             )}
