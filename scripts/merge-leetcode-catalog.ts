@@ -88,12 +88,19 @@ if (existsSync(TESTCASES)) {
     }
   >
   for (const [slug, entry] of Object.entries(sidecar)) {
-    if (entry.status !== 'ok' || !entry.cases?.length) continue
     const row = bySlug.get(slug)
     if (!row) continue
-    row.testCases = JSON.stringify(entry.cases)
-    if (entry.meta) row.signature = JSON.stringify(entry.meta)
-    withTests++
+    if (entry.status === 'ok' && entry.cases?.length) {
+      row.testCases = JSON.stringify(entry.cases)
+      if (entry.meta) row.signature = JSON.stringify(entry.meta)
+      withTests++
+    } else {
+      // Status regressed (no-metadata / no-solution / exec-failed / …): drop any
+      // test cases + signature folded in by an earlier run so the app falls back
+      // to the "no tests yet" note instead of judging against stale data.
+      row.testCases = '[]'
+      delete row.signature
+    }
   }
 }
 

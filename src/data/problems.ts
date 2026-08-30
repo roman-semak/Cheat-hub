@@ -103,7 +103,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Sliding Window\"]",
     companies: "[\"Amazon\",\"Google\",\"Microsoft\",\"Meta\"]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar lengthOfLongestSubstring = function(s) {\n    // Your solution here\n};",
-    testCases: "[{\"input\":\"\\\"abcabcbb\\\"\",\"expected\":\"3\"},{\"input\":\"\\\"bbbbb\\\"\",\"expected\":\"1\"},{\"input\":\"\\\"pwwkew\\\"\",\"expected\":\"3\"}]",
+    testCases: "[]",
     solution: "var lengthOfLongestSubstring = function(s) {\n    const charIndex = {};\n    let maxLen = 0;\n    let start = 0;\n\n    for (let i = 0; i < s.length; i++) {\n        if (charIndex[s[i]] !== undefined && charIndex[s[i]] >= start) {\n            start = charIndex[s[i]] + 1;\n        }\n        charIndex[s[i]] = i;\n        maxLen = Math.max(maxLen, i - start + 1);\n    }\n\n    return maxLen;\n};",
     editorial: "## Approach: Sliding Window\nUse a sliding window with a hash map to track character positions. Expand the window and update the maximum length when a duplicate is found.\n\n**Time Complexity:** O(n)\n**Space Complexity:** O(min(m, n)) where m is charset size",
   },
@@ -2338,7 +2338,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} low\n * @param {number} high\n * @return {number}\n */\nvar countSymmetricIntegers = function(low, high) {\n    \n};",
-    testCases: "[{\"input\":\"[1,100]\",\"expected\":\"9\"},{\"input\":\"[1200,1230]\",\"expected\":\"4\"}]",
+    testCases: "[]",
   },
   {
     slug: "check-if-a-string-is-an-acronym-of-words",
@@ -3499,7 +3499,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maximumXOR = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"[[3,2,4,6]]\",\"expected\":\"7\"},{\"input\":\"[[1,2,3,9,2]]\",\"expected\":\"11\"}]",
+    testCases: "[]",
   },
   {
     slug: "neighboring-bitwise-xor",

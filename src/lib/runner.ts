@@ -90,10 +90,18 @@ ${code}
   }
 }
 
-/** Extract the entry function name from `var`/`const`/`function name` declarations. */
+/**
+ * Extract the entry function name from `var`/`const`/`function name`
+ * declarations. Names starting with `_` are skipped: the TypeScript transform
+ * (sucrase) prepends helpers like `_nullishCoalesce` / `_optionalChain` when the
+ * code uses `??` / `?.`, and those must not be mistaken for the solution.
+ */
 export function extractFunctionName(code: string): string {
-  const match = code.match(/(?:var|const|function)\s+(\w+)\s*[=\s(]/)
-  return match?.[1] || 'solution'
+  const re = /(?:var|const|function)\s+(\w+)\s*[=\s(]/g
+  for (const match of code.matchAll(re)) {
+    if (!match[1].startsWith('_')) return match[1]
+  }
+  return 'solution'
 }
 
 function parseSignature(
@@ -146,8 +154,10 @@ export async function runCode(
     }
   }
 
-  const fnName = extractFunctionName(jsCode)
   const sig = parseSignature(signature)
+  // The LeetCode signature name is authoritative when we have it; otherwise fall
+  // back to scanning the code (skipping sucrase helper declarations).
+  const fnName = sig?.name || extractFunctionName(jsCode)
 
   // With a signature we run through the LeetCode-shape adapter: array inputs are
   // turned into ListNode/TreeNode where needed, `void` problems are judged by
