@@ -1,0 +1,174 @@
+{
+  "3sum": {
+    "solution": "function threeSum(nums: number[]): number[][] {\n    nums.sort((a, b) => a - b);\n    const ans: number[][] = [];\n    const n = nums.length;\n    for (let i = 0; i < n - 2 && nums[i] <= 0; i++) {\n        if (i > 0 && nums[i] === nums[i - 1]) {\n            continue;\n        }\n        let j = i + 1;\n        let k = n - 1;\n        while (j < k) {\n            const x = nums[i] + nums[j] + nums[k];\n            if (x < 0) {\n                ++j;\n            } else if (x > 0) {\n                --k;\n            } else {\n                ans.push([nums[i], nums[j++], nums[k--]]);\n                while (j < k && nums[j] === nums[j - 1]) {\n                    ++j;\n                }\n                while (j < k && nums[k] === nums[k + 1]) {\n                    --k;\n                }\n            }\n        }\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "3sum-closest": {
+    "solution": "function threeSumClosest(nums: number[], target: number): number {\n    nums.sort((a, b) => a - b);\n    let ans: number = Infinity;\n    const n = nums.length;\n    for (let i = 0; i < n; ++i) {\n        let j = i + 1;\n        let k = n - 1;\n        while (j < k) {\n            const t: number = nums[i] + nums[j] + nums[k];\n            if (t === target) {\n                return t;\n            }\n            if (Math.abs(t - target) < Math.abs(ans - target)) {\n                ans = t;\n            }\n            if (t > target) {\n                --k;\n            } else {\n                ++j;\n            }\n        }\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "4sum": {
+    "solution": "function fourSum(nums: number[], target: number): number[][] {\n    const n = nums.length;\n    const ans: number[][] = [];\n    if (n < 4) {\n        return ans;\n    }\n    nums.sort((a, b) => a - b);\n    for (let i = 0; i < n - 3; ++i) {\n        if (i > 0 && nums[i] === nums[i - 1]) {\n            continue;\n        }\n        for (let j = i + 1; j < n - 2; ++j) {\n            if (j > i + 1 && nums[j] === nums[j - 1]) {\n                continue;\n            }\n            let [k, l] = [j + 1, n - 1];\n            while (k < l) {\n                const x = nums[i] + nums[j] + nums[k] + nums[l];\n                if (x < target) {\n                    ++k;\n                } else if (x > target) {\n                    --l;\n                } else {\n                    ans.push([nums[i], nums[j], nums[k++], nums[l--]]);\n                    while (k < l && nums[k] === nums[k - 1]) {\n                        ++k;\n                    }\n                    while (k < l && nums[l] === nums[l + 1]) {\n                        --l;\n                    }\n                }\n            }\n        }\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "combination-sum": {
+    "solution": "function combinationSum(candidates: number[], target: number): number[][] {\n    candidates.sort((a, b) => a - b);\n    const ans: number[][] = [];\n    const t: number[] = [];\n    const dfs = (i: number, s: number) => {\n        if (s === 0) {\n            ans.push(t.slice());\n            return;\n        }\n        if (s < candidates[i]) {\n            return;\n        }\n        for (let j = i; j < candidates.length; ++j) {\n            t.push(candidates[j]);\n            dfs(j, s - candidates[j]);\n            t.pop();\n        }\n    };\n    dfs(0, target);\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "combination-sum-ii": {
+    "solution": "function combinationSum2(candidates: number[], target: number): number[][] {\n    candidates.sort((a, b) => a - b);\n    const ans: number[][] = [];\n    const t: number[] = [];\n    const dfs = (i: number, s: number) => {\n        if (s === 0) {\n            ans.push(t.slice());\n            return;\n        }\n        if (i >= candidates.length || s < candidates[i]) {\n            return;\n        }\n        for (let j = i; j < candidates.length; j++) {\n            if (j > i && candidates[j] === candidates[j - 1]) {\n                continue;\n            }\n            t.push(candidates[j]);\n            dfs(j + 1, s - candidates[j]);\n            t.pop();\n        }\n    };\n    dfs(0, target);\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "container-with-most-water": {
+    "solution": "function maxArea(height: number[]): number {\n    let [l, r] = [0, height.length - 1];\n    let ans = 0;\n    while (l < r) {\n        const t = Math.min(height[l], height[r]) * (r - l);\n        ans = Math.max(ans, t);\n        if (height[l] < height[r]) {\n            ++l;\n        } else {\n            --r;\n        }\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "count-and-say": {
+    "solution": "function countAndSay(n: number): string {\n    let s = '1';\n    for (let i = 1; i < n; i++) {\n        let t = '';\n        let cur = s[0];\n        let count = 1;\n        for (let j = 1; j < s.length; j++) {\n            if (s[j] !== cur) {\n                t += `${count}${cur}`;\n                cur = s[j];\n                count = 0;\n            }\n            count++;\n        }\n        t += `${count}${cur}`;\n        s = t;\n    }\n    return s;\n}",
+    "solutionSource": "doocs"
+  },
+  "divide-two-integers": {
+    "solution": "function divide(a: number, b: number): number {\n    if (b === 1) {\n        return a;\n    }\n    if (a === -(2 ** 31) && b === -1) {\n        return 2 ** 31 - 1;\n    }\n\n    const sign: boolean = (a > 0 && b > 0) || (a < 0 && b < 0);\n    a = a > 0 ? -a : a;\n    b = b > 0 ? -b : b;\n    let ans: number = 0;\n\n    while (a <= b) {\n        let x: number = b;\n        let cnt: number = 1;\n\n        while (x >= -(2 ** 30) && a <= x << 1) {\n            x <<= 1;\n            cnt <<= 1;\n        }\n\n        ans += cnt;\n        a -= x;\n    }\n\n    return sign ? ans : -ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "find-first-and-last-position-of-element-in-sorted-array": {
+    "solution": "function searchRange(nums: number[], target: number): number[] {\n    const search = (x: number): number => {\n        let [left, right] = [0, nums.length];\n        while (left < right) {\n            const mid = (left + right) >> 1;\n            if (nums[mid] >= x) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        }\n        return left;\n    };\n    const l = search(target);\n    const r = search(target + 1);\n    return l === r ? [-1, -1] : [l, r - 1];\n}",
+    "solutionSource": "doocs"
+  },
+  "find-the-index-of-the-first-occurrence-in-a-string": {
+    "solution": "function strStr(haystack: string, needle: string): number {\n    const m = haystack.length;\n    const n = needle.length;\n    for (let i = 0; i <= m - n; i++) {\n        let isEqual = true;\n        for (let j = 0; j < n; j++) {\n            if (haystack[i + j] !== needle[j]) {\n                isEqual = false;\n                break;\n            }\n        }\n        if (isEqual) {\n            return i;\n        }\n    }\n    return -1;\n}",
+    "solutionSource": "doocs"
+  },
+  "first-missing-positive": {
+    "solution": "function firstMissingPositive(nums: number[]): number {\n    const n = nums.length;\n    for (let i = 0; i < n; i++) {\n        while (nums[i] >= 1 && nums[i] <= n && nums[i] !== nums[nums[i] - 1]) {\n            const j = nums[i] - 1;\n            [nums[i], nums[j]] = [nums[j], nums[i]];\n        }\n    }\n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i + 1) {\n            return i + 1;\n        }\n    }\n    return n + 1;\n}",
+    "solutionSource": "doocs"
+  },
+  "generate-parentheses": {
+    "solution": "function generateParenthesis(n: number): string[] {\n    const dfs = (l: number, r: number, t: string) => {\n        if (l > n || r > n || l < r) {\n            return;\n        }\n        if (l == n && r == n) {\n            ans.push(t);\n            return;\n        }\n        dfs(l + 1, r, t + '(');\n        dfs(l, r + 1, t + ')');\n    };\n    const ans: string[] = [];\n    dfs(0, 0, '');\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "integer-to-roman": {
+    "solution": "function intToRoman(num: number): string {\n    const cs: string[] = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];\n    const vs: number[] = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];\n    const ans: string[] = [];\n    for (let i = 0; i < vs.length; ++i) {\n        while (num >= vs[i]) {\n            num -= vs[i];\n            ans.push(cs[i]);\n        }\n    }\n    return ans.join('');\n}",
+    "solutionSource": "doocs"
+  },
+  "jump-game-ii": {
+    "solution": "function jump(nums: number[]): number {\n    let [ans, mx, last] = [0, 0, 0];\n    for (let i = 0; i < nums.length - 1; ++i) {\n        mx = Math.max(mx, i + nums[i]);\n        if (last === i) {\n            ++ans;\n            last = mx;\n        }\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "letter-combinations-of-a-phone-number": {
+    "solution": "function letterCombinations(digits: string): string[] {\n    if (digits.length === 0) {\n        return [];\n    }\n    const ans: string[] = [''];\n    const d = ['abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];\n    for (const i of digits) {\n        const s = d[+i - 2];\n        const t: string[] = [];\n        for (const a of ans) {\n            for (const b of s) {\n                t.push(a + b);\n            }\n        }\n        ans.splice(0, ans.length, ...t);\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "longest-common-prefix": {
+    "solution": "function longestCommonPrefix(strs: string[]): string {\n    const len = strs.reduce((r, s) => Math.min(r, s.length), Infinity);\n    for (let i = len; i > 0; i--) {\n        const target = strs[0].slice(0, i);\n        if (strs.every(s => s.slice(0, i) === target)) {\n            return target;\n        }\n    }\n    return '';\n}",
+    "solutionSource": "doocs"
+  },
+  "longest-palindromic-substring": {
+    "solution": "function longestPalindrome(s: string): string {\n    const n = s.length;\n    const f: boolean[][] = Array(n)\n        .fill(0)\n        .map(() => Array(n).fill(true));\n    let k = 0;\n    let mx = 1;\n    for (let i = n - 2; i >= 0; --i) {\n        for (let j = i + 1; j < n; ++j) {\n            f[i][j] = false;\n            if (s[i] === s[j]) {\n                f[i][j] = f[i + 1][j - 1];\n                if (f[i][j] && mx < j - i + 1) {\n                    mx = j - i + 1;\n                    k = i;\n                }\n            }\n        }\n    }\n    return s.slice(k, k + mx);\n}",
+    "solutionSource": "doocs"
+  },
+  "longest-substring-without-repeating-characters": {
+    "solution": "function lengthOfLongestSubstring(s: string): number {\n    let ans = 0;\n    const cnt = new Map<string, number>();\n    const n = s.length;\n    for (let l = 0, r = 0; r < n; ++r) {\n        cnt.set(s[r], (cnt.get(s[r]) || 0) + 1);\n        while (cnt.get(s[r])! > 1) {\n            cnt.set(s[l], cnt.get(s[l])! - 1);\n            ++l;\n        }\n        ans = Math.max(ans, r - l + 1);\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "longest-valid-parentheses": {
+    "solution": "function longestValidParentheses(s: string): number {\n    const n = s.length;\n    const f: number[] = new Array(n + 1).fill(0);\n    for (let i = 2; i <= n; ++i) {\n        if (s[i - 1] === ')') {\n            if (s[i - 2] === '(') {\n                f[i] = f[i - 2] + 2;\n            } else {\n                const j = i - f[i - 1] - 1;\n                if (j && s[j - 1] === '(') {\n                    f[i] = f[i - 1] + 2 + f[j - 1];\n                }\n            }\n        }\n    }\n    return Math.max(...f);\n}",
+    "solutionSource": "doocs"
+  },
+  "median-of-two-sorted-arrays": {
+    "solution": "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n    const m = nums1.length;\n    const n = nums2.length;\n    const f = (i: number, j: number, k: number): number => {\n        if (i >= m) {\n            return nums2[j + k - 1];\n        }\n        if (j >= n) {\n            return nums1[i + k - 1];\n        }\n        if (k == 1) {\n            return Math.min(nums1[i], nums2[j]);\n        }\n        const p = Math.floor(k / 2);\n        const x = i + p - 1 < m ? nums1[i + p - 1] : 1 << 30;\n        const y = j + p - 1 < n ? nums2[j + p - 1] : 1 << 30;\n        return x < y ? f(i + p, j, k - p) : f(i, j + p, k - p);\n    };\n    const a = f(0, 0, Math.floor((m + n + 1) / 2));\n    const b = f(0, 0, Math.floor((m + n + 2) / 2));\n    return (a + b) / 2;\n}",
+    "solutionSource": "doocs"
+  },
+  "merge-k-sorted-lists": {
+    "solution": "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction mergeKLists(lists: Array<ListNode | null>): ListNode | null {\n    const pq = new PriorityQueue<ListNode>((a, b) => a.val - b.val);\n    lists.filter(head => head).forEach(head => pq.enqueue(head));\n    const dummy: ListNode = new ListNode();\n    let cur: ListNode = dummy;\n    while (!pq.isEmpty()) {\n        const node = pq.dequeue();\n        cur.next = node;\n        cur = cur.next;\n        if (node.next) {\n            pq.enqueue(node.next);\n        }\n    }\n    return dummy.next;\n}",
+    "solutionSource": "doocs"
+  },
+  "merge-two-sorted-lists": {
+    "solution": "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {\n    if (list1 == null || list2 == null) {\n        return list1 || list2;\n    }\n    if (list1.val < list2.val) {\n        list1.next = mergeTwoLists(list1.next, list2);\n        return list1;\n    } else {\n        list2.next = mergeTwoLists(list1, list2.next);\n        return list2;\n    }\n}",
+    "solutionSource": "doocs"
+  },
+  "multiply-strings": {
+    "solution": "function multiply(num1: string, num2: string): string {\n    if (num1 === '0' || num2 === '0') {\n        return '0';\n    }\n    const m: number = num1.length;\n    const n: number = num2.length;\n    const arr: number[] = Array(m + n).fill(0);\n    for (let i: number = m - 1; i >= 0; i--) {\n        const a: number = +num1[i];\n        for (let j: number = n - 1; j >= 0; j--) {\n            const b: number = +num2[j];\n            arr[i + j + 1] += a * b;\n        }\n    }\n    for (let i: number = arr.length - 1; i > 0; i--) {\n        arr[i - 1] += Math.floor(arr[i] / 10);\n        arr[i] %= 10;\n    }\n    let i: number = 0;\n    while (i < arr.length && arr[i] === 0) {\n        i++;\n    }\n    return arr.slice(i).join('');\n}",
+    "solutionSource": "doocs"
+  },
+  "next-permutation": {
+    "solution": "function nextPermutation(nums: number[]): void {\n    const n = nums.length;\n    let i = n - 2;\n    while (i >= 0 && nums[i] >= nums[i + 1]) {\n        --i;\n    }\n    if (i >= 0) {\n        for (let j = n - 1; j > i; --j) {\n            if (nums[j] > nums[i]) {\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n                break;\n            }\n        }\n    }\n    for (let j = n - 1; j > i; --j, ++i) {\n        [nums[i + 1], nums[j]] = [nums[j], nums[i + 1]];\n    }\n}",
+    "solutionSource": "doocs"
+  },
+  "palindrome-number": {
+    "solution": "function isPalindrome(x: number): boolean {\n    if (x < 0 || (x > 0 && x % 10 === 0)) {\n        return false;\n    }\n    let y = 0;\n    for (; y < x; x = ~~(x / 10)) {\n        y = y * 10 + (x % 10);\n    }\n    return x === y || x === ~~(y / 10);\n}",
+    "solutionSource": "doocs"
+  },
+  "permutations": {
+    "solution": "function permute(nums: number[]): number[][] {\n    const n = nums.length;\n    const ans: number[][] = [];\n    const vis: boolean[] = Array(n).fill(false);\n    const t: number[] = Array(n).fill(0);\n    const dfs = (i: number) => {\n        if (i >= n) {\n            ans.push(t.slice());\n            return;\n        }\n        for (let j = 0; j < n; ++j) {\n            if (!vis[j]) {\n                vis[j] = true;\n                t[i] = nums[j];\n                dfs(i + 1);\n                vis[j] = false;\n            }\n        }\n    };\n    dfs(0);\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "permutations-ii": {
+    "solution": "function permuteUnique(nums: number[]): number[][] {\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    const ans: number[][] = [];\n    const t: number[] = Array(n);\n    const vis: boolean[] = Array(n).fill(false);\n    const dfs = (i: number) => {\n        if (i === n) {\n            ans.push(t.slice());\n            return;\n        }\n        for (let j = 0; j < n; ++j) {\n            if (vis[j] || (j > 0 && nums[j] === nums[j - 1] && !vis[j - 1])) {\n                continue;\n            }\n            t[i] = nums[j];\n            vis[j] = true;\n            dfs(i + 1);\n            vis[j] = false;\n        }\n    };\n    dfs(0);\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "regular-expression-matching": {
+    "solution": "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function (s, p) {\n    const m = s.length;\n    const n = p.length;\n    const f = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    const dfs = (i, j) => {\n        if (j >= n) {\n            return i === m;\n        }\n        if (f[i][j]) {\n            return f[i][j] === 1;\n        }\n        let res = -1;\n        if (j + 1 < n && p[j + 1] === '*') {\n            if (dfs(i, j + 2) || (i < m && (s[i] === p[j] || p[j] === '.') && dfs(i + 1, j))) {\n                res = 1;\n            }\n        } else if (i < m && (s[i] === p[j] || p[j] === '.') && dfs(i + 1, j + 1)) {\n            res = 1;\n        }\n        f[i][j] = res;\n        return res === 1;\n    };\n    return dfs(0, 0);\n};",
+    "solutionSource": "doocs"
+  },
+  "remove-duplicates-from-sorted-array": {
+    "solution": "function removeDuplicates(nums: number[]): number {\n    let k: number = 0;\n    for (const x of nums) {\n        if (k === 0 || x !== nums[k - 1]) {\n            nums[k++] = x;\n        }\n    }\n    return k;\n}",
+    "solutionSource": "doocs"
+  },
+  "remove-element": {
+    "solution": "function removeElement(nums: number[], val: number): number {\n    let k: number = 0;\n    for (const x of nums) {\n        if (x !== val) {\n            nums[k++] = x;\n        }\n    }\n    return k;\n}",
+    "solutionSource": "doocs"
+  },
+  "remove-nth-node-from-end-of-list": {
+    "solution": "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {\n    const dummy = new ListNode(0, head);\n    let fast = dummy;\n    let slow = dummy;\n    while (n--) {\n        fast = fast.next;\n    }\n    while (fast.next) {\n        slow = slow.next;\n        fast = fast.next;\n    }\n    slow.next = slow.next.next;\n    return dummy.next;\n}",
+    "solutionSource": "doocs"
+  },
+  "reverse-integer": {
+    "solution": "/**\n * @param {number} x\n * @return {number}\n */\nvar reverse = function (x) {\n    const mi = -(2 ** 31);\n    const mx = 2 ** 31 - 1;\n    let ans = 0;\n    for (; x != 0; x = ~~(x / 10)) {\n        if (ans < ~~(mi / 10) || ans > ~~(mx / 10)) {\n            return 0;\n        }\n        ans = ans * 10 + (x % 10);\n    }\n    return ans;\n};",
+    "solutionSource": "doocs"
+  },
+  "reverse-nodes-in-k-group": {
+    "solution": "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction reverseKGroup(head: ListNode | null, k: number): ListNode | null {\n    const dummy = new ListNode(0, head);\n    let pre = dummy;\n    while (pre !== null) {\n        let cur: ListNode | null = pre;\n        for (let i = 0; i < k; i++) {\n            cur = cur?.next || null;\n            if (cur === null) {\n                return dummy.next;\n            }\n        }\n\n        const node = pre.next;\n        const nxt = cur?.next || null;\n        cur!.next = null;\n        pre.next = reverse(node);\n        node!.next = nxt;\n        pre = node!;\n    }\n\n    return dummy.next;\n}\n\nfunction reverse(head: ListNode | null): ListNode | null {\n    let dummy: ListNode | null = null;\n    let cur = head;\n\n    while (cur !== null) {\n        const nxt = cur.next;\n        cur.next = dummy;\n        dummy = cur;\n        cur = nxt;\n    }\n\n    return dummy;\n}",
+    "solutionSource": "doocs"
+  },
+  "roman-to-integer": {
+    "solution": "function romanToInt(s: string): number {\n    const d: Map<string, number> = new Map([\n        ['I', 1],\n        ['V', 5],\n        ['X', 10],\n        ['L', 50],\n        ['C', 100],\n        ['D', 500],\n        ['M', 1000],\n    ]);\n    let ans: number = d.get(s[s.length - 1])!;\n    for (let i = 0; i < s.length - 1; ++i) {\n        const sign = d.get(s[i])! < d.get(s[i + 1])! ? -1 : 1;\n        ans += sign * d.get(s[i])!;\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "rotate-image": {
+    "solution": "/**\n Do not return anything, modify matrix in-place instead.\n */\nfunction rotate(matrix: number[][]): void {\n    matrix.reverse();\n    for (let i = 0; i < matrix.length; ++i) {\n        for (let j = 0; j < i; ++j) {\n            const t = matrix[i][j];\n            matrix[i][j] = matrix[j][i];\n            matrix[j][i] = t;\n        }\n    }\n}",
+    "solutionSource": "doocs"
+  },
+  "search-in-rotated-sorted-array": {
+    "solution": "function search(nums: number[], target: number): number {\n    const n = nums.length;\n    let left = 0,\n        right = n - 1;\n    while (left < right) {\n        const mid = (left + right) >> 1;\n        if (nums[0] <= nums[mid]) {\n            if (nums[0] <= target && target <= nums[mid]) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        } else {\n            if (nums[mid] < target && target <= nums[n - 1]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n    }\n    return nums[left] == target ? left : -1;\n}",
+    "solutionSource": "doocs"
+  },
+  "search-insert-position": {
+    "solution": "function searchInsert(nums: number[], target: number): number {\n    let [l, r] = [0, nums.length];\n    while (l < r) {\n        const mid = (l + r) >> 1;\n        if (nums[mid] >= target) {\n            r = mid;\n        } else {\n            l = mid + 1;\n        }\n    }\n    return l;\n}",
+    "solutionSource": "doocs"
+  },
+  "string-to-integer-atoi": {
+    "solution": "const myAtoi = function (str) {\n    str = str.trim();\n    if (!str) return 0;\n    let isPositive = 1;\n    let i = 0,\n        ans = 0;\n    if (str[i] === '+') {\n        isPositive = 1;\n        i++;\n    } else if (str[i] === '-') {\n        isPositive = 0;\n        i++;\n    }\n    for (; i < str.length; i++) {\n        let t = str.charCodeAt(i) - 48;\n        if (t > 9 || t < 0) break;\n        if (ans > 2147483647 / 10 || ans > (2147483647 - t) / 10) {\n            return isPositive ? 2147483647 : -2147483648;\n        } else {\n            ans = ans * 10 + t;\n        }\n    }\n    return isPositive ? ans : -ans;\n};",
+    "solutionSource": "doocs"
+  },
+  "substring-with-concatenation-of-all-words": {
+    "solution": "function findSubstring(s: string, words: string[]): number[] {\n    const cnt: Map<string, number> = new Map();\n    for (const w of words) {\n        cnt.set(w, (cnt.get(w) || 0) + 1);\n    }\n    const ans: number[] = [];\n    const [m, n, k] = [s.length, words.length, words[0].length];\n    for (let i = 0; i < k; i++) {\n        let [l, r] = [i, i];\n        const cnt1: Map<string, number> = new Map();\n        while (r + k <= m) {\n            const t = s.substring(r, r + k);\n            r += k;\n            if (!cnt.has(t)) {\n                cnt1.clear();\n                l = r;\n                continue;\n            }\n            cnt1.set(t, (cnt1.get(t) || 0) + 1);\n            while (cnt1.get(t)! > cnt.get(t)!) {\n                const w = s.substring(l, l + k);\n                cnt1.set(w, cnt1.get(w)! - 1);\n                if (cnt1.get(w) === 0) {\n                    cnt1.delete(w);\n                }\n                l += k;\n            }\n            if (r - l === n * k) {\n                ans.push(l);\n            }\n        }\n    }\n    return ans;\n}",
+    "solutionSource": "doocs"
+  },
+  "swap-nodes-in-pairs": {
+    "solution": "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction swapPairs(head: ListNode | null): ListNode | null {\n    if (!head || !head.next) {\n        return head;\n    }\n    const t = swapPairs(head.next.next);\n    const p = head.next;\n    p.next = head;\n    head.next = t;\n    return p;\n}",
+    "solutionSource": "doocs"
+  },
+  "valid-sudoku": {
+    "solution": "function isValidSudoku(board: string[][]): boolean {\n    const row: boolean[][] = Array.from({ length: 9 }, () =>\n        Array.from({ length: 9 }, () => false),\n    );\n    const col: boolean[][] = Array.from({ length: 9 }, () =>\n        Array.from({ length: 9 }, () => false),\n    );\n    const sub: boolean[][] = Array.from({ length: 9 }, () =>\n        Array.from({ length: 9 }, () => false),\n    );\n    for (let i = 0; i < 9; ++i) {\n        for (let j = 0; j < 9; ++j) {\n            const num = board[i][j].charCodeAt(0) - '1'.charCodeAt(0);\n            if (num < 0 || num > 8) {\n                continue;\n            }\n            const k = Math.floor(i / 3) * 3 + Math.floor(j / 3);\n            if (row[i][num] || col[j][num] || sub[k][num]) {\n                return false;\n            }\n            row[i][num] = true;\n            col[j][num] = true;\n            sub[k][num] = true;\n        }\n    }\n    return true;\n}",
+    "solutionSource": "doocs"
+  },
+  "wildcard-matching": {
+    "solution": "function isMatch(s: string, p: string): boolean {\n    const m = s.length;\n    const n = p.length;\n    const f: number[][] = Array.from({ length: m + 1 }, () =>\n        Array.from({ length: n + 1 }, () => -1),\n    );\n    const dfs = (i: number, j: number): boolean => {\n        if (i >= m) {\n            return j >= n || (p[j] === '*' && dfs(i, j + 1));\n        }\n        if (j >= n) {\n            return false;\n        }\n        if (f[i][j] !== -1) {\n            return f[i][j] === 1;\n        }\n        if (p[j] === '*') {\n            f[i][j] = dfs(i + 1, j) || dfs(i, j + 1) ? 1 : 0;\n        } else {\n            f[i][j] = (p[j] === '?' || s[i] === p[j]) && dfs(i + 1, j + 1) ? 1 : 0;\n        }\n        return f[i][j] === 1;\n    };\n    return dfs(0, 0);\n}",
+    "solutionSource": "doocs"
+  },
+  "zigzag-conversion": {
+    "solution": "function convert(s: string, numRows: number): string {\n    if (numRows === 1) {\n        return s;\n    }\n    const g: string[][] = new Array(numRows).fill(0).map(() => []);\n    let i = 0;\n    let k = -1;\n    for (const c of s) {\n        g[i].push(c);\n        if (i === numRows - 1 || i === 0) {\n            k = -k;\n        }\n        i += k;\n    }\n    return g.flat().join('');\n}",
+    "solutionSource": "doocs"
+  }
+}

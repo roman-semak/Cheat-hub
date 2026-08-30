@@ -59,7 +59,9 @@
       "Bash(git --no-pager show 8b0b298 --stat)",
       "Bash(env)",
       "Bash(curl -s -m 5 -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"function lengthOfLongestSubstring\\(s\\){let set=new Set\\(\\),l=0,max=0;for\\(let r=0;r<s.length;r++\\){while\\(set.has\\(s[r]\\)\\)set.delete\\(s[l++]\\);set.add\\(s[r]\\);max=Math.max\\(max,r-l+1\\)}return max}\",\"language\":\"typescript\",\"testCases\":[{\"input\":\"[\\\\\"abcabcbb\\\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\\\"bbbbb\\\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\\\"pwwkew\\\\\"]\",\"expected\":\"3\"}],\"signature\":\"{\\\\\"name\\\\\":\\\\\"lengthOfLongestSubstring\\\\\",\\\\\"paramTypes\\\\\":[\\\\\"string\\\\\"],\\\\\"returnType\\\\\":\\\\\"integer\\\\\"}\"}')",
-      "Bash(curl -s -o /tmp/run_resp.txt -w \"%{http_code}\\\\n\" -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"var reverseString=function\\(s\\){s.reverse\\(\\)}\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[\\\\\"h\\\\\",\\\\\"e\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"o\\\\\"]]\",\"expected\":\"[\\\\\"o\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"e\\\\\",\\\\\"h\\\\\"]\"}]}')"
+      "Bash(curl -s -o /tmp/run_resp.txt -w \"%{http_code}\\\\n\" -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"var reverseString=function\\(s\\){s.reverse\\(\\)}\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[\\\\\"h\\\\\",\\\\\"e\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"o\\\\\"]]\",\"expected\":\"[\\\\\"o\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"e\\\\\",\\\\\"h\\\\\"]\"}]}')",
+      "Bash(python3 -c \"import json;d=json.load\\(open\\('src/lib/cheatsheet/contentManifest.generated.json'\\)\\);print\\('valid json,',len\\(d['entries']\\),'entries'\\)\")",
+      "Bash(python3 -c ' *)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"

@@ -23,6 +23,7 @@ import {
   SANDBOX_PRELUDE,
   type CompactSignature,
 } from '../src/lib/leetcode-shapes'
+import { fetchReferenceSolution } from './lib/doocs'
 
 interface MetaData {
   name: string
@@ -43,9 +44,6 @@ const SLUG_ALIASES: Record<string, string> = {
   'longest-substring-without-repeating':
     'longest-substring-without-repeating-characters',
 }
-const RAW = 'https://raw.githubusercontent.com/doocs/leetcode/main/solution'
-const API = 'https://api.github.com/repos/doocs/leetcode/contents/solution'
-
 interface Case {
   input: string
   expected: string
@@ -81,51 +79,6 @@ function saveSidecar(data: Sidecar) {
     Object.entries(data).sort(([a], [b]) => a.localeCompare(b)),
   )
   writeFileSync(SIDECAR, JSON.stringify(sorted, null, 2) + '\n', 'utf8')
-}
-
-function bucket(n: number): string {
-  const lo = Math.floor(n / 100) * 100
-  const pad = (x: number) => String(x).padStart(4, '0')
-  return `${pad(lo)}-${pad(lo + 99)}`
-}
-
-const bucketListings = new Map<string, Promise<string[]>>()
-async function listBucket(b: string): Promise<string[]> {
-  if (!bucketListings.has(b)) {
-    bucketListings.set(
-      b,
-      fetch(`${API}/${b}`, { headers: { 'User-Agent': 'gen-testcases' } })
-        .then((r) => (r.ok ? r.json() : []))
-        .then((d: unknown) =>
-          Array.isArray(d) ? (d as { name: string }[]).map((x) => x.name) : [],
-        )
-        .catch(() => []),
-    )
-  }
-  return bucketListings.get(b)!
-}
-
-/** Fetch the doocs reference solution (TS preferred, JS fallback). */
-async function fetchReferenceSolution(
-  frontendId: number,
-  title: string,
-): Promise<string | null> {
-  const b = bucket(frontendId)
-  const id4 = String(frontendId).padStart(4, '0')
-  const candidates = [`${id4}.${title}`]
-
-  const listed = await listBucket(b)
-  const match = listed.find((name) => name.startsWith(`${id4}.`))
-  if (match && !candidates.includes(match)) candidates.push(match)
-
-  for (const folder of candidates) {
-    for (const file of ['Solution.ts', 'Solution.js']) {
-      const url = `${RAW}/${b}/${encodeURIComponent(folder)}/${file}`
-      const res = await fetch(url)
-      if (res.ok) return await res.text()
-    }
-  }
-  return null
 }
 
 async function generateForProblem(

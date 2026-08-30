@@ -16,7 +16,9 @@
     "prisma:seed": "node prisma/seed.ts",
     "stamp:new": "tsx scripts/stamp-new-content.mjs",
     "merge:leetcode": "tsx scripts/merge-leetcode-catalog.ts",
-    "gen:testcases": "tsx scripts/generate-testcases.ts"
+    "gen:testcases": "tsx scripts/generate-testcases.ts",
+    "gen:solutions": "tsx scripts/generate-solutions.ts",
+    "verify:approaches": "tsx scripts/verify-approaches.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.8.1",

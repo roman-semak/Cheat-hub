@@ -14,6 +14,7 @@ import type { Section, TaskCard } from '../src/lib/cheatsheet/types'
 
 const OUT = resolve('src/data/problems.ts')
 const TESTCASES = resolve('src/data/testcases.generated.json')
+const APPROACHES = resolve('src/data/approaches.json')
 
 const FIELDS = [
   'slug', 'title', 'frontendId', 'difficulty', 'acRate', 'description',
@@ -29,7 +30,7 @@ function toRow(p: Record<string, unknown>): Row {
   return r
 }
 
-function buildApproach(task: TaskCard): string {
+function buildApproach(task: { hint?: string; complexity?: string }): string {
   const parts: string[] = []
   if (task.hint) parts.push(task.hint.trim())
   if (task.complexity) parts.push(`**Складність:** ${task.complexity.trim()}`)
@@ -75,6 +76,28 @@ for (const section of leetcodeData.sections as Section[]) {
   }
 }
 
+// Fold in the hand/script-maintained approaches sidecar
+// (src/data/approaches.json): fills `approach` (UA hint + complexity) and
+// `solution` for problems the NeetCode catalog does not cover. The catalog is
+// applied first, so it wins on conflicts.
+let approaches = 0
+if (existsSync(APPROACHES)) {
+  const extra = JSON.parse(readFileSync(APPROACHES, 'utf8')) as Record<
+    string,
+    { hint?: string; complexity?: string; solution?: string }
+  >
+  for (const [slug, e] of Object.entries(extra)) {
+    const row = bySlug.get(slug)
+    if (!row) continue
+    const approach = buildApproach(e)
+    if (approach && !row.approach) {
+      row.approach = approach
+      approaches++
+    }
+    if (e.solution && !row.solution) row.solution = e.solution
+  }
+}
+
 // Fold in generated test cases (src/data/testcases.generated.json is the source
 // of truth for `testCases`, produced by scripts/generate-testcases.ts).
 let withTests = 0
@@ -117,5 +140,5 @@ for (const row of rows) {
 
 writeFileSync(OUT, renderModule(rows), 'utf8')
 console.log(
-  `Merged catalog: ${matched} matched, ${stubs} stubs, ${withTests} with generated test cases, ${rows.length} problems total -> ${OUT}`,
+  `Merged catalog: ${matched} matched, ${stubs} stubs, +${approaches} approaches, ${withTests} with generated test cases, ${rows.length} problems total -> ${OUT}`,
 )

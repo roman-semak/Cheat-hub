@@ -166,8 +166,30 @@ DB. That file is AUTO-GENERATED — do not hand-edit it. Pipeline:
    `testCases` (LeetCode's API has no expected outputs).
 2. `scripts/export-problems.ts` — dumps `prisma/dev.db` → `src/data/problems.ts`.
 3. `npm run merge:leetcode` (`scripts/merge-leetcode-catalog.ts`) — folds in the
-   NeetCode-250 `approach` write-ups **and** `testCases` from the sidecar
-   `src/data/testcases.generated.json`. **Always run this after step 2.**
+   NeetCode-250 `approach` write-ups, the `src/data/approaches.json` sidecar
+   (see below), **and** `testCases` from `src/data/testcases.generated.json`.
+   **Always run this after step 2.**
+
+### Popup solutions — `src/data/approaches.json` (source of truth)
+
+Fills the "Solution" popup (`approach` = UA hint + `**Складність:**` line, and
+`solution` = reference code) for problems the NeetCode-250 catalog does not
+cover. Keyed by slug; committed; the catalog wins on conflicts.
+
+- `npm run gen:solutions` (`scripts/generate-solutions.ts`) — pulls the doocs
+  reference `solution` (original TS, verified to parse) for every problem
+  lacking one. Resumable; `-- --report` prints coverage, `-- --only=` / `--force`
+  / `--limit=` scope a subset. Falls back to a LeetCode query for the
+  `frontendId` when `problems.ts` has none.
+- `hint` + `complexity` are **hand-authored** (Ukrainian, style like the Two Sum
+  catalog entry) directly into the JSON — `gen:solutions` never touches them.
+- `npm run verify:approaches` (`scripts/verify-approaches.ts`) — runs every
+  sidecar `solution` through `src/lib/runner.ts` against
+  `testcases.generated.json`; non-zero exit on any FAIL. Run after editing.
+
+Entry shape: `{ hint?, complexity?, solution?, solutionSource?: "doocs"|"authored" }`.
+The shared doocs fetcher lives in `scripts/lib/doocs.ts`
+(used by `gen:testcases` too).
 
 ### Test cases — `src/data/testcases.generated.json` (source of truth)
 

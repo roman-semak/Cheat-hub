@@ -211,6 +211,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @return {boolean}\n */\nvar isPalindrome = function(x) {\n    \n};",
     testCases: "[{\"input\":\"[121]\",\"expected\":\"true\"},{\"input\":\"[-121]\",\"expected\":\"false\"},{\"input\":\"[10]\",\"expected\":\"false\"}]",
+    solution: "function isPalindrome(x: number): boolean {\n    if (x < 0 || (x > 0 && x % 10 === 0)) {\n        return false;\n    }\n    let y = 0;\n    for (; y < x; x = ~~(x / 10)) {\n        y = y * 10 + (x % 10);\n    }\n    return x === y || x === ~~(y / 10);\n}",
     signature: "{\"name\":\"isPalindrome\",\"paramTypes\":[\"integer\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -233,6 +234,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} height\n * @return {number}\n */\nvar maxArea = function(height) {\n    \n};",
     testCases: "[{\"input\":\"[[1,8,6,2,5,4,8,3,7]]\",\"expected\":\"49\"},{\"input\":\"[[1,1]]\",\"expected\":\"1\"}]",
+    solution: "function maxArea(height: number[]): number {\n    let [l, r] = [0, height.length - 1];\n    let ans = 0;\n    while (l < r) {\n        const t = Math.min(height[l], height[r]) * (r - l);\n        ans = Math.max(ans, t);\n        if (height[l] < height[r]) {\n            ++l;\n        } else {\n            --r;\n        }\n    }\n    return ans;\n}",
     signature: "{\"name\":\"maxArea\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -255,6 +257,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar romanToInt = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"III\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"LVIII\\\"]\",\"expected\":\"58\"},{\"input\":\"[\\\"MCMXCIV\\\"]\",\"expected\":\"1994\"}]",
+    solution: "function romanToInt(s: string): number {\n    const d: Map<string, number> = new Map([\n        ['I', 1],\n        ['V', 5],\n        ['X', 10],\n        ['L', 50],\n        ['C', 100],\n        ['D', 500],\n        ['M', 1000],\n    ]);\n    let ans: number = d.get(s[s.length - 1])!;\n    for (let i = 0; i < s.length - 1; ++i) {\n        const sign = d.get(s[i])! < d.get(s[i + 1])! ? -1 : 1;\n        ans += sign * d.get(s[i])!;\n    }\n    return ans;\n}",
     signature: "{\"name\":\"romanToInt\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -278,6 +281,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar threeSum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[-1,0,1,2,-1,-4]]\",\"expected\":\"[[-1,-1,2],[-1,0,1]]\"},{\"input\":\"[[0,1,1]]\",\"expected\":\"[]\"},{\"input\":\"[[0,0,0]]\",\"expected\":\"[[0,0,0]]\"}]",
+    solution: "function threeSum(nums: number[]): number[][] {\n    nums.sort((a, b) => a - b);\n    const ans: number[][] = [];\n    const n = nums.length;\n    for (let i = 0; i < n - 2 && nums[i] <= 0; i++) {\n        if (i > 0 && nums[i] === nums[i - 1]) {\n            continue;\n        }\n        let j = i + 1;\n        let k = n - 1;\n        while (j < k) {\n            const x = nums[i] + nums[j] + nums[k];\n            if (x < 0) {\n                ++j;\n            } else if (x > 0) {\n                --k;\n            } else {\n                ans.push([nums[i], nums[j++], nums[k--]]);\n                while (j < k && nums[j] === nums[j - 1]) {\n                    ++j;\n                }\n                while (j < k && nums[k] === nums[k + 1]) {\n                    --k;\n                }\n            }\n        }\n    }\n    return ans;\n}",
     approach: "Sort + fix i + two pointers. O(n²)\n\n**Складність:** Time O(n²), Space O(1) (без виводу)",
     signature: "{\"name\":\"threeSum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<list<integer>>\"}",
   },
