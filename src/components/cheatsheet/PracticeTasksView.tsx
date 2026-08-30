@@ -7,9 +7,11 @@ import 'highlight.js/styles/github-dark.css'
 import type { PracticeTask, PracticeTopic } from '@/lib/cheatsheet/types'
 import { highlight } from '@/lib/cheatsheet/highlight'
 import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import { resetReadStateForKeys } from '@/lib/userStore'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
 import { StatusMarker } from './StatusMarker'
+import { SectionResetButton } from './SectionResetButton'
 
 const TOPICS: PracticeTopic[] = [
   'JS Utilities',
@@ -97,7 +99,12 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
   )
 
   const pairs = useMemo(() => tasks.map((t) => sameKey(`practice:${t.id}`)), [tasks])
-  const { statusOf, cycle, dismissNew, hasRecent, markAllSeen } = useContentStatus(pairs)
+  const { statusOf, cycle, dismissNew, isRead, hasRecent, markAllSeen } =
+    useContentStatus(pairs)
+
+  // Reset targets the whole topic, ignoring the level/search filter.
+  const topicKeys = (t: PracticeTopic) =>
+    tasks.filter((task) => task.topic === t).map((task) => `practice:${task.id}`)
 
   const openTask = (id: string) => {
     setSelectedId(id)
@@ -155,8 +162,15 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
           )}
           {groups.map((group) => (
             <div key={group.topic} className="flex flex-col gap-2">
-              <div className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
-                {group.topic} ({group.tasks.length})
+              <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                <span>
+                  {group.topic} ({group.tasks.length})
+                </span>
+                <SectionResetButton
+                  show={topicKeys(group.topic).some(isRead)}
+                  label={group.topic}
+                  onReset={() => resetReadStateForKeys(topicKeys(group.topic))}
+                />
               </div>
               <ul className="flex flex-col gap-2">
                 {group.tasks.map((task) => (

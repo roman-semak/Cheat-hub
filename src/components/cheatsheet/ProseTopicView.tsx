@@ -8,10 +8,15 @@ import { JsonLd } from '@/components/JsonLd'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useReadTracking } from '@/lib/cheatsheet/useReadTracking'
 import { useRestoreSectionScroll, useSectionHashSync } from '@/lib/cheatsheet/useSectionHash'
-import { resetReadStateForTopic, resetAllReadState } from '@/lib/userStore'
+import {
+  resetReadStateForTopic,
+  resetAllReadState,
+  resetReadStateForKeys,
+} from '@/lib/userStore'
 import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
 import { RotateCcw, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { SectionResetButton } from './SectionResetButton'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
 import { ContentBlocks } from './ContentBlocks'
@@ -55,7 +60,7 @@ export function ProseTopicView({
     () => content.sections.map((s) => pairFor(s.id)),
     [content.sections, pairFor],
   )
-  const { statusOf, cycle, hasRecent, markAllSeen } = useContentStatus(pairs)
+  const { statusOf, cycle, isRead, hasRecent, markAllSeen } = useContentStatus(pairs)
 
   const items: TopicPanelItem[] = useMemo(
     () =>
@@ -157,7 +162,14 @@ export function ProseTopicView({
             className="min-h-[100dvh] scroll-mt-4 snap-start px-6 py-8 md:px-10"
           >
             <div className="mx-auto max-w-3xl">
-              <h2 className="mb-4 text-2xl font-bold text-slate-100">{section.title}</h2>
+              <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-slate-100">
+                <span>{section.title}</span>
+                <SectionResetButton
+                  show={isRead(`${content.slug}:${section.id}`)}
+                  label={section.title}
+                  onReset={() => resetReadStateForKeys([`${content.slug}:${section.id}`])}
+                />
+              </h2>
               <ContentBlocks blocks={section.blocks} />
               {section.interviewQuestions && section.interviewQuestions.length > 0 && (
                 <InterviewQuestionsBlock

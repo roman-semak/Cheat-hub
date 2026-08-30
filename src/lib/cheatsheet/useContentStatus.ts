@@ -21,6 +21,9 @@ export interface ContentStatusApi {
   cycle: (pair: StatusPair) => void
   // Clear the "new" flag without touching read-state (e.g. on "open").
   dismissNew: (pair: StatusPair) => void
+  // Cheap read-state predicate — true only when the key is explicitly "read"
+  // (unlike statusOf, which reports "new" for unacknowledged-new units).
+  isRead: (readKey: string) => boolean
   hasRecent: boolean
   markAllSeen: () => void
 }
@@ -65,5 +68,10 @@ export function useContentStatus(pairs: StatusPair[]): ContentStatusApi {
     [isNew],
   )
 
-  return { statusOf, cycle, dismissNew, hasRecent, markAllSeen }
+  const isRead = useCallback(
+    (readKey: string) => readState[readKey] === 'read',
+    [readState],
+  )
+
+  return { statusOf, cycle, dismissNew, isRead, hasRecent, markAllSeen }
 }

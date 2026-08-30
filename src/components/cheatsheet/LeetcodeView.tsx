@@ -6,8 +6,10 @@ import { Dumbbell } from 'lucide-react'
 import type { LeetcodeData } from '@/lib/cheatsheet/types'
 import { useScrollSpy } from '@/lib/cheatsheet/useScrollSpy'
 import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import { resetReadStateForKeys } from '@/lib/userStore'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
+import { SectionResetButton } from './SectionResetButton'
 import { TaskCard } from './TaskCard'
 
 export function LeetcodeView({ data }: { data: LeetcodeData }) {
@@ -21,7 +23,12 @@ export function LeetcodeView({ data }: { data: LeetcodeData }) {
       ]),
     [data.sections],
   )
-  const { statusOf, cycle } = useContentStatus(pairs)
+  const { statusOf, cycle, isRead } = useContentStatus(pairs)
+
+  const sectionKeys = (section: LeetcodeData['sections'][number]) => [
+    `leetcode:${section.id}`,
+    ...section.tasks.map((t) => `leetcode-task:${t.id}`),
+  ]
 
   const items: TopicPanelItem[] = useMemo(
     () => [
@@ -90,6 +97,11 @@ export function LeetcodeView({ data }: { data: LeetcodeData }) {
                 {section.count != null && (
                   <span className="text-sm font-normal text-slate-500">({section.count})</span>
                 )}
+                <SectionResetButton
+                  show={sectionKeys(section).some(isRead)}
+                  label={section.title}
+                  onReset={() => resetReadStateForKeys(sectionKeys(section))}
+                />
               </h2>
               <div className="mt-5 flex flex-col gap-4">
                 {section.tasks.map((task) => (

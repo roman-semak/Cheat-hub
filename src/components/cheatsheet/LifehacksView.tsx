@@ -4,8 +4,10 @@ import { useMemo, useState } from 'react'
 import { Search, Sparkles } from 'lucide-react'
 import type { Lifehack, LifehackCategory } from '@/lib/cheatsheet/types'
 import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import { resetReadStateForKeys } from '@/lib/userStore'
 import { Button } from '@/components/ui/Button'
 import { LifehackCard } from './LifehackCard'
+import { SectionResetButton } from './SectionResetButton'
 
 // JS/TS lifehacks grouped by category with a free-text search over
 // title / tags / code. Empty categories are hidden while filtering.
@@ -36,7 +38,11 @@ export function LifehacksView({
   )
 
   const pairs = useMemo(() => hacks.map((h) => sameKey(`lifehack:${h.id}`)), [hacks])
-  const { statusOf, cycle, hasRecent, markAllSeen } = useContentStatus(pairs)
+  const { statusOf, cycle, isRead, hasRecent, markAllSeen } = useContentStatus(pairs)
+
+  // Reset targets the whole category, not just the search-filtered subset.
+  const categoryKeys = (catId: string) =>
+    hacks.filter((h) => h.category === catId).map((h) => `lifehack:${h.id}`)
 
   return (
     <div className="flex flex-col gap-8">
@@ -73,6 +79,11 @@ export function LifehacksView({
             <h2 className="mb-3 flex items-center gap-2 border-b border-orange-400/30 pb-2 text-lg font-bold text-orange-400">
               {cat.emoji && <span>{cat.emoji}</span>} {cat.title}
               <span className="text-sm font-normal text-slate-500">({items.length})</span>
+              <SectionResetButton
+                show={categoryKeys(cat.id).some(isRead)}
+                label={cat.title}
+                onReset={() => resetReadStateForKeys(categoryKeys(cat.id))}
+              />
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {items.map((hack) => (

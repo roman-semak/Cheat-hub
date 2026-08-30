@@ -289,6 +289,18 @@ export function resetReadStateForTopic(topicSlug: string) {
   })
 }
 
+// Clears read state for an explicit list of keys (one section / group), in a
+// single store write. No-op if none of them are currently "read".
+export function resetReadStateForKeys(keys: string[]) {
+  update((d) => {
+    const toClear = keys.filter((k) => d.readState[k] === 'read')
+    if (toClear.length === 0) return d
+    const readState = { ...d.readState }
+    for (const k of toClear) delete readState[k]
+    return { ...d, readState }
+  })
+}
+
 // Clears every "read" marker across all topics. Leaves "new" markers
 // (seenNew), task progress and quizzes untouched.
 export function resetAllReadState() {
