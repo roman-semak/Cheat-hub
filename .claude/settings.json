@@ -49,7 +49,17 @@
       "Bash(git --no-pager log --oneline origin/main..HEAD)",
       "Bash(git --no-pager log --oneline -3 origin/main)",
       "Bash(git --no-pager diff --stat HEAD)",
-      "Bash(git --no-pager log --oneline -2)"
+      "Bash(git --no-pager log --oneline -2)",
+      "Bash(git --no-pager diff src/lib/runner.ts)",
+      "Bash(git --no-pager diff --stat src/data/problems.ts)",
+      "Bash(curl -s -m 5 -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"var twoSum=function\\(nums,target\\){const m=new Map\\(\\);for\\(let i=0;i<nums.length;i++\\){if\\(m.has\\(target-nums[i]\\)\\)return [m.get\\(target-nums[i]\\),i];m.set\\(nums[i],i\\)}};\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[2,7,11,15],9]\",\"expected\":\"[0,1]\"},{\"input\":\"[[3,2,4],6]\",\"expected\":\"[1,2]\"}],\"signature\":\"{\\\\\"name\\\\\":\\\\\"twoSum\\\\\",\\\\\"paramTypes\\\\\":[\\\\\"integer[]\\\\\",\\\\\"integer\\\\\"],\\\\\"returnType\\\\\":\\\\\"integer[]\\\\\"}\"}')",
+      "Bash(git --no-pager log --oneline -5)",
+      "Bash(git --no-pager diff origin/main..HEAD --stat)",
+      "Bash(curl -s -m 5 -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"function reverseString\\(s\\){let i=0,j=s.length-1;while\\(i<j\\){const t=s[i];s[i]=s[j];s[j]=t;i++;j--}}\",\"language\":\"typescript\",\"testCases\":[{\"input\":\"[[\\\\\"h\\\\\",\\\\\"e\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"o\\\\\"]]\",\"expected\":\"[\\\\\"o\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"e\\\\\",\\\\\"h\\\\\"]\"}],\"signature\":\"{\\\\\"name\\\\\":\\\\\"reverseString\\\\\",\\\\\"paramTypes\\\\\":[\\\\\"character[]\\\\\"],\\\\\"returnType\\\\\":\\\\\"void\\\\\"}\"}')",
+      "Bash(git --no-pager show 8b0b298 --stat)",
+      "Bash(env)",
+      "Bash(curl -s -m 5 -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"function lengthOfLongestSubstring\\(s\\){let set=new Set\\(\\),l=0,max=0;for\\(let r=0;r<s.length;r++\\){while\\(set.has\\(s[r]\\)\\)set.delete\\(s[l++]\\);set.add\\(s[r]\\);max=Math.max\\(max,r-l+1\\)}return max}\",\"language\":\"typescript\",\"testCases\":[{\"input\":\"[\\\\\"abcabcbb\\\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\\\"bbbbb\\\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\\\"pwwkew\\\\\"]\",\"expected\":\"3\"}],\"signature\":\"{\\\\\"name\\\\\":\\\\\"lengthOfLongestSubstring\\\\\",\\\\\"paramTypes\\\\\":[\\\\\"string\\\\\"],\\\\\"returnType\\\\\":\\\\\"integer\\\\\"}\"}')",
+      "Bash(curl -s -o /tmp/run_resp.txt -w \"%{http_code}\\\\n\" -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"var reverseString=function\\(s\\){s.reverse\\(\\)}\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[\\\\\"h\\\\\",\\\\\"e\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"o\\\\\"]]\",\"expected\":\"[\\\\\"o\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"e\\\\\",\\\\\"h\\\\\"]\"}]}')"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"

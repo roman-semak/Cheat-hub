@@ -69,18 +69,29 @@ export function CodeEditor({
           body: JSON.stringify({ code, language, testCases, signature }),
         })
 
-        const data = await response.json()
+        const raw = await response.text()
+        let data: { error?: string; results?: TestResult[] }
+        try {
+          data = JSON.parse(raw)
+        } catch {
+          setError(
+            `Не вдалося запустити код: сервер повернув ${response.status} ` +
+              `(${response.statusText || 'не-JSON відповідь'}). ` +
+              `Перевір, що dev-сервер запущено і сторінку відкрито на тому самому порту, що й API.`,
+          )
+          return
+        }
 
         if (!response.ok) {
           setError(data.error || 'Failed to run code')
           return
         }
 
-        setResults(data.results)
+        setResults(data.results ?? [])
         const allPassed =
           Array.isArray(data.results) &&
           data.results.length > 0 &&
-          data.results.every((r: { passed: boolean }) => r.passed)
+          data.results.every((r) => r.passed)
 
         if (allPassed) {
           markSolved(problemSlug)
