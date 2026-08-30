@@ -49,7 +49,7 @@ export const reactContent: TopicContent = {
     <div class="changelog-row"><span class="chver">2022 · v18</span><span class="changelog-text">Concurrent rendering, automatic batching, <code>useTransition</code>/<code>useDeferredValue</code>, Suspense для data fetching, перші Server Components</span></div>
     <div class="changelog-row"><span class="chver">2024 · v19 ✦</span><span class="changelog-text"><strong>Поточна:</strong> Actions, <code>use()</code>, <code>useActionState</code>, <code>useOptimistic</code>, React Compiler (RC)</span></div>
   </div>
-  <p><strong>Головний вектор 2013 → 2024:</strong> від "бібліотеки для рендерингу View у MVC" → до власної рантайм-моделі з конкурентним рендерингом і серверними компонентами. Найбільший зсув для щоденної роботи — <strong>Hooks (2019)</strong>: класи перестали бути обов'язковими для стану/lifecycle (детально — розділ "Lifecycle: Class vs Functional" нижче).</p>`,
+  <p><strong>Головний вектор 2013 → 2024:</strong> від "бібліотеки для рендерингу View у MVC" → до власної рантайм-моделі з конкурентним рендерингом і серверними компонентами. Найбільший зсув для щоденної роботи — <strong>Hooks (2019)</strong>: класи перестали бути обов'язковими для стану/lifecycle (детально — розділ "🏛️ Class vs Functional" нижче).</p>`,
         },
       ],
     },
@@ -158,7 +158,7 @@ npm run dev          # dev-сервер з HMR, за замовчуванням 
   <div class="table-wrap">
     <table>
       <tr><th>Розширення</th><th>Навіщо</th></tr>
-      <tr><td><strong>ES7+ React/Redux/React-Native Snippets</strong></td><td>Сніпети <code>rfc</code>/<code>rafce</code> — функціональний компонент за секунду; <code>rcc</code> — класовий (легасі-проєкти, Block "Lifecycle")</td></tr>
+      <tr><td><strong>ES7+ React/Redux/React-Native Snippets</strong></td><td>Сніпети <code>rfc</code>/<code>rafce</code> — функціональний компонент за секунду (<code>rcc</code> — класовий, лише для легасі)</td></tr>
       <tr><td><strong>Prettier</strong></td><td>Автоформатування — прибирає суперечки про стиль коду в команді</td></tr>
       <tr><td><strong>ESLint</strong></td><td>Лінтинг у редакторі в реальному часі (правила Rules of Hooks — <code>eslint-plugin-react-hooks</code> ловить порушення до рантайму)</td></tr>
       <tr><td><strong>Auto Rename Tag</strong></td><td>Перейменування відкриваючого JSX-тега автоматично перейменовує закриваючий</td></tr>
@@ -172,10 +172,9 @@ npm run dev          # dev-сервер з HMR, за замовчуванням 
       <tr><th>Префікс</th><th>Розшифровка</th><th>Що генерує</th></tr>
       <tr><td><code>rfc</code></td><td>React Functional Component</td><td>Функціональний компонент, <code>export default function</code></td></tr>
       <tr><td><code>rafce</code></td><td>React Arrow Function Component Export</td><td>Те саме, але як стрілкова функція з <code>export default</code> одразу зверху</td></tr>
-      <tr><td><code>rcc</code></td><td>React Class Component</td><td>Класовий компонент з методом <code>render()</code> (легасі, розділ "Lifecycle" вище)</td></tr>
     </table>
   </div>
-  <h3 class="topic"><code>rfc</code> vs <code>rcc</code> — приклад</h3>`,
+  <h3 class="topic"><code>rfc</code> — приклад</h3>`,
         },
         {
           kind: 'code',
@@ -183,15 +182,6 @@ npm run dev          # dev-сервер з HMR, за замовчуванням 
           code: `// rfc / rafce → генерує:
 export default function ComponentName() {
   return <div>ComponentName</div>;
-}
-
-// rcc → генерує (класовий, легасі — детально в розділі Lifecycle):
-import React, { Component } from 'react';
-
-export default class ComponentName extends Component {
-  render() {
-    return <div>ComponentName</div>;
-  }
 }`,
         },
         {
@@ -637,7 +627,7 @@ function Toast({ message, onClose }: { message: string; onClose(): void }) {
 <span class="cmt">// стан ЦЬОГО рендеру (детальніше — closures, Block 1/2)</span></pre>
   </div>
   <h3 class="topic">Stateful vs Stateless <span class="tag tag-key">KEY</span></h3>
-  <p>Компонент <strong>stateful</strong> — має власний <code>useState</code>/<code>useReducer</code> усередині, "пам'ятає" щось між рендерами. Компонент <strong>stateless</strong> — чиста функція від <code>props</code>: однакові пропи завжди дають однаковий вивід, немає внутрішньої памʼяті. До хуків (до 2019) такий компонент офіційно називався <strong>"stateless functional component" (SFC)</strong> — термін лишився в старих статтях/книгах, хоча сьогодні "функціональний компонент" вже не означає автоматично "без стану" (з хуками функціональний компонент може бути так само stateful, як і класовий).</p>
+  <p>Компонент <strong>stateful</strong> — має власний <code>useState</code>/<code>useReducer</code> усередині, "пам'ятає" щось між рендерами. Компонент <strong>stateless</strong> — чиста функція від <code>props</code>: однакові пропи завжди дають однаковий вивід, немає внутрішньої памʼяті. До хуків (до 2019) такий компонент називали <strong>"stateless functional component" (SFC)</strong> — термін лишився в старих статтях; сьогодні "функціональний компонент" вже не означає автоматично "без стану".</p>
   <div class="grid2">
     <div class="card blue"><h4>Stateless</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Avatar</span>({ url, alt }: Props) {
   <span class="cmt">// нічого не памʼятає між рендерами —</span>
@@ -705,6 +695,10 @@ function UserCard({ name, age, onSelect }: UserCardProps) { /* ... */ }
           question: 'Чому <code>event.stopPropagation()</code> усередині React-обробника не завжди зупиняє спливання нативної DOM-події так, як очікує розробник, що змішує React-обробники з ручним <code>addEventListener</code>?',
           answer: 'React обробляє свою внутрішню (синтетичну) систему спливання окремо від нативного DOM-дерева. <code>stopPropagation()</code> на <code>SyntheticEvent</code> зупиняє спливання <strong>всередині React-делегування</strong> (інші React-обробники вище по дереву не викличуться), але подія вже могла встигнути дійти до кореневого нативного слухача чи до сторонніх обробників, підписаних напряму через <code>addEventListener</code> поза React — тому в проєктах, де React-код співіснує з нативним/сторонніми бібліотеками на тому ж DOM-дереві, це джерело неочевидних багів.',
         },
+        {
+          question: 'У чому різниця між <code>preventDefault()</code> і <code>stopPropagation()</code>, і що (не) робить <code>return false</code> з React-обробника?',
+          answer: '<code>preventDefault()</code> скасовує дефолтну дію браузера для події (перезавантаження при submit, перехід по посиланню, галочка чекбокса), але не чіпає спливання. <code>stopPropagation()</code> навпаки — зупиняє спливання до батьківських обробників, але дефолтну дію браузера не скасовує. Це ортогональні речі: потрібні обидва ефекти — викликай обидва методи. <code>return false</code> у React (на відміну від inline-хендлерів чи jQuery) не робить нічого з цього — це просто повернене значення, яке React ігнорує.',
+        },
       ],
       blocks: [
         {
@@ -732,7 +726,14 @@ function UserCard({ name, age, onSelect }: UserCardProps) { /* ... */ }
     <div class="card green"><h4>✅ React-делегування</h4><p>1000 елементів з <code>onClick</code> = 1 нативний слухач на корені; React сам маршрутизує подію до правильного колбека, елементи можна вільно додавати/видаляти без ручного (де)реєстрування слухачів.</p></div>
   </div>
   <h3 class="topic">stopPropagation — пастка на межі React/DOM <span class="tag tag-pit">PITFALL</span></h3>
-  <p><code>e.stopPropagation()</code> зупиняє спливання лише <strong>всередині React</strong>-делегування. Якщо на тому ж DOM-дереві є сторонній <code>addEventListener</code>, підключений напряму (не через React), він усе одно може отримати подію — React-делегування й нативне DOM-спливання це окремі механізми.</p>`,
+  <p><code>e.stopPropagation()</code> зупиняє спливання лише <strong>всередині React</strong>-делегування. Якщо на тому ж DOM-дереві є сторонній <code>addEventListener</code>, підключений напряму (не через React), він усе одно може отримати подію — React-делегування й нативне DOM-спливання це окремі механізми.</p>
+  <h3 class="topic">preventDefault() vs stopPropagation() <span class="tag tag-key">KEY</span></h3>
+  <p>Два незалежні методи події, які часто плутають — вони роблять зовсім різне і не замінюють одне одного.</p>
+  <div class="grid2">
+    <div class="card blue"><h4><code>preventDefault()</code></h4><p>Скасовує <strong>дефолтну дію браузера</strong> для цієї події: submit форми (перезавантаження сторінки), перехід по <code>&lt;a href&gt;</code>, встановлення галочки в чекбоксі, контекстне меню на <code>contextmenu</code>. <strong>Не</strong> впливає на спливання — батьківські обробники все одно спрацюють.</p></div>
+    <div class="card green"><h4><code>stopPropagation()</code></h4><p>Зупиняє <strong>подальше спливання</strong> події по дереву — обробники на батьківських елементах не викличуться. <strong>Не</strong> скасовує дефолтну дію браузера: форма з <code>onSubmit</code>, у якому лише <code>stopPropagation()</code>, усе одно перезавантажить сторінку.</p></div>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Потрібні обидва ефекти одразу — виклич обидва методи. У React <code>return false</code> з обробника (на відміну від старого jQuery) <strong>не</strong> робить ні того, ні іншого.</span></div>`,
         },
       ],
     },
@@ -780,6 +781,11 @@ function UserCard({ name, age, onSelect }: UserCardProps) { /* ... */ }
 <span class="cmt">// key — стабільний ідентифікатор, за яким React зіставляє елементи</span>
 <span class="cmt">// між рендерами. Без key (або key={index}) — баги при вставці/видаленні</span>
 <span class="cmt">// посередині списку. Повне пояснення "чому саме" — Block 1 (Reconciliation).</span></pre>
+  <h3 class="topic"><code>key</code> поза списками — скидання стану <span class="tag tag-key">KEY</span></h3>
+  <p>Зміна <code>key</code> на компоненті каже React: це «інший» екземпляр — старий демонтується (з усім станом, ефектами, незакоммічені інпути), новий монтується з нуля. Це найчистіший спосіб «перезапустити» піддерево при зміні сутності — без <code>useEffect</code>, що вручну скидає кожне поле.</p>
+  <pre><span class="cmt">// Профіль перемикається — форму треба скинути під нового користувача</span>
+<span class="jsx">&lt;ProfileForm</span> key={userId} userId={userId} <span class="jsx">/&gt;</span>
+<span class="cmt">// userId змінився → стара форма демонтована, нова — з чистим станом</span></pre>
   <h3 class="topic">Форма — базовий приклад</h3>
   <pre><span class="kw">function</span> <span class="fn">LoginForm</span>() {
   <span class="kw">const</span> [email, setEmail] = <span class="fn">useState</span>(<span class="str">''</span>);
@@ -963,36 +969,23 @@ list = [B, C],   keys = [0,1]
     },
     {
       id: 'internals-rerenders-batching',
-      title: '🔄 Тригери ре-рендеру, Batching, StrictMode',
+      title: '⚡ Automatic Batching (React 18)',
       interviewQuestions: [
         {
           question: 'Що таке batching, і чим автоматичний batching у React 18 відрізняється від того, що було в React 17?',
           answer: 'Batching — об\'єднання кількох викликів <code>setState</code> в один ре-рендер замість окремого ре-рендеру на кожен виклик. У React 17 batching працював лише всередині React-обробників подій; у <code>setTimeout</code>, промісах чи нативних обробниках кожен <code>setState</code> викликав окремий рендер. React 18 з <code>createRoot</code> робить batching <strong>автоматичним усюди</strong>, незалежно від контексту виклику.',
         },
         {
-          question: 'Навіщо потрібен <code>StrictMode</code> і чому в ньому компоненти рендеряться двічі в dev-режимі?',
-          answer: '<code>StrictMode</code> навмисно подвоює виклик рендер-функцій та деяких ефектів у dev-режимі, щоб виявити неідемпотентні побічні ефекти в тілі компонента чи витоки в ефектах без cleanup — речі, які стануть реальними багами в concurrent-режимі, де React теж може повторно викликати рендер. У production-збірці подвійний виклик відсутній.',
-        },
-        {
-          question: `Назви 4 причини ре-рендеру компонента`,
-          answer: `власний state, ре-рендер батька, зміна Context, force update через useReducer.`,
-        },
-        {
-          question: `Що змінилось у batching в React 18?`,
-          answer: `раніше батчинг лише в React-обробниках подій, тепер — всюди (таймери, проміси, нативні листенери).`,
-        },
-        {
-          question: `StrictMode впливає на прод-білд?`,
-          answer: `ні, лише dev, подвійні виклики — щоб виявити нечисті ефекти заздалегідь.`,
+          question: 'Як вимкнути batching для конкретного оновлення і навіщо це буває треба?',
+          answer: '<code>flushSync(() =&gt; setX(...))</code> з <code>react-dom</code> змушує React синхронно відрендерити й закомітити результат одразу після виклику. Потрібно рідко — типово коли наступний рядок коду має прочитати вже оновлений DOM (виміряти позицію, сфокусувати щойно показаний елемент). У 99% випадків batching бажаний, тож <code>flushSync</code> — виняток, не інструмент за замовчуванням.',
         },
       ],
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Чому компонент ре-рендериться <span class="tag tag-key">KEY</span></h3>
-  <p>Чотири тригери: (1) зміна власного <code>state</code>, (2) ре-рендер батька — <strong>дитина рендериться теж, навіть якщо її пропи не змінились</strong> (без <code>React.memo</code>, Block 3), (3) зміна значення <code>Context</code>, яке вона споживає (Block 4), (4) <code>useReducer</code> dispatch того самого значення все одно триггерить рендер — на відміну від <code>useState</code> з тим самим значенням, де React <strong>бейлить</strong> (пропускає ре-рендер через <code>Object.is</code>-порівняння).</p>
-  <div class="alert good"><span class="icon">✅</span><span>Приклад — <code>Parent</code> оновлює власний стан, дитина з незмінним пропом усе одно рендериться, і як <code>React.memo</code> зупиняє каскад — покроково, з профілюванням, у розділі "Performance Deep Dive" нижче (Block 3).</span></div>
-  <h3 class="topic">Automatic Batching <span class="tag tag-new">React 18</span></h3>`,
+          html: `<h3 class="topic">Automatic Batching <span class="tag tag-new">React 18</span></h3>
+  <p>Batching — об'єднання кількох викликів <code>setState</code> в межах одного тику в <strong>один</strong> ре-рендер. React 17 батчив лише всередині своїх обробників подій; у <code>setTimeout</code>, промісах і нативних слухачах кожен <code>setState</code> давав окремий рендер. React 18 (<code>createRoot</code>) батчить <strong>скрізь</strong>, незалежно від контексту виклику.</p>
+  <p style="font-size:12.5px;opacity:.75">Що саме тригерить ре-рендер (власний state, батько, Context, <code>useReducer</code>) і як поводиться <code>&lt;StrictMode&gt;</code> — розділ «🔄 Життєвий цикл і події компонента» нижче.</p>`,
         },
         {
           kind: 'code',
@@ -1006,83 +999,39 @@ setTimeout(() => {
 
 // Явно вимкнути батчинг (рідко потрібно) — flushSync()
 import { flushSync } from 'react-dom';
-flushSync(() => setCount(c => c + 1));  // синхронний рендер одразу після цього виклику`,
+flushSync(() => {
+  setOpen(true);          // React синхронно рендерить + комітить тут
+});
+tooltipRef.current.scrollIntoView();  // ← DOM уже оновлений, можна міряти/скролити`,
         },
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">&lt;StrictMode&gt; — подвійний виклик лише в dev <span class="tag tag-key">KEY</span></h3>
-  <p><strong>Що це:</strong> runtime-перемикач ЛИШЕ для development-збірки. Навмисно ДВІЧІ викликає тіло компонента, <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> initializer'и і (React 18+) mount-фазу effects (mount → unmount → mount). <strong>Навіщо:</strong> викрити нечисті компоненти й ефекти без cleanup ще в розробці, поки легко пофіксити.</p>
-  <div class="alert good"><span class="icon">✅</span><span><strong>У продакшн-білді нічого не подвоюється</strong> — це суто dev-поведінка, на відміну, наприклад, від Angular <code>--strict</code>, який є compile-time перевіркою і ніяк не змінює runtime.</span></div>
-  <h3 class="topic">Як вмикати і прийнята конвенція <span class="tag tag-key">KEY</span></h3>
-  <p>Обгортається <strong>один раз, навколо кореня застосунку</strong> — не розкидано по окремих компонентах. У Vite/CRA-подібному застосунку — навколо <code>&lt;App /&gt;</code> у точці входу; у Next.js App Router увімкнено <strong>за замовчуванням</strong> (<code>reactStrictMode: true</code> — дефолтна поведінка <code>next.config.js</code>, вимикати навмисно не рекомендують).</p>
-  <div class="grid2">
-    <pre><span class="cmt">// main.tsx (Vite) — один раз, навколо кореня</span>
-createRoot(document.<span class="fn">getElementById</span>(<span class="str">'root'</span>)!).<span class="fn">render</span>(
-  <span class="jsx">&lt;React.StrictMode&gt;</span>
-    <span class="jsx">&lt;App /&gt;</span>
-  <span class="jsx">&lt;/React.StrictMode&gt;</span>
-);</pre>
-    <pre><span class="cmt">// next.config.js — увімкнено за замовчуванням</span>
-<span class="kw">const</span> nextConfig = {
-  reactStrictMode: <span class="kw">true</span>, <span class="cmt">// дефолт, зазвичай не чіпають</span>
-};</pre>
-  </div>
-  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Подвоюється не лише сам ефект</strong> — будь-який <code>console.log</code> у тілі компонента чи в <code>useEffect</code>, викликаному в StrictMode, виведеться в консоль <strong>двічі поспіль</strong>. Це не помилка логування — так само подвоюється весь код, що виконується в цих точках.</span></div>
-  <h3 class="topic">StrictMode (React) vs <code>'use strict'</code> (JavaScript) — не плутати <span class="tag tag-pit">PITFALL</span></h3>
-  <div class="table-wrap">
-    <table>
-      <tr><th></th><th><code>&lt;React.StrictMode&gt;</code></th><th><code>'use strict'</code></th></tr>
-      <tr><td>Що це</td><td>React-компонент (JSX-обгортка)</td><td>Директива мови JavaScript (рядок на початку файлу/функції)</td></tr>
-      <tr><td>Хто виконує</td><td>React runtime</td><td>JS-рушій (V8 та ін.)</td></tr>
-      <tr><td>Діє де</td><td>Лише в development-збірці</td><td>Завжди, у будь-якому середовищі — dev і прод однаково</td></tr>
-      <tr><td>Що робить</td><td>Подвоює рендер/ефекти, щоб виявити нечистоту</td><td>Забороняє небезпечні конструкції (неоголошені змінні, дублікати параметрів), робить деякі мовчазні помилки такими, що кидають виняток</td></tr>
-      <tr><td>Стосунок один до одного</td><td colspan="2">Жодного — випадковий збіг слова "strict". <code>'use strict'</code> і так увімкнений автоматично в ES-модулях (весь сучасний React/TS-код) незалежно від StrictMode-компонента.</td></tr>
-    </table>
-  </div>`,
-        },
-        {
-          kind: 'code',
-          language: 'tsx',
-          code: `function Counter() {
-  console.log('render');           // dev + StrictMode: виведе ДВІЧІ підряд
-
-  useEffect(() => {
-    console.log('mount');          // dev: mount → unmount → mount (теж двічі)
-    return () => console.log('unmount');
-  }, []);
-
-  return <div />;
-}
-
-// Це виявляє ефекти БЕЗ cleanup — без StrictMode такий баг непомітний у dev,
-// але в concurrent-рендерингу прода призводить до подвійних підписок/запитів:
-useEffect(() => {
-  const id = setInterval(tick, 1000); // ❌ немає clearInterval → StrictMode покаже "2 інтервали"
-}, []);
-
-useEffect(() => {
-  const id = setInterval(tick, 1000);
-  return () => clearInterval(id);     // ✅ cleanup — StrictMode проходить чисто
-}, []);`,
-        },
-        {
-          kind: 'paragraph',
-          html: ``,
+          html: `<h3 class="topic">Bailout — коли ре-рендеру не буде взагалі</h3>
+  <p>Якщо <code>setState</code> отримує значення, рівне поточному за <code>Object.is</code>, React може «вийти» ще до рендеру дочірніх компонентів (<em>bailout</em>). Але сам компонент один раз усе одно викликається — тому <code>setState</code> у тілі рендеру без умови = нескінченний цикл, навіть якщо значення однакове.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Batching стосується і React 19 Actions / <code>use()</code>: кілька <code>setState</code> у межах одного transition чи в async-екшені після <code>await</code> так само групуються в один ре-рендер. <code>flushSync</code> лишається винятком «мені потрібен DOM негайно», а не інструментом за замовчуванням.</span></div>`,
         },
       ],
     },
     /* ============================= BLOCK 2 — HOOKS DEEP DIVE ============================= */
     {
       id: 'hooks-why',
-      title: '🪝 Навіщо хуки: яку проблему вирішують',
+      title: '🪝 Хуки: навіщо і правила',
       interviewQuestions: [
         {
           question: 'Яку конкретну проблему класових компонентів вирішили хуки, окрім «менше boilerplate»?',
           answer: 'Головна проблема — <strong>logic reuse</strong>: у класах повторно використати stateful-логіку (підписка на подію, таймер, fetch) між компонентами можна було лише через HOC або render props, що призводило до «wrapper hell» і ускладнювало трасування, звідки приходять props. Хуки дозволяють винести таку логіку в звичайну функцію (custom hook) і композювати без додаткових шарів у дереві компонентів.',
         },
         {
-          question: 'Чому хуки вважаються кращим рішенням, ніж <code>this</code>-прив\'язка методів у класових компонентах?',
-          answer: '<code>this</code> у JS не прив\'язаний лексично — метод класу, переданий як callback (<code>onClick={this.handleClick}</code>), втрачає контекст, якщо не забінджений вручну в конструкторі або не оголошений як стрілкова властивість класу. Це джерело постійних багів у класах. Хуки — звичайні функції-замикання, де <code>this</code> взагалі не задіяний, тому такого класу помилок не існує.',
+          question: 'Чим виклик custom hook принципово відрізняється від виклику звичайної функції-утиліти?',
+          answer: 'Custom hook має доступ до <strong>персистентного слоту памʼяті</strong> поточного Fiber-вузла — він може всередині викликати <code>useState</code>/<code>useEffect</code>/<code>useRef</code>, і ці значення переживають рендери саме цього компонента. Звичайна функція такої памʼяті не має: кожен виклик стартує з нуля. Саме тому хук можна викликати лише з тіла компонента чи іншого хука і лише на верхньому рівні — його ідентичність визначається порядковою позицією виклику, а не імʼям.',
+        },
+        {
+          question: 'Чому хуки не можна викликати всередині умов, циклів чи вкладених функцій?',
+          answer: 'React відстежує стан хуків не за іменем, а за <strong>порядком виклику</strong> в кожному рендері (внутрішньо — пов\'язаний список на fiber-вузлі). Якщо виклик хука обумовлений (наприклад, <code>if (cond) useState()</code>), порядок може відрізнятись між рендерами, і React прив\'яже стан не до того хука — це не варнінг, а реальна десинхронізація стану.',
+        },
+        {
+          question: 'Як обійти ситуацію, коли за бізнес-логікою хук потрібно викликати «умовно» (наприклад, лише для одного з варіантів UI)?',
+          answer: 'Хук викликається завжди, безумовно, а <em>умовною</em> робиться логіка всередині нього або використання результату: наприклад, завжди викликати <code>useEffect</code>, але саму підписку/запит обгорнути в <code>if</code> усередині callback\'а; або розбити компонент на два (умовний рендер компонента-обгортки, а не умовний виклик хука).',
         },
       ],
       blocks: [
@@ -1092,7 +1041,7 @@ useEffect(() => {
   <p>Класи були єдиним способом дати компоненту стан і lifecycle. Це створювало дві конкретні болі:</p>
   <div class="grid2">
     <div class="card red"><h4>1. Перевикористання stateful-логіки — лише через "wrapper hell"</h4><p>Хотів переюзати логіку (підписка, debounce, auth-check) в кількох компонентах — доводилось обгортати компонент у HOC або render-props (Block 5, розділ "Patterns"). Кожна така обгортка — ще один рівень у дереві React DevTools, ще один шар пропів, що "просвічують" крізь усі обгортки.</p></div>
-    <div class="card red"><h4>2. Логіка розкидана по методах, а не по фічах</h4><p><code>componentDidMount</code> міг мати код для трьох незвʼязаних речей (fetch, аналітика, підписка) в одному методі — і той самий "fetch"-код доводилось дублювати в <code>componentDidUpdate</code> (детально — розділ "Lifecycle: Class vs Functional" вище, там же й <code>this</code>-binding).</p></div>
+    <div class="card red"><h4>2. Логіка розкидана по методах, а не по фічах</h4><p>Один lifecycle-метод містив код кількох незвʼязаних речей (fetch, аналітика, підписка), а той самий "fetch"-код доводилось дублювати в методі оновлення — коротка мапа класового API на хуки в розділі "🏛️ Class vs Functional" нижче.</p></div>
   </div>
   <p><strong>Хуки (React 16.8, 2019)</strong> вирішили обидві: логіку можна винести у звичайну функцію (custom hook, розділ нижче) без жодної обгортки в дереві компонентів, і повʼязаний код (state + effect для нього) живе поруч в одному місці, а не розкиданий по lifecycle-методах.</p>
   <h3 class="topic">Звідки назва "hook"</h3>
@@ -1112,41 +1061,17 @@ useEffect(() => {
 <span class="cmt">// саме тому це можливо ЛИШЕ у функції-компоненті/хуку,</span>
 <span class="cmt">// що React викликає й відстежує сам (детально — наступний розділ)</span></pre></div>
   </div>
-  <div class="alert good"><span class="icon">✅</span><span>Це і є відповідь на "чим хук відрізняється від функції": хук отримує доступ до React-рантайму (конкретно — до слоту в Fiber-дереві поточного компонента), звичайна функція — ні. Саме тому хуки не можна "просто взяти й викликати" будь-де — звідси Правила хуків (наступний розділ).</span></div>`,
+  <div class="alert good"><span class="icon">✅</span><span>Це і є відповідь на "чим хук відрізняється від функції": хук отримує доступ до React-рантайму (конкретно — до слоту в Fiber-дереві поточного компонента), звичайна функція — ні. Саме тому хуки не можна "просто взяти й викликати" будь-де — звідси <strong>Правила хуків</strong> нижче.</span></div>`,
         },
-      ],
-    },
-    {
-      id: 'hooks-rules',
-      title: '📏 Правила хуків: коли не можна викликати',
-      interviewQuestions: [
-        {
-          question: 'Чому хуки не можна викликати всередині умов, циклів чи вкладених функцій?',
-          answer: 'React відстежує стан хуків не за іменем, а за <strong>порядком виклику</strong> в кожному рендері (внутрішньо — пов\'язаний список на fiber-вузлі). Якщо виклик хука обумовлений (наприклад, <code>if (cond) useState()</code>), порядок може відрізнятись між рендерами, і React прив\'яже стан не до того хука — це не варнінг, а реальна десинхронізація стану.',
-        },
-        {
-          question: 'Як обійти ситуацію, коли за бізнес-логікою хук потрібно викликати «умовно» (наприклад, лише для одного з варіантів UI)?',
-          answer: 'Хук викликається завжди, безумовно, а <em>умовною</em> робиться логіка всередині нього або використання результату: наприклад, завжди викликати <code>useEffect</code>, але саму підписку/запит обгорнути в <code>if</code> усередині callback\'а; або розбити компонент на два (умовний рендер компонента-обгортки, а не умовний виклик хука).',
-        },
-        {
-          question: `Що станеться, якщо викликати useState всередині if?`,
-          answer: `наведи приклад із конкретним "зсувом" значень між слотами, а не просто "так не можна".`,
-        },
-        {
-          question: `Чим ловиться порушення Rules of Hooks до рантайму?`,
-          answer: `eslint-plugin-react-hooks, правило rules-of-hooks.`,
-        },
-      ],
-      blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Два правила <span class="tag tag-key">KEY</span></h3>
+          html: `<h3 class="topic">Два правила хуків <span class="tag tag-key">KEY</span></h3>
   <div class="grid2">
     <div class="card"><h4>1. Лише на верхньому рівні</h4><p>Ніколи всередині <code>if</code>/циклів/вкладених функцій/<code>try-catch</code>/після раннього <code>return</code>. Хуки викликаються в <strong>однаковому порядку на кожному рендері</strong>.</p></div>
     <div class="card blue"><h4>2. Лише з React-функцій</h4><p>Функції-компоненти або інші custom hooks. Ніколи — зі звичайних JS-функцій, методів класу, чи колбека, визначеного поза компонентом.</p></div>
   </div>
   <h3 class="topic">Чому саме так — звʼязок з Fiber <span class="tag tag-pit">PITFALL</span></h3>
-  <p>React зіставляє хуки між рендерами <strong>за позицією виклику</strong> у зв'язному списку <code>memoizedState</code> Fiber-вузла — не за іменем змінної (розділ вище). Умовний виклик хука зсуває позицію <strong>усіх наступних</strong> хуків у тому ж компоненті — і React підставляє їм чужі значення.</p>`,
+  <p>React зіставляє хуки між рендерами <strong>за позицією виклику</strong> у зв'язному списку <code>memoizedState</code> Fiber-вузла — не за іменем змінної (див. «Хук vs звичайна функція» вище). Умовний виклик хука зсуває позицію <strong>усіх наступних</strong> хуків у тому ж компоненті — і React підставляє їм чужі значення.</p>`,
         },
         {
           kind: 'code',
@@ -1184,6 +1109,69 @@ function Profile({ userId }: Props) {
       ],
     },
     {
+      id: 'hooks-usestate-patterns',
+      title: '🔢 useState: оновлювачі та ініціалізація',
+      interviewQuestions: [
+        {
+          question: 'Коли <code>setX(x + 1)</code> і <code>setX(v => v + 1)</code> дають різний результат?',
+          answer: 'Коли за один цикл потрібно кілька оновлень поспіль або оновлення відбувається із замикання (таймер, проміс, обробник події, що вже "бачить" застарілий <code>x</code>). <code>setX(x + 1)</code> двічі поспіль дасть <code>+1</code>: обидва виклики читають той самий <code>x</code> з поточного рендеру. <code>setX(v => v + 1)</code> двічі дасть <code>+2</code>: React передає в апдейтер найсвіжіше значення з черги.',
+        },
+        {
+          question: 'Чим <code>useState(() => init())</code> відрізняється від <code>useState(init())</code>?',
+          answer: '<code>useState(init())</code> викликає <code>init()</code> на <strong>кожному</strong> рендері й одразу відкидає результат після першого — марна робота, а якщо це читання <code>localStorage</code> чи важкий розрахунок, то ще й помітна. <code>useState(() => init())</code> (lazy initializer) React викликає рівно один раз, при монтуванні.',
+        },
+        {
+          question: 'Чому <code>console.log(x)</code> одразу після <code>setX(...)</code> друкує старе значення?',
+          answer: 'Змінна <code>x</code> — це <strong>знімок</strong> стану для конкретного рендеру, вона незмінна до кінця цього рендеру. <code>setX</code> не мутує <code>x</code>, а планує наступний рендер з новим значенням. Нове значення побачиш лише як нову змінну <code>x</code> у тілі наступного рендеру.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">State — це знімок, не «жива» змінна <span class="tag tag-key">KEY</span></h3>
+  <p>У межах одного рендеру значення зі <code>useState</code> заморожене. Усі замикання, створені під час цього рендеру (обробники, ефекти, таймери), «бачать» саме це значення — навіть якщо викликаються пізніше. Це не баг, а модель: рендер — чиста функція від пропів і знімка стану.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// 1. Функціональний оновлювач — обовʼязковий при кількох апдейтах / в async
+function Counter() {
+  const [n, setN] = useState(0);
+  function addThree() {
+    setN(n + 1);        // усі три читають n === 0
+    setN(n + 1);        // → підсумок: 1
+    setN(n + 1);
+    // setN(v => v + 1) тричі → підсумок: 3
+  }
+  useEffect(() => {
+    const id = setInterval(() => setN(v => v + 1), 1000); // ✅ не залежить від n
+    return () => clearInterval(id);
+  }, []);              // порожній масив — бо оновлювач не читає n напряму
+}
+
+// 2. Lazy initializer — важкий старт рахується один раз
+const [tree, setTree] = useState(() => parseHugeJSON(raw));   // не parseHugeJSON(raw)
+
+// 3. Обʼєкт у state — заміна, не мутація
+setForm(f => ({ ...f, email: value }));   // ✅ новий обʼєкт
+// form.email = value; setForm(form);     // ❌ той самий референс → рендер не спрацює`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Кілька <code>useState</code> vs один обʼєкт vs <code>useReducer</code></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Ситуація</th><th>Вибір</th></tr>
+      <tr><td>Незалежні поля, що змінюються окремо</td><td>кілька <code>useState</code> — простіше, не треба спред щоразу</td></tr>
+      <tr><td>Поля завжди змінюються разом (напр. <code>{x, y}</code> позиція)</td><td>один <code>useState</code>-обʼєкт</td></tr>
+      <tr><td>Наступний стан залежить від попереднього, багато типів переходів</td><td><code>useReducer</code> — переходи в одному місці, легше тестувати (розділ «🔄 Життєвий цикл і події компонента»)</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Правило: якщо в <code>onChange</code> ти читаєш поточний стан, щоб порахувати наступний — майже завжди має бути оновлювач-функція. <code>exhaustive-deps</code> тоді ще й прибирає стан із масивів залежностей <code>useEffect</code>/<code>useCallback</code>.</span></div>`,
+        },
+      ],
+    },
+    {
       id: 'hooks-catalog-full',
       title: '📋 Повний каталог хуків',
       interviewQuestions: [
@@ -1191,23 +1179,27 @@ function Profile({ userId }: Props) {
           question: 'Які React-хуки ти б виділив як такі, що рідко потрібні у звичайному продуктовому коді, і чому вони взагалі існують?',
           answer: '<code>useImperativeHandle</code>, <code>useDebugValue</code>, <code>useId</code>, <code>useSyncExternalStore</code> — нішеві. <code>useImperativeHandle</code> потрібен для контрольованого імперативного API компонента (кастомний input-wrapper з методом <code>.focus()</code>); <code>useSyncExternalStore</code> — коректний спосіб підписатись на зовнішнє (поза-React) сховище стану без tearing у concurrent-режимі — на ньому побудовані бібліотеки на кшталт Zustand.',
         },
+        {
+          question: 'Чому підписку на зовнішнє джерело краще робити через <code>useSyncExternalStore</code>, а не через <code>useEffect</code> + <code>useState</code>?',
+          answer: 'Ручний <code>useEffect</code> підписується <strong>після</strong> paint — між першим рендером і спрацюванням ефекту компонент показує застаріле значення, а в concurrent-режимі різні частини дерева можуть відрендеритись з різними значеннями одного джерела (tearing). <code>useSyncExternalStore</code> читає <code>getSnapshot</code> синхронно під час рендеру й гарантує, що весь рендер бачить одне узгоджене значення; плюс має окремий <code>getServerSnapshot</code> для SSR.',
+        },
       ],
       blocks: [
         {
           kind: 'paragraph',
-          html: `<p>Мапа всіх хуків React за категоріями. Ті, що мають детальний розбір нижче (useEffect, useMemo/useCallback, useRef, useLayoutEffect, useReducer — розділ "Hooks — Deep Dive"; useTransition/useDeferredValue — розділ "useTransition / useDeferredValue"), тут — коротким рядком з переходом. Решта — <strong>лише тут</strong>, повністю.</p>
+          html: `<p>Мапа всіх хуків React за категоріями. Ті, що мають детальний розбір в інших розділах (useEffect, useLayoutEffect, useReducer, StrictMode — «🔄 Життєвий цикл і події компонента»; useMemo/useCallback — «🧠 Мемоізація та референсна стабільність»; useRef — «🎯 useRef — детально»; useTransition/useDeferredValue — «useTransition / useDeferredValue»), тут — коротким рядком з переходом. Решта — <strong>лише тут</strong>, повністю.</p>
   <div class="table-wrap">
     <table>
       <tr><th>Хук</th><th>Категорія</th><th>З якої версії</th><th>Навіщо</th><th>Edge case</th></tr>
       <tr><td><code>useState</code></td><td>State</td><td>16.8</td><td>Локальний стан, незалежні прості значення</td><td>Lazy initializer — <code>useState(() =&gt; expensive())</code>, інакше <code>expensive()</code> виконується щорендеру, навіть якщо результат використано лише при mount</td></tr>
-      <tr><td><code>useReducer</code></td><td>State</td><td>16.8</td><td>Складний повʼязаний state, явні action-переходи</td><td>Детально — "Hooks — Deep Dive" (є свій lazy-init нюанс)</td></tr>
-      <tr><td><code>useEffect</code></td><td>Effect</td><td>16.8</td><td>Side-effects після paint (fetch, підписки)</td><td>Детально — "Hooks — Deep Dive" (stale closures)</td></tr>
-      <tr><td><code>useLayoutEffect</code></td><td>Effect</td><td>16.8</td><td>Синхронно до paint — читання layout</td><td>Детально — "Hooks — Deep Dive"</td></tr>
+      <tr><td><code>useReducer</code></td><td>State</td><td>16.8</td><td>Складний повʼязаний state, явні action-переходи</td><td>Детально — «🔄 Життєвий цикл і події компонента» (є свій lazy-init нюанс)</td></tr>
+      <tr><td><code>useEffect</code></td><td>Effect</td><td>16.8</td><td>Side-effects після paint (fetch, підписки)</td><td>Детально — «🔄 Життєвий цикл і події компонента» (stale closures, cleanup)</td></tr>
+      <tr><td><code>useLayoutEffect</code></td><td>Effect</td><td>16.8</td><td>Синхронно до paint — читання layout</td><td>Детально — «🔄 Життєвий цикл і події компонента»</td></tr>
       <tr><td><code>useInsertionEffect</code></td><td>Effect</td><td>18</td><td>Вставка <code>&lt;style&gt;</code> ДО useLayoutEffect — лише для CSS-in-JS бібліотек (styled-components, розділ "Styling" вище)</td><td>Не для прикладного коду — немає доступу до refs, призначений виключно авторам бібліотек стилізації</td></tr>
-      <tr><td><code>useRef</code></td><td>Ref</td><td>16.8</td><td>DOM-ref / мутабельне значення без ре-рендеру</td><td>Детально — "Hooks — Deep Dive"</td></tr>
+      <tr><td><code>useRef</code></td><td>Ref</td><td>16.8</td><td>DOM-ref / мутабельне значення без ре-рендеру</td><td>Детально — розділ "🎯 useRef — детально"</td></tr>
       <tr><td><code>useImperativeHandle</code></td><td>Ref</td><td>16.8</td><td>Кастомізує, що саме батько бачить через <code>ref</code> на дочірній компонент (у парі з <code>forwardRef</code> або React 19 <code>ref</code>-як-проп)</td><td>Легко зловживати — імперативний API (<code>focus()</code>, <code>reset()</code>) в React мусить лишатись винятком, не звичкою; 95% кейсів вирішуються звичайним потоком props/state</td></tr>
-      <tr><td><code>useMemo</code></td><td>Performance</td><td>16.8</td><td>Кешує дороге обчислення / стабільний референс</td><td>Детально — "Hooks — Deep Dive" (не гарантія!)</td></tr>
-      <tr><td><code>useCallback</code></td><td>Performance</td><td>16.8</td><td>Кешує референс функції</td><td>Детально — "Hooks — Deep Dive"</td></tr>
+      <tr><td><code>useMemo</code></td><td>Performance</td><td>16.8</td><td>Кешує дороге обчислення / стабільний референс</td><td>Детально — «🧠 Мемоізація та референсна стабільність» (не гарантія!)</td></tr>
+      <tr><td><code>useCallback</code></td><td>Performance</td><td>16.8</td><td>Кешує референс функції</td><td>Детально — «🧠 Мемоізація та референсна стабільність»</td></tr>
       <tr><td><code>useContext</code></td><td>Context</td><td>16.8</td><td>Читає значення найближчого Provider вище по дереву</td><td>Компонент, що споживає Context, ре-рендериться на <strong>будь-яку</strong> зміну value провайдера — навіть якщо реально використовує лише одне поле з обʼєкта value (детально — розділ "Межі стану та Context")</td></tr>
       <tr><td><code>useTransition</code></td><td>Concurrent</td><td>18</td><td>Неурочна дія (функція-апдейт)</td><td>Детально — розділ "useTransition / useDeferredValue"</td></tr>
       <tr><td><code>useDeferredValue</code></td><td>Concurrent</td><td>18</td><td>Неурочне значення (ззовні)</td><td>Детально — розділ "useTransition / useDeferredValue"</td></tr>
@@ -1215,13 +1207,52 @@ function Profile({ userId }: Props) {
       <tr><td><code>useSyncExternalStore</code></td><td>Misc</td><td>18</td><td>Коректна підписка на зовнішнє джерело стану поза React (браузерні API, стан-менеджери)</td><td>Це те, на чому <strong>всередині</strong> побудований Zustand-хук (розділ "Zustand" вище) — гарантує коректність під час concurrent-рендерингу (tearing-safe), на відміну від ручного <code>useEffect</code> + <code>useState</code> для підписки</td></tr>
       <tr><td><code>useDebugValue</code></td><td>Misc</td><td>16.8</td><td>Підписує custom hook міткою в React DevTools (розділ вище)</td><td>Працює лише в custom hooks, ефекту в звичайному компоненті не має — суто DX для авторів бібліотек хуків</td></tr>
     </table>
-  </div>`,
+  </div>
+  <h3 class="topic">Нішеві хуки — мінімальний робочий приклад</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// useId — стабільний id для звʼязки label ↔ input (і для aria-*)
+function Field({ label }: { label: string }) {
+  const id = useId();
+  return <><label htmlFor={id}>{label}</label><input id={id} /></>;
+  // ❌ не для ключів списку — id один на компонент, не на елемент
+}
+
+// useSyncExternalStore — підписка на джерело поза React без tearing.
+// Приклад: чи онлайн браузер
+function useOnlineStatus() {
+  return useSyncExternalStore(
+    (cb) => {
+      window.addEventListener('online', cb);
+      window.addEventListener('offline', cb);
+      return () => {
+        window.removeEventListener('online', cb);
+        window.removeEventListener('offline', cb);
+      };
+    },
+    () => navigator.onLine,          // getSnapshot (клієнт)
+    () => true,                      // getServerSnapshot (SSR)
+  );
+}
+
+// useDebugValue — мітка custom hook у DevTools
+function useUser(id: string) {
+  const user = /* ... */;
+  useDebugValue(user ? user.name : 'loading');
+  return user;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span><code>useImperativeHandle</code> — окремий приклад у розділі «🎯 useRef — детально». <code>useInsertionEffect</code> у прикладному коді не викликають — це API для авторів CSS-in-JS.</span></div>`,
         },
       ],
     },
     {
       id: 'memoization-concept',
-      title: '🧠 Мемоізація: єдина концепція',
+      title: '🧠 Мемоізація та референсна стабільність',
       interviewQuestions: [
         {
           question: 'Поясни мемоізацію як загальну техніку (без React), а потім покажи, чому useMemo, useCallback і React.memo — це насправді одна й та сама ідея.',
@@ -1230,6 +1261,14 @@ function Profile({ userId }: Props) {
         {
           question: 'Fiber-поле memoizedState теж називається "мемоізація" — це та сама техніка, що useMemo?',
           answer: 'Ні, і це поширена плутанина через збіг слова. memoizedState — просто "слот останнього відомого значення" хука в Fiber-вузлі, без ключа й без інвалідації за замовчуванням. useMemo/useCallback/React.memo — справжній кеш-за-ключем із чіткою умовою скидання (зміна deps/props). Схожа за назвою, але окрема від них річ — Next.js Request Memoization, навпаки, це саме кешування-за-ключем (дедуплікація однакових fetch у межах одного рендеру за URL+опціями як ключем).',
+        },
+        {
+          question: 'Коли <code>React.memo</code> реально допомагає, а коли лише додає накладні витрати без користі?',
+          answer: '<code>React.memo</code> корисний для «важких» компонентів (дорогий рендер), чиї props стабільні між рендерами батька частіше, ніж змінюються. Якщо компонент дешевий у рендері або props (особливо об\'єкти/функції/масиви) створюються заново щоразу — <code>memo</code> лише додає витрати на поверхневе порівняння props без жодної економії, бо порівняння все одно «провалиться» і рендер відбудеться.',
+        },
+        {
+          question: '<code>memo</code> не допоміг — з чого почнеш дебаг?',
+          answer: 'Спершу <strong>виміряти</strong>, не гадати: React DevTools Profiler → «Why did this render?» назве причину (<code>props changed</code> / <code>hooks changed</code> / <code>parent rendered</code>). Найчастіша причина — <strong>новий референс пропу</strong> щорендеру батька (інлайновий <code>{}</code> / стрілка), який провалює поверхневе порівняння <code>memo</code>. Далі — стабілізувати той проп через <code>useMemo</code>/<code>useCallback</code> або підняти його вище, щоб не створювався в тілі батька.',
         },
       ],
       blocks: [
@@ -1265,7 +1304,7 @@ fastSquare(5); // з кешу, миттєво — той самий "ключ" (
   <p>Побачивши схему вище, легко впізнати її ще тричі — <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code> НЕ три окремі концепції для зазубрювання, а <strong>та сама</strong> схема "кеш за ключем", застосована до різних речей:</p>
   <div class="grid3">
     <div class="card"><h4>useMemo</h4><p>Кешує <strong>значення</strong>. Ключ — deps-масив. <code>useMemo(fn, deps)</code> ≈ <code>memoize(fn)</code> з ключем <code>deps</code>.</p></div>
-    <div class="card blue"><h4>useCallback</h4><p>Кешує <strong>посилання на функцію</strong> — окремий випадок useMemo (детально, з формулою еквівалентності — розділ "Hooks — Deep Dive" нижче).</p></div>
+    <div class="card blue"><h4>useCallback</h4><p>Кешує <strong>посилання на функцію</strong> — окремий випадок useMemo (<code>useCallback(fn, deps)</code> ≈ <code>useMemo(() =&gt; fn, deps)</code>).</p></div>
     <div class="card green"><h4>React.memo</h4><p>Кешує <strong>результат рендеру компонента</strong>. Ключ — props. "Аргументи" (props) ті самі → пропускаємо повторний виклик функції-компонента, як і в memoize().</p></div>
   </div>
   <div class="table-wrap">
@@ -1279,83 +1318,182 @@ fastSquare(5); // з кешу, миттєво — той самий "ключ" (
   <div class="alert good"><span class="icon">✅</span><span>Це і є "єдина концепція": щойно зрозуміло <code>memoize()</code> вище, <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code> — не три різні API для завчання, а один патерн, застосований до значення, функції й компонента відповідно.</span></div>
   <h3 class="topic">Не плутати зі схожими словами <span class="tag tag-pit">PITFALL</span></h3>
   <p><code>memoizedState</code> у Fiber-вузлі (розділ "Reconciliation, Virtual DOM, Fiber" вище) — <strong>не</strong> ця техніка: це просто слот "останнє відоме значення хука", без ключа й без умови інвалідації. А от Next.js <strong>Request Memoization</strong> (розділ "Next.js App Router" нижче) — навпаки, СПРАВЖНІЙ приклад тієї самої схеми: дедуплікація однакових <code>fetch</code>-викликів у межах одного рендеру, де ключ — URL + опції запиту.</p>
-  <p>Детальні API, edge cases і pitfalls кожного з трьох — <code>useMemo</code>/<code>useCallback</code> у розділі "Hooks — Deep Dive" нижче, <code>React.memo</code> у розділі "Performance Deep Dive". React Compiler (розділ "React 19 / майбутнє") автоматизує застосування саме цієї схеми — розставляє мемоізацію за тебе, не змінюючи самої ідеї.</p>`,
+  <p>React Compiler (розділ "React 19 / майбутнє") автоматизує застосування саме цієї схеми — розставляє мемоізацію за тебе, не змінюючи самої ідеї. <code>useRef</code> — стабільний контейнер, але <strong>не</strong> кеш-за-ключем: окремий розділ "🎯 useRef — детально" нижче.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useMemo / useCallback — коли реально треба <span class="tag tag-pit">PITFALL</span></h3>
+  <p><code>useMemo(fn, deps)</code> кешує <strong>значення</strong> <code>fn()</code>; <code>useCallback(fn, deps)</code> кешує саму <strong>функцію</strong>. Обидва не безкоштовні — порівняння <code>deps</code> і зберігання кешу теж коштує. Виправдані, коли: (а) обчислення справді важке, або (б) стабільність референсу критична — проп до <code>React.memo</code>-компонента чи залежність іншого хука. Інакше — складність без вимірної користі, тож спершу профілюй (розділ "Performance Deep Dive").</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useMemo — підказка, не гарантія <span class="tag tag-pit">PITFALL</span>:</strong> React офіційно залишає за собою право <strong>відкинути</strong> закешоване значення й порахувати заново (наприклад, щоб звільнити память) навіть якщо залежності не змінились. Код <strong>не повинен покладатись</strong> на useMemo для коректності (напр. мутація об'єкта всередині обчислення "бо воно виконається лише раз") — лише для продуктивності. Якщо потрібна гарантія "виконати рівно раз" — <code>useRef</code> з лінивою ініціалізацією (розділ "🎯 useRef — детально") або <code>useEffect</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useCallback не "чинить" сам себе <span class="tag tag-pit">PITFALL</span>:</strong> референс функції лишається стабільним, лише якщо стабільні ВСІ значення в її dependency array. Якщо один з deps — новий обʼєкт/масив щорендеру (див. «Референсна стабільність» нижче), <code>useCallback</code> все одно поверне нову функцію — сама наявність <code>useCallback</code> нічого не гарантує без стабільності залежностей.</span></div>
+  <h3 class="topic">React.memo — коли працює, коли ні <span class="tag tag-key">KEY</span></h3>
+  <p><code>React.memo</code> — та сама схема "кеш за ключем", тільки ключ — <strong>props компонента</strong>. Порівнює пропи <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий обʼєкт/масив/функція на кожен рендер батька (референс завжди інший). Можна передати власний компаратор — рідко потрібно і легко зламати непомітно.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const Row = React.memo(
+  function Row({ item, onSelect }: RowProps) {
+    return <li onClick={() => onSelect(item.id)}>{item.title}</li>;
+  },
+  (prev, next) => prev.item.id === next.item.id && prev.item.title === next.item.title,
+  // кастомний компаратор — true = "пропи рівні, скіпнути рендер"
+  // ⚠️ якщо забудеш порівняти якийсь проп — компонент застрягне зі старими даними
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Референсна стабільність — головна причина, чому memo "не працює" <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Новий референс щорендеру</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={{ color: <span class="str">'red'</span> }}  <span class="cmt">// новий {} щоразу</span>
+    onSelect={(id) =&gt; <span class="fn">doSomething</span>(id)} <span class="cmt">// нова функція щоразу</span>
+  <span class="jsx">/&gt;</span>;               <span class="cmt">// memo(Row) все одно ре-рендериться</span>
+}</pre></div>
+    <div class="card green"><h4>✅ Стабілізовано useMemo/useCallback</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">const</span> style = <span class="fn">useMemo</span>(() =&gt; ({ color: <span class="str">'red'</span> }), []);
+  <span class="kw">const</span> onSelect = <span class="fn">useCallback</span>((id) =&gt; <span class="fn">doSomething</span>(id), []);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={style} onSelect={onSelect} <span class="jsx">/&gt;</span>;
+}</pre></div>
+  </div>
+  <h3 class="topic">Як саме ре-рендериться дерево — покроковий приклад <span class="tag tag-key">KEY</span></h3>
+  <p>Дерево з трьох рівнів: <code>Parent</code> тримає <code>useState</code>, рендерить <code>Child</code>, той рендерить <code>Grandchild</code>. Жоден проп між ними реально не змінюється — лише <code>Parent</code> оновлює свій власний стан.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Parent() {
+  const [count, setCount] = useState(0);
+  return (
+    <>
+      <button onClick={() => setCount(c => c + 1)}>{count}</button>
+      <Child label="static" />                 {/* проп НЕ змінюється */}
+    </>
+  );
+}
+function Child({ label }: { label: string }) {
+  return <Grandchild label={label} />;          {/* проп НЕ змінюється */}
+}
+function Grandchild({ label }: { label: string }) {
+  return <span>{label}</span>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="grid2">
+    <div class="card red"><h4>❌ Без memo — усі три рендеряться</h4>
+      <p>Клік по кнопці → <code>setCount</code> → <code>Parent</code> ре-рендериться (власний state — тригер #1, розділ «Життєвий цикл і події компонента» нижче). <strong>За замовчуванням React рендерить усе піддерево під ним</strong> — <code>Child</code> рендериться (тригер "ре-рендер батька"), і оскільки <code>Child</code> сам повертає <code>&lt;Grandchild&gt;</code> у своєму тілі, <code>Grandchild</code> рендериться теж. Три рендери на клік, хоча <code>label</code> ніде не змінився.</p>
+    </div>
+    <div class="card green"><h4>✅ memo(Child) зупиняє каскад на першому кордоні</h4>
+      <p>Обгорни лише <code>Child</code> в <code>React.memo</code>. При кліку: <code>Parent</code> рендериться (не уникнути — власний state), <code>Child</code> отримує ре-рендер-запит від батька, але <code>React.memo</code> порівнює його пропи (<code>label="static"</code> — не змінився) і <strong>каже React: "not rendering"</strong>. Оскільки сам <code>Child</code> не виконався — <code>Grandchild</code> усередині нього <strong>взагалі не викликається</strong>, каскад зупинився на межі.</p>
+    </div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span><code>memo</code> — це <strong>межа (boundary)</strong>, а не глобальний перемикач: він зупиняє поширення ре-рендеру рівно в тому місці дерева, де стоїть, і не потребує обгортати кожен компонент — досить поставити його перед "важким" піддеревом, яке не залежить від того, що змінюється вище.</span></div>
+  <p style="font-size:12.5px;opacity:.75">Як знайти зайвий ре-рендер на практиці (Profiler, "Why did this render?") — розділи "Performance Deep Dive" та "React DevTools як Senior" нижче.</p>`,
         },
       ],
     },
     {
       id: 'hooks-deep-dive',
-      title: '🪝 Hooks — Deep Dive',
+      title: '🔄 Життєвий цикл і події компонента',
       interviewQuestions: [
         {
-          question: 'Чому масив залежностей <code>useEffect</code>/<code>useMemo</code>/<code>useCallback</code> порівнюється по-різному з масивом об\'єктів у стейті — які тут підводні камені?',
-          answer: 'React порівнює кожен елемент масиву залежностей через <code>Object.is</code> (поверхнево, а не глибоко). Якщо залежність — новий об\'єкт/масив/функція, створений щорендеру (наприклад, <code>{ id }</code> в JSX-виклику), ефект/мемоізація спрацьовуватиме щоразу, навіть якщо «логічно» значення не змінилось — типова причина зайвих ре-рендерів чи нескінченних циклів у <code>useEffect</code>.',
+          question: 'Як зіставити <code>componentDidMount</code>, <code>componentDidUpdate</code> і <code>componentWillUnmount</code> з <code>useEffect</code>?',
+          answer: 'Один <code>useEffect(fn, [])</code> покриває <code>componentDidMount</code> (запускається раз після монтування) + <code>componentWillUnmount</code> (функція, повернута з <code>fn</code>, — cleanup). <code>useEffect(fn, [dep])</code> покриває <code>componentDidUpdate</code>, але з відмінністю: ефект запускається і після <em>монтування</em> теж, тоді як <code>componentDidUpdate</code> — лише після оновлень. Головна зміна мислення: не «в яку фазу», а «від яких значень залежить».',
         },
         {
-          question: 'У чому різниця між <code>useMemo</code> і <code>useCallback</code>, і коли передчасна мемоізація шкодить більше, ніж допомагає?',
-          answer: '<code>useMemo</code> мемоізує <em>значення</em>, <code>useCallback</code> — <em>посилання на функцію</em> (по суті, <code>useCallback(fn, deps)</code> еквівалентний <code>useMemo(() => fn, deps)</code>). Обидва самі по собі не безкоштовні — порівняння залежностей і зберігання кешу теж коштує. Мемоізація виправдана, коли обчислення справді важке або коли стабільність посилання критична (проп до <code>React.memo</code>-компонента, залежність іншого хука) — інакше вона додає складність без вимірної користі.',
+          question: 'Назви причини, з яких компонент ре-рендериться.',
+          answer: 'Чотири: (1) змінився власний <code>state</code>; (2) ре-рендернувся батько — дитина рендериться теж, навіть якщо її пропи не змінились (доки не стоїть <code>React.memo</code>); (3) змінилось значення <code>Context</code>, яке компонент споживає; (4) <code>useReducer</code> dispatch — навіть тим самим значенням (на відміну від <code>useState</code> тим самим значенням, де React бейлить через <code>Object.is</code>). Зміна пропу сама по собі не окремий пункт — вона діє через (2).',
         },
         {
-          question: `Що таке stale closure і як його уникнути?`,
-          answer: `приклад з setInterval + functional update / useRef.`,
+          question: 'Навіщо потрібен <code>&lt;StrictMode&gt;</code> і чому в ньому компоненти рендеряться / монтуються двічі в dev?',
+          answer: 'StrictMode навмисно подвоює виклик тіла компонента, ініціалізаторів <code>useState</code>/<code>useReducer</code> і mount-фазу ефектів (mount → unmount → mount) — щоб виявити неідемпотентність у рендері та ефекти без cleanup ще в розробці. Це саме те, що ламається в concurrent-режимі прода. У production подвоєння немає.',
         },
         {
-          question: `Коли useReducer краще за useState?`,
-          answer: `коли наступний стан залежить від попереднього складним чином, або переходи станів треба тестувати ізольовано від UI.`,
+          question: 'Що таке stale closure у <code>useEffect</code> і як його уникнути?',
+          answer: 'Колбек ефекту «замикає» значення пропсів/стейту на момент свого створення. Якщо ефект запустився один раз (<code>[]</code>), а всередині є <code>setInterval</code>/підписка, що читає <code>count</code> — вона назавжди бачитиме <code>count</code> з першого рендеру. Виходи: <strong>функціональний апдейт</strong> (<code>setCount(c =&gt; c + 1)</code>), додати значення в <code>deps</code> (ефект перезапуститься з актуальним замиканням — не забути cleanup), або тримати «живе» значення в <code>useRef</code> і читати <code>ref.current</code>.',
         },
         {
-          question: `Чи можна покладатись на useMemo для коректності коду (не лише продуктивності)?`,
-          answer: `ні, React може відкинути кеш у будь-який момент — це підказка (hint), не гарантія.`,
+          question: 'Навіщо <code>AbortController</code> в ефекті, якщо вже є прапорець <code>active</code>?',
+          answer: '<code>active</code>-guard лише <em>ігнорує</em> застарілу відповідь — сам запит усе одно доходить до сервера, тримає з\'єднання й може впертись у rate-limit. <code>controller.abort()</code> реально <strong>рве мережевий запит</strong>, звільняє слот у пулі з\'єднань і зупиняє парсинг тіла. На швидких перемиканнях (autocomplete, пагінація) це відчутно економить трафік і навантаження на бекенд.',
         },
         {
-          question: `useCallback обгортає функцію — референс точно стабільний?`,
-          answer: `лише якщо стабільні всі deps; нестабільна залежність все одно дає нову функцію щорендеру.`,
+          question: 'Що не так з <code>useEffect(async () =&gt; { … })</code>?',
+          answer: '<code>async</code>-стрілка завжди повертає <strong>Promise</strong>, а React очікує від колбека ефекту або <code>undefined</code>, або cleanup-функцію — Promise він cleanup-ом трактувати не вміє (буде ворнінг, cleanup не спрацює). Правильно: оголосити <code>async</code>-функцію <strong>всередині</strong> ефекту й одразу викликати її, а сам колбек лишити синхронним і повернути з нього справжній cleanup (<code>AbortController.abort()</code>).',
         },
       ],
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">useEffect — правила <span class="tag tag-key">KEY</span></h3><div class="grid2">
-    <pre><span class="cmt">// Lifecycle-аналогія:</span>
-<span class="fn">useEffect</span>(() =&gt; {
-  <span class="cmt">// componentDidMount + componentDidUpdate</span>
-  <span class="kw">return</span> () =&gt; { <span class="cmt">/* componentWillUnmount */</span> };
-}, [dep]);        <span class="cmt">// [] = лише mount/unmount</span>
-                  <span class="cmt">// без масиву = кожен рендер</span>
-                  <span class="cmt">// [dep] = при зміні dep</span></pre>
-    <pre><span class="cmt">// Stale closure bug!</span>
-<span class="fn">useEffect</span>(() =&gt; {
-  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() =&gt; {
-    <span class="fn">setCount</span>(count + <span class="num">1</span>);  <span class="cmt">// ❌ stale count=0 назавжди</span>
-  }, <span class="num">1000</span>);
-  <span class="kw">return</span> () =&gt; <span class="fn">clearInterval</span>(id);
-}, []);
-
-<span class="cmt">// ✅ Функціональний апдейт — не залежить від closure</span>
-<span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>);</pre>
-  </div>
-  <p style="font-size:12.5px;opacity:.75">Обидва хуки нижче — конкретне застосування єдиної схеми "кеш за ключем" (розділ "Мемоізація: єдина концепція" вище).</p>
-  <h3 class="topic">useMemo / useCallback — коли реально треба <span class="tag tag-pit">PITFALL</span></h3>
-  <p style="font-size:12.5px;opacity:.75">Коли саме useMemo/useCallback/React.memo виправдані, а коли це передчасна оптимізація — єдина порівняльна таблиця в розділі "Мемоізація: єдина концепція" вище.</p>
-  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useMemo — підказка, не гарантія <span class="tag tag-pit">PITFALL</span>:</strong> React офіційно залишає за собою право <strong>відкинути</strong> закешоване значення й порахувати заново (наприклад, щоб звільнити память) навіть якщо залежності не змінились. Код <strong>не повинен покладатись</strong> на useMemo для коректності (напр. мутація об'єкта всередині обчислення "бо воно виконається лише раз") — лише для продуктивності. Якщо потрібна гарантія "виконати рівно раз" — <code>useRef</code> з lazy-ініціалізацією або <code>useEffect</code>.</span></div>
-  <h3 class="topic">useRef — 3 use cases</h3><div class="grid3">
-    <div class="card"><h4>1. DOM ref</h4><pre style="font-size:10.5px"><span class="kw">const</span> inputRef = <span class="fn">useRef</span>&lt;HTMLInputElement&gt;(<span class="kw">null</span>);
-<span class="cmt">// &lt;input ref={inputRef} /&gt;</span>
-inputRef.current?.<span class="fn">focus</span>();</pre></div>
-    <div class="card blue"><h4>2. Mutable без ре-рендеру</h4><pre style="font-size:10.5px"><span class="kw">const</span> timerRef = <span class="fn">useRef</span>&lt;NodeJS.Timeout&gt;();
-timerRef.current = <span class="fn">setTimeout</span>(fn, <span class="num">1000</span>);
-<span class="cmt">// зміна .current НЕ тригерить рендер</span></pre></div>
-    <div class="card green"><h4>3. "Живе" значення в effect</h4><pre style="font-size:10.5px"><span class="kw">const</span> valueRef = <span class="fn">useRef</span>(value);
-valueRef.current = value;
-<span class="cmt">// effect завжди читає актуальне значення</span>
-<span class="cmt">// (обхід stale closure без зміни dep array)</span></pre></div>
-  </div>
-  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Антипатерн useRef <span class="tag tag-pit">PITFALL</span>:</strong> зберігати в ref значення, яке <strong>повинно</strong> відображатись в UI. Зміна <code>.current</code> не тригерить ре-рендер — компонент показує застарілі дані, доки якийсь ІНШИЙ стан не змусить його перерендеритись. Якщо значення впливає на те, що бачить користувач — це <code>useState</code>, не <code>useRef</code>.</span></div>
-  <h3 class="topic">useLayoutEffect vs useEffect</h3><div class="grid2">
-    <div class="card red"><h4>useEffect (асинхронний)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. Використовуй в 95% випадків (fetch, підписки, аналітика).</p></div>
-    <div class="card yellow"><h4>useLayoutEffect (синхронний)</h4><p>Виконується <strong>до</strong> paint, одразу після DOM-мутацій. Потрібен для читання layout/dimensions і синхронних правок DOM — уникнути візуального "флешу".</p></div>
-  </div>
-  <h3 class="topic">useReducer vs useState</h3><div class="grid2">
+          html: `<h3 class="topic">Три фази життя компонента <span class="tag tag-key">KEY</span></h3>
+  <p>Кожен компонент проходить: <strong>Mount</strong> (перше створення й вставка в DOM) → <strong>Update</strong> (повторюється на кожен ре-рендер: зміна props / state / context) → <strong>Unmount</strong> (видалення з DOM). Класові компоненти виражали це явними методами (<code>componentDidMount</code> тощо — розділ «🏛️ Class vs Functional» нижче); функціональні — через <code>useEffect</code> і порядок виконання самого тіла функції. Нижче — кожна подія покроково.</p>`,
+        },
+        {
+          kind: 'mermaid',
+          caption:
+            'Три стани життя: Mount (один раз) → Update (цикл — повторюється на кожну зміну props / state / context) → Unmount (один раз).',
+          code: `flowchart LR
+  S["Компонент<br/>оголошено в JSX"] --> MOUNT["🟢 MOUNT<br/>перший рендер +<br/>вставка у DOM"]
+  MOUNT --> UPDATE["🔵 UPDATE<br/>ре-рендер на зміну<br/>props / state / context"]
+  UPDATE -->|"знову змінилось"| UPDATE
+  UPDATE --> UNMOUNT["🔴 UNMOUNT<br/>прибрано з DOM +<br/>cleanup ефектів"]
+  MOUNT -->|"прибрано одразу"| UNMOUNT`,
+        },
+        {
+          kind: 'mermaid',
+          caption:
+            'Що саме виконується на кожному кроці у функціональному компоненті. Тіло функції = render-фаза (чиста, без side-effects); усе інше робить React у commit-фазі. Побічні ефекти живуть лише в useEffect — бо render-фазу React може перервати чи повторити (розділ «Render vs Commit фази» вище).',
+          code: `flowchart TB
+  subgraph MOUNT["🟢 MOUNT — один раз"]
+    M1["Виклик тіла функції<br/>render-фаза: чиста, повертає JSX"] --> M2["React комітить DOM<br/>+ присвоює refs"]
+    M2 --> M3["useLayoutEffect<br/>синхронно, ДО paint"]
+    M3 --> M4["🖌️ Браузер малює екран"]
+    M4 --> M5["useEffect<br/>асинхронно, ПІСЛЯ paint"]
+  end
+  subgraph UPDATE["🔵 UPDATE — на кожну зміну props / state / context"]
+    U1["Повторний виклик тіла функції"] --> U2["React диффить і комітить<br/>лише те, що змінилось"]
+    U2 --> U3["Залежності useEffect змінились?<br/>ТАК → cleanup старого ефекту, потім новий запуск<br/>НІ → ефект пропускається"]
+  end
+  subgraph UNMOUNT["🔴 UNMOUNT — один раз"]
+    X1["React прибирає вузол з DOM"] --> X2["Запуск УСІХ cleanup-функцій<br/>return з useEffect / useLayoutEffect"]
+  end
+  M5 --> U1
+  U3 -->|"знову змінились props / state"| U1
+  U3 --> X1`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">🧭</span><span>Як читати діаграму: <strong>тіло функції викликається на кожній фазі Mount і Update</strong> — це і є функціональний аналог <code>render()</code>. А <strong>коли</strong> спрацює ефект, вирішує масив залежностей: <code>useEffect(fn, [])</code> = лише Mount + Unmount; <code>useEffect(fn, [dep])</code> = Mount + кожен Update, де змінився <code>dep</code>; <code>useEffect(fn)</code> без масиву = після кожного рендеру. Чому side-effects заборонені прямо в тілі — розділ «🎬 Render vs Commit фази» вище.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">1. MOUNT — що відбувається за першим разом</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Крок</th><th>Що робить React</th></tr>
+    <tr><td>Виклик тіла функції</td><td>render-фаза — чиста, повертає JSX; тут <strong>не можна</strong> робити side-effects</td></tr>
+    <tr><td>Commit у DOM</td><td>React вставляє вузли, присвоює <code>ref.current</code></td></tr>
+    <tr><td><code>useLayoutEffect</code></td><td>синхронно, <strong>ДО</strong> paint — для читання layout / синхронних правок DOM без візуального «флешу»</td></tr>
+    <tr><td>🖌️ Paint</td><td>браузер малює екран</td></tr>
+    <tr><td><code>useEffect</code></td><td>асинхронно, <strong>ПІСЛЯ</strong> paint — fetch, підписки, аналітика (95% випадків)</td></tr>
+  </table></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">2. RE-RENDER — 4 тригери <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap"><table>
+    <tr><th>Тригер</th><th>Деталь</th></tr>
+    <tr><td>Власний <code>state</code></td><td><code>setState</code> тим самим значенням → React <strong>бейлить</strong> (пропускає ре-рендер, <code>Object.is</code>-порівняння)</td></tr>
+    <tr><td>Ре-рендер батька</td><td>дитина рендериться <strong>теж</strong>, навіть якщо її пропи не змінились — доки не стоїть <code>React.memo</code> (розділ «🧠 Мемоізація та референсна стабільність» вище)</td></tr>
+    <tr><td>Зміна <code>Context</code></td><td>усі споживачі провайдера ре-рендеряться на будь-яку зміну <code>value</code> (розділ «🧭 Межі стану та Context»)</td></tr>
+    <tr><td><code>useReducer</code> dispatch</td><td>тригерить рендер <strong>навіть тим самим значенням</strong> — на відміну від <code>useState</code></td></tr>
+  </table></div>
+  <p style="font-size:12.5px;opacity:.75">Кілька <code>setState</code> в одному тику зливаються в один ре-рендер (batching) — розділ «⚡ Automatic Batching» вище.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useReducer vs useState — коли який</h3><div class="grid2">
     <pre><span class="cmt">// useState — незалежні прості значення</span>
 <span class="kw">const</span> [name, setName] = <span class="fn">useState</span>(<span class="str">''</span>);
 <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">false</span>);</pre>
@@ -1374,9 +1512,341 @@ valueRef.current = value;
   <span class="kw">return</span> { count: initialCount, history: [] };  <span class="cmt">// дороге обчислення initial-стану</span>
 }
 <span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, initialCount, init);
-<span class="cmt">// без цього довелось би рахувати початковий стан щорендеру назовні хука</span></pre>
-  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useCallback не "чинить" сам себе <span class="tag tag-pit">PITFALL</span>:</strong> референс функції лишається стабільним, лише якщо стабільні ВСІ значення в її dependency array. Якщо один з deps — новий обʼєкт/масив щорендеру (Block 3, referential stability), <code>useCallback</code> все одно поверне нову функцію — сама наявність <code>useCallback</code> нічого не гарантує без стабільності залежностей.</span></div>
-  `,
+<span class="cmt">// без цього довелось би рахувати початковий стан щорендеру назовні хука</span></pre>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">3. Зміна залежностей ефекту <span class="tag tag-key">KEY</span></h3>
+  <p>Коли значення в <code>deps</code> змінилось: React спершу викликає <strong>cleanup попереднього</strong> запуску, потім запускає ефект <strong>наново</strong> з актуальним замиканням. Якщо <code>deps</code> не змінились — ефект пропускається цілком. Порівняння — <code>Object.is</code> по кожному елементу (поверхнево): новий обʼєкт/масив/функція щорендеру «змінює» залежність, навіть якщо логічно значення те саме — типова причина зайвих запусків і нескінченних циклів.</p>
+  <div class="grid2">
+    <pre><span class="cmt">// Lifecycle-аналогія:</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="cmt">// componentDidMount + componentDidUpdate</span>
+  <span class="kw">return</span> () =&gt; { <span class="cmt">/* componentWillUnmount */</span> };
+}, [dep]);        <span class="cmt">// [] = лише mount/unmount</span>
+                  <span class="cmt">// без масиву = кожен рендер</span>
+                  <span class="cmt">// [dep] = при зміні dep</span></pre>
+    <pre><span class="cmt">// Stale closure bug!</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() =&gt; {
+    <span class="fn">setCount</span>(count + <span class="num">1</span>);  <span class="cmt">// ❌ stale count=0 назавжди</span>
+  }, <span class="num">1000</span>);
+  <span class="kw">return</span> () =&gt; <span class="fn">clearInterval</span>(id);
+}, []);
+
+<span class="cmt">// ✅ Функціональний апдейт — не залежить від closure</span>
+<span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>);</pre>
+  </div>
+  <p style="font-size:12.5px;opacity:.75">Ще один обхід stale closure — «живе» значення в <code>useRef</code> (розділ «🎯 useRef — детально» нижче). Лінтер <code>exhaustive-deps</code> з <code>eslint-plugin-react-hooks</code> стежить за повнотою масиву.</p>
+  <h3 class="topic">useLayoutEffect vs useEffect</h3><div class="grid2">
+    <div class="card red"><h4>useEffect (асинхронний)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. 95% випадків (fetch, підписки, аналітика).</p></div>
+    <div class="card yellow"><h4>useLayoutEffect (синхронний)</h4><p>Виконується <strong>до</strong> paint, одразу після DOM-мутацій. Для читання layout/dimensions і синхронних правок DOM — уникнути візуального «флешу».</p></div>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">4. useEffect cleanup — механізм <span class="tag tag-key">KEY</span></h3>
+  <p>Cleanup — це функція, яку <strong>повертає</strong> колбек <code>useEffect</code>. React кличе її <strong>перед кожним наступним запуском</strong> ефекту і <strong>при розмонтуванні</strong> компонента — щоб прибрати все, що ефект «відкрив».</p>
+  <p style="margin-top:6px"><strong>Коли cleanup спрацьовує:</strong></p>
+  <ul>
+    <li>перед повторним запуском ефекту — коли змінилась залежність із <code>deps</code>;</li>
+    <li>при unmount компонента;</li>
+    <li>у dev зі <code>&lt;StrictMode&gt;</code> — додатково після першого «пробного» mount (тому й видно <code>mount → unmount → mount</code>).</li>
+  </ul>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Setup (що ефект відкрив)</th><th>Cleanup (що повернути)</th></tr>
+      <tr><td><code>setInterval</code> / <code>setTimeout</code></td><td><code>clearInterval</code> / <code>clearTimeout</code></td></tr>
+      <tr><td><code>addEventListener</code></td><td><code>removeEventListener</code> — <strong>та сама функція!</strong></td></tr>
+      <tr><td><code>fetch</code> / async-запит</td><td><code>AbortController.abort()</code></td></tr>
+      <tr><td><code>WebSocket</code> / subscription</td><td><code>.close()</code> / <code>unsubscribe()</code></td></tr>
+      <tr><td>Observer (Intersection / Resize / Mutation)</td><td><code>.disconnect()</code></td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Event listener — та сама референція в add і remove',
+          code: `useEffect(() => {
+  const onResize = () => setWidth(window.innerWidth);
+  window.addEventListener('resize', onResize);
+  return () => window.removeEventListener('resize', onResize);
+}, []);
+// removeEventListener мусить отримати ТУ САМУ функцію, що й add —
+// тому оголошуй onResize усередині ефекту, не інлайном у двох місцях.`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Async fetch — race-condition guard + AbortController',
+          code: `useEffect(() => {
+  const controller = new AbortController();
+  fetch(url, { signal: controller.signal })
+    .then(r => r.json())
+    .then(setData)
+    .catch(e => { if (e.name !== 'AbortError') throw e; }); // ігнор скасування
+  return () => controller.abort();  // скасувати при зміні url / unmount
+}, [url]);
+
+// Альтернатива без abort — прапорець-guard (запит усе одно доходить):
+useEffect(() => {
+  let active = true;
+  fetchData().then(d => { if (active) setData(d); });
+  return () => { active = false; };  // ігнорувати stale-відповідь
+}, [url]);`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Subscription — WebSocket / RxJS / Centrifugo',
+          code: `useEffect(() => {
+  const sub = channel.subscribe(onMessage);
+  return () => sub.unsubscribe();
+}, [channel]);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span><strong>Типові помилки cleanup <span class="tag tag-pit">PITFALL</span>:</strong>
+  <ul style="margin:4px 0 0">
+    <li><strong>Порожній cleanup там, де потрібен</strong> — забув <code>return</code> → витік слухача/інтервалу на кожен re-run ефекту.</li>
+    <li><strong>Async-функція прямо в <code>useEffect</code></strong> — <code>useEffect(async () =&gt; …)</code> повертає Promise, а не cleanup. Оголошуй <code>async</code> усередині, ефект лишай синхронним.</li>
+    <li><strong>Різні референції в add/remove</strong> — інлайнова стрілка в обох місцях → <code>removeEventListener</code> не спрацює.</li>
+    <li><strong>Оновлення стану після unmount</strong> — <code>AbortController</code> або <code>active</code>-guard знімають це.</li>
+  </ul></span></div>
+  <p style="font-size:12.5px;opacity:.75">Повний приклад <code>fetch</code> + <code>AbortController</code> з автентифікацією — розділ «🌐 Fetch, axios та автентифікація на клієнті» нижче; мапінг cleanup ↔ <code>componentWillUnmount</code> — «🏛️ Class vs Functional» нижче.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">5. UNMOUNT</h3>
+  <p>React прибирає вузол з DOM і запускає <strong>всі</strong> cleanup-функції, повернуті з <code>useEffect</code> / <code>useLayoutEffect</code> цього компонента (і його піддерева). Після цього посилання на компонент можна відпускати — таймери зупинені, слухачі зняті, підписки закриті, запити скасовані.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">6. &lt;StrictMode&gt; — подвійний виклик лише в dev <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Що це:</strong> runtime-перемикач ЛИШЕ для development-збірки. Навмисно ДВІЧІ викликає тіло компонента, ініціалізатори <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> і (React 18+) mount-фазу ефектів — <code>mount → unmount → mount</code>. <strong>Навіщо:</strong> викрити нечисті компоненти й ефекти без cleanup ще в розробці, поки легко пофіксити. Це той самий сценарій, що React виконує в concurrent-режимі прода — тому баг, який StrictMode показує в dev, там стане реальним.</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>У продакшн-білді нічого не подвоюється.</strong> Правильна реакція на подвійний <code>mount</code>/<code>fetch</code> у dev — не «прибрати <code>&lt;StrictMode&gt;</code>», а зробити ефект <strong>ідемпотентним</strong>: cleanup, який лишає рівно один активний слухач / інтервал / підписку, і <code>AbortController</code> для запитів. Забутий cleanup → після двох <code>mount</code> без <code>unmount</code> між ними отримаєш два інтервали / дубльовані підписки.</span></div>
+  <p>Обгортається <strong>один раз, навколо кореня застосунку</strong>: у Vite/CRA — навколо <code>&lt;App /&gt;</code> у точці входу; у Next.js App Router увімкнено <strong>за замовчуванням</strong> (<code>reactStrictMode: true</code>).</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Подвоюється не лише сам ефект</strong> — будь-який <code>console.log</code> у тілі компонента чи в <code>useEffect</code> виведеться <strong>двічі поспіль</strong>. Це не баг логування — так само подвоюється весь код у цих точках.</span></div>
+  <h3 class="topic">StrictMode (React) vs <code>'use strict'</code> (JavaScript) — не плутати <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th><code>&lt;React.StrictMode&gt;</code></th><th><code>'use strict'</code></th></tr>
+      <tr><td>Що це</td><td>React-компонент (JSX-обгортка)</td><td>Директива мови JavaScript</td></tr>
+      <tr><td>Хто виконує</td><td>React runtime</td><td>JS-рушій (V8 та ін.)</td></tr>
+      <tr><td>Діє де</td><td>Лише в development-збірці</td><td>Завжди — dev і прод однаково</td></tr>
+      <tr><td>Що робить</td><td>Подвоює рендер/ефекти, щоб виявити нечистоту</td><td>Забороняє небезпечні конструкції, робить деякі мовчазні помилки винятками</td></tr>
+      <tr><td>Стосунок один до одного</td><td colspan="2">Жодного — випадковий збіг слова "strict". <code>'use strict'</code> і так увімкнений автоматично в ES-модулях незалежно від StrictMode-компонента.</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Counter() {
+  console.log('render');           // dev + StrictMode: виведе ДВІЧІ підряд
+
+  useEffect(() => {
+    console.log('mount');          // dev: mount → unmount → mount (теж двічі)
+    return () => console.log('unmount');
+  }, []);
+
+  return <div />;
+}
+
+// Виявляє ефекти БЕЗ cleanup — без StrictMode такий баг непомітний у dev,
+// але в concurrent-рендерингу прода дає подвійні підписки/запити:
+useEffect(() => {
+  const id = setInterval(tick, 1000); // ❌ немає clearInterval → StrictMode покаже "2 інтервали"
+}, []);
+
+useEffect(() => {
+  const id = setInterval(tick, 1000);
+  return () => clearInterval(id);     // ✅ cleanup — StrictMode проходить чисто
+}, []);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<p style="font-size:12.5px;opacity:.75">Як це саме виглядало в класових методах (<code>componentDidMount</code>/<code>DidUpdate</code>/<code>WillUnmount</code>) і повна мапа метод → хук — розділ «🏛️ Class vs Functional» нижче.</p>`,
+        },
+      ],
+    },
+    {
+      id: 'hooks-useref',
+      title: '🎯 useRef — детально',
+      interviewQuestions: [
+        {
+          question: 'У чому головна відмінність <code>useRef</code> від <code>useState</code>?',
+          answer:
+            '<code>useRef</code> повертає мутабельний контейнер <code>{ current }</code>, зміна якого <strong>синхронна й «тиха»</strong> — не планує ре-рендер, нове значення видно одразу в тому самому тику. <code>useState</code> оновлюється <strong>асинхронно</strong> (значення в поточному рендері «заморожене» до наступного) і <strong>тригерить ре-рендер</strong>. Правило вибору: якщо значення впливає на те, що бачить користувач — <code>useState</code>; якщо воно живе «поза UI» (id таймера, попереднє значення, DOM-вузол) — <code>useRef</code>.',
+        },
+        {
+          question: 'Чому не можна читати/писати <code>.current</code> під час рендеру, і який єдиний виняток?',
+          answer:
+            'Рендер має бути <strong>чистою функцією</strong> пропсів і стейту. Мутація ref у тілі компонента робить результат рендеру залежним від побічного ефекту — це ламається в Concurrent Mode та StrictMode, де React може викликати тіло компонента двічі, перервати чи відкинути рендер. Читати/писати <code>.current</code> треба в <code>useEffect</code> або обробниках подій. Єдиний припустимий виняток — <strong>лінива ініціалізація</strong>: <code>if (ref.current === null) ref.current = createOnce()</code>, бо вона ідемпотентна й виконується фактично один раз.',
+        },
+        {
+          question: 'Що не так з <code>useRef(new ExpensiveThing())</code> і як ініціалізувати важкий об\'єкт один раз?',
+          answer:
+            'Аргумент <code>useRef(...)</code> обчислюється на <strong>кожному рендері</strong> — <code>new ExpensiveThing()</code> створюватиметься щоразу, хоча використається лише перший результат (решта одразу відкидається). Правильно: <code>const ref = useRef(null)</code> і нижче <code>if (ref.current === null) ref.current = new ExpensiveThing()</code> — конструктор виконається рівно раз.',
+        },
+        {
+          question: 'Як <code>useRef</code> рятує від stale closure при порожньому масиві залежностей?',
+          answer:
+            'Колбек, створений один раз (<code>[]</code> deps), назавжди замикається на значеннях першого рендеру. <code>ref</code> — це <strong>той самий об\'єкт</strong> на всіх рендерах; якщо на кожному рендері оновлювати <code>ref.current = value</code>, то читання <code>ref.current</code> усередині «застряглого» колбека дає актуальне значення без перепідписки. На відміну від <strong>функціонального апдейту</strong> (<code>setX(x =&gt; …)</code>) чи <strong>додавання в deps</strong> (перезапуск ефекту з новим замиканням), ref не перезапускає ефект і не тригерить ре-рендер — але й не є реактивним, тож не годиться, коли на зміну значення треба саме зреагувати.',
+        },
+        {
+          question: 'useRef чи useMemo для стабільного мутабельного значення на весь час життя компонента?',
+          answer:
+            '<code>useRef</code>. <code>useMemo(() =&gt; obj, deps)</code> призначений для <strong>похідних значень</strong> і React офіційно може відкинути його кеш будь-коли — покладатись на нього для «створити рівно раз» не можна. <code>useRef</code> гарантує один і той самий <code>.current</code> назавжди й дозволяє його мутувати. <code>useMemo</code> доречний, коли значення <em>обчислюється</em> з інших і має перераховуватись при їх зміні.',
+        },
+        {
+          question: 'Чому не можна навісити <code>ref</code> на функціональний компонент напряму і що змінилось у React 19?',
+          answer:
+            'До React 19 <code>ref</code> — не звичайний prop: React перехоплює його, і функціональний компонент його просто не отримує. Щоб пробросити <code>ref</code> до внутрішнього DOM-вузла, компонент треба обгорнути в <code>forwardRef((props, ref) =&gt; …)</code>. У <strong>React 19</strong> <code>ref</code> став звичайним пропом — його можна приймати як <code>props.ref</code>, і <code>forwardRef</code> більше не обов\'язковий.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що це та базова механіка <span class="tag tag-key">KEY</span></h3>
+  <p><code>useRef</code> — хук, що повертає <strong>мутабельний контейнер</strong> <code>{ current: value }</code>, який зберігається між рендерами й <strong>не викликає ре-рендер</strong> при зміні. Два головні застосування: доступ до DOM-вузлів і зберігання значень, що мають пережити рендери, але не впливати на UI.</p>
+  <pre><span class="kw">const</span> ref = <span class="fn">useRef</span>(initialValue);
+ref.current;            <span class="cmt">// читання</span>
+ref.current = newValue; <span class="cmt">// запис — НЕ тригерить ре-рендер</span></pre>
+  <p><code>useRef(x)</code> повертає <strong>той самий об'єкт</strong> на кожному рендері. Змінюєш <code>.current</code> — значення живе далі, але React про це «не знає» й не перемальовує компонент.</p>`,
+        },
+        {
+          kind: 'mermaid',
+          caption:
+            'Головна різниця: setState ставить оновлення в чергу й запускає ре-рендер; запис у ref.current відбувається синхронно й тихо — React про нього не дізнається.',
+          code: `flowchart LR
+  A["setState(x)"] --> B["React ставить<br/>оновлення в чергу"]
+  B --> C["🔵 Ре-рендер<br/>наступний рендер бачить x"]
+  C --> D["🖼️ UI оновлено"]
+  E["ref.current = x"] --> F["🔴 Значення змінено<br/>синхронно, одразу"]
+  F --> G["UI НЕ оновлюється<br/>React не знає про зміну"]`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useRef vs useState <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>&nbsp;</th><th>useState</th><th>useRef</th></tr>
+      <tr><td>Зміна тригерить ре-рендер</td><td>✅ так</td><td>❌ ні</td></tr>
+      <tr><td>Зберігається між рендерами</td><td>✅ так</td><td>✅ так</td></tr>
+      <tr><td>Оновлення</td><td>асинхронне (наступний рендер)</td><td>синхронне (одразу)</td></tr>
+      <tr><td>Читання в тому ж тику</td><td>старе значення</td><td>нове значення</td></tr>
+      <tr><td>Для чого</td><td>дані, що впливають на UI</td><td>дані «поза» UI, DOM-посилання</td></tr>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card red"><h4>state — «заморожений» до наступного рендеру</h4><pre style="font-size:10.5px"><span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+<span class="fn">setCount</span>(<span class="num">5</span>);
+<span class="fn">console</span>.<span class="fn">log</span>(count); <span class="cmt">// 0 — оновиться лише в наступному рендері</span></pre></div>
+    <div class="card green"><h4>ref — синхронно, але тихо</h4><pre style="font-size:10.5px"><span class="kw">const</span> countRef = <span class="fn">useRef</span>(<span class="num">0</span>);
+countRef.current = <span class="num">5</span>;
+<span class="fn">console</span>.<span class="fn">log</span>(countRef.current); <span class="cmt">// 5 — синхронно; UI при цьому не оновиться</span></pre></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Застосування 1 — імперативний доступ до DOM',
+          code: `function Input() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();   // імперативний доступ до DOM
+  }, []);
+
+  return <input ref={inputRef} />;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<p><strong>Типові кейси:</strong> <code>focus()</code>, <code>scrollIntoView()</code>, вимірювання (<code>getBoundingClientRect</code>), інтеграція з не-React бібліотеками (canvas, відеоплеєри, чарти, карти).</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>ref</code> на елементі = <code>null</code> до монтування. Звертайся до <code>.current</code> в <code>useEffect</code> / обробниках подій, <strong>не під час рендеру</strong>.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Застосування 2 — значення, що переживають рендери (id таймера, попереднє значення)',
+          code: `// id інтервалу — треба зберегти для cleanup, але UI від нього не залежить
+const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+useEffect(() => {
+  timerRef.current = setInterval(tick, 1000);
+  return () => { if (timerRef.current) clearInterval(timerRef.current); };
+}, []);
+
+// попереднє значення prop / state
+function usePrevious<T>(value: T) {
+  const ref = useRef<T>();
+  useEffect(() => { ref.current = value; });  // оновлюємо ПІСЛЯ рендеру
+  return ref.current;                          // повертаємо старе
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Застосування 3 — обхід stale closure: ref завжди читає актуальне значення',
+          code: `function Chat() {
+  const [messages, setMessages] = useState<Msg[]>([]);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;   // тримаємо ref свіжим на кожному рендері
+
+  useEffect(() => {
+    socket.on('event', () => {
+      // messagesRef.current — завжди актуальний, на відміну від
+      // messages, замкнутого на значенні першого рендеру
+      console.log(messagesRef.current.length);
+    });
+    return () => socket.off('event');
+  }, []);   // порожні deps, але через ref бачимо свіже значення
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<p>Колбек із порожнім <code>deps</code> замикається на значеннях першого рендеру назавжди (<strong>stale closure</strong>). <code>ref.current</code> — той самий об'єкт на всіх рендерах, тож читання <code>ref.current</code> усередині такого колбека дає завжди актуальне значення без перепідписки. Мінус: ref <strong>не реактивний</strong> — на саму зміну значення так не зреагуєш, лише прочитаєш свіже при наступному виклику колбека.</p>
+  <p style="font-size:12.5px;opacity:.75">Механіка замикань — розділ "Functions, Closures &amp; Scope" у топіку JavaScript; stale closure в <code>useEffect</code> та інші виходи (функціональний апдейт, deps) — розділ «🔄 Життєвий цикл і події компонента» вище.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Критичні правила <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Не читай / не пиши <code>.current</code> під час рендеру.</strong> Рендер має бути чистим. Мутація ref у тілі компонента робить його непередбачуваним для React (Concurrent Mode, StrictMode). Виняток — лінива ініціалізація (нижче). Усе інше — в <code>useEffect</code> або обробниках подій.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Зміна ref не оновлює UI.</strong> Якщо змінив <code>.current</code> і чекаєш перемальовування — це помилка вибору: тобі потрібен <code>useState</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Не роби ref «тіньовим станом»</strong> для даних, що впливають на рендер — компонент показуватиме застарілі дані, доки якийсь ІНШИЙ стан не змусить його перерендеритись; UI розсинхронізується з даними.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Лінива ініціалізація важкого значення',
+          code: `// ❌ useRef(new ExpensiveThing()) — аргумент обчислюється на КОЖНОМУ рендері
+//    (результат після першого просто відкидається) — даремна робота
+
+// ✅ ініціалізуй умовно — конструктор виконається рівно раз
+const ref = useRef<ExpensiveThing | null>(null);
+if (ref.current === null) {
+  ref.current = new ExpensiveThing();
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">forwardRef — ref на власний компонент</h3>
+  <p>Не можна навісити <code>ref</code> на функціональний компонент напряму — до React 19 потрібен <code>forwardRef</code>, щоб пробросити його всередину до DOM-вузла:</p>
+  <pre><span class="kw">const</span> Input = <span class="fn">forwardRef</span>((props, ref) =&gt; &lt;<span class="fn">input</span> ref={ref} {...props} /&gt;);
+<span class="cmt">// тепер &lt;Input ref={myRef} /&gt; працює</span></pre>
+  <div class="alert good"><span class="icon">✅</span><span><span class="tag tag-new">React 19</span> <code>ref</code> можна передавати як звичайний prop — <code>forwardRef</code> більше не обов'язковий. Кастомізація того, що саме бачить батько через <code>ref</code> — <code>useImperativeHandle</code> (каталог хуків вище; детальніше — розділ "React 19 / майбутнє").</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useRef vs useMemo — щоб не плутати</h3>
+  <div class="grid2">
+    <div class="card blue"><h4>useMemo(() =&gt; obj, deps)</h4><p>Перераховує при зміні <code>deps</code>. Для <strong>похідних значень</strong> — кешоване обчислення, що залежить від входів. Кеш React може відкинути — не гарантія.</p></div>
+    <div class="card green"><h4>useRef(obj)</h4><p><strong>Ніколи</strong> не перераховує сам. Чистий контейнер зі стабільним <code>.current</code> на весь час життя компонента.</p></div>
+  </div>
+  <p>Для стабільного mutable-значення на весь час життя — <code>useRef</code>; для кешованого обчислення, що залежить від входів — <code>useMemo</code>.</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Ключова фраза для співбесіди:</strong> <code>useRef</code> — мутабельний контейнер <code>{ current }</code>, стабільний між рендерами, зміна якого не тригерить ре-рендер. Два застосування: імперативний доступ до DOM (через атрибут <code>ref</code>) і зберігання значень поза циклом рендеру — id таймерів, попередні значення, обхід stale closure. Головна відмінність від state: ref оновлюється синхронно й тихо, state — асинхронно й із перемальовуванням. Не читати/писати <code>.current</code> під час рендеру (крім лінивої ініціалізації) — рендер має лишатись чистим.</span></div>`,
         },
       ],
     },
@@ -1416,6 +1886,49 @@ valueRef.current = value;
   </div>
   <div class="alert good"><span class="icon">✅</span><span>Різниця у виборі: є функція, яку викликаєш сам (сеттер) → <code>useTransition</code>. Є готове значення (проп ззовні, не контролюєш сеттер) → <code>useDeferredValue</code>.</span></div>`,
         },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Повний патерн: миттєвий інпут + низькопріоритетний важкий список',
+          code: `function Search({ allItems }: { allItems: Item[] }) {
+  const [query, setQuery] = useState('');
+  const [isPending, startTransition] = useTransition();
+
+  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setQuery(e.target.value);           // urgent — інпут оновлюється негайно
+    startTransition(() => {
+      // низькопріоритетно: якщо користувач друкує далі,
+      // React викине цей рендер і почне новий
+      setResults(filterExpensive(allItems, e.target.value));
+    });
+  }
+
+  return (
+    <>
+      <input value={query} onChange={onChange} />
+      <ul style={{ opacity: isPending ? 0.6 : 1 }}>{/* ... */}</ul>
+    </>
+  );
+}
+
+// Той самий результат без окремого state — useDeferredValue:
+function Search({ allItems }: { allItems: Item[] }) {
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
+  const results = useMemo(
+    () => filterExpensive(allItems, deferredQuery),  // рахується на "відстаючому" значенні
+    [allItems, deferredQuery],
+  );
+  const isStale = query !== deferredQuery;
+  return <>{/* input керується query, список — results */}</>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Чому це не дебаунс <span class="tag tag-key">KEY</span></h3>
+  <p>Дебаунс <em>відкладає</em> роботу на фіксований таймер — навіть якщо процесор вільний, ти чекаєш умовні 300 мс. Transition роботу <strong>не відкладає</strong>: React починає рендер одразу, але з правом перервати його, щойно прилетить урочніше оновлення (наступна клавіша). На швидкій машині список оновиться майже миттєво, на повільній — плавно деградує, без магічної константи.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>startTransition</code> має містити <strong>синхронний</strong> <code>setState</code>. <code>await</code> усередині «розриває» transition — оновлення після нього вже урочне. Для async-роботи в React 19 <code>useTransition</code> приймає async-функцію (Actions, розділ «✨ React 19 / майбутнє»). І transition не робить сам <code>filterExpensive</code>/fetch швидшим — лише знижує пріоритет рендеру результату.</span></div>`,
+        },
       ],
     },
     {
@@ -1435,7 +1948,7 @@ valueRef.current = value;
         {
           kind: 'paragraph',
           html: `<h3 class="topic">Custom Hooks <span class="tag tag-key">KEY</span></h3>
-  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і підпорядковується тим самим правилам хуків (не в умовах/циклах/вкладених функціях, розділ "Правила хуків" вище). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — компонент, що її використовує, лишається "тупим" (тонкий шар рендеру).</p>
+  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і підпорядковується тим самим правилам хуків (не в умовах/циклах/вкладених функціях, розділ «🪝 Хуки: навіщо і правила» вище). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — компонент, що її використовує, лишається "тупим" (тонкий шар рендеру).</p>
   <div class="alert good"><span class="icon">✅</span><span><strong>Префікс <code>use</code> — не стиль, а вимога.</strong> Саме за ним <code>eslint-plugin-react-hooks</code> розпізнає функцію як хук і застосовує до неї Rules of Hooks-лінтинг. Назви функцію без цього префікса — і лінтер більше не перевірить порядок викликів усередині, навіть якщо вона викликає інші хуки.</span></div>
   <div class="grid2">
     <div class="card"><h4>useDebouncedValue</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(value: T, ms = <span class="num">300</span>) {
@@ -1504,8 +2017,8 @@ valueRef.current = value;
   </div>
   <h3 class="topic">Плюси й мінуси</h3>
   <div class="grid2">
-    <div class="card green"><h4>✅ Плюси</h4><p>Перевикористання логіки без жодної обгортки в дереві компонентів (на відміну від HOC, розділ "Навіщо хуки" вище). Логіка тестується ізольовано (<code>renderHook</code> з testing-library). Композиція — custom hook може викликати інші custom hooks.</p></div>
-    <div class="card red"><h4>❌ Мінуси / edge cases</h4><p><strong>Stale closures</strong> всередині самого хука — та сама проблема, що й у звичайному <code>useEffect</code> (розділ "Hooks — Deep Dive"), просто захована на рівень абстракції глибше — легше не помітити. <strong>Нестабільний референс, що повертається</strong> — якщо хук повертає новий обʼєкт/масив/функцію щовиклику (навіть без зміни даних), кожен компонент-споживач отримує "змінений" проп щорендеру — ламає <code>memo</code>/dep-array у споживача (Block 3, referential stability) так само, як і звичайний нестабільний проп.</p></div>
+    <div class="card green"><h4>✅ Плюси</h4><p>Перевикористання логіки без жодної обгортки в дереві компонентів (на відміну від HOC, розділ «🪝 Хуки: навіщо і правила» вище). Логіка тестується ізольовано (<code>renderHook</code> з testing-library). Композиція — custom hook може викликати інші custom hooks.</p></div>
+    <div class="card red"><h4>❌ Мінуси / edge cases</h4><p><strong>Stale closures</strong> всередині самого хука — та сама проблема, що й у звичайному <code>useEffect</code> (розділ «🔄 Життєвий цикл і події компонента»), просто захована на рівень абстракції глибше — легше не помітити. <strong>Нестабільний референс, що повертається</strong> — якщо хук повертає новий обʼєкт/масив/функцію щовиклику (навіть без зміни даних), кожен компонент-споживач отримує "змінений" проп щорендеру — ламає <code>memo</code>/dep-array у споживача (розділ «🧠 Мемоізація та референсна стабільність») так само, як і звичайний нестабільний проп.</p></div>
   </div>
   <div class="alert warn"><span class="icon">⚠️</span><span>Custom hook — не про "перевикористання UI" (для цього компоненти), а про <strong>перевикористання stateful-логіки</strong>. Кожен виклик хука в різних компонентах створює <em>ізольований</em> стан — вони не діляться значенням між собою.</span></div>`,
         },
@@ -1513,131 +2026,60 @@ valueRef.current = value;
     },
     {
       id: 'lifecycle-class-vs-functional',
-      title: '🔄 Lifecycle компонента: Class vs Functional',
+      title: '🏛️ Class vs Functional',
       interviewQuestions: [
         {
-          question: 'Як зіставити <code>componentDidMount</code>, <code>componentDidUpdate</code> і <code>componentWillUnmount</code> з <code>useEffect</code>?',
-          answer: 'Один <code>useEffect(fn, [])</code> покриває <code>componentDidMount</code> (запускається раз після монтування) + <code>componentWillUnmount</code> (функція, повернута з <code>fn</code>, — cleanup). <code>useEffect(fn, [dep])</code> без порожнього масиву покриває <code>componentDidUpdate</code>, але з важливою відмінністю: ефект запускається і після <em>монтування</em> теж, тоді як <code>componentDidUpdate</code> — лише після оновлень.',
+          question: 'Чому один <code>useEffect(fn, [dep])</code> кращий за пару lifecycle-методів, які він замінює?',
+          answer: 'Логіку «зробити X при першому рендері і при зміні <code>dep</code>» в класі доводилось писати <strong>двічі</strong> — у <code>componentDidMount</code> і в <code>componentDidUpdate</code> з ручним звірянням <code>prevProps</code>. Один <code>useEffect(fn, [dep])</code> покриває обидва випадки декларативно: React сам вирішує «mount чи update», код не дублюється, а без ручного порівняння немає й ризику нескінченного циклу оновлень.',
         },
         {
-          question: 'Чому в класових компонентах було легко випадково створити нескінченний цикл оновлень у <code>componentDidUpdate</code>, і як хуки цьому запобігають?',
-          answer: '<code>componentDidUpdate</code> викликає <code>setState</code> без умови порівняння — і кожен <code>setState</code> знову тригерить <code>componentDidUpdate</code>, тому розробник мусив вручну звіряти <code>prevProps</code>/<code>prevState</code>. У <code>useEffect</code> це вирішується декларативно масивом залежностей — ефект перезапускається лише коли значення в масиві реально змінились (за <code>Object.is</code>), а не при кожному ре-рендері.',
+          question: 'Що з lifecycle досі не має повноцінного хук-еквівалента?',
+          answer: '<code>componentDidCatch</code> / <code>getDerivedStateFromError</code> — механізм Error Boundary. Ловити помилки рендеру піддерева досі можна лише класовим компонентом (або обгорткою <code>react-error-boundary</code>); хука для цього немає — деталі в розділі «🧩 Patterns».',
         },
         {
-          question: `Який єдиний lifecycle-метод обов'язковий у класовому компоненті?`,
-          answer: `<code>render</code>.`,
-        },
-        {
-          question: `Чим один <code>useEffect</code> кращий за пару <code>componentDidMount</code>/<code>componentDidUpdate</code>?`,
-          answer: `не дублює логіку, dependency array сама вирішує "mount чи update" замість ручного порівняння <code>prevProps</code>.`,
-        },
-        {
-          question: `Що з lifecycle досі не має хук-еквівалента?`,
-          answer: `<code>componentDidCatch</code>/<code>getDerivedStateFromError</code> (Error Boundary, Block 5).`,
+          question: 'Навіщо взагалі знати класовий API, якщо нові компоненти на ньому не пишуть?',
+          answer: 'Лише щоб читати легасі-код і розуміти співрозмовника на співбесіді. Весь класовий lifecycle зводиться до короткої мапи на хуки (нижче); нового коду на класах не пишуть — єдиний виняток це самі Error Boundary.',
         },
       ],
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Три фази життя компонента <span class="tag tag-key">KEY</span></h3>
-  <p>Кожен компонент проходить: <strong>Mount</strong> (перше створення й вставка в DOM) → <strong>Update</strong> (повторюється на кожен ре-рендер: зміна props/state/context) → <strong>Unmount</strong> (видалення з DOM). Класові компоненти виражали це явними методами; функціональні — тим самим через <code>useEffect</code> та порядок виконання самого тіла функції.</p>`,
-        },
-        {
-          kind: 'code',
-          language: 'text',
-          code: `MOUNT                       UPDATE (на кожен ре-рендер)         UNMOUNT
-  │                              │                                    │
-  constructor                   (props/state/context змінились)      │
-  │                              │                                    │
-  getDerivedStateFromProps      getDerivedStateFromProps              │
-  │                              │                                    │
-  render                        shouldComponentUpdate (false → стоп)  │
-  │                              │                                    │
-  (React оновлює DOM)           render                                │
-  │                              │                                    │
-  componentDidMount             (React оновлює DOM)                   │
-                                 │                                    │
-                                 getSnapshotBeforeUpdate               │
-                                 │                                    │
-                                 componentDidUpdate            componentWillUnmount`,
-        },
-        {
-          kind: 'paragraph',
-          html: `<h3 class="topic">Методи класового компонента — що важливо, що ні</h3>
+          html: `<p style="font-size:12.5px;opacity:.75">Фази життя, події, cleanup і StrictMode — розділ «🔄 Життєвий цикл і події компонента» вище. Тут лише <strong>історична довідка</strong>: класові компоненти сьогодні не пишуть (виняток — Error Boundary), але легасі-код з ними ще трапляється.</p>
+  <h3 class="topic">Класовий lifecycle → хук <span class="tag tag-key">KEY</span></h3>
   <div class="table-wrap">
     <table>
-      <tr><th>Метод</th><th>Фаза</th><th>Важливість</th><th>Навіщо</th></tr>
-      <tr><td><code>constructor</code></td><td>Mount</td><td><span class="tag tag-key">KEY</span></td><td>Ініціалізація <code>this.state</code>, біндинг методів (<code>this.onClick = this.onClick.bind(this)</code>)</td></tr>
-      <tr><td><code>render</code></td><td>Mount + Update</td><td><span class="tag tag-key">KEY</span></td><td>Єдиний обов'язковий метод — повертає JSX. Має бути чистим (як render-фаза функціонального компонента)</td></tr>
-      <tr><td><code>componentDidMount</code></td><td>Mount</td><td><span class="tag tag-key">KEY</span></td><td>Side-effects після першого рендеру: fetch, підписки, робота з DOM-нодою</td></tr>
-      <tr><td><code>componentDidUpdate</code></td><td>Update</td><td><span class="tag tag-key">KEY</span></td><td>Side-effects після кожного оновлення — типово порівнює <code>prevProps</code>/<code>prevState</code> вручну, щоб не зациклитись</td></tr>
-      <tr><td><code>componentWillUnmount</code></td><td>Unmount</td><td><span class="tag tag-key">KEY</span></td><td>Cleanup: відписки, таймери — аналог return-функції з <code>useEffect</code></td></tr>
-      <tr><td><code>shouldComponentUpdate</code></td><td>Update</td><td>Середня</td><td>Ручний контроль пропуску ре-рендеру — попередник <code>React.memo</code> (Block 3)</td></tr>
-      <tr><td><code>getDerivedStateFromProps</code></td><td>Mount + Update</td><td>Низька</td><td>Рідкісний кейс: state, що залежить від props — сьогодні частіше просто рахують значення прямо в render, без стану</td></tr>
-      <tr><td><code>getSnapshotBeforeUpdate</code></td><td>Update</td><td>Низька</td><td>Зчитати DOM (напр. scroll-позицію) ДО того, як React його змінить — рідкісний UI-кейс</td></tr>
-      <tr><td><code>componentDidCatch</code></td><td>—</td><td>Нішева, але незамінна</td><td>Error Boundary (Block 5) — досі без хук-еквівалента</td></tr>
+      <tr><th>Класовий метод</th><th>Хук-еквівалент</th></tr>
+      <tr><td><code>constructor</code> (ініціалізація state)</td><td><code>useState(initial)</code> / <code>useState(() => initial)</code></td></tr>
+      <tr><td><code>render</code></td><td>тіло функціонального компонента (так само має бути чистим)</td></tr>
+      <tr><td><code>componentDidMount</code></td><td><code>useEffect(fn, [])</code></td></tr>
+      <tr><td><code>componentDidUpdate</code></td><td><code>useEffect(fn, [dep])</code></td></tr>
+      <tr><td><code>componentWillUnmount</code></td><td>return-функція з <code>useEffect</code></td></tr>
+      <tr><td><code>shouldComponentUpdate</code></td><td><code>React.memo</code> (розділ «🧠 Мемоізація та референсна стабільність»)</td></tr>
+      <tr><td><code>this.state</code> з кількох полів</td><td>кілька <code>useState</code> або один <code>useReducer</code></td></tr>
+      <tr><td><code>componentDidCatch</code> / <code>getDerivedStateFromError</code></td><td>— хука немає; Error Boundary лишається класовим</td></tr>
     </table>
-  </div>
-  <h3 class="topic">Class vs Functional — той самий компонент</h3>`,
+  </div>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          code: `// Класовий (rcc-сніпет VS Code) — типовий "до хуків" компонент
-class UserProfile extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { user: null };
-  }
-
-  componentDidMount() {
-    fetchUser(this.props.userId).then(user => this.setState({ user }));
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.userId !== this.props.userId) {           // ручне порівняння!
-      fetchUser(this.props.userId).then(user => this.setState({ user }));
-    }
-  }
-
-  componentWillUnmount() {
-    this.subscription?.unsubscribe();
-  }
-
-  render() {
-    return <div>{this.state.user?.name}</div>;
-  }
-}
-
-// Функціональний (rfc-сніпет) — та сама логіка, без дублювання fetch-виклику
+          code: `// Те, для чого в класі були constructor + componentDidMount +
+// componentDidUpdate(prevProps) з ручним звірянням prevProps.userId:
 function UserProfile({ userId }: Props) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    fetchUser(userId).then(setUser);
-    return () => subscription?.unsubscribe();
-  }, [userId]);  // dependency array = componentDidMount + componentDidUpdate злиті в одне
+    const controller = new AbortController();
+    fetchUser(userId, controller.signal).then(setUser);
+    return () => controller.abort();      // <- componentWillUnmount
+  }, [userId]);                            // <- mount + update на зміну userId в одному
 
   return <div>{user?.name}</div>;
 }`,
         },
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Мапа lifecycle-методів на хуки <span class="tag tag-key">KEY</span></h3>
-  <div class="table-wrap">
-    <table>
-      <tr><th>Класовий метод</th><th>Хук-еквівалент</th></tr>
-      <tr><td><code>constructor</code> (ініціалізація state)</td><td><code>useState(initialValue)</code></td></tr>
-      <tr><td><code>componentDidMount</code></td><td><code>useEffect(() => {'{'} ... {'}'}, [])</code></td></tr>
-      <tr><td><code>componentDidUpdate</code></td><td><code>useEffect(() => {'{'} ... {'}'}, [dep])</code></td></tr>
-      <tr><td><code>componentDidMount + componentDidUpdate</code> разом</td><td><code>useEffect</code> без правильного розділення — саме тому в класах треба було вручну звіряти <code>prevProps</code></td></tr>
-      <tr><td><code>componentWillUnmount</code></td><td>return-функція з <code>useEffect</code></td></tr>
-      <tr><td><code>shouldComponentUpdate</code></td><td><code>React.memo</code> (Block 3) — для всього компонента</td></tr>
-      <tr><td><code>this.state</code> кілька полів</td><td>кілька <code>useState</code> АБО один <code>useReducer</code></td></tr>
-    </table>
-  </div>
-  <div class="alert good"><span class="icon">✅</span><span>Головна практична перевага хуків тут — <code>componentDidMount</code>/<code>componentDidUpdate</code> у класі часто дублювали один і той самий код (як у прикладі вище), бо логіку "зробити X при mount і при зміні Y" доводилось писати двічі. Один <code>useEffect(fn, [dep])</code> покриває обидва випадки за визначенням залежностей.</span></div>
-  `,
+          html: `<div class="alert good"><span class="icon">✅</span><span>Головна практична перевага — <code>componentDidMount</code>/<code>componentDidUpdate</code> у класі часто дублювали той самий код, бо логіку «зробити X при mount і при зміні Y» писали двічі. Один <code>useEffect(fn, [dep])</code> покриває обидва випадки за визначенням залежностей.</span></div>`,
         },
       ],
     },
@@ -1647,94 +2089,25 @@ function UserProfile({ userId }: Props) {
       title: '🚀 Performance Deep Dive',
       interviewQuestions: [
         {
-          question: 'Коли <code>React.memo</code> реально допомагає, а коли лише додає накладні витрати без користі?',
-          answer: '<code>React.memo</code> корисний для «важких» компонентів (дорогий рендер), чиї props стабільні між рендерами батька частіше, ніж змінюються. Якщо компонент дешевий у рендері або props (особливо об\'єкти/функції/масиви) створюються заново щоразу — <code>memo</code> лише додає витрати на поверхневе порівняння props без жодної економії, бо порівняння все одно «провалиться» і рендер відбудеться.',
-        },
-        {
           question: 'Які інструменти чи техніки ти використаєш, щоб знайти реальну причину зайвих ре-рендерів у великому додатку, а не гадати?',
           answer: 'React DevTools Profiler з увімкненим «Highlight updates» покаже, які компоненти й чому ре-рендерились (порівняння props/state/hooks у деталях коміту); для продакшн-профілювання — <code>&lt;Profiler&gt;</code> API з колбеком <code>onRender</code>. Гадати за симптомами («здається, тут щось повільне») — типова помилка джуна, тоді як сеньйор спершу вимірює.',
         },
         {
-          question: `memo не допоміг — з чого почнеш дебаг?`,
-          answer: `спершу Profiler + Why did this render, а не здогадки; типова причина — новий референс пропу.`,
+          question: 'Коли <code>React.lazy</code> + <code>Suspense</code> справді дає виграш, а коли лише плодить водоспади завантаження?',
+          answer: 'Виграш — коли відкладений код <strong>справді важкий і не потрібен на першому екрані</strong>: окремі маршрути, модалки, рідко відкриті панелі, важкі залежності (редактор, чарти). Шкода — коли дробиш на дрібні чанки те, що майже завжди потрібне одразу: браузер робить окремі запити послідовно (waterfall), і сумарно виходить повільніше за один бандл. Межу розділу став на природних кордонах навігації/взаємодії, а не «на кожен компонент».',
         },
         {
-          question: `Коли virtualization справді потрібна?`,
-          answer: `списки в сотні-тисячі DOM-вузлів; для 20-50 елементів — зайва складність.`,
+          question: 'Коли virtualization справді потрібна?',
+          answer: 'Коли в DOM одночасно опиняються <strong>сотні–тисячі</strong> вузлів (довгі списки, таблиці, стрічки) — тоді рендер і layout стають вузьким місцем. Для 20–50 елементів <code>react-window</code>/<code>react-virtual</code> — зайва складність (втрата нативного пошуку по сторінці, складніший a11y, «стрибки» при швидкому скролі), яка не окупається.',
         },
       ],
       blocks: [
         {
           kind: 'paragraph',
-          html: `<p style="font-size:12.5px;opacity:.75">Та сама схема "кеш за ключем", що й useMemo/useCallback (розділ "Мемоізація: єдина концепція", Block 2) — тут ключ не deps-масив, а props компонента.</p>
-  <h3 class="topic">React.memo — коли працює, коли ні <span class="tag tag-key">KEY</span></h3>
-  <p><code>React.memo</code> порівнює пропи <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий обʼєкт/масив/функція на кожен рендер батька (референс завжди інший). Можна передати власний компаратор — рідко потрібно і легко зламати непомітно.</p>`,
-        },
-        {
-          kind: 'code',
-          language: 'tsx',
-          code: `const Row = React.memo(
-  function Row({ item, onSelect }: RowProps) {
-    return <li onClick={() => onSelect(item.id)}>{item.title}</li>;
-  },
-  (prev, next) => prev.item.id === next.item.id && prev.item.title === next.item.title,
-  // кастомний компаратор — true = "пропи рівні, скіпнути рендер"
-  // ⚠️ якщо забудеш порівняти якийсь проп — компонент застрягне зі старими даними
-);`,
-        },
-        {
-          kind: 'paragraph',
-          html: `<h3 class="topic">Referential stability — головна причина, чому memo "не працює"</h3>
-  <div class="grid2">
-    <div class="card red"><h4>❌ Новий референс щорендеру</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
-  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
-  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={{ color: <span class="str">'red'</span> }}  <span class="cmt">// новий {} щоразу</span>
-    onSelect={(id) =&gt; <span class="fn">doSomething</span>(id)} <span class="cmt">// нова функція щоразу</span>
-  <span class="jsx">/&gt;</span>;               <span class="cmt">// memo(Row) все одно ре-рендериться</span>
-}</pre></div>
-    <div class="card green"><h4>✅ Стабілізовано useMemo/useCallback</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
-  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
-  <span class="kw">const</span> style = <span class="fn">useMemo</span>(() =&gt; ({ color: <span class="str">'red'</span> }), []);
-  <span class="kw">const</span> onSelect = <span class="fn">useCallback</span>((id) =&gt; <span class="fn">doSomething</span>(id), []);
-  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={style} onSelect={onSelect} <span class="jsx">/&gt;</span>;
-}</pre></div>
-  </div>
-  <h3 class="topic">Як саме ре-рендериться дерево — покроковий приклад <span class="tag tag-key">KEY</span></h3>
-  <p>Дерево з трьох рівнів: <code>Parent</code> тримає <code>useState</code>, рендерить <code>Child</code>, той рендерить <code>Grandchild</code>. Жоден проп між ними реально не змінюється — лише <code>Parent</code> оновлює свій власний стан.</p>`,
-        },
-        {
-          kind: 'code',
-          language: 'tsx',
-          code: `function Parent() {
-  const [count, setCount] = useState(0);
-  return (
-    <>
-      <button onClick={() => setCount(c => c + 1)}>{count}</button>
-      <Child label="static" />                 {/* проп НЕ змінюється */}
-    </>
-  );
-}
-function Child({ label }: { label: string }) {
-  return <Grandchild label={label} />;          {/* проп НЕ змінюється */}
-}
-function Grandchild({ label }: { label: string }) {
-  return <span>{label}</span>;
-}`,
-        },
-        {
-          kind: 'paragraph',
-          html: `<div class="grid2">
-    <div class="card red"><h4>❌ Без memo — усі три рендеряться</h4>
-      <p>Клік по кнопці → <code>setCount</code> → <code>Parent</code> ре-рендериться (власний state, тригер #1 з розділу вище). <strong>За замовчуванням React рендерить усе піддерево під ним</strong> — <code>Child</code> рендериться (тригер "ре-рендер батька"), і оскільки <code>Child</code> сам повертає <code>&lt;Grandchild&gt;</code> у своєму тілі, <code>Grandchild</code> рендериться теж. Три рендери на клік, хоча <code>label</code> ніде не змінився.</p>
-    </div>
-    <div class="card green"><h4>✅ memo(Child) зупиняє каскад на першому кордоні</h4>
-      <p>Обгорни лише <code>Child</code> в <code>React.memo</code>. При кліку: <code>Parent</code> рендериться (не уникнути — власний state), <code>Child</code> отримує ре-рендер-запит від батька, але <code>React.memo</code> порівнює його пропи (<code>label="static"</code> — не змінився) і <strong>каже React: "not rendering"</strong>. Оскільки сам <code>Child</code> не виконався — <code>Grandchild</code> усередині нього <strong>взагалі не викликається</strong>, каскад зупинився на межі.</p>
-    </div>
-  </div>
-  <div class="alert good"><span class="icon">✅</span><span><code>memo</code> — це <strong>межа (boundary)</strong>, а не глобальний перемикач: він зупиняє поширення ре-рендеру рівно в тому місці дерева, де стоїть, і не потребує обгортати кожен компонент — досить поставити його перед "важким" піддеревом, яке не залежить від того, що змінюється вище.</span></div>
+          html: `<p style="font-size:12.5px;opacity:.75"><code>React.memo</code>, референсна стабільність і покроковий каскад ре-рендеру — розділ «🧠 Мемоізація та референсна стабільність» (Block 2). Тут — <strong>як виміряти</strong> й окремі техніки: профілювання, code splitting, віртуалізація, Core Web Vitals.</p>
   <h3 class="topic">Профілювання — React DevTools Profiler <span class="tag tag-key">KEY</span></h3>
   <p>Вкладка <strong>Profiler</strong>: запиши взаємодію → <strong>Flamegraph</strong> показує, які компоненти рендерились і скільки це коштувало; <strong>Ranked</strong> сортує за тривалістю. Клік на компонент → секція <strong>"Why did this render?"</strong> (треба увімкнути в налаштуваннях) називає точну причину: hook changed, props changed, parent rendered.</p>
-  <div class="alert warn"><span class="icon">⚠️</span><span>Робочий процес на співбесіді/у реальності: спершу <strong>профілюй</strong>, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація, яка додає складність без гарантованого ефекту.</span></div>`,
+  <div class="alert warn"><span class="icon">⚠️</span><span>Робочий процес на співбесіді/у реальності: спершу <strong>профілюй</strong>, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація, яка додає складність без гарантованого ефекту. Повний воркфлоу «виявити → виміряти → діагностувати → перевірити» — розділ «React DevTools як Senior» нижче.</span></div>`,
         },
         {
           kind: 'code',
@@ -1875,6 +2248,37 @@ const ThemeContext = createContext<Theme>('dark');
 // провайдера "зраджує" memo-компоненти нижче:
 const value = useMemo(() => ({ user, theme }), [user, theme]);
 <AppContext.Provider value={value}>{children}</AppContext.Provider>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Окремо значення, окремо диспетчер</h3>
+  <p>Розбий не лише за частотою, а й на <strong>state-контекст</strong> і <strong>dispatch-контекст</strong>. <code>dispatch</code> зі <code>useReducer</code> стабільний назавжди — компоненти, яким потрібен лише він (кнопки-дії), тоді не ре-рендеряться при зміні самого стану.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// "Локальний Redux" — useReducer + два контексти
+const CartStateContext = createContext<CartState | null>(null);
+const CartDispatchContext = createContext<React.Dispatch<CartAction> | null>(null);
+
+function CartProvider({ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = useReducer(cartReducer, initialCart);
+  return (
+    <CartStateContext value={state}>
+      <CartDispatchContext value={dispatch}>{children}</CartDispatchContext>
+    </CartStateContext>
+  );
+}
+
+// Кнопка "додати" читає лише dispatch → не ре-рендериться на зміну кошика
+function AddButton({ id }: { id: string }) {
+  const dispatch = use(CartDispatchContext)!;
+  return <button onClick={() => dispatch({ type: 'add', id })}>+</button>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span>Коли контекст перестає бути інструментом: багато різних шматків стану, потрібна селективна підписка на поле, часті оновлення з великим деревом споживачів — це вже стор із селекторами (розділ «🐻 Zustand»), а не набір контекстів.</span></div>`,
         },
       ],
     },
@@ -2064,7 +2468,11 @@ function* rootSaga() {
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Базовий store</h3>`,
+          html: `<h3 class="topic">Що це <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Zustand</strong> — мінімалістичний state-manager (~1&nbsp;КБ). Один store створюється через <code>create()</code>, компоненти читають <em>зрізи</em> стану через хук-селектор (<code>useStore(s =&gt; s.x)</code>). Під капотом — <code>useSyncExternalStore</code> (розділ «📋 Повний каталог хуків»), тому store живе <strong>поза React-деревом</strong> і не потребує <code>Provider</code>.</p>
+  <p>За позицією — між «тільки Context» і «повний Redux»: помітно менше boilerplate, ніж у Redux, і гранулярніші підписки, ніж у Context (немає ре-рендеру всіх споживачів на будь-яку зміну).</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Коли брати:</strong> глобальний <em>клієнтський</em> стан, який ділять далекі компоненти й для якого Context ре-рендерить забагато — тема, кошик, авторизація, крос-компонентний UI-стан. <strong>Не</strong> для серверного кешу (дані з API) — це TanStack Query (розділ нижче).</span></div>
+  <h3 class="topic">Базовий store</h3>`,
         },
         {
           kind: 'code',
@@ -2619,6 +3027,10 @@ forkJoin({
           question: `Чому 'boolean-prop proliferation' вважають антипатерном компонентного API?`,
           answer: `Кожен новий незалежний boolean/enum-проп подвоює (або більше) кількість комбінацій, які компонент теоретично повинен коректно обробити, хоча реально підтримується лише невелика підмножина. Композиція (окремі спеціалізовані компоненти) або явний <code>variant</code>-union звужують API до дійсно валідних, протестованих станів.`,
         },
+        {
+          question: `Коли обрати іменовані слоти-пропи (<code>header</code>, <code>sidebar</code>) замість одного <code>children</code>, і чому <code>React.cloneElement</code> — поганий вибір для передачі даних дітям?`,
+          answer: `Слоти-пропи типу <code>React.ReactNode</code> потрібні, коли в компоненті кілька незалежних «дірок» для вмісту — <code>children</code> тоді довелося б розбирати за позицією або типом. <code>cloneElement</code>, щоб «доштовхнути» пропи в <code>children</code>, крихкий (залежить від точної форми дитини), погано типізується і ламається при обгортанні дитини у фрагмент/іншій компонент. Для спільного стану — Context (compound components), для параметризованого рендеру — render-prop через <code>children</code>-функцію.`,
+        },
       ],
       blocks: [
         {
@@ -2645,34 +3057,48 @@ Tabs.Tab = function Tab({ id, children }: { id: string; children: React.ReactNod
         },
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Render props / HOC — легасі-патерни</h3>
-  <p>Обидва вирішували "як перевикористати логіку без наслідування" до хуків. Custom hooks замінили ~95% їх застосувань — прямолінійніше й без "wrapper hell" (глибокої вкладеності HOC-обгорток у React DevTools).</p>`,
+          html: `<h3 class="topic">Слоти через пропи-<code>ReactNode</code> <span class="tag tag-key">KEY</span></h3>
+  <p>Коли компонент має кілька «дірок» для вмісту (хедер, футер, бічна панель), не тулиш усе в <code>children</code> — приймаєш кілька пропів типу <code>React.ReactNode</code>. Споживач передає готовий JSX, компонент лише розставляє його в розмітці.</p>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          code: `// Render props — legacy
-<MouseTracker render={({ x, y }) => <span>{x}, {y}</span>} />
+          code: `// Слоти — кілька іменованих "дірок" замість одного children
+function Page({ header, sidebar, children }: {
+  header: React.ReactNode; sidebar: React.ReactNode; children: React.ReactNode;
+}) {
+  return (
+    <div className="layout">
+      <header>{header}</header>
+      <aside>{sidebar}</aside>
+      <main>{children}</main>
+    </div>
+  );
+}
+// <Page header={<Logo />} sidebar={<Nav />}><Article /></Page>
 
-// HOC — legacy
-const withAuth = (Component) => (props) =>
-  useAuth().user ? <Component {...props} /> : <Redirect to="/login" />;
+// ❌ Анти-патерн: React.cloneElement, щоб "доштовхнути" пропи в children —
+//    крихко (залежить від форми дитини), погано типізується.
+// ✅ Замість цього — Context (compound components вище) або render-prop через children:
+function Toggle({ children }: { children: (on: boolean, toggle: () => void) => React.ReactNode }) {
+  const [on, setOn] = useState(false);
+  return <>{children(on, () => setOn(v => !v))}</>;
+}
 
-// Той самий кейс сьогодні — custom hook, без обгортки в дереві компонентів:
-function useMouse() { /* ...повертає { x, y } */ }
-function Profile() {
-  const requireAuth = useRequireAuth(); // редірект усередині хука
-  const { x, y } = useMouse();
-  return <span>{x}, {y}</span>;
+// Provider-компонент як патерн — інкапсулює createContext + стан в одному місці
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const value = useMemo(() => ({ theme, setTheme }), [theme]);
+  return <ThemeContext value={value}>{children}</ThemeContext>;
 }`,
         },
         {
           kind: 'paragraph',
-          html: `<p><strong>Controlled vs Uncontrolled inputs</strong> — окремий детальний розділ "Controlled vs Uncontrolled Inputs" нижче (хто насправді володіє значенням, ref, FormData, verdict).</p>
-  <h3 class="topic">Container / Presentational — межа розмилась</h3>
-  <p>До хуків: Container-компонент тримав стан/логіку, Presentational — лише рендерив пропи. Сьогодні логіка виноситься в <strong>custom hook</strong> (Block 2), а не в окремий компонент-обгортку — той самий поділ відповідальностей, але без зайвого шару в дереві компонентів.</p>
-  <h3 class="topic">Error Boundaries — лише класові <span class="tag tag-pit">PITFALL</span></h3>
-  <p>Немає хук-еквівалента <code>componentDidCatch</code>/<code>getDerivedStateFromError</code> — Error Boundary досі мусить бути класовим компонентом (або обгорткою на кшталт <code>react-error-boundary</code>, яка сама є класом всередині). Ловить помилки рендерингу дерева <strong>нижче себе</strong> — не ловить помилки в обробниках подій, асинхронному коді, самому Error Boundary.</p>`,
+          html: `<h3 class="topic">Легасі-патерни — одним абзацом</h3>
+  <p><strong>HOC</strong> (<code>withAuth(Component)</code>) і <strong>render props</strong> вирішували «перевикористати логіку без наслідування» до хуків. Custom hooks замінили ~95% застосувань — та сама логіка без обгортки в дереві й без «wrapper hell». <strong>Container / Presentational</strong>: логіку тепер виносять у custom hook, а не в окремий компонент-обгортку. У новому коді не пишуться — лише читаються в легасі.</p>
+  <p><strong>Controlled vs Uncontrolled inputs</strong> — окремий детальний розділ "Controlled vs Uncontrolled Inputs" нижче (хто насправді володіє значенням, ref, FormData, verdict).</p>
+  <h3 class="topic">Error Boundary <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Єдиний випадок, де досі потрібен клас: хука-еквівалента <code>getDerivedStateFromError</code> немає. На практиці беруть <code>react-error-boundary</code>. Ловить помилки рендеру піддерева <strong>нижче себе</strong> — не ловить помилки в обробниках подій, асинхронному коді чи самому Error Boundary.</p>`,
         },
         {
           kind: 'code',
@@ -2765,7 +3191,7 @@ function Profile() {
   </div>
   <div class="alert good"><span class="icon">✅</span><span>Саме тому controlled input ніколи не "розсинхронізується" з React-станом, навіть при швидкому наборі тексту — немає окремого "браузерного" значення, з яким можна розійтись, бо React щорендеру перезаписує DOM-вузол своїм значенням наново.</span></div>
   <h3 class="topic"><code>ref</code> для uncontrolled-полів</h3>
-  <p><code>useRef</code> сам по собі детально розібраний у розділі "Hooks — Deep Dive" (3 use cases) — тут важливий саме форм-специфічний патерн: або окремий ref на кожне поле, або <strong>один ref на весь <code>&lt;form&gt;</code></strong> і читання всіх полів разом через <code>FormData</code> (наступний розділ) замість ref-на-кожен-інпут.</p>
+  <p><code>useRef</code> сам по собі детально розібраний у розділі "🎯 useRef — детально" — тут важливий саме форм-специфічний патерн: або окремий ref на кожне поле, або <strong>один ref на весь <code>&lt;form&gt;</code></strong> і читання всіх полів разом через <code>FormData</code> (наступний розділ) замість ref-на-кожен-інпут.</p>
   <div class="alert warn"><span class="icon">⚠️</span><span><code>input[type="file"]</code> — принципово <strong>завжди uncontrolled</strong>. З міркувань безпеки браузер не дозволяє JS програмно встановлювати значення файлового інпуту (не можна "підсунути" довільний файл з диску користувача через <code>value</code>) — тільки читання через <code>ref</code>/<code>FormData</code>.</span></div>
   <h3 class="topic">Порівняння й вердикт <span class="tag tag-key">KEY</span></h3>
   <div class="table-wrap">
@@ -2779,45 +3205,69 @@ function Profile() {
       <tr><td>Типова бібліотека</td><td>Ручний useState або Formik (легасі)</td><td>react-hook-form</td></tr>
     </table>
   </div>
-  <div class="alert good"><span class="icon">✅</span><span><strong>Вердикт:</strong> маленька форма (1-5 полів) з живою валідацією/умовним UI → controlled, просто й достатньо. Велика форма, форма з файлами, або продуктивність під питанням → uncontrolled (найчастіше — через react-hook-form, розділ "Нативний підхід vs бібліотеки" нижче), а не ручні refs на кожне поле.</span></div>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Вердикт:</strong> маленька форма (1-5 полів) з живою валідацією/умовним UI → controlled, просто й достатньо. Велика форма, форма з файлами, або продуктивність під питанням → uncontrolled (найчастіше — через react-hook-form, розділ "📋 Форми: збір даних, валідація, бібліотеки" нижче), а не ручні refs на кожне поле.</span></div>
   `,
         },
       ],
     },
     {
       id: 'forms-formdata-native',
-      title: '📦 FormData — нативний API',
+      title: '📋 Форми: збір даних, валідація, бібліотеки',
       interviewQuestions: [
+        {
+          question: 'Де правильно робити валідацію форми — на клієнті, на сервері, чи обидва, і чому?',
+          answer: 'Клієнтська валідація — для UX (миттєвий фідбек, менше зайвих запитів), але <strong>ніколи не є джерелом істини для безпеки</strong>, бо клієнтський код можна обійти (прямий запит до API). Серверна валідація обов\'язкова завжди — це єдиний надійний бар\'єр. Правильна практика — дублювати ключові правила на обох рівнях, ідеально через спільну схему (Zod), яку імпортують і клієнт, і сервер.',
+        },
         {
           question: 'Які переваги дає нативний <code>FormData</code> API порівняно з ручним збором значень із controlled-полів через <code>useState</code> для кожного поля?',
           answer: '<code>FormData</code> збирає всі значення форми одним викликом (<code>new FormData(formElement)</code>) без потреби заводити окремий <code>useState</code> і <code>onChange</code>-обробник на кожне поле, зменшуючи boilerplate і кількість ре-рендерів. У зв\'язці з React 19 Actions (<code>&lt;form action={fn}&gt;</code>) FormData стає нативним способом передати дані форми у Server Action без ручної серіалізації.',
+        },
+        {
+          question: 'Як показати помилки валідації користувачу так, щоб форма не «сіпалась» (не втрачала фокус/значення полів) при кожному ре-рендері?',
+          answer: 'Стан помилок варто зберігати окремо від значень полів (наприклад, <code>errors</code> у форматі <code>{ fieldName: message }</code>) і оновлювати лише той запис, що змінився, а не пересобирати весь об\'єкт форми. Бібліотеки на кшталт React Hook Form ізолюють ре-рендер конкретного поля через підписку по імені поля, тому помилка в одному інпуті не викликає ре-рендер усієї форми і не збиває фокус користувача.',
+        },
+        {
+          question: 'Коли варто обрати нативний підхід до форм (<code>useState</code> + <code>FormData</code>) замість бібліотеки (React Hook Form, Formik)?',
+          answer: 'Нативний підхід виправданий для простих форм (1-3 поля, без складної крос-польової валідації чи динамічних масивів полів) — додаткова залежність і абстракція бібліотеки там не окупається. Для форм із десятками полів, вкладеними масивами, складною умовною валідацією чи потребою в продуктивності на великому масштабі бібліотека економить значно більше часу, ніж коштує її вивчення.',
         },
       ],
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">Що це <span class="tag tag-key">KEY</span></h3>
-  <p><code>FormData</code> — вбудований у браузер обʼєкт (не React-специфічний), що збирає значення <strong>усіх</strong> названих полів форми за один виклик — заміна ref-на-кожен-інпут для uncontrolled-форм.</p>`,
+          html: `<p>Робота з даними форми — три рівні, кожен наступний потрібен лише коли попереднього не вистачає:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Рівень</th><th>Інструмент</th><th>Достатньо для</th></tr>
+      <tr><td>Збір значень</td><td>нативний <code>FormData</code> / <code>&lt;form action&gt;</code> (React 19)</td><td>будь-яка форма — заміна <code>useState</code> на кожне поле</td></tr>
+      <tr><td>Перевірка</td><td>HTML5-атрибути + Constraint Validation API + своя схема (Zod)</td><td>1–10 полів, проста крос-польова логіка</td></tr>
+      <tr><td>Керування станом форми</td><td>react-hook-form / TanStack Form</td><td>десятки полів, динамічні масиви, складна умовна валідація</td></tr>
+    </table>
+  </div>
+  <p style="font-size:12.5px;opacity:.75">Хто «володіє» значенням поля (controlled vs uncontrolled, <code>input[type=file]</code>) — окремий розділ «Controlled vs Uncontrolled Inputs» вище.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">FormData — нативний збір значень <span class="tag tag-key">KEY</span></h3>
+  <p><code>FormData</code> — вбудований у браузер обʼєкт (не React-специфічний), що збирає значення <strong>усіх</strong> названих (<code>name="..."</code>) полів форми за один виклик — заміна ref-на-кожен-інпут для uncontrolled-форм.</p>`,
         },
         {
           kind: 'code',
           language: 'tsx',
           code: `function ContactForm() {
-  const formRef = useRef<HTMLFormElement>(null);
-
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = new FormData(formRef.current!);
+    const data = new FormData(e.currentTarget);   // ref не потрібен — форма з події
 
-    data.get('email');              // одне значення
+    data.get('email');              // одне значення: string | File | null
     data.getAll('interests');       // масив — для checkbox-груп з тим самим name
+    data.get('avatar') as File;     // файл із <input type="file">
     Object.fromEntries(data);       // { email: '...', name: '...' } — плейн-обʼєкт
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input name="email" type="email" />
-      <input name="name" />
+      <input name="avatar" type="file" />
       <button type="submit">Submit</button>
     </form>
   );
@@ -2825,32 +3275,32 @@ function Profile() {
         },
         {
           kind: 'paragraph',
-          html: `<div class="alert good"><span class="icon">✅</span><span>Це <strong>той самий</strong> <code>FormData</code>, що вже зустрічався в <code>action</code> React Router (розділ "React Router" вище) і в Server Actions/React 19 Actions (розділ "React 19 / майбутнє") — там форма (найчастіше <code>&lt;Form&gt;</code>/<code>&lt;form action={'{'}fn{'}'}&gt;</code>) автоматично збирає <code>FormData</code> й передає готовим першим аргументом у функцію, без ручного <code>new FormData(...)</code>.</span></div>`,
-        },
-      ],
-    },
-    {
-      id: 'forms-validation-errors',
-      title: '✅ Валідація та обробка помилок',
-      interviewQuestions: [
-        {
-          question: 'Де правильно робити валідацію форми — на клієнті, на сервері, чи обидва, і чому?',
-          answer: 'Клієнтська валідація — для UX (миттєвий фідбек, менше зайвих запитів), але <strong>ніколи не є джерелом істини для безпеки</strong>, бо клієнтський код можна обійти (прямий запит до API). Серверна валідація обов\'язкова завжди — це єдиний надійний бар\'єр. Правильна практика — дублювати ключові правила на обох рівнях, ідеально через спільну схему (Zod), яку імпортують і клієнт, і сервер.',
+          html: `<h3 class="topic">React 19 Actions — <code>&lt;form action={'{'}fn{'}'}&gt;</code></h3>
+  <p>У React 19 форма приймає <strong>функцію</strong> в <code>action</code> — вона отримує зібраний <code>FormData</code> першим аргументом, форма скидається після успіху, а робота може виконуватись прямо на сервері (Server Action). Той самий <code>FormData</code> вже зустрічався в <code>action</code> React Router (розділ «React Router» вище); деталі — розділ «React 19 / майбутнє».</p>`,
         },
         {
-          question: 'Як показати помилки валідації користувачу так, щоб форма не «сіпалась» (не втрачала фокус/значення полів) при кожному ре-рендері?',
-          answer: 'Стан помилок варто зберігати окремо від значень полів (наприклад, <code>errors</code> у форматі <code>{ fieldName: message }</code>) і оновлювати лише той запис, що змінився, а не пересобирати весь об\'єкт форми. Бібліотеки на кшталт React Hook Form ізолюють ре-рендер конкретного поля через підписку по імені поля, тому помилка в одному інпуті не викликає ре-рендер усієї форми і не збиває фокус користувача.',
+          kind: 'code',
+          language: 'tsx',
+          code: `async function updateName(formData: FormData) {
+  'use server';                                  // Server Action (Next.js App Router)
+  await db.user.update({ name: formData.get('name') });
+}
+
+function ProfileForm() {
+  const [state, action, isPending] = useActionState(updateName, null);
+  return (
+    <form action={action}>
+      <input name="name" />
+      <SubmitButton />
+    </form>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();            // стан найближчої <form> — без пропсів
+  return <button disabled={pending}>{pending ? 'Збереження…' : 'Зберегти'}</button>;
+}`,
         },
-        {
-          question: `onChange чи onBlur для валідації email?`,
-          answer: `onBlur — не заважає вводу, дає фідбек після завершення поля; onChange для миттєвих індикаторів (сила пароля).`,
-        },
-        {
-          question: `Навіщо aria-invalid/aria-describedby на полі з помилкою?`,
-          answer: `зв'язує поле з текстом помилки для screen reader — без цього невізуальний користувач не отримає фідбек про помилку взагалі.`,
-        },
-      ],
-      blocks: [
         {
           kind: 'paragraph',
           html: `<h3 class="topic">Нативна HTML5-валідація <span class="tag tag-key">KEY</span></h3>
@@ -2860,11 +3310,12 @@ function Profile() {
     <table>
       <tr><th>Момент</th><th>UX</th><th>Коли доречно</th></tr>
       <tr><td><code>onChange</code></td><td>Миттєвий фідбек, але може дратувати посеред вводу ("email invalid" ще до того, як дописав)</td><td>Індикатори сили пароля, лічильник символів</td></tr>
-      <tr><td><code>onBlur</code></td><td>Валідація при виході з поля — не заважає під час вводу</td><td>Найпоширеніший баланс — "перевірки на фокус", про які питав користувач</td></tr>
+      <tr><td><code>onBlur</code></td><td>Валідація при виході з поля — не заважає під час вводу</td><td>Найпоширеніший баланс для текстових полів</td></tr>
       <tr><td><code>onSubmit</code></td><td>Усе одразу в момент сабміту</td><td>Прості форми, або як фінальна перевірка поверх onBlur</td></tr>
     </table>
   </div>
-  <h3 class="topic">Error state і фокус на невалідному полі <span class="tag tag-pit">PITFALL</span></h3>`,
+  <h3 class="topic">Error state і фокус на невалідному полі <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Стан помилок тримай <strong>окремо</strong> від значень полів (<code>{ '{' } fieldName: message { '}' }</code>) й оновлюй лише змінений запис — інакше форма пересобирається й «сіпається». Після невдалого сабміту — фокус на перше невалідне поле й ARIA-звʼязок помилки з інпутом.</p>`,
         },
         {
           kind: 'code',
@@ -2873,49 +3324,63 @@ function Profile() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fieldRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  function handleSubmit(data: Record<string, string>) {
-    const nextErrors: Record<string, string> = {};
-    if (!data.email) nextErrors.email = 'Обовʼязкове поле';
-    setErrors(nextErrors);
+  function validate(data: Record<string, string>) {
+    const next: Record<string, string> = {};
+    if (!data.email) next.email = 'Обовʼязкове поле';
+    setErrors(next);
 
-    const firstInvalid = Object.keys(nextErrors)[0];
-    if (firstInvalid) fieldRefs.current[firstInvalid]?.focus(); // ⚠️ легко забути — a11y-очікування
+    const firstInvalid = Object.keys(next)[0];
+    if (firstInvalid) fieldRefs.current[firstInvalid]?.focus(); // ⚠️ a11y — легко забути
+    return Object.keys(next).length === 0;
   }
-
-  return { errors, fieldRefs, handleSubmit };
+  return { errors, fieldRefs, validate };
 }
 
-// <input
-//   name="email"
-//   ref={el => (fieldRefs.current.email = el)}
-//   aria-invalid={!!errors.email}
-//   aria-describedby={errors.email ? 'email-error' : undefined}
-// />
-// {errors.email && <span id="email-error">{errors.email}</span>}`,
+// розмітка поля з помилкою:
+<input
+  name="email"
+  ref={el => { fieldRefs.current.email = el; }}
+  aria-invalid={!!errors.email}
+  aria-describedby={errors.email ? 'email-error' : undefined}
+/>
+{errors.email && <span id="email-error" role="alert">{errors.email}</span>}`,
         },
         {
           kind: 'paragraph',
-          html: `<div class="alert warn"><span class="icon">⚠️</span><span>Перенесення фокуса на перше невалідне поле після невдалого сабміту — не косметика, а очікувана a11y-поведінка (користувачі screen reader/клавіатурної навігації інакше не дізнаються, де саме помилка). Легко забути, бо форма "технічно працює" й без цього.</span></div>
-  `,
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span>Перенесення фокуса на перше невалідне поле й <code>aria-invalid</code>/<code>aria-describedby</code> — не косметика, а очікувана a11y-поведінка: користувачі screen reader / клавіатурної навігації інакше не дізнаються, де саме помилка. Легко забути, бо форма «технічно працює» й без цього.</span></div>`,
         },
-      ],
-    },
-    {
-      id: 'forms-libraries',
-      title: '📚 Нативний підхід vs бібліотеки',
-      interviewQuestions: [
-        {
-          question: 'Коли варто обрати нативний підхід до форм (useState + FormData) замість бібліотеки (React Hook Form, Formik)?',
-          answer: 'Нативний підхід виправданий для простих форм (1-3 поля, без складної крос-польової валідації чи динамічних масивів полів) — додаткова залежність і абстракція бібліотеки там не окупається. Для форм із десятками полів, вкладеними масивами, складною умовною валідацією чи потребою в продуктивності на великому масштабі бібліотека економить значно більше часу, ніж коштує її вивчення.',
-        },
-      ],
-      blocks: [
         {
           kind: 'paragraph',
-          html: `<div class="table-wrap">
+          html: `<h3 class="topic">Zod — одна схема на клієнт і сервер <span class="tag tag-key">KEY</span></h3>
+  <p>Ключове правило безпеки: клієнтська валідація — лише для UX, серверна — обовʼязкова завжди. Щоб не писати правила двічі — <strong>одна Zod-схема</strong> в окремому файлі, який імпортують і компонент, і Server Action / API-роут.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// signupSchema.ts — імпортується І в компонент, І в API-роут / Server Action
+import { z } from 'zod';
+
+export const signupSchema = z.object({
+  email: z.string().email('Невалідний email'),
+  age: z.coerce.number().min(18, 'Мінімум 18 років'),  // coerce — FormData дає рядки
+});
+export type SignupInput = z.infer<typeof signupSchema>;  // тип зі схеми, без дублювання
+
+// будь-де (клієнт або сервер):
+const parsed = signupSchema.safeParse(Object.fromEntries(formData));
+if (!parsed.success) {
+  parsed.error.flatten().fieldErrors;   // { email: ['Невалідний email'], ... }
+} else {
+  parsed.data;                          // типізовано як SignupInput
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Бібліотеки — коли ручного вже мало</h3>
+  <div class="table-wrap">
     <table>
       <tr><th>Підхід</th><th>Модель</th><th>Статус</th></tr>
-      <tr><td>Vanilla <code>useState</code></td><td>Controlled, по полю</td><td>Ок для 1-3 полів, росте боляче</td></tr>
+      <tr><td>Vanilla <code>useState</code> / <code>FormData</code></td><td>Controlled по полю / нативний збір</td><td>Ок для 1–3 полів, росте боляче</td></tr>
       <tr><td><strong>react-hook-form</strong></td><td>Uncontrolled (refs) + Zod для схем</td><td>✅ Актуальний стандарт для будь-чого складнішого за тривіальну форму</td></tr>
       <tr><td>Formik</td><td>Controlled, обгортка над useState</td><td>Легасі — здебільшого витіснений react-hook-form через продуктивність</td></tr>
       <tr><td>TanStack Form</td><td>Type-safe, framework-agnostic ядро</td><td>Новіший гравець, зростає, поки не домінує</td></tr>
@@ -2927,16 +3392,11 @@ function Profile() {
           language: 'tsx',
           code: `import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-const schema = z.object({
-  email: z.string().email('Невалідний email'),
-  age: z.number().min(18, 'Мінімум 18 років'),
-});
+import { signupSchema } from './signupSchema';   // та сама схема, що й на сервері
 
 function SignupForm() {
   const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(schema),  // валідація — схемою, не вручну
+    resolver: zodResolver(signupSchema),  // валідація — схемою, не вручну
   });
 
   return (
@@ -2952,7 +3412,7 @@ function SignupForm() {
         },
         {
           kind: 'paragraph',
-          html: `<div class="alert good"><span class="icon">✅</span><span><strong>Вердикт:</strong> react-hook-form + Zod — типова сучасна пара для будь-якої форми серйозніше за 2-3 поля: схема валідації одна (можна перевикористати на бекенді), продуктивність не деградує з кількістю полів, TypeScript-типи виводяться зі схеми автоматично.</span></div>`,
+          html: `<div class="alert good"><span class="icon">✅</span><span><strong>Вердикт:</strong> проста форма (1–5 полів) → нативний <code>FormData</code> + Zod-схема, без бібліотеки. Форма серйозніше за 2–3 поля, з файлами, динамічними полями чи потребою в продуктивності → <strong>react-hook-form + Zod</strong>: одна схема (перевикористовна на бекенді), продуктивність не деградує з кількістю полів, TS-типи виводяться зі схеми автоматично.</span></div>`,
         },
       ],
     },
@@ -3469,46 +3929,112 @@ export default function Page() {
           question: `React Compiler означає "більше не треба знати useMemo"?`,
           answer: `ні — для співбесіди й для дебагу edge-case'ів розуміння ручної мемоізації лишається обов'язковим.`,
         },
+        {
+          question: 'Навіщо <code>useFormStatus</code>, якщо <code>useActionState</code> вже повертає <code>isPending</code>?',
+          answer: '<code>useActionState</code> дає <code>isPending</code> у тому компоненті, що <strong>оголошує</strong> екшен. <code>useFormStatus</code> читає стан найближчої батьківської <code>&lt;form&gt;</code> зсередини будь-якого дочірнього компонента — тобто кнопка чи спінер у власному файлі дізнається про pending без props-drilling. Обмеження: хук має викликатись у компоненті, відрендереному <em>всередині</em> <code>&lt;form&gt;</code>, а не в тому, що її рендерить.',
+        },
+        {
+          question: 'Що змінилось з <code>forwardRef</code> у React 19?',
+          answer: '<code>ref</code> став звичайним пропом функціонального компонента — <code>function Input({ ref }) {…}</code> замість <code>forwardRef((props, ref) => …)</code>. <code>forwardRef</code> ще працює для сумісності, але в новому коді не потрібен. Так само <code>&lt;Context&gt;</code> тепер можна рендерити напряму як провайдер, без <code>&lt;Context.Provider&gt;</code>.',
+        },
       ],
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">React 19 — нове <span class="tag tag-new">React 19</span></h3>`,
+          html: `<h3 class="topic">React 19 — нове <span class="tag tag-new">React 19</span></h3>
+  <p>Кожна фіча — окремо, з мінімальним прикладом.</p>
+  <h3 class="topic"><code>use()</code> — читання Promise / Context під час рендеру</h3>
+  <p>Не хук: можна викликати умовно, в циклі, після early return. Читає <code>Promise</code> (suspend до resolve, найближчий <code>&lt;Suspense&gt;</code> показує fallback, помилку ловить Error Boundary) або <code>Context</code>.</p>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          code: `// Actions — async-функція просто у <form action>,
-// React сам керує pending/помилками/оптимістичними апдейтами
-async function submitAction(formData: FormData) {
-  'use server';
-  await saveName(formData.get('name'));
-}
-<form action={submitAction}>...</form>
-
-// use() — читає Promise або Context, можна викликати УМОВНО
-// (на відміну від звичайних хуків, яким заборонено бути в if)
-function Comments({ commentsPromise }: { commentsPromise: Promise<Comment[]> }) {
-  const comments = use(commentsPromise); // suspends до resolve
+          code: `function Comments({ commentsPromise }: { commentsPromise: Promise<Comment[]> }) {
+  const comments = use(commentsPromise);   // suspends до resolve — без useState для loading
   return <ul>{comments.map(c => <li key={c.id}>{c.text}</li>)}</ul>;
 }
 
-// use() із Context — заміна useContext(), можна після early return
 function Toolbar() {
-  if (isHidden) return null;         // ⛔ useContext() тут кинув би помилку
-  const theme = use(ThemeContext);   // ✅ use() можна викликати умовно
-  return <div className={theme}>...</div>;
+  if (isHidden) return null;               // useContext() тут кинув би помилку
+  const theme = use(ThemeContext);         // use() можна після early return
+  return <div className={theme} />;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>useActionState</code> — форма + pending + помилка в одному хуку</h3>
+  <p>Обгортає async-функцію (Server Action чи звичайну). Форма працює навіть без JS через нативний <code>&lt;form action&gt;</code>.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `async function updateName(prev: State, formData: FormData): Promise<State> {
+  const error = await saveName(formData.get('name'));
+  return error ? { error } : { ok: true };
 }
 
-// useOptimistic — миттєве UI-оновлення до підтвердження сервера
-const [optimisticTodos, addOptimistic] = useOptimistic(
-  todos,
-  (state, newTodo) => [...state, newTodo]
-);
+function Form() {
+  const [state, formAction, isPending] = useActionState(updateName, {});
+  return (
+    <form action={formAction}>
+      <input name="name" />
+      <button disabled={isPending}>Save</button>
+      {state.error && <p>{state.error}</p>}
+    </form>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>useOptimistic</code> — миттєве UI до відповіді сервера</h3>
+  <p>Показує очікуваний результат одразу; при помилці екшену React сам відкочує до реального стану — без ручного «оптимістичний vs підтверджений».</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Todos({ todos }: { todos: Todo[] }) {
+  const [optimistic, addOptimistic] = useOptimistic(
+    todos,
+    (state, newText: string) => [...state, { id: 'temp', text: newText, pending: true }],
+  );
+  async function action(formData: FormData) {
+    const text = formData.get('text') as string;
+    addOptimistic(text);               // UI оновлюється негайно
+    await saveTodo(text);              // помилка → optimistic відкотиться
+  }
+  return <form action={action}>{/* рендер optimistic */}</form>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>useFormStatus</code> — статус батьківської <code>&lt;form&gt;</code> без props-drilling</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Компонент кнопки читає стан форми, всередині якої він відрендерений —
+// не отримуючи isPending пропом через кілька рівнів.
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>{pending ? 'Збереження…' : 'Зберегти'}</button>;
+}
+// <form action={action}><SubmitButton /></form>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>ref</code> як звичайний проп + <code>&lt;Context&gt;</code> як провайдер</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// React 19: forwardRef більше не потрібен — ref просто проп
+function Input({ ref, ...props }: React.ComponentProps<'input'>) {
+  return <input ref={ref} {...props} />;
+}
 
-// useActionState — форма + результат + pending в одному хуку
-const [state, formAction, isPending] = useActionState(submitAction, initialState);
-// <form action={formAction}><button disabled={isPending}>Save</button></form>`,
+// <Context> сам є провайдером — <Context.Provider> тепер зайве
+const ThemeContext = createContext<Theme>('light');
+<ThemeContext value="dark">{children}</ThemeContext>   // не <ThemeContext.Provider>`,
         },
         {
           kind: 'paragraph',
