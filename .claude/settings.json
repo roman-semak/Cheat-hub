@@ -23,7 +23,14 @@
       "Bash(git restore *)",
       "Bash(set -e)",
       "Bash(rm -rf /private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad/node_modules /private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad/package*.json; cat /Users/romansemak/.claude/projects/-Users-romansemak-GitHub-PET-leetCode/memory/cheatsheet-mermaid-and-system-design.md)",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('hooks',{}\\),indent=2\\)\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('hooks',{}\\),indent=2\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w \"react:%{http_code}\\\\n\" http://localhost:5001/react)",
+      "Bash(curl -s -o /dev/null -w \"leetcode:%{http_code}\\\\n\" http://localhost:5001/leetcode)",
+      "Bash(curl -s -o /dev/null -w \"lc-cheat:%{http_code}\\\\n\" http://localhost:5001/leetcode/cheatsheet)",
+      "Bash(curl -s -o /dev/null -w \"tasks:%{http_code}\\\\n\" http://localhost:5001/leetcode/tasks)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5001/profile)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5001/git)",
+      "Bash(pkill -f \"curl -s http://localhost:5001\")"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"
