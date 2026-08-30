@@ -4164,6 +4164,10 @@ function PhotoDetail({ photo }: { photo: Photo }) {
           answer: '<code>getBy*</code> — синхронний пошук, кидає помилку одразу, якщо елемент не знайдено (для перевірки "елемент має бути на екрані вже зараз"). <code>queryBy*</code> — синхронний, повертає <code>null</code>, якщо не знайдено, замість помилки — єдиний правильний спосіб перевірити <strong>відсутність</strong> елемента (<code>expect(queryByText(...)).not.toBeInTheDocument()</code>; <code>getBy</code> тут би одразу впав з помилкою). <code>findBy*</code> — асинхронний (повертає проміс, ретраїть до таймауту) — для елементів, що з\'являються <em>після</em> асинхронної дії (запит, <code>setTimeout</code>).',
         },
         {
+          question: 'Чому <code>userEvent</code> кращий за <code>fireEvent</code> за замовчуванням?',
+          answer: '<code>fireEvent</code> диспатчить <em>одну</em> сиру DOM-подію (напр. <code>change</code>). <code>userEvent</code> імітує <strong>повний ланцюг</strong>, який породжує реальна взаємодія: на ввід літери — <code>keydown → keypress → input → keyup</code>, на клік — <code>pointerdown → mousedown → focus → mouseup → click</code>, плюс перевіряє, чи елемент видимий і не <code>disabled</code>. Тому <code>userEvent</code> ловить баги, які <code>fireEvent</code> пропускає (напр. обробник висить на <code>keydown</code>, а не на <code>change</code>). <code>userEvent</code> v14+ асинхронний — кожну дію треба <code>await</code>.',
+        },
+        {
           question: 'Як правильно тестувати кастомний хук, якщо в ньому немає JSX для рендеру?',
           answer: 'Через <code>renderHook</code> з <code>@testing-library/react</code> — він монтує хук у мінімальному тестовому компоненті-обгортці й повертає <code>result.current</code> (поточне значення, яке повернув хук) та <code>rerender</code>/<code>act</code> для симуляції оновлень. Зміни стану всередині хука (виклик функції, що робить <code>setState</code>) треба обгортати в <code>act()</code>, інакше React попереджає, що оновлення відбулось поза контрольованим тестовим середовищем, і DOM може не встигнути синхронізуватись до наступної перевірки.',
         },
@@ -4175,52 +4179,108 @@ function PhotoDetail({ photo }: { photo: Photo }) {
       blocks: [
         {
           kind: 'paragraph',
-          html: `<h3 class="topic">React Testing Library — тестуй поведінку, не реалізацію <span class="tag tag-key">KEY</span></h3>
-  <p>RTL навмисно не дає доступу до внутрішнього стану чи інстансу компонента — лише те, що бачить і робить користувач: текст на екрані, ролі елементів, клік, ввід. Це робить тести стійкими до рефакторингу реалізації (клас → хуки, перейменування внутрішнього стейта).</p>`,
+          html: `<h3 class="topic">Тестуй поведінку, а не імплементацію <span class="tag tag-key">KEY</span></h3>
+  <p>Головна філософія сучасного тестування React (Kent C. Dodds): <em>«чим більше твої тести нагадують те, як софтом користуються насправді, тим більше впевненості вони дають»</em>. Тестуй <strong>behavior</strong> — що бачить і робить користувач, — а не <strong>implementation details</strong>: внутрішній стан, назви методів, кількість ре-рендерів.</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Implementation details</h4><p>Ламається при рефакторингу без зміни поведінки. Enzyme заохочував саме це (<code>.state()</code>, <code>.instance()</code>, <code>shallow</code>) → крихкі тести.</p></div>
+    <div class="card green"><h4>✅ Behavior</h4><p>Переживає рефакторинг (клас → хуки, перейменування стейта). Знайти по ролі/тексту, клікнути, перевірити, що на екрані.</p></div>
+  </div>`,
         },
         {
           kind: 'code',
           language: 'tsx',
-          caption: 'Рендер компонента, взаємодія користувача, асинхронне очікування',
+          caption: 'Той самий сценарій: деталь реалізації проти поведінки',
+          code: `// ❌ Implementation details — ламається при рефакторингу
+expect(wrapper.state('isOpen')).toBe(true);
+
+// ✅ Behavior — виживає рефакторинг
+await user.click(screen.getByRole('button', { name: /open menu/i }));
+expect(screen.getByRole('menu')).toBeVisible();`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Testing Trophy — не піраміда</h3>
+  <p>Для фронтенду актуальніша модель за піраміду — <strong>Testing Trophy</strong> Кента Доддса:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Шар</th><th>Обсяг</th><th>Чим</th></tr>
+      <tr><td>Static</td><td>база</td><td>TypeScript, ESLint</td></tr>
+      <tr><td>Unit</td><td>помірно</td><td>утиліти, хуки, reducer'и</td></tr>
+      <tr><td><strong>Integration</strong></td><td><strong>більшість</strong></td><td>рендер компонента з реальними дітьми, взаємодія, перевірка результату (RTL)</td></tr>
+      <tr><td>E2E</td><td>мало</td><td>Playwright — критичні flow у реальному браузері</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Найбільше впевненості на одиницю зусиль дають <strong>integration-тести</strong> — саме на них має припадати основна маса тестів фронту.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Стек (2026)</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Інструмент</th><th>Роль</th></tr>
+      <tr><td><strong>Vitest</strong></td><td>Test runner — сучасний стандарт, швидший за Jest, нативний ESM, ділить конфіг трансформації з Vite</td></tr>
+      <tr><td><strong>Jest</strong></td><td>Test runner — досі поширений (Next legacy, CRA)</td></tr>
+      <tr><td><strong>React Testing Library</strong></td><td>Рендер + запити до DOM</td></tr>
+      <tr><td><code>@testing-library/user-event</code></td><td>Симуляція взаємодії (краще за <code>fireEvent</code>)</td></tr>
+      <tr><td><code>@testing-library/jest-dom</code></td><td>Matchers: <code>toBeInTheDocument</code>, <code>toBeVisible</code></td></tr>
+      <tr><td><strong>MSW</strong></td><td>Мокання мережі на рівні network</td></tr>
+      <tr><td><strong>Playwright</strong></td><td>E2E у реальному браузері</td></tr>
+    </table>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Enzyme мертвий</strong> — немає підтримки React 18+. Behavior-testing через RTL — індустріальний стандарт.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Queries: getBy / queryBy / findBy <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Варіант</th><th>Якщо елемента нема</th><th>Async</th><th>Use case</th></tr>
+      <tr><td><code>getBy…</code></td><td>кидає error</td><td>ні</td><td>елемент має бути зараз</td></tr>
+      <tr><td><code>queryBy…</code></td><td>повертає <code>null</code></td><td>ні</td><td>перевірка <strong>відсутності</strong></td></tr>
+      <tr><td><code>findBy…</code></td><td>кидає error (після таймауту)</td><td>так</td><td>елемент з'явиться async</td></tr>
+    </table>
+  </div>
+  <p><strong>Порядок пріоритету запитів</strong> (сигнал seniority): <code>getByRole</code> → <code>getByLabelText</code> → <code>getByPlaceholderText</code> → <code>getByText</code> → … → <code>getByTestId</code> (останній resort — <code>data-testid</code> невидимий користувачу).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Три варіанти запиту — коли який',
+          code: `const btn = screen.getByRole('button', { name: /submit/i });   // є зараз
+expect(screen.queryByText('Error')).not.toBeInTheDocument();    // відсутність
+const item = await screen.findByText('Loaded');                 // async поява`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">userEvent &gt; fireEvent</h3>
+  <p><code>fireEvent.change(input, …)</code> диспатчить <em>одну</em> синтетичну подію. <code>userEvent</code> імітує реальну послідовність (<code>focus → keydown → input → keyup</code> на кожну літеру, pointer-події на клік) — ловить баги, яких одна подія не покаже. <code>userEvent</code> v14+ асинхронний; за замовчуванням завжди він.</p>
+  <div class="alert"><span class="icon">🧭</span><span><strong>AAA-патерн:</strong> Arrange (<code>render</code> + <code>userEvent.setup()</code>) → Act (взаємодія) → Assert (перевірка DOM).</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Базовий приклад (AAA): рендер, взаємодія, асинхронне очікування',
           code: `import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 test('показує помилку при невалідному email', async () => {
-  const user = userEvent.setup();
+  const user = userEvent.setup();            // Arrange
   render(<SignupForm />);
 
-  await user.type(screen.getByLabelText(/email/i), 'not-an-email');
+  await user.type(screen.getByLabelText(/email/i), 'not-an-email');  // Act
   await user.click(screen.getByRole('button', { name: /submit/i }));
 
-  // findBy — асинхронний, чекає появи помилки після валідації
+  // Assert: findBy — асинхронний, чекає появи помилки після валідації
   expect(await screen.findByText(/невалідний email/i)).toBeInTheDocument();
-
   // queryBy — правильний спосіб перевірити ВІДСУТНІСТЬ елемента
   expect(screen.queryByText(/успішно/i)).not.toBeInTheDocument();
 });`,
         },
         {
-          kind: 'code',
-          language: 'tsx',
-          caption: 'Тестування кастомного хука через renderHook',
-          code: `import { renderHook, act } from '@testing-library/react';
-
-test('useCounter збільшує значення', () => {
-  const { result } = renderHook(() => useCounter(0));
-
-  expect(result.current.count).toBe(0);
-
-  act(() => {
-    result.current.increment(); // мутація стану — обов'язково всередині act()
-  });
-
-  expect(result.current.count).toBe(1);
-});`,
-        },
-        {
           kind: 'paragraph',
-          html: `<h3 class="topic">Мокання запитів — jest.mock vs MSW</h3>
-  <p><code>jest.mock</code> підміняє сам модуль з функцією запиту — тестує лише "чи викликано з правильними аргументами". MSW перехоплює на мережевому рівні — компонент робить справжній <code>fetch</code>, тестується весь шлях (серіалізація, заголовки, обробка статусу) так само, як у продакшні.</p>`,
+          html: `<h3 class="topic">Async + мережа через MSW</h3>
+  <p>Не мокай <code>fetch</code> вручну — перехоплюй на рівні мережі. Компонент виконує <strong>справжній</strong> запит, підміняється лише транспорт, тому тестується весь шлях (URL, заголовки, обробка статусу). Той самий mock працює в тестах, Storybook і dev — на відміну від <code>jest.mock('axios')</code>, не прив'язаний до конкретного HTTP-клієнта.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>afterEach(() =&gt; server.resetHandlers())</code> — обов'язково: скидає per-test оверайди (<code>server.use(…)</code>), інакше тести течуть один в одного.</span></div>`,
         },
         {
           kind: 'code',
@@ -4235,13 +4295,109 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => server.resetHandlers());   // ізоляція тестів!
 afterAll(() => server.close());
 
-test('показує ім\\'я користувача після завантаження', async () => {
+test('рендерить користувача після завантаження', async () => {
   render(<UserProfile userId="1" />);
   expect(await screen.findByText('Ada')).toBeInTheDocument();
-  // компонент реально викликав fetch('/api/users/1') — MSW відповів замість бекенду
+});
+
+test('показує помилку при 500', async () => {
+  server.use(
+    http.get('/api/users/:id', () => new HttpResponse(null, { status: 500 })),
+  );
+  render(<UserProfile userId="1" />);
+  expect(await screen.findByText(/щось пішло не так/i)).toBeInTheDocument();
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">waitFor / findBy / act</h3>
+  <ul>
+    <li><code>await screen.findByText('Done')</code> — чекаєш появу елемента</li>
+    <li><code>await waitFor(() =&gt; expect(mockFn).toHaveBeenCalled())</code> — довільна умова</li>
+    <li><code>await waitForElementToBeRemoved(() =&gt; screen.queryByText(/loading/i))</code> — зникнення</li>
+  </ul>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Warning <code>"not wrapped in act(...)"</code> майже завжди = <strong>забув <code>await</code></strong> на async-оновленні стану (<code>findBy</code>/<code>waitFor</code>). RTL авто-обгортає <code>render</code> і <code>userEvent</code> сам.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'renderHook: синхронний і async хук; result.current — свіже значення (getter)',
+          code: `import { renderHook, act, waitFor } from '@testing-library/react';
+
+test('useCounter збільшує значення', () => {
+  const { result } = renderHook(() => useCounter(0));
+  act(() => result.current.increment());  // act потрібен явно поза event-handler
+  expect(result.current.count).toBe(1);
+});
+
+test('useFetch завантажує дані', async () => {
+  const { result } = renderHook(() => useFetch('/api/data'));
+  expect(result.current.status).toBe('loading');
+  await waitFor(() => expect(result.current.status).toBe('success'));
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Провайдери: custom render wrapper</h3>
+  <p>Реальні компоненти залежать від context / router / store. Senior-патерн — власний <code>render</code>, що загортає UI в потрібні провайдери з тестовими налаштуваннями (<code>retry: false</code> у QueryClient, <code>MemoryRouter</code> з початковим маршрутом).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// test-utils.tsx
+function customRender(ui: React.ReactElement, { route = '/', ...options } = {}) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },  // не ретраїти в тестах!
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+    </QueryClientProvider>
+  );
+  return render(ui, { wrapper: Wrapper, ...options });
+}
+
+export * from '@testing-library/react';
+export { customRender as render };  // тести імпортують render звідси, не з RTL`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Антипатерни — що НЕ тестувати</h3>
+  <ul>
+    <li><strong>Implementation details</strong> — state, назви функцій, кількість ре-рендерів</li>
+    <li><strong>Сторонні бібліотеки</strong> — не тестуй, що React Router навігує; тестуй, що <em>твій</em> код реагує</li>
+    <li><strong>Дитячі компоненти</strong> — зазвичай не мокай (це integration); мокай лише важке/зовнішнє (карти, чарти, платіжні iframe) через <code>vi.mock()</code></li>
+    <li><strong>Великі snapshot-тести</strong> — нічого не ловлять, усі роблять <code>--update</code>. Точково для малих виводів</li>
+    <li><code>container.querySelector('.class')</code> — прив'язка до CSS крихка, юзай role/text</li>
+    <li><strong>Coverage-driven</strong> — 100% coverage ≠ якість</li>
+  </ul>
+  <div class="alert good"><span class="icon">✅</span><span><strong>a11y:</strong> <code>getByRole</code> вже змушує писати доступний markup; додатково — <code>jest-axe</code>: <code>expect(await axe(container)).toHaveNoViolations()</code>.</span></div>
+  <div class="alert"><span class="icon">⏱️</span><span><strong>Debounce/throttle:</strong> <code>vi.useFakeTimers()</code> + <code>vi.advanceTimersByTime(300)</code>; з <code>userEvent</code> v14 — <code>setup({ advanceTimers: vi.advanceTimersByTime })</code>, наприкінці <code>vi.useRealTimers()</code>.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'a11y через jest-axe та fake timers для debounce',
+          code: `import { axe } from 'jest-axe';
+
+test('немає порушень доступності', async () => {
+  const { container } = render(<SignupForm />);
+  expect(await axe(container)).toHaveNoViolations();
+});
+
+test('debounce: запит іде один раз після паузи', async () => {
+  vi.useFakeTimers();
+  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+  render(<Search />);
+  await user.type(screen.getByRole('searchbox'), 'react');
+  vi.advanceTimersByTime(300);
+
+  expect(fetchSpy).toHaveBeenCalledTimes(1);
+  vi.useRealTimers();
 });`,
         },
       ],
