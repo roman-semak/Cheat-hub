@@ -4403,6 +4403,295 @@ test('debounce: запит іде один раз після паузи', async 
       ],
     },
     {
+      id: 'i18n-localization',
+      title: '🌐 Локалізація (i18n) React-застосунку',
+      interviewQuestions: [
+        {
+          question: 'У чому різниця між <code>i18n</code>, <code>l10n</code> і <code>locale</code>, і чому <code>en-US ≠ en-GB</code>?',
+          answer: '<strong>i18n</strong> (internationalization) — <em>підготовка</em> коду: винесення рядків, підтримка плюрал-правил, форматів дат/чисел/валют, RTL. Робиться раз розробником. <strong>l10n</strong> (localization) — <em>власне переклад</em> під конкретну locale, робота перекладачів. <strong>locale</strong> — мова + регіон, а не лише мова: <code>en-US</code> і <code>en-GB</code> мають різний формат дати (<code>MM/DD</code> vs <code>DD/MM</code>), валюту ($ vs £), розділювачі тисяч. Тому форматувати треба за повною locale, а не за кодом мови.',
+        },
+        {
+          question: 'Чому <code>count === 1 ? "item" : "items"</code> — це баг, і як робити плюралізацію правильно?',
+          answer: 'Такий тернарник припускає 2 форми множини (як в англійській), але українська, польська, російська мають <strong>3 форми</strong> (one / few / many: «1 товар», «2 товари», «5 товарів»), арабська — 6. Правильно — <strong>CLDR plural rules</strong> через нативний <code>Intl.PluralRules</code>: i18next сам обирає форму за суфіксом ключа (<code>_one</code>/<code>_few</code>/<code>_many</code>/<code>_other</code>) залежно від <code>count</code> і активної locale. Власну логіку множини писати не треба ніколи.',
+        },
+        {
+          question: 'Як вставити посилання чи <code>&lt;strong&gt;</code> всередину перекладеного речення, не розриваючи рядок на шматки?',
+          answer: 'Компонент <code>&lt;Trans&gt;</code> з react-i18next: розмітка лишається в JSX, а переклад містить лише <strong>індекси</strong> дочірніх елементів (<code>&lt;1&gt;текст посилання&lt;/1&gt;</code>). i18next підставляє реальні елементи за позицією. Перекладач редагує суцільний рядок з плейсхолдерами, розробник не конкатенує <code>t("Click ") + &lt;a&gt; + t(" here")</code> (що ламає порядок слів у багатьох мовах).',
+        },
+        {
+          question: 'Чому не можна просто заімпортувати всі JSON-словники всіх мов, і як це вирішують?',
+          answer: 'Кожна мова + кожен namespace — це кілобайти в бандлі; 10 мов × 5 модулів у головному чанку роздують first load. Рішення: <strong>lazy-load</strong> — <code>i18next-http-backend</code> вантажить <code>/locales/{{lng}}/{{ns}}.json</code> по потребі; <code>useTranslation("checkout")</code> підтягує <code>checkout.json</code> лише коли компонент рендериться; у головний бандл не потрапляє жоден переклад, лише активна locale. Це частина роботи над bundle-size.',
+        },
+        {
+          question: 'Чому для Next.js локалізовані URL-сегменти (<code>/uk/about</code>) + переклад на сервері кращі за client-side перемикання?',
+          answer: 'Переклад у Server Components резолвиться на сервері й потрапляє в <strong>HTML до гідрації</strong> — пошуковик і користувач без JS бачать перекладений контент одразу (client-only i18n віддає порожні ключі в SSR-HTML). Локалізований URL — окрема індексована сторінка на мову, на відміну від <code>?lang=uk</code>, який Google ігнорує. Плюс обовʼязкові <code>&lt;html lang&gt;</code> і <code>hreflang</code> alternate-теги, щоб видача показувала правильну мовну версію.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">i18n · l10n · locale — три різні речі <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card blue"><h4>i18n — internationalization</h4><p><em>Підготовка</em> коду до перекладу: винесення рядків, плюрал-правила, формати дат/чисел, RTL. Раз, розробником.</p></div>
+    <div class="card green"><h4>l10n — localization</h4><p><em>Власне переклад</em> під конкретну locale (uk-UA, en-US). Робота перекладачів, не коду.</p></div>
+  </div>
+  <p><strong>locale</strong> — мова + регіон, не лише мова: <code>en-US</code> ≠ <code>en-GB</code> (формат дати, валюта, розділювачі тисяч).</p>
+  <div class="alert"><span class="icon">💡</span><span>Сигнал seniority — розуміти, що i18n це <strong>не просто словник рядків</strong>, а плюрал-правила, формати, напрямок тексту, SEO і code-splitting перекладів.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Вибір бібліотеки</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Бібліотека</th><th>Коли обирати</th></tr>
+      <tr><td><strong>react-i18next</strong> (+ i18next)</td><td>Дефолт для SPA/CSR. Найбагатша екосистема: language detection, backend-loading, namespaces</td></tr>
+      <tr><td><strong>react-intl</strong> (FormatJS)</td><td>Суворі ICU-повідомлення, промислове форматування; поширена в enterprise</td></tr>
+      <tr><td><strong>next-intl</strong> / <strong>next-i18next</strong></td><td>Next.js: App Router → <code>next-intl</code>, Pages Router → <code>next-i18next</code></td></tr>
+      <tr><td><strong>Lingui</strong></td><td>Компіляція повідомлень, менший рантайм, DX з макросами</td></tr>
+      <tr><td>Нативний <code>Intl</code> API</td><td>Форматування дат/чисел/множини <em>без</em> бібліотеки — вбудований у браузер</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Дефолт: <strong>react-i18next</strong> для SPA, <strong>next-intl</strong> для Next.js App Router.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Структура перекладів + namespaces</h3>
+  <p><strong>Namespaces</strong> (<code>common</code>, <code>auth</code>, <code>checkout</code>) — розбивка словника на модулі: логічна структура + можливість вантажити лише потрібний файл, а не весь словник. Прямий аналог feature-based модулів.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          caption: 'src/locales/en/common.json — вкладені ключі та плюрал-форми',
+          code: `{
+  "greeting": "Hello, {{name}}!",
+  "cart": {
+    "empty": "Your cart is empty",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
+  }
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'js',
+          caption: 'i18n.js — ініціалізація react-i18next',
+          code: `import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import HttpBackend from 'i18next-http-backend';
+
+i18n
+  .use(HttpBackend)        // lazy-load JSON по мережі
+  .use(LanguageDetector)   // визначити мову: localStorage -> navigator -> ...
+  .use(initReactI18next)
+  .init({
+    fallbackLng: 'en',
+    supportedLngs: ['en', 'uk'],
+    ns: ['common', 'auth'],
+    defaultNS: 'common',
+    interpolation: { escapeValue: false }, // React вже екранує XSS
+    backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
+  });
+
+export default i18n;`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Використання в компоненті + перемикання мови',
+          code: `import { useTranslation } from 'react-i18next';
+
+function Header() {
+  const { t, i18n } = useTranslation('common');
+
+  return (
+    <header>
+      <h1>{t('greeting', { name: 'Roman' })}</h1>
+      <button onClick={() => i18n.changeLanguage('uk')}>UA</button>
+      <button onClick={() => i18n.changeLanguage('en')}>EN</button>
+    </header>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Плюралізація — не пиши власну логіку <span class="tag tag-key">KEY</span></h3>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>count === 1 ? 'item' : 'items'</code> ламається для мов зі складними правилами: українська, польська, російська мають <strong>3 форми</strong>, арабська — 6.</span></div>
+  <p>i18next обирає форму за <strong>CLDR plural rules</strong> через нативний <code>Intl.PluralRules</code> — за суфіксами ключів <code>_one</code> / <code>_few</code> / <code>_many</code> / <code>_other</code> залежно від <code>count</code> і активної locale.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          caption: 'Плюрал-ключі: en (2 форми) проти uk (3 форми)',
+          code: `{
+  "en": {
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
+  },
+  "uk": {
+    "items_one": "{{count}} товар",
+    "items_few": "{{count}} товари",
+    "items_many": "{{count}} товарів"
+  }
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Форму обирає i18next за CLDR — виклик однаковий',
+          code: `t('items', { count: 1 }); // "1 товар"
+t('items', { count: 3 }); // "3 товари"
+t('items', { count: 5 }); // "5 товарів"`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">&lt;Trans&gt; — JSX усередині перекладу</h3>
+  <p>Як перекласти <code>"Click &lt;a&gt;here&lt;/a&gt; to continue"</code> не розриваючи рядок на <code>t("Click ") + &lt;a&gt; + t(" here")</code> (це ламає порядок слів у багатьох мовах)? <code>&lt;Trans&gt;</code> лишає розмітку в JSX, а переклад містить лише <strong>індекси</strong> дочірніх елементів.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Індекс 1 = другий дочірній елемент (посилання)',
+          code: `// JSX
+<Trans i18nKey="terms">
+  I accept the <a href="/terms">terms and conditions</a>
+</Trans>
+
+// uk/common.json
+// { "terms": "Я приймаю <1>умови та положення</1>" }`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Формати дат, чисел, валют — через <code>Intl</code>, не хардкод</h3>
+  <p>Не хардкодь формати рядками. Нативний <code>Intl</code> знає правила кожної locale: позицію символу валюти, розділювачі, порядок компонентів дати.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'js',
+          caption: 'Нативний Intl API + інтеграція в i18next',
+          code: `new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'EUR' })
+  .format(1234.5);                    // "1 234,50 €"
+
+new Intl.DateTimeFormat('en-US', { dateStyle: 'long' })
+  .format(new Date());               // "August 30, 2026"
+
+new Intl.RelativeTimeFormat('uk', { numeric: 'auto' })
+  .format(-1, 'day');                // "вчора"
+
+// i18next прокидує ці опції через formatParams:
+t('price', {
+  val: 1234.5,
+  formatParams: { val: { style: 'currency', currency: 'EUR' } },
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">RTL — арабська, іврит</h3>
+  <p>Два кроки: (1) виставити напрямок на <code>&lt;html&gt;</code> при зміні мови, (2) писати CSS через <strong>logical properties</strong> — тоді layout дзеркалиться сам, без окремого RTL-стайлшита.</p>
+  <div class="alert"><span class="icon">🧭</span><span><code>margin-inline-start</code> замість <code>margin-left</code>, <code>padding-inline-end</code> замість <code>padding-right</code>, <code>text-align: start</code> замість <code>left</code>.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `useEffect(() => {
+  document.dir = i18n.dir(); // 'ltr' | 'rtl' — i18next знає напрямок locale
+}, [i18n.language]);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Продуктивність: lazy-load перекладів</h3>
+  <ul>
+    <li><strong>HttpBackend</strong> вантажить JSON по потребі (<code>loadPath</code>)</li>
+    <li><strong>Namespace on demand:</strong> <code>useTranslation('checkout')</code> завантажить <code>checkout.json</code> лише коли компонент відрендериться</li>
+    <li><strong>Code splitting:</strong> у головний бандл не потрапляє жоден переклад, лише активна locale</li>
+  </ul>
+  <div class="alert"><span class="icon">💡</span><span>Переклади — часто недооцінена вага бандла. Розбивка по namespaces + lazy-load — частина роботи над bundle-size.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'ready — namespace ще вантажиться',
+          code: `const { t, ready } = useTranslation('checkout');
+if (!ready) return <Spinner />;`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Next.js специфіка + SEO <span class="tag tag-key">KEY</span></h3>
+  <p><strong>App Router (<code>next-intl</code>):</strong> locale у сегменті шляху (<code>/uk/about</code>), <code>middleware.ts</code> для detection і редіректу, переклади резолвляться на сервері в Server Components → у HTML <em>до</em> гідрації.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>SEO must-have</th><th>Навіщо</th></tr>
+      <tr><td><code>&lt;html lang={locale}&gt;</code></td><td>Пошуковик і screen reader знають мову сторінки</td></tr>
+      <tr><td><code>hreflang</code> alternate-теги</td><td>Google показує правильну мовну версію у видачі</td></tr>
+      <tr><td>Локалізовані URL (<code>/uk/...</code>)</td><td>Кожна мова — окремий індексований URL; <strong>не</strong> query-параметр</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'app/[locale]/page.tsx — переклад на сервері',
+          code: `import { useTranslations } from 'next-intl';
+
+export default function Page() {
+  const t = useTranslations('common');
+  return <h1>{t('greeting', { name: 'Roman' })}</h1>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">TypeScript: типобезпечні ключі</h3>
+  <p>Типізуй ключі, щоб <code>t('wrong.key')</code> давав помилку компіляції + автокомпліт по всіх наявних ключах:</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'ts',
+          caption: 'i18next.d.ts',
+          code: `import 'i18next';
+import common from './locales/en/common.json';
+
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    defaultNS: 'common';
+    resources: { common: typeof common };
+  }
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Процес і тулінг</h3>
+  <ul>
+    <li><strong>Не редагуй переклади вручну в проді</strong> — TMS (Translation Management System): Lokalise, Crowdin, Phrase</li>
+    <li><strong>Структуровані ключі</strong> (<code>cart.empty</code>), а не англійський текст як ID — стабільніші при зміні формулювання</li>
+    <li><code>i18next-parser</code> витягує ключі з коду → знаходить пропущені й невикористані переклади (lint)</li>
+    <li><strong>Fallback chain:</strong> <code>uk → en → ключ</code>. Ніколи не показуй сирий ключ користувачу в проді</li>
+  </ul>
+  <div class="alert warn"><span class="icon">⚠️</span><span>У тестах <strong>не мокай <code>t</code> як <code>key =&gt; key</code></strong> — це ховає баги інтерполяції та плюралів. Використовуй реальний instance з мінімальним тестовим словником.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Тест i18n — реальний instance, не мок t',
+          code: `import { I18nextProvider } from 'react-i18next';
+import i18n from './test-i18n';
+
+i18n.init({
+  lng: 'en',
+  resources: { en: { common: { greeting: 'Hi {{name}}' } } },
+});
+
+test('вітає користувача на активній мові', () => {
+  render(
+    <I18nextProvider i18n={i18n}>
+      <Header />
+    </I18nextProvider>,
+  );
+  expect(screen.getByText('Hi Roman')).toBeInTheDocument();
+});`,
+        },
+      ],
+    },
+    {
       id: 'react-native-ecosystem',
       title: '📱 React Native та поза-браузерні рендерери',
       interviewQuestions: [

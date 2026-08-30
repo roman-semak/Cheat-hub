@@ -19,38 +19,30 @@ export const javascriptContent: TopicContent = {
           "answer": "TypeScript порівнює типи за <strong>формою</strong> (набором полів і їхніх типів), а не за іменем оголошення — два різні інтерфейси з однаковими полями взаємозамінні. У nominal typing два класи з ідентичною структурою, але різними іменами, несумісні без явного успадкування. Це дає TypeScript гнучкість, але й ризик випадкової сумісності типів, які концептуально не мають бути взаємозамінними."
         },
         {
-          question: `Interface vs abstract class?`,
-          answer: `interface = compile-time форма, стирається, кілька через implements; abstract class = runtime, з реалізацією/станом/конструктором, один через extends, не інстанціюється.`,
+          question: `Навіщо моделювати async-стан як discriminated union замість набору полів <code>isLoading</code>/<code>error</code>/<code>data</code>?`,
+          answer: `Набір незалежних опціональних полів дозволяє <em>impossible states</em> — <code>{ isLoading: true, data, error }</code> компілюється, хоча це нонсенс. Discriminated union (<code>{ status: 'loading' } | { status: 'success'; data } | { status: 'error'; error }</code>) робить нелегальні комбінації невимовними: <code>data</code> існує <strong>тільки</strong> при <code>status === 'success'</code>, і компілятор це гарантує. Гасло — <strong>«make impossible states impossible»</strong>.`,
         },
         {
-          question: `В чому різниця unknown і any?`,
-          answer: `unknown потребує перевірки типу, any ні. Use unknown у catch блоках (TS 4.0+).`,
+          question: `Що дає exhaustiveness checking через <code>never</code> / <code>assertNever</code>, і чому це сильний сигнал на співбесіді?`,
+          answer: `У <code>default</code> гілці <code>switch</code> присвоюєш значення змінній типу <code>never</code> (<code>const _x: never = shape</code>). Поки всі варіанти оброблені, <code>shape</code> у <code>default</code> звужений до <code>never</code> і присвоєння валідне. Додаєш новий член union — і <strong>кожен</strong> <code>switch</code> без відповідного <code>case</code> перестає компілюватись. Компілятор стає чеклистом рефакторингу. Згадка <code>assertNever</code> показує, що кандидат реально працював з DU.`,
         },
         {
-          question: `Як ти використовуєш discriminated unions?`,
-          answer: `Структури (status + data) для type narrowing без type guards.`,
+          question: `Перелічи механізми type narrowing і поясни, чому custom type predicate (<code>x is T</code>) потенційно небезпечний.`,
+          answer: `<code>typeof</code> (примітиви), <code>instanceof</code> (класи), <code>in</code> (наявність властивості), перевірка дискримінатора, truthiness, equality narrowing, <code>!= null</code>. Custom predicate <code>function isCat(p): p is Cat</code> — це <em>обіцянка</em> компілятору, яку він <strong>не перевіряє</strong>: якщо тіло функції бреше, отримаєш рантайм-баг без жодного warning. TS 5.5+ уміє інферити прості предикати автоматично, що безпечніше.`,
         },
         {
-          question: `Коли використовуєш satisfies?`,
-          answer: `Коли потрібна перевірка типу, але збереження точного літерального типу значення.`,
+          question: `Interface vs abstract class — у чому принципова різниця і коли брати що?`,
+          answer: `<code>interface</code> — суто <em>compile-time</em> контракт форми, стирається при компіляції (нуль рантайм-коду), клас реалізує <strong>кілька</strong> через <code>implements</code>. <code>abstract class</code> — <em>runtime</em> конструкція: має реалізацію методів, стан, конструктор, <code>private</code>/<code>protected</code>, <code>static</code>; успадкувати можна <strong>один</strong> через <code>extends</code>; працює <code>instanceof</code>. Правило: починай з interface, переходь на abstract class, коли з'являється <strong>спільна реалізація або стан</strong> (напр. Template Method pattern).`,
         },
         {
-          question: `Поясни type narrowing.`,
-          answer: `typeof/instanceof для розпізнання типу всередину if/else, потім TS звужує тип.`,
-        },
-        {
-          question: `Що таке type predicate (is)?`,
-          answer: `Custom функція, яка повертає boolean і говорить TS-у про результуючий тип.`,
-        },
-        {
-          question: `Як структурувати API response типи?`,
-          answer: `Discriminated unions з status полем + type predicate функції для парсингу.`,
+          question: `Чому в Angular DI <code>interface</code> не може бути токеном провайдера?`,
+          answer: `Interface стирається при компіляції — у рантаймі його просто не існує, тому немає значення, яке можна передати як DI-токен. Використовують або <code>abstract class</code> як абстракцію (<code>{ provide: AbstractService, useClass: ConcreteService }</code>), або <code>InjectionToken</code>. Це практична демонстрація різниці compile-time vs runtime.`,
         },
       ],
       "blocks": [
         {
           "kind": "paragraph",
-          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-es5\">ES5 typeof</span>\n            <span class=\"ver ver-ts2\">TS 2.x</span>\n            <span class=\"ver ver-ts5\">TS 5.x satisfies</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Хронологія (ES5 → TS 5.x)</div>\n            <div class=\"changelog-row\"><span class=\"chver\">ES5</span><span class=\"changelog-text\">Динамічна типізація, typeof, слабе порівняння</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 2</span><span class=\"changelog-text\">Interfaces, type aliases, type inference</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 4</span><span class=\"changelog-text\">Variadic tuples, const type parameters</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 5 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> satisfies operator для перевірки типів</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #f7df1e; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Type System в TypeScript:</strong></p>\n            <p>JavaScript — динамічна мова. TypeScript додає статичну типізацію. Типи живуть тільки у TS.</p>\n            <p><strong>Type vs Interface:</strong></p>\n            <ul class=\"list\">\n              <li><strong>Interface:</strong> для об'єктів, merging, extends, декларативні</li>\n              <li><strong>Type:</strong> універсально, union/intersection, більше гнучкі</li>\n              <li><strong>Discriminated Unions:</strong> тип + поле для розрізнення</li>\n              <li><strong>Type narrowing:</strong> typeof, instanceof, in, type predicates (is)</li>\n            </ul>\n          </div><h3 class=\"topic\">Базові типи & unknown/any/never <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> TypeScript базові типи для контролю типів. unknown — безпечна any (потребує type guard). any — відімкнути type checking. never — значення які ніколи не повертаються. <strong>Навіщо:</strong> Розуміти різниці для правильної типізації. unknown краще за any.</p>"
+          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-es5\">ES5 typeof</span>\n            <span class=\"ver ver-ts2\">TS 2.x</span>\n            <span class=\"ver ver-ts5\">TS 5.x satisfies</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Хронологія (ES5 → TS 5.x)</div>\n            <div class=\"changelog-row\"><span class=\"chver\">ES5</span><span class=\"changelog-text\">Динамічна типізація, typeof, слабе порівняння</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 2</span><span class=\"changelog-text\">Interfaces, type aliases, type inference</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 4</span><span class=\"changelog-text\">Variadic tuples, const type parameters</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 5 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> satisfies operator для перевірки типів</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #f7df1e; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Type System в TypeScript:</strong></p>\n            <p>JavaScript — динамічна мова. TypeScript додає статичну типізацію. Типи живуть тільки у TS.</p>\n            <p><strong>Type vs Interface:</strong></p>\n            <ul class=\"list\">\n              <li><strong>Interface:</strong> для об'єктів, merging, extends, декларативні</li>\n              <li><strong>Type:</strong> універсально, union/intersection, більше гнучкі</li>\n              <li><strong>Discriminated Unions:</strong> union + літеральне поле-дискримінатор → «make impossible states impossible»</li>\n              <li><strong>Type narrowing:</strong> typeof, instanceof, in, дискримінатор, type predicates (is), asserts</li>\n            </ul>\n          </div><h3 class=\"topic\">Базові типи & unknown/any/never <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> TypeScript базові типи для контролю типів. unknown — безпечна any (потребує type guard). any — відімкнути type checking. never — значення які ніколи не повертаються. <strong>Навіщо:</strong> Розуміти різниці для правильної типізації. unknown краще за any.</p>"
         },
         {
           "kind": "code",
@@ -59,16 +51,125 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Unknown vs Any vs Never — Таблиця</h3><p><strong>Що це:</strong> Три спеціальні типи з різним поведінням. <strong>Навіщо:</strong> Вибір правильного типу для безпечності і функціональності. any — лінивий вихід. unknown — безпечниший. never — pentru impossible values.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Тип</th><th>Опис</th><th>Юз-кейс</th></tr>\n              <tr><td>unknown</td><td>Безпечна \"будь-що\" — потрібна перевірка типу</td><td>catch блоки, parse результати</td></tr>\n              <tr><td>any</td><td>Вимкнути типобезпеку повністю (лінива)</td><td>Legacy код, quick fixes (УНИКАЙ!)</td></tr>\n              <tr><td>never</td><td>Тип, який ніколи не буває (dead code)</td><td>Impossible states, exhaustiveness checks</td></tr>\n            </table>\n          </div><h3 class=\"topic\">Discriminated Unions & Type Narrowing</h3><p><strong>Що це:</strong> Discriminated Union — union з common property щоб розрізнити. Type narrowing — звужувати тип через type guards (typeof, instanceof, in, is). <strong>Навіщо:</strong> Type-safe обробка різних типів. Аналог pattern matching.</p>"
+          "html": "<h3 class=\"topic\">Unknown vs Any vs Never — Таблиця</h3><p><strong>Що це:</strong> Три спеціальні типи з різним поведінням. <strong>Навіщо:</strong> Вибір правильного типу для безпечності і функціональності. any — лінивий вихід. unknown — безпечниший. never — для impossible values.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th>Тип</th><th>Опис</th><th>Юз-кейс</th></tr>\n              <tr><td>unknown</td><td>Безпечна \"будь-що\" — потрібна перевірка типу</td><td>catch блоки, parse результати</td></tr>\n              <tr><td>any</td><td>Вимкнути типобезпеку повністю (лінива)</td><td>Legacy код, quick fixes (УНИКАЙ!)</td></tr>\n              <tr><td>never</td><td>Тип, який ніколи не буває (dead code)</td><td>Impossible states, exhaustiveness checks</td></tr>\n            </table>\n          </div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Discriminated Unions & Type Narrowing <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> union кількох типів зі спільним <em>літеральним</em> полем-дискримінатором (<code>status</code>, <code>kind</code>, <code>type</code>), за значенням якого TS однозначно розрізняє варіант. <strong>Type narrowing</strong> — звуження ширшого типу до конкретнішого за рантайм-перевіркою. <strong>Навіщо:</strong> головна ідея — <strong>«make impossible states impossible»</strong>: замість набору незалежних булевих/опціональних полів, що дають нелегальні комбінації, моделюєш стан як union легальних станів.</p><p><strong>Три складові DU:</strong></p><ul class="list"><li>спільна властивість у кожному члені (дискримінатор);</li><li>її тип — <em>літеральний</em> (<code>'success'</code>, не <code>string</code>);</li><li>union цих типів.</li></ul>`
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "type Result =\n  | { status: 'success'; data: string }\n  | { status: 'error'; error: Error };\n\nif (result.status === 'success') {\n  console.log(result.data); // TS узнає, що це string\n}\n\n// Type narrowing techniques\nif (typeof val === 'string') { // val is string }\nif (err instanceof Error) { // err is Error }\nif ('email' in obj) { // obj has email }"
+          "code": `// ❌ impossible states: { isLoading: true, data, error } — компілюється, але нонсенс
+interface State { isLoading: boolean; data?: User; error?: Error }
+
+// ✅ discriminated union — лише легальні стани
+type State =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: User }   // data існує ТІЛЬКИ тут
+  | { status: 'error'; error: Error };`
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert alert-warn\"><strong>⚠️ Дві реальні пастки narrowing:</strong> <code>typeof null === 'object'</code> — класичний баг мови (historical artifact) — typeof-перевірка НЕ відсіює null, потрібна окрема явна перевірка <code>x !== null</code>. І: звуження типу «протікає» — губиться після <code>await</code> або всередині вкладеного замикання, бо TS не гарантує незмінність значення за час асинхронної паузи.</div>"
+          "html": `<h3 class="topic">Narrowing по дискримінатору</h3><p><code>switch</code> або <code>if</code> по полю-дискримінатору — TS <strong>автоматично</strong> звужує тип у кожній гілці: доступні лише поля відповідного варіанту, звернення до чужого поля = помилка компіляції.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `type Shape =
+  | { kind: 'circle'; radius: number }
+  | { kind: 'square'; side: number }
+  | { kind: 'rect'; width: number; height: number };
+
+function area(s: Shape): number {
+  switch (s.kind) {
+    case 'circle': return Math.PI * s.radius ** 2; // s звужений до circle
+    case 'square': return s.side ** 2;
+    case 'rect':   return s.width * s.height;
+  }
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Exhaustiveness — Senior маркер</h3><p>Компілятор гарантує, що оброблені <strong>всі</strong> варіанти: у <code>default</code> присвоюєш <code>s</code> змінній типу <code>never</code>. Додаєш новий член union (<code>{ kind: 'triangle' }</code>) → кожен <code>switch</code> без нового <code>case</code> перестає компілюватись. Компілятор стає чеклистом рефакторингу. Часто виносять у хелпер <code>assertNever</code>.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `function assertNever(x: never): never {
+  throw new Error('Unexpected: ' + JSON.stringify(x));
+}
+
+function area(s: Shape): number {
+  switch (s.kind) {
+    case 'circle': return Math.PI * s.radius ** 2;
+    case 'square': return s.side ** 2;
+    case 'rect':   return s.width * s.height;
+    default:       return assertNever(s); // помилка компіляції, якщо забув case
+  }
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Усі механізми narrowing</h3><div class="table-wrap"><table><tr><th>Механізм</th><th>Для чого</th><th>Приклад</th></tr><tr><td><code>typeof</code></td><td>примітиви</td><td><code>if (typeof v === 'string') v.padStart(5)</code></td></tr><tr><td><code>instanceof</code></td><td>класи</td><td><code>if (err instanceof TypeError) …</code></td></tr><tr><td><code>in</code></td><td>наявність властивості</td><td><code>if ('permissions' in u) // u: Admin</code></td></tr><tr><td>дискримінатор</td><td>discriminated unions</td><td><code>if (s.kind === 'circle') …</code></td></tr><tr><td>truthiness</td><td>відсів <code>null</code>/<code>undefined</code>/<code>0</code>/<code>''</code></td><td><code>if (name) name.toUpperCase()</code></td></tr><tr><td>equality</td><td>спільний тип двох змінних</td><td><code>if (x === y) { /* спільний тип тут */ }</code></td></tr><tr><td><code>!= null</code></td><td>виключає і <code>null</code>, і <code>undefined</code></td><td><code>if (v != null) …</code></td></tr></table></div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Custom type guards & asserts</h3><p><strong>Type predicate</strong> (<code>arg is Type</code>) — власний guard, коли вбудованих мало. <strong>⚠️ Небезпека:</strong> predicate — це <em>обіцянка</em> компілятору, яку він <strong>не перевіряє</strong>; збрешеш у тілі — рантайм-баг без warning. TS 5.5+ інферить прості предикати сам. <strong>Assertion functions</strong> (<code>asserts val is T</code>) кидають виняток, якщо тип не той — після виклику тип звужений.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `type Cat = { type: 'cat'; meow(): void };
+type Dog = { type: 'dog'; bark(): void };
+
+function isCat(p: Cat | Dog): p is Cat {   // type predicate — обіцянка, не перевірка
+  return p.type === 'cat';
+}
+
+function assertIsString(v: unknown): asserts v is string {
+  if (typeof v !== 'string') throw new Error('Not a string');
+}
+
+function f(x: unknown) {
+  assertIsString(x);
+  x.toUpperCase(); // після assert — x: string
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Патерни в React</h3><p><code>useReducer</code>: і <code>State</code>, і <code>Action</code> — обидва discriminated unions. <code>reducer</code> робить <code>switch (action.type)</code> з <code>default: return assertNever(action)</code> — додаєш екшен, компілятор показує всі місця. У JSX <code>switch (state.status)</code>: <code>data</code> гарантовано є в гілці <code>'success'</code>. Ще один патерн — <strong>discriminated props</strong>: <code>{ variant: 'link'; href } | { variant: 'button'; onClick }</code> робить нелегальні комбінації пропсів помилкою компіляції.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `type State =
+  | { status: 'loading' }
+  | { status: 'success'; data: User[] }
+  | { status: 'error'; error: string };
+
+type Action =
+  | { type: 'FETCH_START' }
+  | { type: 'FETCH_SUCCESS'; payload: User[] }
+  | { type: 'FETCH_ERROR'; error: string };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'FETCH_START':   return { status: 'loading' };
+    case 'FETCH_SUCCESS': return { status: 'success', data: action.payload };
+    case 'FETCH_ERROR':   return { status: 'error', error: action.error };
+    default: return assertNever(action);
+  }
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="alert alert-warn"><strong>⚠️ Пастки narrowing / DU:</strong><ul class="list"><li><strong>не-літеральний дискримінатор</strong> — <code>kind: string</code> замість <code>kind: 'circle'</code> ламає narrowing;</li><li><strong>забутий <code>as const</code></strong> — <code>{ kind: 'circle' }</code> розширюється до <code>{ kind: string }</code>;</li><li>звуження <strong>«тече»</strong> — губиться після <code>await</code> чи виклику функції, що <em>могла</em> змінити змінну;</li><li><code>typeof null === 'object'</code> — <code>typeof</code> не відсіює <code>null</code>, потрібна окрема перевірка;</li><li><code>data!.name</code> (non-null assertion) глушить помилку, але нічого не перевіряє — краще guard.</li></ul></div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="alert"><strong>Зв'язок (follow-up на співбесіді):</strong> зовнішні дані приймай як <code>unknown</code> і звужуй через guards/схему. <code>never</code> — тип «неможливого значення», порожній union = <code>never</code>, основа exhaustiveness. <strong>Zod <code>discriminatedUnion</code></strong> — рантайм-валідація + точний TS-тип за дискримінатором з одного джерела: <code>z.discriminatedUnion('status', [z.object({ status: z.literal('success'), data: UserSchema }), …])</code>.</div>`
         },
         {
           "kind": "paragraph",
@@ -90,12 +191,95 @@ export const javascriptContent: TopicContent = {
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Abstract class vs Interface <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> обидва задають «контракт», але в різних площинах. <strong>Interface</strong> — суто <em>compile-time</em> опис форми: стирається при компіляції, без реалізації чи стану; клас може реалізувати <strong>кілька</strong> інтерфейсів. <strong>Abstract class</strong> — <em>runtime</em> конструкція: може мати готові методи, поля, конструктор і модифікатори доступу, але його <strong>не можна</strong> інстанціювати (<code>new</code>), і успадкувати можна лише <strong>один</strong>. <strong>Навіщо:</strong> interface — коли потрібна лише форма чи кілька контрактів; abstract class — коли треба ділити спільну <em>реалізацію</em> та стан між нащадками.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th></th><th>Interface</th><th>Abstract class</th></tr>\n              <tr><td>Існує в рантаймі</td><td>Ні (стирається)</td><td>Так (це клас)</td></tr>\n              <tr><td>Реалізація методів</td><td>Ні, лише сигнатури</td><td>Так (+ abstract-методи без тіла)</td></tr>\n              <tr><td>Поля / стан</td><td>Лише опис, без значень</td><td>Так, реальні поля</td></tr>\n              <tr><td>Конструктор</td><td>Ні</td><td>Так</td></tr>\n              <tr><td>private/protected</td><td>Ні (усе публічне)</td><td>Так</td></tr>\n              <tr><td>Скільки можна взяти</td><td><code>implements</code> кількох</td><td><code>extends</code> лише одного</td></tr>\n              <tr><td>Можна <code>new</code></td><td>—</td><td>Ні (тільки нащадка)</td></tr>\n            </table>\n          </div><p><strong>Правило:</strong> потрібна <em>лише форма</em> або кілька контрактів → interface; треба <em>ділити код/стан</em> → abstract class. Часто разом: abstract class <code>implements</code> interface.</p>"
+          "html": `<h3 class="topic">Abstract class vs Interface <span class="tag tag-key">KEY</span></h3><p><strong>Суть в одному реченні:</strong> <strong>interface</strong> — це про <em>що</em> (форма, compile-time, повністю стирається, нуль рантайм-коду). <strong>abstract class</strong> — про <em>що + як</em> (форма + спільна реалізація + стан + ідентичність у рантаймі). interface описує лише сигнатури; abstract class може містити готові методи, поля, конструктор і залишати частину <code>abstract</code> для нащадків.</p><div class="table-wrap">
+            <table>
+              <tr><th>Критерій</th><th>Interface</th><th>Abstract class</th></tr>
+              <tr><td>Рантайм</td><td>Ні — стирається (type-only)</td><td>Так — існує як JS-клас</td></tr>
+              <tr><td>Реалізація методів / стан</td><td>Ні, лише сигнатури</td><td>Так — тіла методів, ініціалізовані поля</td></tr>
+              <tr><td>Конструктор</td><td>Ні</td><td>Так</td></tr>
+              <tr><td><code>private</code>/<code>protected</code>, <code>static</code></td><td>Ні (усе публічне)</td><td>Так</td></tr>
+              <tr><td>Скільки можна взяти</td><td><code>implements A, B, C</code> — кілька</td><td><code>extends</code> — лише один</td></tr>
+              <tr><td>Declaration merging</td><td>Так (повторне оголошення доповнює)</td><td>Ні (помилка)</td></tr>
+              <tr><td><code>instanceof</code> у рантаймі</td><td>Ні (нема на що перевіряти)</td><td>Так</td></tr>
+              <tr><td><code>new</code></td><td>—</td><td>Ні — тільки нащадка</td></tr>
+            </table>
+          </div><p><strong>Structural vs nominal:</strong> TS порівнює типи за <em>структурою</em> — клас задовольняє interface навіть без явного <code>implements</code> (на відміну від Java/C# з nominal typing).</p>`
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// Interface — контракт форми (compile-time, стирається)\ninterface Repository<T> {\n  findById(id: string): T | null;\n  save(entity: T): void;\n}\n\n// Abstract class — спільна реалізація + abstract-«дірки»\nabstract class BaseRepository<T> implements Repository<T> {\n  protected items = new Map<string, T>();          // стан\n\n  findById(id: string): T | null {                 // готова реалізація\n    return this.items.get(id) ?? null;\n  }\n  abstract save(entity: T): void;                  // нащадок мусить дореалізувати\n}\n\nclass UserRepository extends BaseRepository<User> { // extends — лише один\n  save(user: User) { this.items.set(user.id, user); }\n}\n\n// ❌ new BaseRepository() — помилка: abstract не інстанціюється\n// Клас може реалізувати КІЛЬКА інтерфейсів:\nclass Service implements Repository<User>, Disposable { /* ... */ }"
+          "code": `// Interface — контракт форми (compile-time, стирається)
+interface Repository<T> {
+  findById(id: string): T | null;
+  save(entity: T): void;
+}
+
+// Abstract class — спільна реалізація + abstract-«дірки»
+abstract class BaseRepository<T> implements Repository<T> {
+  protected items = new Map<string, T>();          // стан
+
+  findById(id: string): T | null {                 // готова реалізація
+    return this.items.get(id) ?? null;
+  }
+  abstract save(entity: T): void;                  // нащадок мусить дореалізувати
+}
+
+class UserRepository extends BaseRepository<User> { // extends — лише один
+  save(user: User) { this.items.set(user.id, user); }
+}
+
+// new BaseRepository()          → помилка: abstract не інстанціюється
+// repo instanceof BaseRepository → ✅ працює (клас існує в рантаймі)
+// x instanceof Repository       → ✗ не компілюється (interface стерто)
+class Service implements Repository<User>, Disposable { /* кілька interface */ }`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Коли що обирати</h3><p><strong>Rule of thumb:</strong> починай з <strong>interface</strong> (контракти: props, DTO, service contracts, публічний API бібліотеки). Переходь на <strong>abstract class</strong> тоді, коли з'являється <em>спільна реалізація або стан</em>, що дублюється між класами — базовий репозиторій, template method. Обидва інструменти вторинні до композиції: <em>«prefer composition over inheritance»</em>, ієрархію тримай пласкою.</p>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Template Method Pattern — канонічний use case</h3><p>Abstract class задає <strong>скелет алгоритму</strong>, нащадки заповнюють кроки-«дірки». Interface так не вміє — він не може зафіксувати сам алгоритм.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `abstract class DataExporter {
+  export(data: unknown[]): string {          // template method — фіксований алгоритм
+    const header = this.formatHeader();
+    const rows = data.map(d => this.formatRow(d));
+    return [header, ...rows].join('\\n');
+  }
+  protected abstract formatHeader(): string;  // «дірки» для нащадків
+  protected abstract formatRow(item: unknown): string;
+}
+
+class CsvExporter extends DataExporter {
+  protected formatHeader() { return 'id,name'; }
+  protected formatRow(item: any) { return \`\${item.id},\${item.name}\`; }
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Гібрид: interface + abstract base</h3><p>Промислова практика — <strong>interface як публічний контракт</strong>, abstract class як <em>необов'язкова</em> базова реалізація для зручності. Споживач залежить від interface (<strong>Dependency Inversion</strong>), реалізація може або наслідувати базовий клас, або імплементувати interface напряму.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `interface Logger { log(msg: string): void; error(msg: string): void }
+
+abstract class BaseLogger implements Logger {
+  abstract log(msg: string): void;
+  error(msg: string) { this.log(\`ERROR: \${msg}\`); }  // готове — нащадкам менше писати
+}
+
+class ConsoleLogger extends BaseLogger {
+  log(msg: string) { console.log(msg); }               // error успадковано безкоштовно
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="alert alert-warn"><strong>⚠️ Пастки:</strong><ul class="list"><li><strong>interface для рантайму</strong> (<code>instanceof</code>, DI-токени) не спрацює — стирається. <strong>Angular DI:</strong> interface не може бути токеном — потрібен клас або <code>InjectionToken</code>; abstract class часто і є DI-абстракцією: <code>{ provide: AbstractService, useClass: ConcreteService }</code>;</li><li><strong>fragile base class</strong> — глибока ієрархія abstract class крихка: зміна базового ламає всіх нащадків;</li><li>плутати <code>implements</code> (контракт) і <code>extends</code> (реалізація);</li><li>abstract class, де всі методи <code>abstract</code> і нема реалізації — це фактично interface, але дорожчий (рантайм-код). Тоді бери interface.</li></ul></div>`
         },
         {
           "kind": "paragraph",
