@@ -292,42 +292,26 @@ class ConsoleLogger extends BaseLogger {
       "title": "🔧 Functions, Closures & Scope",
       interviewQuestions: [
         {
-          "question": "Поясни, як замикання (closure) дозволяють реалізувати приватний стан у JavaScript без класів.",
-          "answer": "Функція, оголошена всередині іншої функції, зберігає доступ до змінних зовнішньої функції навіть після її завершення (лексичне середовище не звільняється, доки на нього є посилання). Це дозволяє створити «приватну» змінну, доступну лише через повернуті функції-геттери/сеттери — сама змінна не досяжна ззовні напряму, класична реалізація модульного патерну до появи <code>class</code> з приватними полями."
+          question: `Виклик функції <em>до</em> її оголошення: коли буде <code>TypeError</code>, а коли <code>ReferenceError</code>?`,
+          answer: `Залежить від форми. <strong>Function declaration</strong> піднімається повністю — виклик вище оголошення просто працює. <strong>Function expression через <code>var</code></strong>: піднімається лише оголошення змінної зі значенням <code>undefined</code>, тому виклик = <code>undefined()</code> → <strong><code>TypeError</code></strong> (<code>x is not a function</code>). <strong>Через <code>const</code>/<code>let</code></strong>: змінна в <strong>TDZ</strong> (Temporal Dead Zone) до рядка оголошення → <strong><code>ReferenceError</code></strong>. Розрізнення цих двох помилок — типова деталь, що виділяє кандидата.`,
         },
         {
-          "question": "Яка класична помилка з <code>var</code> у циклі й замиканнях, і чому <code>let</code> її вирішує без додаткового коду?",
-          "answer": "<code>var</code> має функціональну область видимості — всі ітерації циклу ділять одну й ту саму змінну, тому асинхронні колбеки (наприклад, у <code>setTimeout</code>) бачать її фінальне значення після завершення циклу, а не значення на момент своєї ітерації. <code>let</code> створює нову прив'язку змінної на кожну ітерацію блоку, тому кожне замикання захоплює власну копію."
+          question: `Чим <code>this</code> у звичайній функції відрізняється від <code>this</code> у стрілковій, і які 4 правила визначають <code>this</code> для звичайної?`,
+          answer: `Звичайна функція має <strong>динамічний</strong> <code>this</code> — визначається тим, <em>як</em> її викликали: (1) метод <code>obj.fn()</code> → <code>this = obj</code>; (2) проста функція <code>fn()</code> → <code>undefined</code> у strict / <code>globalThis</code> у non-strict; (3) <code>new fn()</code> → новий інстанс; (4) <code>fn.call/apply/bind(ctx)</code> → <code>this = ctx</code> явно. Стрілкова <strong>не має власного <code>this</code></strong> — бере його лексично з місця оголошення, і <code>call/apply/bind</code> на неї не впливають. Тому стрілка — для колбеків (зберегти зовнішній <code>this</code>), звичайна — для методів, де <code>this</code> має бути динамічним.`,
         },
         {
-          question: `Поясни hoisting.`,
-          answer: `Function declarations підіймаються повністю, var — undefined, let/const — TDZ error.`,
+          question: `Чого саме позбавлена стрілкова функція і чому її не можна викликати через <code>new</code>?`,
+          answer: `У стрілки немає власних <code>this</code>, <code>arguments</code>, <code>super</code>, <code>new.target</code>, немає властивості <code>prototype</code> і немає внутрішнього методу <code>[[Construct]]</code>. Саме відсутність <code>[[Construct]]</code> і <code>prototype</code> робить <code>new ArrowFn()</code> → <code>TypeError: not a constructor</code>. Також стрілка не може бути генератором (<code>function*</code>). Практичний наслідок: стрілку не використовують як метод об'єкта/прототипу, що читає <code>this</code>, і як конструктор-фабрику.`,
         },
         {
-          question: `Що таке closure?`,
-          answer: `Функція + доступ до батьківської області. Утримує дані в пам'яті. Memory leak ризик.`,
-        },
-        {
-          question: `Чому IIFE?`,
-          answer: `Ізоляція змінних, module pattern, уникнення забруднення global scope.`,
-        },
-        {
-          question: `Overloading у TS: як це працює?`,
-          answer: `Multiple signatures для type checking, одна implementation для runtime.`,
-        },
-        {
-          question: `Currying vs partial application?`,
-          answer: `Currying = все аргументи по одному, partial = кілька за раз.`,
-        },
-        {
-          question: `Як запобігти memory leaks у closures?`,
-          answer: `Явно очисти посилання (= null), використовуй WeakMap для кешу.`,
+          question: `Навіщо потрібен Named Function Expression (<code>const f = function named() {…}</code>), якщо ім'я не витікає назовні?`,
+          answer: `Ім'я видиме <strong>лише всередині тіла</strong> функції. Два зиски: (1) <strong>рекурсія</strong> за внутрішнім іменем не залежить від зовнішньої змінної, яку могли перепризначити чи яка може бути відсутня (напр. функція передана як колбек); (2) <strong>кращі stack traces</strong> — анонімні функції показуються як <code>anonymous</code>, named FE — зі своїм іменем. Згадка NFE на співбесіді — сигнал глибини.`,
         },
       ],
       "blocks": [
         {
           "kind": "paragraph",
-          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-es5\">ES5</span>\n            <span class=\"ver ver-es6\">ES6 arrows</span>\n            <span class=\"ver ver-ts4\">TS 4.x overloads</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Хронологія</div>\n            <div class=\"changelog-row\"><span class=\"chver\">ES5</span><span class=\"changelog-text\">Function declaration, expression, hoisting, this</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">ES6</span><span class=\"changelog-text\">Arrow functions, default/rest params</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 5 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> Typed this параметри, overloads</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #f7df1e; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Closures:</strong> Функції мають доступ до змінних батьківської області.</p>\n            <p><strong>Scope Chain:</strong> Local → Function → Global</p>\n            <p><strong>TDZ (Temporal Dead Zone):</strong> let/const до декларації — ReferenceError</p>\n            <p><strong>Hoisting:</strong> function декларації підіймаються, вирази — ні.</p>\n          </div><h3 class=\"topic\">Hoisting: Declaration vs Expression <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> Hoisting — процес коли JavaScript рушій рухає декларації на верх scope. function declaration піднімається повністю (можеш викликати раніше). var піднімається але = undefined. let/const НЕ хойстаються (TDZ — Temporal Dead Zone). <strong>Навіщо:</strong> Розуміти execution order. Уникнути undefined errors.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th></th><th>Function Declaration</th><th>Function Expression</th><th>Arrow Function</th></tr>\n              <tr><td>Hoisting</td><td>✓ Full (Whole function)</td><td>✗ TDZ (undefined)</td><td>✗ TDZ</td></tr>\n              <tr><td>Can use before declare</td><td>✓ Yes</td><td>✗ No (ReferenceError)</td><td>✗ No</td></tr>\n              <tr><td>this binding</td><td>Dynamic</td><td>Dynamic</td><td>Lexical</td></tr>\n            </table>\n          </div>"
+          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-es5\">ES5</span>\n            <span class=\"ver ver-es6\">ES6 arrows</span>\n            <span class=\"ver ver-ts4\">TS 4.x overloads</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Хронологія</div>\n            <div class=\"changelog-row\"><span class=\"chver\">ES5</span><span class=\"changelog-text\">Function declaration, expression, hoisting, this</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">ES6</span><span class=\"changelog-text\">Arrow functions, default/rest params</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">TS 5 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> Typed this параметри, overloads</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #f7df1e; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Closures:</strong> Функції мають доступ до змінних батьківської області.</p>\n            <p><strong>Scope Chain:</strong> Local → Function → Global</p>\n            <p><strong>TDZ (Temporal Dead Zone):</strong> let/const до декларації — ReferenceError</p>\n            <p><strong>Hoisting:</strong> function декларації підіймаються, вирази — ні.</p>\n          </div><h3 class=\"topic\">Hoisting: Declaration vs Expression <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> Hoisting — процес коли JavaScript рушій рухає декларації на верх scope. function declaration піднімається повністю (можеш викликати раніше). var піднімається але = undefined. let/const НЕ хойстаються (TDZ — Temporal Dead Zone). <strong>Навіщо:</strong> Розуміти execution order. Уникнути undefined errors.</p><div class=\"table-wrap\">\n            <table>\n              <tr><th></th><th>Function Declaration</th><th>Function Expression</th><th>Arrow Function</th></tr>\n              <tr><td>Hoisting</td><td>✓ Full (Whole function)</td><td>✗ TDZ (undefined)</td><td>✗ TDZ</td></tr>\n              <tr><td>Can use before declare</td><td>✓ Yes</td><td>✗ No (ReferenceError)</td><td>✗ No</td></tr>\n              <tr><td>this binding</td><td>Dynamic</td><td>Dynamic</td><td>Lexical</td></tr>\n              <tr><td>arguments</td><td>✓ власний</td><td>✓ власний</td><td>✗ (бере з оточення)</td></tr>\n              <tr><td>new (constructor)</td><td>✓</td><td>✓</td><td>✗ TypeError</td></tr>\n              <tr><td>prototype property</td><td>✓</td><td>✓</td><td>✗ немає</td></tr>\n              <tr><td>super / new.target</td><td>✓</td><td>✓</td><td>✗ (лексично)</td></tr>\n              <tr><td>generator (function*)</td><td>✓</td><td>✓</td><td>✗</td></tr>\n              <tr><td>Named</td><td>завжди named</td><td>named / anon</td><td>лише через змінну</td></tr>\n            </table>\n          </div>"
         },
         {
           "kind": "code",
@@ -380,10 +364,254 @@ class ConsoleLogger extends BaseLogger {
           "code": "// Currying: функція повертає функцію\nfunction curry(fn) {\n  return function(...args1) {\n    if (args1.length >= fn.length) return fn(...args1);\n    return (...args2) => curry(fn)(...args1, ...args2);\n  };\n}\n\nconst add = (a, b, c) => a + b + c;\nconst curriedAdd = curry(add);\ncurriedAdd(1)(2)(3); // 6"
         },
         {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Hoisting — TypeError vs ReferenceError <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Що це:</strong> function declaration піднімається <em>цілим тілом</em> — виклик вище оголошення працює. Function expression піднімає <em>лише змінну</em>, тому поведінка залежить від того, чим оголошено.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Форма</th><th>Виклик до оголошення</th></tr>
+      <tr><td><code>function greet(){}</code></td><td>✓ працює (тіло підняте)</td></tr>
+      <tr><td><code>var greet = function(){}</code></td><td><code>greet</code> === <code>undefined</code> → <strong>TypeError</strong> (<code>greet is not a function</code>)</td></tr>
+      <tr><td><code>const/let greet = …</code></td><td>змінна в <strong>TDZ</strong> → <strong>ReferenceError</strong></td></tr>
+    </table>
+  </div>
+  <div class="alert"><span class="icon">💡</span><span>На інтерв'ю точна відповідь — розрізняти <strong>TypeError</strong> (<code>var</code>) і <strong>ReferenceError</strong> (<code>const</code>/<code>let</code> TDZ). Це деталь, яка виділяє.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">4 правила визначення <code>this</code> для звичайних функцій</h3>
+  <p><code>this</code> у звичайній функції — <strong>динамічний</strong>, визначається тим, <em>як</em> викликано, не де оголошено. Повний розбір <code>call/apply/bind</code> — у розділі «🎯 This Binding» нижче.</p>
+  <ul class="list">
+    <li><strong>Метод</strong> <code>obj.fn()</code> → <code>this = obj</code></li>
+    <li><strong>Проста функція</strong> <code>fn()</code> → <code>undefined</code> (strict) / <code>globalThis</code> (non-strict)</li>
+    <li><strong><code>new fn()</code></strong> → <code>this =</code> новий інстанс</li>
+    <li><strong><code>fn.call/apply/bind(ctx)</code></strong> → <code>this = ctx</code> явно</li>
+  </ul>
+  <p>Стрілкова функція ігнорує всі чотири — бере <code>this</code> лексично з оточення на момент оголошення.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'this: динамічний (regular) vs лексичний (arrow)',
+          code: `const obj = {
+  name: 'Roman',
+  regular() { return this.name; },
+};
+obj.regular();            // 'Roman' — this = obj
+const fn = obj.regular;
+fn();                     // undefined (strict) — this загублено
+
+// Arrow РЯТУЄ в колбеках — зберігає зовнішній this:
+class Timer {
+  seconds = 0;
+  start() {
+    setInterval(() => { this.seconds++; }, 1000); // this = інстанс Timer
+    // з function () {...} тут this був би undefined — класичний баг
+  }
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Named Function Expression (NFE)</h3>
+  <p><strong>Що це:</strong> function expression з іменем, видимим <em>лише всередині власного тіла</em>. <strong>Навіщо:</strong> рекурсія без залежності від зовнішньої змінної (яку могли перепризначити) + кращі stack traces (не <code>anonymous</code>).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          code: `const factorial = function fact(n: number): number {
+  return n <= 1 ? 1 : n * fact(n - 1); // ім'я 'fact' видиме ТІЛЬКИ тут
+};
+factorial(5); // 120
+// fact;      // ❌ ReferenceError — ім'я не витікає в зовнішній scope`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React-специфіка <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Компонент можна оголосити обома способами: <code>function Button() {}</code> (hoisted, named у React DevTools) або <code>const Button = () => …</code> (треба оголосити вище використання).</p>
+  <p><strong>Пастка perf:</strong> inline-стрілка в JSX (<code>onClick={() => doThing(id)}</code>) створює <strong>нову референцію щорендер</strong> → діти в <code>React.memo</code> ре-рендеряться, бо referential equality зламана. Фікс — <code>useCallback</code> або винести handler. Але не оптимізуй передчасно: для простих випадків inline-стрілка нормальна.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Пастки</h3>
+  <ul class="list">
+    <li><strong>Arrow як метод об'єкта/прототипу з <code>this</code></strong> → <code>this</code> не той (лексичний, не <code>obj</code>).</li>
+    <li><strong>Arrow як class property</strong> прив'язує <code>this</code> до інстансу (зручно для handlers), але кладеться на <strong>кожен інстанс</strong>, не на <code>prototype</code> → трохи більше пам'яті, не видно в prototype chain.</li>
+    <li><strong>Одно-рядкова arrow з <code>{}</code></strong> — це блок, не implicit return: <code>x => { x * 2 }</code> повертає <code>undefined</code>. Для об'єкта — <code>x => ({ ... })</code>.</li>
+    <li><strong><code>arguments</code> в arrow</strong> → бере з оточення або <code>ReferenceError</code>. Використовуй <code>...rest</code>.</li>
+  </ul>`,
+        },
+        {
           "kind": "paragraph",
           "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 Що буде у 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Partial application syntax (potential), pipe operator, better function composition</span></div></div>"
         }
       ]
+    },
+    {
+      id: 'closures-deep-dive',
+      title: '🔒 Closures — глибокий розбір',
+      interviewQuestions: [
+        {
+          question: `«Кожна функція в JS — це closure» — правда чи ні?`,
+          answer: `Технічно так: кожна функція має посилання на лексичне оточення, де її створено, тож має доступ до зовнішнього scope. Але <strong>термін</strong> "closure" вживають, коли функція <em>переживає</em> свій зовнішній контекст і продовжує тримати доступ до його змінних (повернена назовні, збережена, передана як колбек). Формула: <strong>closure = function + lexical environment</strong>.`,
+        },
+        {
+          question: `Чому <code>for (var i…) setTimeout(() => console.log(i))</code> друкує <code>3 3 3</code>, і чому <code>let</code> це виправляє без іншого коду?`,
+          answer: `<code>var</code> має <strong>function scope</strong> — усі три колбеки замикають <em>ту саму</em> змінну <code>i</code>; на момент виконання таймерів цикл завершився і <code>i === 3</code>. <code>let</code> має <strong>block scope</strong> і специфікація створює <strong>нову прив'язку <code>i</code> на кожну ітерацію</strong> (з копіюванням значення попередньої) — кожне замикання захоплює власну. Pre-ES6 фікс — IIFE, що бере копію <code>i</code> у параметр.`,
+        },
+        {
+          question: `Два виклики <code>createCounter()</code> — вони ділять стан?`,
+          answer: `Ні. Кожен виклик зовнішньої функції створює <strong>новий</strong> лексичний environment зі своїм <code>count</code>, тому лічильники повністю ізольовані. Це і є основа module pattern / приватного стану: змінна доступна лише через повернуті замикання, ззовні — <code>undefined</code>.`,
+        },
+        {
+          question: `У чому корінь stale closure в <code>useEffect</code> і три способи це полагодити?`,
+          answer: `Кожен рендер React створює <strong>новий scope</strong> зі своїм <code>count</code>. Колбек в <code>useEffect(() => {…}, [])</code> замкнув <code>count</code> <em>першого</em> рендеру (0) і більше не оновлюється, бо ефект не перестворювався. Фікси: (1) додати <code>count</code> у deps — ефект перестворюється зі свіжим замиканням; (2) functional update <code>setCount(c => c + 1)</code> — не залежить від замкненого значення; (3) <code>useRef</code>, який оновлюють щорендер (<code>ref.current = count</code>) і читають у колбеку. Масив залежностей у хуках існує саме <em>через</em> замикання.`,
+        },
+        {
+          question: `<code>this</code> — це частина closure?`,
+          answer: `Ні. <code>this</code> визначається динамічно за call-site (для звичайних функцій), не замикається лексично як звичайна змінна. Виняток — стрілкова функція бере <code>this</code> лексично, але це <em>окремий</em> механізм (<code>[[ThisMode]]: lexical</code>), а не closure над змінною <code>this</code>.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Визначення <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Closure</strong> — функція разом із посиланнями на її <strong>лексичне оточення</strong>. Функція "пам'ятає" змінні зі scope, у якому була <em>створена</em>, навіть після того, як цей scope завершив виконання. Змінна живе не в стеку (не зникає при поверненні), а в купі (heap), поки на неї є посилання.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          code: `function outer() {
+  const secret = 42;           // локальна змінна outer
+  return function inner() {
+    return secret;             // inner "замикає" secret
+  };
+}
+const fn = outer();            // outer завершився...
+fn();                          // 42 — secret досі живий через closure`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Як це працює під капотом</h3>
+  <ul class="list">
+    <li>При створенні функції JS зберігає внутрішнє посилання <code>[[Environment]]</code> на scope, де функцію <strong>оголошено</strong> (лексично, не де викликано).</li>
+    <li>Під час виконання resolve змінних іде по <strong>scope chain</strong>: локальний → зовнішній (через <code>[[Environment]]</code>) → … → global.</li>
+    <li>Якщо зовнішня функція завершилась, але внутрішня жива, GC <strong>не збирає</strong> ті змінні зовнішнього scope, на які є посилання — вони переїжджають у heap.</li>
+  </ul>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Closure має вартість пам'яті: замкнені змінні не звільняються, доки живе функція, що їх тримає.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'Лексичний scope — за місцем оголошення, не виклику',
+          code: `const x = 'global';
+function outer() {
+  const x = 'outer';
+  function inner() { return x; }  // бере x з місця ОГОЛОШЕННЯ
+  return inner;
+}
+outer()();  // 'outer' — не 'global'`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Класичний баг: <code>var</code> у циклі <span class="tag tag-key">KEY</span></h3>
+  <p><code>var</code> має function scope — усі колбеки замикають <strong>ту саму</strong> <code>i</code>. <code>let</code> створює нову прив'язку на кожну ітерацію; IIFE захоплює копію в параметр.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          code: `// ❌ Проблема
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100); // 3, 3, 3
+}
+
+// ✅ Фікс 1 — let (block scope, нова i на ітерацію)
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100); // 0, 1, 2
+}
+
+// ✅ Фікс 2 — IIFE (pre-ES6), захоплює копію i в j
+for (var k = 0; k < 3; k++) {
+  ((j) => setTimeout(() => console.log(j), 100))(k); // 0, 1, 2
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Практичні патерни</h3>
+  <div class="grid2">
+    <div class="card"><h4>Privacy / module</h4><p>Приватна змінна, доступна лише через повернуті методи.</p></div>
+    <div class="card"><h4>Function factory</h4><p>Параметризована функція, що замикає конфіг.</p></div>
+    <div class="card"><h4>Memoize</h4><p><code>cache</code> живе в closure між викликами.</p></div>
+    <div class="card"><h4>Debounce / throttle</h4><p><code>timer</code> — стан між викликами через closure.</p></div>
+    <div class="card"><h4>Currying</h4><p>Кожен рівень замикає попередній аргумент.</p></div>
+    <div class="card"><h4>once</h4><p><code>called</code> + <code>result</code> у closure.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'debounce, memoize, once — стан живе в замиканні',
+          code: `function debounce<T extends unknown[]>(fn: (...a: T) => void, delay: number) {
+  let timer: ReturnType<typeof setTimeout>;      // стан між викликами
+  return (...args: T) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+function memoize<A, R>(fn: (arg: A) => R) {
+  const cache = new Map<A, R>();                 // кеш у closure
+  return (arg: A): R => {
+    if (cache.has(arg)) return cache.get(arg)!;
+    const result = fn(arg);
+    cache.set(arg, result);
+    return result;
+  };
+}
+
+function once<T extends unknown[], R>(fn: (...a: T) => R) {
+  let called = false, result: R;
+  return (...args: T): R => {
+    if (!called) { called = true; result = fn(...args); }
+    return result;
+  };
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Closures у React — stale closure <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Кожен рендер = новий scope зі своїм <code>count</code>. Колбек в <code>useEffect</code> з <code>[]</code> замкнув <code>count</code> першого рендеру і не оновлюється. Масив залежностей існує саме <em>через</em> замикання — він каже React, коли перестворити функцію з актуальним лексичним оточенням.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      console.log(count); // ❌ ЗАВЖДИ 0 — замкнув count з першого рендеру
+    }, 1000);
+    return () => clearInterval(id);
+  }, []); // порожні deps
+
+  // Фікси:
+  // 1) }, [count]);                 — ефект перестворюється зі свіжим count
+  // 2) setCount(c => c + 1);        — functional update, не залежить від замикання
+  // 3) const ref = useRef(count);   — ref.current = count щорендер, читаємо ref.current
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Closures і memory leaks</h3>
+  <p>Замикання можуть тримати живими великі об'єкти й підписки. Реальні витоки:</p>
+  <ul class="list">
+    <li>Event listeners, що замикають компонент/DOM і не знімаються — <code>removeEventListener</code> у cleanup.</li>
+    <li>Таймери / інтервали без очистки.</li>
+    <li>Підписки (WebSocket, RxJS), що замикають стан — <code>unsubscribe</code> / <code>takeUntil</code>.</li>
+  </ul>
+  <p><code>useEffect</code> cleanup вирішує те саме в React, що <code>unsubscribe</code> в RxJS.</p>`,
+        },
+      ],
     },
     {
       "id": "this-binding-callapplybind",

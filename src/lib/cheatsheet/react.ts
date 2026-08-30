@@ -2306,6 +2306,14 @@ function AddButton({ id }: { id: string }) {
           question: 'Що таке паттерн ducks для структурування Redux-проєкту і чим він відрізняється від класичної структури actions/reducers/types по окремих папках?',
           answer: 'Класична структура групує файли за <em>технічною роллю</em> — усі типи action в одній папці, усі reducers в іншій, тому для однієї фічі доводиться стрибати між 3+ файлами. Ducks — це структурування за <em>фічею</em>: типи action, action creators і reducer однієї фічі живуть в одному файлі, який експортує reducer за замовчуванням. Redux Toolkit фактично зробив ducks офіційним підходом — <code>createSlice</code> генерує action creators, action types і reducer з одного опису в одному файлі.',
         },
+        {
+          question: 'Чому «класичний» Redux зі switch-reducer\'ами вважають застарілим стилем і що конкретно дає Redux Toolkit?',
+          answer: 'RTK — <strong>офіційно рекомендований</strong> спосіб писати Redux. Він прибирає boilerplate: <code>createSlice</code> генерує action creators + action types + reducer з одного опису; <strong>Immer</strong> під капотом дозволяє писати "мутуючий" код (<code>state.items.push(x)</code>), який насправді робить immutable-оновлення; <code>configureStore</code> дає розумні дефолти (Redux DevTools, thunk, перевірки на випадкові мутації та несеріалізовний стан); <code>createAsyncThunk</code> формалізує async (генерує <code>pending</code>/<code>fulfilled</code>/<code>rejected</code>); <code>RTK Query</code> — вбудований data-fetching/caching. Концепції ті самі — просто без ручної церемонії.',
+        },
+        {
+          question: 'Чому в сучасному підході Redux не має тримати server state, і що використовувати замість?',
+          answer: 'Server state — це асинхронний кеш чужих даних: йому потрібні refetch, інвалідація, дедуплікація запитів, stale-while-revalidate, retry. Redux цього "з коробки" не робить — довелося б писати thunks + reducers + селектори руками і все одно вручну керувати свіжістю. <strong>TanStack Query</strong> або <strong>RTK Query</strong> дають це декларативно. Redux/RTK лишається для складного синхронного <strong>client/UI state</strong>, що шариться між несуміжними частинами застосунку. Розрізнення server vs client state — сильний сигнал seniority і причина, чому "чистий" Redux рідше беруть для серверних даних.',
+        },
       ],
       blocks: [
         {
@@ -2441,6 +2449,69 @@ function* rootSaga() {
   user/
     userSlice.ts
     userSaga.ts        ← якщо фіча має складну async-оркестрацію</pre>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Redux Toolkit — сучасний стандарт <span class="tag tag-key">KEY</span></h3>
+  <p>"Класичний" Redux зі switch-reducer'ами і ручними action creators — <strong>застарілий стиль</strong>. Сьогодні пишуть на <strong>Redux Toolkit (RTK)</strong> — офіційно рекомендований спосіб. Що дає:</p>
+  <div class="grid2">
+    <div class="card green"><h4>createSlice</h4><p>Генерує reducer + actions автоматично з одного опису (ducks як стандарт).</p></div>
+    <div class="card green"><h4>Immer під капотом</h4><p>Пишеш "мутуючий" код — виходить immutable-оновлення.</p></div>
+    <div class="card"><h4>configureStore</h4><p>DevTools, thunk, перевірки на мутації/несеріалізовність — з коробки.</p></div>
+    <div class="card"><h4>createAsyncThunk</h4><p>Формалізує thunk — генерує <code>pending</code>/<code>fulfilled</code>/<code>rejected</code>.</p></div>
+  </div>
+  <p><strong>RTK Query</strong> — вбудований data-fetching/caching (конкурент TanStack Query); здебільшого <em>усуває потребу</em> писати thunks для server state.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'RTK — той самий counter без boilerplate',
+          code: `import { createSlice, configureStore } from '@reduxjs/toolkit';
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => { state.value += 1; },        // Immer → immutable
+    addBy: (state, action: { payload: number }) => { state.value += action.payload; },
+  },
+});
+
+export const { increment, addBy } = counterSlice.actions; // автогенеровані
+const store = configureStore({ reducer: { counter: counterSlice.reducer } });`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Server state vs client state <span class="tag tag-key">KEY</span></h3>
+  <p>Сильний сигнал seniority — розрізняти два типи стану і не тримати серверний у Redux:</p>
+  <div class="grid2">
+    <div class="card"><h4>Server state</h4><p>Асинхронний кеш чужих даних: refetch, інвалідація, дедуплікація, retry → <strong>TanStack Query / RTK Query</strong>.</p></div>
+    <div class="card"><h4>Client / UI state</h4><p>Синхронний, "власний": фільтри, візард, крос-компонентні взаємодії → <strong>Redux/RTK / Zustand / Context</strong>.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Коли Redux НЕ потрібен</h3>
+  <ul class="list">
+    <li>Стан переважно <strong>server state</strong> → TanStack Query / RTK Query.</li>
+    <li>Простий локальний стан → <code>useState</code> / <code>useReducer</code> + Context.</li>
+    <li>Малий/середній застосунок без складних крос-компонентних взаємодій.</li>
+  </ul>
+  <p><strong>Бери Redux/RTK</strong>, коли: складний client state між багатьма несуміжними частинами UI; потрібна відстежуваність змін (time-travel, аудит); велика команда, де важлива сувора передбачуваність.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Redux vs альтернативи</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Рішення</th><th>Тип стану</th><th>Boilerplate</th><th>Коли</th></tr>
+      <tr><td>Redux Toolkit</td><td>client (складний)</td><td>середній</td><td>велике SPA, аудит змін</td></tr>
+      <tr><td>Zustand</td><td>client</td><td>мінімальний</td><td>легша альтернатива, менше церемоній</td></tr>
+      <tr><td>Context + useReducer</td><td>локальний/середній</td><td>малий</td><td>без зовнішньої бібліотеки</td></tr>
+      <tr><td>TanStack Query</td><td>server</td><td>малий</td><td>fetch/cache/sync з бекендом</td></tr>
+      <tr><td>Jotai / Recoil</td><td>atomic</td><td>малий</td><td>дрібнозернистий реактивний стан</td></tr>
+    </table>
+  </div>`,
         },
       ],
     },
