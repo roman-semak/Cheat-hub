@@ -105,22 +105,6 @@ export default async function ProblemPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-
-        <style>{`
-          .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-          }
-          .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.3);
-            border-radius: 4px;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.5);
-          }
-        `}</style>
       </main>
     </>
   )
