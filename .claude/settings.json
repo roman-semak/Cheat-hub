@@ -33,10 +33,31 @@
       "Bash(pkill -f \"curl -s http://localhost:5001\")",
       "Bash(curl -sf -o /dev/null http://localhost:5001/problems/two-sum)",
       "Bash(curl -sf -o /dev/null -w \"javascript:%{http_code}\\\\n\" http://localhost:5001/javascript)",
-      "Bash(curl -sf -o /dev/null -w \"react:%{http_code}\\\\n\" http://localhost:5001/react)"
+      "Bash(curl -sf -o /dev/null -w \"react:%{http_code}\\\\n\" http://localhost:5001/react)",
+      "Bash(git pull *)",
+      "Bash(/usr/bin/jq -c '{type, uuid: \\(.uuid[0:8]\\), ts: .timestamp, cwd, content_types: [\\(.message.content // []\\)[]? | .type], tool_names: [\\(.message.content // []\\)[]? | select\\(.type==\"tool_use\"\\) | .name]}')",
+      "Bash(xargs -I{} sh -c '/usr/bin/jq -c \"select\\(.message.content != null\\) | .message.content[]? | select\\(.type==\\\\\"tool_use\\\\\" and .name==\\\\\"ExitPlanMode\\\\\"\\) | .name\" {} | head -2')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5001/javascript)",
+      "Bash(/usr/bin/jq -e '.hooks.Stop[] | .hooks[] | select\\(.type==\"command\"\\) | .command' .claude/settings.json)",
+      "Bash(/usr/bin/jq '.hooks' .claude/settings.json)",
+      "Bash(bash -n .claude/hooks/auto-commit-after-plan.sh)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/auto-commit-after-plan.sh\"",
+            "timeout": 45,
+            "statusMessage": "Auto-committing changes after plan…"
+          }
+        ]
+      }
     ]
   }
 }

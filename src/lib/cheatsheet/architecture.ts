@@ -615,6 +615,133 @@ const mutation = useMutation({
       ]
     },
     {
+      "id": "load-balancing",
+      "title": "⚖️ Load Balancer",
+      interviewQuestions: [
+        {
+          "question": "У чому різниця між L4 і L7 load balancer'ом і чому для фронтенду важливіший L7?",
+          "answer": "<strong>L4</strong> працює на рівні TCP/UDP — бачить лише IP і порт, розподіляє пакети, не заглядаючи в контент (швидший, простіший). <strong>L7</strong> розбирає HTTP: URL path, host, заголовки, cookie — і на цій основі маршрутизує (<code>/api/*</code> → один пул, <code>/images/*</code> → інший), робить <strong>SSL termination</strong>, стиснення, кешування, rate limiting. Для фронтенду L7 цікавіший, бо саме на ньому будують <strong>path-based routing</strong> для мікросервісів/мікрофронтендів, <strong>A/B-тести й canary</strong> за cookie/header, і zero-downtime деплої."
+        },
+        {
+          "question": "Що не так зі sticky sessions і що казати замість них на інтерв'ю?",
+          "answer": "Sticky sessions (session affinity) прив'язують клієнта до конкретного сервера через cookie або IP hash — потрібні, коли сервер тримає стан сесії в пам'яті. Це <strong>милиця</strong>: ламає рівномірність балансування, заважає масштабуванню й rolling-деплою (вивід інстансу вбиває сесії на ньому). Правильна відповідь: зробити backend <strong>stateless</strong>, а стан винести назовні — сесії в Redis/shared cache, автентифікацію в JWT (стан у клієнта). Тоді будь-який інстанс обробляє будь-який запит, і LB балансує вільно."
+        },
+        {
+          "question": "Чому WebSocket-трафік за load balancer'ом — окрема проблема, і як її вирішувати?",
+          "answer": "WS — це довгоживучі з'єднання: Round Robin розподілить <em>кількість</em> з'єднань рівно, але навантаження перекоситься, бо одні сокети активні, інші сплять. Тому беруть <strong>Least Connections</strong>. Друга проблема — стан з'єднання: якщо realtime-нода тримає підписки локально, падіння ноди губить їх усі. Рішення — <strong>stateless pub/sub</strong> (Redis, Centrifugo, NATS): нода лише реле, підписки й фан-аут живуть у брокері, тож будь-яка нода віддасть будь-яке повідомлення."
+        },
+        {
+          "question": "Що таке consistent hashing і навіщо він, якщо є звичайний hash % N?",
+          "answer": "При <code>hash % N</code> зміна кількості серверів (N → N±1) перетасовує <strong>майже всі</strong> ключі — для розподіленого кешу це масовий cache miss і шторм на БД. Consistent hashing розкладає і сервери, і ключі на одне хеш-кільце; ключ іде на найближчий сервер за годинниковою стрілкою. Додавання/видалення сервера зачіпає лише <strong>~1/N ключів</strong> (сусідній сегмент кільця), решта лишається на місці. Віртуальні вузли (vnodes) вирівнюють розподіл. Це основа Redis cluster, CDN, шардингу."
+        }
+      ],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Що це і навіщо</h3>
+            <p><strong>Load Balancer (LB)</strong> — це <strong>reverse proxy</strong>, що розподіляє вхідний трафік між кількома ідентичними інстансами застосунку (backends / upstream). Він робить можливим <strong>horizontal scaling</strong> і прибирає single point of failure на рівні застосунку.</p>
+            <div class="grid2">
+              <div class="card blue"><h4>Що дає LB</h4>
+                <ul class="list">
+                  <li><strong>Scalability</strong> — більше RPS, ніж витягне один сервер</li>
+                  <li><strong>High availability</strong> — впав інстанс → трафік іде на живі</li>
+                  <li><strong>Performance</strong> — рівне навантаження, нижча латентність</li>
+                  <li><strong>Maintainability</strong> — rolling / blue-green деплой без даунтайму</li>
+                </ul>
+              </div>
+              <div class="card green"><h4>Де стоїть у картині</h4>
+                <ul class="list">
+                  <li>Clients → DNS / CDN → <strong>LB</strong> → пул stateless-серверів → DB / Cache / Queue</li>
+                  <li>Часто не один: <strong>L4 LB</strong> на вході → <strong>L7 LB / API Gateway</strong> глибше → сервіси</li>
+                  <li>CDN спереду віддає <em>статику</em> географічно; LB — <em>динаміку</em> до застосунку</li>
+                </ul>
+              </div>
+            </div>`
+        },
+        {
+          "kind": "mermaid",
+          "caption": "Ланцюг трафіку: CDN → L4 LB → L7 LB → пул stateless-інстансів, стан назовні",
+          "code": `flowchart TB
+  C["Clients (browsers)"] --> DNS["DNS / CDN<br/>(статика, edge-кеш)"]
+  DNS --> L4["L4 LB<br/>TCP/IP · швидкий розподіл"]
+  L4 --> L7["L7 LB / API Gateway<br/>path routing · SSL termination · rate limit"]
+  L7 --> S1["Instance 1"]
+  L7 --> S2["Instance 2"]
+  L7 --> S3["Instance 3"]
+  S1 --> R["Redis: сесії · pub/sub"]
+  S2 --> R
+  S3 --> R
+  S1 --> DB[("DB / Cache / Queue")]
+  S2 --> DB
+  S3 --> DB`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">L4 vs L7 — must-know розрізнення</h3>
+            <div class="table-wrap">
+              <table>
+                <tr><th></th><th>L4 (transport)</th><th>L7 (application)</th></tr>
+                <tr><td>Рівень</td><td>TCP / UDP (IP + порт)</td><td>HTTP / HTTPS (URL, headers, cookies)</td></tr>
+                <tr><td>Що бачить</td><td>пакети, не контент</td><td>повний HTTP-запит: path, host, заголовки</td></tr>
+                <tr><td>Рішення на основі</td><td>IP / порт</td><td>URL path, host, cookie, method</td></tr>
+                <tr><td>Швидкість</td><td>швидший (менше парсингу)</td><td>трохи повільніший (аналіз контенту)</td></tr>
+                <tr><td>Можливості</td><td>простий розподіл</td><td>routing за шляхом, SSL termination, кеш, стиснення, rate limit</td></tr>
+                <tr><td>Приклад</td><td>AWS NLB</td><td>AWS ALB, Nginx, HAProxy (L7 mode)</td></tr>
+              </table>
+            </div>
+            <div class="alert good"><span class="icon">💡</span> <span>L7-рішення: <code>/api/*</code> → backend-пул, <code>/images/*</code> → інший пул; A/B testing за cookie; canary за header. Це те, що фронтенд реально бачить у роботі з мікрофронтендами та feature-роллаутами.</span></div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Алгоритми балансування</h3>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Алгоритм</th><th>Як працює</th><th>Коли</th></tr>
+                <tr><td><strong>Round Robin</strong></td><td>по черзі на кожен сервер</td><td>сервери рівні, запити однорідні</td></tr>
+                <tr><td><strong>Weighted Round Robin</strong></td><td>більше на потужніші (ваги)</td><td>різна потужність інстансів</td></tr>
+                <tr><td><strong>Least Connections</strong></td><td>на сервер з найменшою к-стю активних з'єднань</td><td>довгі/нерівномірні з'єднання (WebSocket!)</td></tr>
+                <tr><td><strong>Least Response Time</strong></td><td>на найшвидший (мін. латентність)</td><td>оптимізація latency</td></tr>
+                <tr><td><strong>IP Hash</strong></td><td>сервер за хешем IP клієнта</td><td>потрібна «прив'язка» клієнта (sticky)</td></tr>
+                <tr><td><strong>Consistent Hashing</strong></td><td>хеш-кільце, мінімум перерозподілу при зміні к-сті вузлів</td><td>розподілені кеші, sharding</td></tr>
+              </table>
+            </div>
+            <div class="alert"><span class="icon">🎯</span> <span><strong>Consistent hashing</strong> — часте follow-up питання. При <code>hash % N</code> зміна кількості серверів перетасовує майже всі ключі; на хеш-кільці — лише ~1/N. Критично для Redis cluster і CDN.</span></div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="grid2">
+              <div class="card"><h4>📌 Sticky sessions (session affinity)</h4>
+                <p><strong>Проблема:</strong> сервер тримає сесію в пам'яті → наступний запит юзера має потрапити на той самий сервер (LB прив'язує через cookie / IP hash).</p>
+                <p><strong>Але це антипатерн.</strong> Правильно: backend <strong>stateless</strong>, стан назовні — сесії в Redis, токени в JWT. Тоді будь-який інстанс обробить будь-який запит, LB балансує вільно, легко масштабувати.</p>
+              </div>
+              <div class="card"><h4>🩺 Health checks</h4>
+                <p><strong>Active</strong> — LB періодично пінгує <code>GET /health</code> і виводить з ротації тих, хто не відповідає.</p>
+                <p><strong>Passive</strong> — LB стежить за реальними запитами; сервер сипле помилки/таймаути → позначається нездоровим.</p>
+                <p>Health-endpoint часто перевіряє й залежності (БД, кеш), а не лише «процес живий».</p>
+              </div>
+              <div class="card"><h4>♻️ Redundancy самого LB</h4>
+                <p>LB не має бути SPOF: <strong>active-passive</strong> (резервний перебирає через failover, VIP + heartbeat), <strong>active-active</strong> (кілька LB одночасно, трафік ділиться DNS / anycast), <strong>DNS load balancing</strong> (round robin по IP перед самими LB).</p>
+              </div>
+              <div class="card"><h4>➕ Що L7 LB часто робить іще</h4>
+                <p>SSL/TLS termination (розшифровка на LB, далі HTTP — і там же сертифікати), gzip/brotli, кеш статики, rate limiting / DDoS-захист, request routing (path/host), метрики трафіку й латентності.</p>
+              </div>
+            </div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Frontend-специфічні дотики</h3>
+            <ul class="list">
+              <li><strong>CDN vs LB:</strong> CDN балансує й кешує <em>статику</em> географічно (edge); LB балансує <em>динамічні</em> запити до застосунку. Часто в парі: CDN спереду, LB для origin.</li>
+              <li><strong>WebSocket + LB:</strong> довгі з'єднання → <strong>Least Connections</strong> + stateless pub/sub, щоб інстанси не тримали стан з'єднання локально (Centrifugo / Redis).</li>
+              <li><strong>A/B / canary на L7:</strong> LB/edge маршрутизує % трафіку на нову версію за cookie/header — та сама ідея, що feature flags, але на рівні інфраструктури.</li>
+              <li><strong>Blue-green / rolling deploy:</strong> LB виводить старі інстанси й вводить нові без даунтайму (zero-downtime switch між версіями).</li>
+              <li><strong>Vercel / edge network:</strong> фактично managed LB + CDN — деплой на Vercel це робота поверх цієї абстракції.</li>
+            </ul>
+            <div class="alert good"><span class="icon">🗣️</span> <span><strong>Скелет відповіді на інтерв'ю (крок «scaling»):</strong> «Один сервер не витримає навантаження і є SPOF, тому ставлю LB перед пулом stateless-інстансів. L7 для path-routing і SSL termination; Least Connections для WS, Round Robin для звичайного HTTP. Сесійний стан — у Redis, щоб не потрібні були sticky sessions. Health checks виводять хворі інстанси; сам LB в active-passive. Статику й географію віддаю CDN спереду.» Чесна межа: «Руками в проді LB конфігурував DevOps — я розумію роль і працюю поверх (Vercel edge, CDN, WS за балансуванням).»</span></div>`
+        }
+      ]
+    },
+    {
       "id": "observability",
       "title": "🔭 Observability та продуктивність у проді",
       interviewQuestions: [

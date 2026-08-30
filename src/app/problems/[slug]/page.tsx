@@ -52,7 +52,14 @@ export default async function ProblemPage({ params }: PageProps) {
     notFound()
   }
 
-  const testCases = JSON.parse(problem.testCases)
+  const testCases = JSON.parse(problem.testCases) as {
+    input: string
+    expected: string
+  }[]
+  const hasTests =
+    Array.isArray(testCases) &&
+    testCases.length > 0 &&
+    !testCases.every((tc) => tc?.input === 'placeholder')
   const tags = JSON.parse(problem.tags) as string[]
   const companies = JSON.parse(problem.companies)
 
@@ -100,6 +107,8 @@ export default async function ProblemPage({ params }: PageProps) {
               <CodeEditor
                 starterCode={problem.starterCode}
                 testCases={testCases}
+                hasTests={hasTests}
+                signature={problem.signature}
                 problemSlug={problem.slug}
               />
             </div>

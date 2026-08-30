@@ -16,6 +16,10 @@ interface CodeEditorProps {
   starterCode: string
   testCases: TestCase[]
   problemSlug: string
+  /** False when the problem has no generated test cases yet — hides Run/Submit. */
+  hasTests?: boolean
+  /** JSON string of the LeetCode signature; forwarded to /api/run. */
+  signature?: string
 }
 
 type Language = 'javascript' | 'typescript'
@@ -39,7 +43,13 @@ function beforeMount(monaco: Monaco) {
   jsDefaults.setDiagnosticsOptions({ noSemanticValidation: true, noSyntaxValidation: false })
 }
 
-export function CodeEditor({ starterCode, testCases, problemSlug }: CodeEditorProps) {
+export function CodeEditor({
+  starterCode,
+  testCases,
+  problemSlug,
+  hasTests = true,
+  signature,
+}: CodeEditorProps) {
   const [code, setCode] = useState(starterCode)
   const [language, setLanguage] = useState<Language>('typescript')
   const [isRunning, setIsRunning] = useState(false)
@@ -56,7 +66,7 @@ export function CodeEditor({ starterCode, testCases, problemSlug }: CodeEditorPr
         const response = await fetch('/api/run', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code, language, testCases }),
+          body: JSON.stringify({ code, language, testCases, signature }),
         })
 
         const data = await response.json()
@@ -93,7 +103,7 @@ export function CodeEditor({ starterCode, testCases, problemSlug }: CodeEditorPr
         setIsRunning(false)
       }
     },
-    [code, language, testCases, problemSlug],
+    [code, language, testCases, problemSlug, signature],
   )
 
   const handleRun = useCallback(() => execute(false), [execute])
@@ -145,24 +155,33 @@ export function CodeEditor({ starterCode, testCases, problemSlug }: CodeEditorPr
         />
       </GlassPanel>
 
-      <div className="flex gap-2">
-        <Button
-          onClick={handleRun}
-          disabled={isRunning}
-          variant="default"
-          className="w-full"
-        >
-          {isRunning ? 'Running...' : 'Run Code'}
-        </Button>
-        <Button
-          onClick={handleSubmit}
-          disabled={isRunning}
-          variant="secondary"
-          className="w-full"
-        >
-          Submit
-        </Button>
-      </div>
+      {hasTests ? (
+        <div className="flex gap-2">
+          <Button
+            onClick={handleRun}
+            disabled={isRunning}
+            variant="default"
+            className="w-full"
+          >
+            {isRunning ? 'Running...' : 'Run Code'}
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isRunning}
+            variant="secondary"
+            className="w-full"
+          >
+            Submit
+          </Button>
+        </div>
+      ) : (
+        <GlassPanel className="p-4">
+          <p className="text-sm text-slate-300">
+            Тестів для цієї задачі поки немає — можна писати рішення тут і
+            звірятися з розділом <span className="font-medium">Solution</span>.
+          </p>
+        </GlassPanel>
+      )}
 
       {error && (
         <GlassPanel className="p-4">

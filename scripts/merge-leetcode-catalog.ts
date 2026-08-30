@@ -5,7 +5,7 @@
 //
 // Idempotent: keyed by slug, safe to re-run. Run after export-problems.ts.
 //   npx tsx scripts/merge-leetcode-catalog.ts
-import { writeFileSync } from 'node:fs'
+import { writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { problems } from '../src/data/problems'
 import { leetcodeData } from '../src/lib/cheatsheet/leetcode'
@@ -13,11 +13,12 @@ import { renderModule } from './lib/serialize-problems'
 import type { Section, TaskCard } from '../src/lib/cheatsheet/types'
 
 const OUT = resolve('src/data/problems.ts')
+const TESTCASES = resolve('src/data/testcases.generated.json')
 
 const FIELDS = [
   'slug', 'title', 'frontendId', 'difficulty', 'acRate', 'description',
   'tags', 'companies', 'starterCode', 'testCases', 'solution', 'editorial',
-  'approach',
+  'approach', 'signature',
 ] as const
 
 type Row = Record<string, unknown>
@@ -74,7 +75,40 @@ for (const section of leetcodeData.sections as Section[]) {
   }
 }
 
+// Fold in generated test cases (src/data/testcases.generated.json is the source
+// of truth for `testCases`, produced by scripts/generate-testcases.ts).
+let withTests = 0
+if (existsSync(TESTCASES)) {
+  const sidecar = JSON.parse(readFileSync(TESTCASES, 'utf8')) as Record<
+    string,
+    {
+      status: string
+      cases?: { input: string; expected: string }[]
+      meta?: { name: string; paramTypes: string[]; returnType: string }
+    }
+  >
+  for (const [slug, entry] of Object.entries(sidecar)) {
+    if (entry.status !== 'ok' || !entry.cases?.length) continue
+    const row = bySlug.get(slug)
+    if (!row) continue
+    row.testCases = JSON.stringify(entry.cases)
+    if (entry.meta) row.signature = JSON.stringify(entry.meta)
+    withTests++
+  }
+}
+
+// Normalise the legacy placeholder stub to an empty array so the app can cleanly
+// detect "no test cases yet" (see hasRealTestCases in src/lib/runner.ts).
+for (const row of rows) {
+  if (
+    typeof row.testCases === 'string' &&
+    row.testCases.includes('"placeholder"')
+  ) {
+    row.testCases = '[]'
+  }
+}
+
 writeFileSync(OUT, renderModule(rows), 'utf8')
 console.log(
-  `Merged catalog: ${matched} matched, ${stubs} stubs, ${rows.length} problems total -> ${OUT}`,
+  `Merged catalog: ${matched} matched, ${stubs} stubs, ${withTests} with generated test cases, ${rows.length} problems total -> ${OUT}`,
 )

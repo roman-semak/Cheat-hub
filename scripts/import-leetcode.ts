@@ -239,7 +239,9 @@ async function importProblems() {
             tags,
             companies,
             starterCode: jsCode,
-            testCases: JSON.stringify([{ input: 'placeholder', expected: 'placeholder' }]),
+            // Test cases are generated separately by scripts/generate-testcases.ts
+            // (LeetCode's API does not return expected outputs).
+            testCases: '[]',
             solution: null,
             editorial,
           },
@@ -252,7 +254,7 @@ async function importProblems() {
             tags,
             companies,
             starterCode: jsCode,
-            testCases: JSON.stringify([{ input: 'placeholder', expected: 'placeholder' }]),
+            // testCases intentionally left untouched on update — owned by the sidecar.
             editorial,
           },
         })

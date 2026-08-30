@@ -8,13 +8,14 @@ interface RunRequest {
   code: string
   language: 'javascript' | 'typescript'
   testCases: Array<{ input: string; expected: string }>
+  signature?: string
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: RunRequest = await request.json()
 
-    const { code, language, testCases } = body
+    const { code, language, testCases, signature } = body
 
     if (!code || !language || !testCases) {
       return NextResponse.json(
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const results = await runCode(code, language, testCases)
+    const results = await runCode(code, language, testCases, signature)
 
     return NextResponse.json({ results }, { status: 200 })
   } catch (error) {

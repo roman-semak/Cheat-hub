@@ -1,0 +1,7967 @@
+{
+  "3sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[-1,0,1,2,-1,-4]]",
+        "expected": "[[-1,-1,2],[-1,0,1]]"
+      },
+      {
+        "input": "[[0,1,1]]",
+        "expected": "[]"
+      },
+      {
+        "input": "[[0,0,0]]",
+        "expected": "[[0,0,0]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:09.987Z"
+  },
+  "3sum-closest": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[-1,2,1,-4],1]",
+        "expected": "2"
+      },
+      {
+        "input": "[[0,0,0],1]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:10.851Z"
+  },
+  "4sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,0,-1,0,-2,2],0]",
+        "expected": "[[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]"
+      },
+      {
+        "input": "[[2,2,2,2,2],8]",
+        "expected": "[[2,2,2,2]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:12.645Z"
+  },
+  "add-binary": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"11\",\"1\"]",
+        "expected": "\"100\""
+      },
+      {
+        "input": "[\"1010\",\"1011\"]",
+        "expected": "\"10101\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:53.083Z"
+  },
+  "add-search-words": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:50.233Z"
+  },
+  "add-two-integers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[12,5]",
+        "expected": "17"
+      },
+      {
+        "input": "[-10,4]",
+        "expected": "-6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:05.596Z"
+  },
+  "add-two-numbers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,4,3],[5,6,4]]",
+        "expected": "[7,0,8]"
+      },
+      {
+        "input": "[[0],[0]]",
+        "expected": "[0]"
+      },
+      {
+        "input": "[[9,9,9,9,9,9,9],[9,9,9,9]]",
+        "expected": "[8,9,9,9,0,0,0,1]"
+      }
+    ],
+    "meta": {
+      "name": "addTwoNumbers",
+      "paramTypes": [
+        "ListNode",
+        "ListNode"
+      ],
+      "returnType": "ListNode"
+    },
+    "generatedAt": "2026-08-30T18:54:42.485Z"
+  },
+  "add-two-promises": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:38:31.062Z",
+    "note": "Unexpected token 'e', \"new Promise\"... is not valid JSON"
+  },
+  "alien-dictionary": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:50:14.517Z"
+  },
+  "all-elements-in-two-binary-search-trees": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,1,4],[1,0,3]]",
+        "expected": "[0,1,1,2,3,4]"
+      },
+      {
+        "input": "[[1,null,8],[8,1]]",
+        "expected": "[1,1,8,8]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:38.981Z"
+  },
+  "all-paths-from-source-to-target": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2],[3],[3],[]]]",
+        "expected": "[[0,1,3],[0,2,3]]"
+      },
+      {
+        "input": "[[[4,3,1],[3,2,4],[3],[4],[]]]",
+        "expected": "[[0,4],[0,3,4],[0,1,3,4],[0,1,2,3,4],[0,1,4]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:19.663Z"
+  },
+  "all-possible-full-binary-trees": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[7]",
+        "expected": "[{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":null,\"right\":null}}}},{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":null,\"right\":null}},\"right\":{\"val\":0,\"left\":null,\"right\":null}}},{\"val\":0,\"left\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":null,\"right\":null}},\"right\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":null,\"right\":null}}},{\"val\":0,\"left\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":null,\"right\":null}}},\"right\":{\"val\":0,\"left\":null,\"right\":null}},{\"val\":0,\"left\":{\"val\":0,\"left\":{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":null,\"right\":null}},\"right\":{\"val\":0,\"left\":null,\"right\":null}},\"right\":{\"val\":0,\"left\":null,\"right\":null}}]"
+      },
+      {
+        "input": "[3]",
+        "expected": "[{\"val\":0,\"left\":{\"val\":0,\"left\":null,\"right\":null},\"right\":{\"val\":0,\"left\":null,\"right\":null}}]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:11.179Z"
+  },
+  "allow-one-function-call": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:39:28.288Z",
+    "note": "Unexpected token '(', \"(a,b,c) =>\"... is not valid JSON"
+  },
+  "append-characters-to-string-to-make-subsequence": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"coaching\",\"coding\"]",
+        "expected": "4"
+      },
+      {
+        "input": "[\"abcde\",\"a\"]",
+        "expected": "0"
+      },
+      {
+        "input": "[\"z\",\"abcde\"]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:27.483Z"
+  },
+  "apply-transform-over-each-element-in-array": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:39:36.708Z",
+    "note": "Unexpected token 'u', \"function pl\"... is not valid JSON"
+  },
+  "arithmetic-subarrays": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,6,5,9,3,7],[0,0,2],[2,3,5]]",
+        "expected": "[true,false,true]"
+      },
+      {
+        "input": "[[-12,-9,-3,-12,-6,15,20,-25,-20,-15,-10],[0,1,6,4,8,7],[4,4,9,7,9,10]]",
+        "expected": "[false,true,false,false,true,true]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:17.763Z"
+  },
+  "array-reduce-transformation": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:39:47.470Z",
+    "note": "Unexpected token 'u', \"function su\"... is not valid JSON"
+  },
+  "array-wrapper": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:38:55.056Z",
+    "note": "Class constructor ArrayWrapper cannot be invoked without 'new'"
+  },
+  "asteroid-collision": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,10,-5]]",
+        "expected": "[5,10]"
+      },
+      {
+        "input": "[[8,-8]]",
+        "expected": "[]"
+      },
+      {
+        "input": "[[10,2,-5]]",
+        "expected": "[10]"
+      },
+      {
+        "input": "[[3,5,-6,2,-1,4]]",
+        "expected": "[-6,2,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:23.951Z"
+  },
+  "average-waiting-time": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2],[2,5],[4,3]]]",
+        "expected": "5"
+      },
+      {
+        "input": "[[[5,2],[5,4],[10,3],[20,1]]]",
+        "expected": "3.25"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:26.556Z"
+  },
+  "balance-a-binary-search-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,null,2,null,3,null,4]]",
+        "expected": "[2,1,3,null,null,null,4]"
+      },
+      {
+        "input": "[[2,1,3]]",
+        "expected": "[2,1,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:58.748Z"
+  },
+  "balanced-binary-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,9,20,null,null,15,7]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,2,2,3,3,null,null,4,4]]",
+        "expected": "false"
+      },
+      {
+        "input": "[[]]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:39.478Z"
+  },
+  "baseball-game": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"5\",\"2\",\"C\",\"D\",\"+\"]]",
+        "expected": "30"
+      },
+      {
+        "input": "[[\"5\",\"-2\",\"4\",\"C\",\"D\",\"9\",\"+\",\"+\"]]",
+        "expected": "27"
+      },
+      {
+        "input": "[[\"1\",\"C\"]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:19.462Z"
+  },
+  "battleships-in-a-board": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"X\",\".\",\".\",\"X\"],[\".\",\".\",\".\",\"X\"],[\".\",\".\",\".\",\"X\"]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[\".\"]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:09.706Z"
+  },
+  "best-time-to-buy-stock": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:15.245Z"
+  },
+  "binary-search": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[-1,0,3,5,9,12],9]",
+        "expected": "4"
+      },
+      {
+        "input": "[[-1,0,3,5,9,12],2]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:25.432Z"
+  },
+  "binary-search-tree-iterator": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:46:20.176Z",
+    "note": "class-based / design problem"
+  },
+  "binary-search-tree-to-greater-sum-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]]",
+        "expected": "[30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]"
+      },
+      {
+        "input": "[[0,null,1]]",
+        "expected": "[1,null,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:44.536Z"
+  },
+  "bitwise-or-of-even-numbers-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5,6]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[7,9,11]]",
+        "expected": "0"
+      },
+      {
+        "input": "[[1,8,16]]",
+        "expected": "24"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:58.403Z"
+  },
+  "brace-expansion-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"{a,b}{c,{d,e}}\"]",
+        "expected": "[\"ac\",\"ad\",\"ae\",\"bc\",\"bd\",\"be\"]"
+      },
+      {
+        "input": "[\"{{a,z},a{b,c},{ab,z}}\"]",
+        "expected": "[\"a\",\"ab\",\"ac\",\"z\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:47.430Z"
+  },
+  "build-a-matrix-with-conditions": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,[[1,2],[3,2]],[[2,1],[3,2]]]",
+        "expected": "[[0,0,1],[3,0,0],[0,2,0]]"
+      },
+      {
+        "input": "[3,[[1,2],[2,3],[3,1],[2,3]],[[2,1]]]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:32.953Z"
+  },
+  "build-an-array-with-stack-operations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3],3]",
+        "expected": "[\"Push\",\"Push\",\"Pop\",\"Push\"]"
+      },
+      {
+        "input": "[[1,2,3],3]",
+        "expected": "[\"Push\",\"Push\",\"Push\"]"
+      },
+      {
+        "input": "[[1,2],4]",
+        "expected": "[\"Push\",\"Push\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:30.337Z"
+  },
+  "build-array-from-permutation": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,2,1,5,3,4]]",
+        "expected": "[0,1,2,4,5,3]"
+      },
+      {
+        "input": "[[5,0,1,2,3,4]]",
+        "expected": "[4,5,0,1,2,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:35.717Z"
+  },
+  "build-array-where-you-can-find-the-maximum-exactly-k-comparisons": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:29.453Z"
+  },
+  "build-from-pre-inorder": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:47.922Z"
+  },
+  "burst-balloons": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1,5,8]]",
+        "expected": "167"
+      },
+      {
+        "input": "[[1,5]]",
+        "expected": "10"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:52.500Z"
+  },
+  "buy-sell-cooldown": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:27.296Z"
+  },
+  "cache-with-time-limit": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:46:25.014Z",
+    "note": "foobar is not defined"
+  },
+  "call-function-with-custom-context": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:46:08.191Z",
+    "note": "Unexpected token 'u', \"function ad\"... is not valid JSON"
+  },
+  "capacity-to-ship-packages-within-d-days": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5,6,7,8,9,10],5]",
+        "expected": "15"
+      },
+      {
+        "input": "[[3,2,2,4,1,4],3]",
+        "expected": "6"
+      },
+      {
+        "input": "[[1,2,3,1,1],4]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:06.204Z"
+  },
+  "car-fleet": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[12,[10,8,0,5,3],[2,4,1,1,3]]",
+        "expected": "3"
+      },
+      {
+        "input": "[10,[3],[3]]",
+        "expected": "1"
+      },
+      {
+        "input": "[100,[0,2,4],[4,2,1]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:22.654Z"
+  },
+  "cells-in-a-range-on-an-excel-sheet": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"K1:L2\"]",
+        "expected": "[\"K1\",\"K2\",\"L1\",\"L2\"]"
+      },
+      {
+        "input": "[\"A1:F1\"]",
+        "expected": "[\"A1\",\"B1\",\"C1\",\"D1\",\"E1\",\"F1\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:12.405Z"
+  },
+  "chalkboard-xor-game": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:26.596Z"
+  },
+  "char-replacement": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:16.383Z"
+  },
+  "cheapest-flights-k-stops": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:12.520Z"
+  },
+  "check-if-a-string-is-an-acronym-of-words": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"alice\",\"bob\",\"charlie\"],\"abc\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[[\"an\",\"apple\"],\"a\"]",
+        "expected": "false"
+      },
+      {
+        "input": "[[\"never\",\"gonna\",\"give\",\"up\",\"on\",\"you\"],\"ngguoy\"]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:33.478Z"
+  },
+  "check-if-it-is-a-good-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[12,5,7,23]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[29,6,10]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[3,6]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:36.811Z"
+  },
+  "check-if-number-is-a-sum-of-powers-of-three": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[12]",
+        "expected": "true"
+      },
+      {
+        "input": "[91]",
+        "expected": "true"
+      },
+      {
+        "input": "[21]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:48.045Z"
+  },
+  "check-if-strings-can-be-made-equal-with-operations-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcdba\",\"cabdab\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"abe\",\"bea\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:03.525Z"
+  },
+  "check-if-the-sentence-is-pangram": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"thequickbrownfoxjumpsoverthelazydog\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"leetcode\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:11.579Z"
+  },
+  "check-if-two-string-arrays-are-equivalent": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"ab\",\"c\"],[\"a\",\"bc\"]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[\"a\",\"cb\"],[\"ab\",\"c\"]]",
+        "expected": "false"
+      },
+      {
+        "input": "[[\"abc\",\"d\",\"defg\"],[\"abcddefg\"]]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:38.220Z"
+  },
+  "checking-existence-of-edge-length-limited-paths": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:54.586Z"
+  },
+  "cherry-pickup-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[3,1,1],[2,5,1],[1,5,5],[2,1,1]]]",
+        "expected": "24"
+      },
+      {
+        "input": "[[[1,0,0,0,0,0,1],[2,0,0,0,0,3,0],[2,0,9,0,0,0,0],[0,3,0,5,4,0,0],[1,0,2,3,0,0,6]]]",
+        "expected": "28"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:51.462Z"
+  },
+  "chunk-array": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:40:06.857Z",
+    "note": "chunkify is not defined"
+  },
+  "climbing-stairs": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2]",
+        "expected": "2"
+      },
+      {
+        "input": "[3]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:34:09.615Z"
+  },
+  "clone-graph": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:50:02.030Z",
+    "note": "_Node is not defined"
+  },
+  "coin-change": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,5],11]",
+        "expected": "3"
+      },
+      {
+        "input": "[[2],3]",
+        "expected": "-1"
+      },
+      {
+        "input": "[[1],0]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:20.448Z"
+  },
+  "coin-change-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5,[1,2,5]]",
+        "expected": "4"
+      },
+      {
+        "input": "[3,[2]]",
+        "expected": "0"
+      },
+      {
+        "input": "[10,[10]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:27.863Z"
+  },
+  "combination-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,6,7],7]",
+        "expected": "[[2,2,3],[7]]"
+      },
+      {
+        "input": "[[2,3,5],8]",
+        "expected": "[[2,2,2,2],[2,3,3],[3,5]]"
+      },
+      {
+        "input": "[[2],1]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:31.245Z"
+  },
+  "combination-sum-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,1,2,7,6,1,5],8]",
+        "expected": "[[1,1,6],[1,2,5],[1,7],[2,6]]"
+      },
+      {
+        "input": "[[2,5,2,1,2],5]",
+        "expected": "[[1,2,2],[5]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:32.117Z"
+  },
+  "combination-sum-iii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,7]",
+        "expected": "[[1,2,4]]"
+      },
+      {
+        "input": "[3,9]",
+        "expected": "[[1,2,6],[1,3,5],[2,3,4]]"
+      },
+      {
+        "input": "[4,1]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:25.679Z"
+  },
+  "combination-sum-iv": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3],4]",
+        "expected": "7"
+      },
+      {
+        "input": "[[9],3]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:24.882Z"
+  },
+  "combinations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[4,2]",
+        "expected": "[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]"
+      },
+      {
+        "input": "[1,1]",
+        "expected": "[[1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:54.738Z"
+  },
+  "complex-number-multiplication": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"1+1i\",\"1+1i\"]",
+        "expected": "\"0+2i\""
+      },
+      {
+        "input": "[\"1+-1i\",\"1+-1i\"]",
+        "expected": "\"0+-2i\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:17.953Z"
+  },
+  "compute-alternating-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,5,7]]",
+        "expected": "-4"
+      },
+      {
+        "input": "[[100]]",
+        "expected": "100"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:44.732Z"
+  },
+  "concatenate-array-with-reverse": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3]]",
+        "expected": "[1,2,3,3,2,1]"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "[1,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:29.945Z"
+  },
+  "concatenation-of-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,1]]",
+        "expected": "[1,2,1,1,2,1]"
+      },
+      {
+        "input": "[[1,3,2,1]]",
+        "expected": "[1,3,2,1,1,3,2,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:41.530Z"
+  },
+  "connected-components": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:08.755Z"
+  },
+  "construct-binary-search-tree-from-preorder-traversal": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[8,5,1,7,10,12]]",
+        "expected": "[8,5,10,1,7,null,12]"
+      },
+      {
+        "input": "[[1,3]]",
+        "expected": "[1,null,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:14.780Z"
+  },
+  "construct-binary-tree-from-preorder-and-postorder-traversal": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,4,5,3,6,7],[4,5,2,6,7,3,1]]",
+        "expected": "[1,2,3,4,5,6,7]"
+      },
+      {
+        "input": "[[1],[1]]",
+        "expected": "[1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:06.184Z"
+  },
+  "construct-quad-tree": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:45:59.254Z"
+  },
+  "construct-smallest-number-from-di-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"IIIDIDDD\"]",
+        "expected": "\"123549876\""
+      },
+      {
+        "input": "[\"DDD\"]",
+        "expected": "\"4321\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:03.693Z"
+  },
+  "construct-the-minimum-bitwise-array-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,5,7]]",
+        "expected": "[-1,1,4,3]"
+      },
+      {
+        "input": "[[11,13,31]]",
+        "expected": "[9,12,15]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:56.915Z"
+  },
+  "container-water": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:14.127Z"
+  },
+  "container-with-most-water": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,8,6,2,5,4,8,3,7]]",
+        "expected": "49"
+      },
+      {
+        "input": "[[1,1]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:06.275Z"
+  },
+  "contains-duplicate": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,1]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "false"
+      },
+      {
+        "input": "[[1,1,1,3,3,4,3,2,4,2]]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:34:06.836Z"
+  },
+  "convert-an-array-into-a-2d-array-with-conditions": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,4,1,2,3,1]]",
+        "expected": "[[1,2,3,4],[1,3],[1]]"
+      },
+      {
+        "input": "[[2,1,1]]",
+        "expected": "[[1,2],[1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:59.686Z"
+  },
+  "convert-date-to-binary": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"2080-02-29\"]",
+        "expected": "\"100000100000-10-11101\""
+      },
+      {
+        "input": "[\"1900-01-01\"]",
+        "expected": "\"11101101100-1-1\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:56.997Z"
+  },
+  "convert-the-temperature": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[36.5]",
+        "expected": "[309.65,97.7]"
+      },
+      {
+        "input": "[122.11]",
+        "expected": "[395.26,251.798]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:42.369Z"
+  },
+  "copy-random-pointer": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:35.091Z"
+  },
+  "count-all-possible-routes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,6,8,4],1,3,5]",
+        "expected": "4"
+      },
+      {
+        "input": "[[4,3,1],1,0,6]",
+        "expected": "5"
+      },
+      {
+        "input": "[[5,2,1],0,2,3]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:38.794Z"
+  },
+  "count-all-valid-pickup-and-delivery-options": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:37.726Z"
+  },
+  "count-and-say": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[1]",
+        "expected": "\"1\""
+      },
+      {
+        "input": "[4]",
+        "expected": "\"1211\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:30.314Z"
+  },
+  "count-asterisks": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"l|*e*et|c**o|*de|\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"iamprogrammer\"]",
+        "expected": "0"
+      },
+      {
+        "input": "[\"yo|uar|e**|b|e***au|tifu|l\"]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:25.052Z"
+  },
+  "count-complete-subarrays-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,1,2,2]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[5,5,5,5]]",
+        "expected": "10"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:25.939Z"
+  },
+  "count-digit-appearances": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[12,54,32,22],2]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,34,7],9]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:53.378Z"
+  },
+  "count-equal-and-divisible-pairs-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1,2,2,2,1,3],2]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,2,3,4],1]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:19.236Z"
+  },
+  "count-fertile-pyramids-in-a-land": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:24.403Z"
+  },
+  "count-good-nodes": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:46.170Z"
+  },
+  "count-good-nodes-in-binary-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1,4,3,null,1,5]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[3,3,null,4,2]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:09.813Z"
+  },
+  "count-good-triplets": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,0,1,1,9,7],7,2,3]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,1,2,2,3],0,0,1]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:48.697Z"
+  },
+  "count-good-triplets-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,0,1,3],[0,1,2,3]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[4,0,1,3,2],[4,1,0,2,3]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:31.836Z"
+  },
+  "count-items-matching-a-rule": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"phone\",\"blue\",\"pixel\"],[\"computer\",\"silver\",\"lenovo\"],[\"phone\",\"gold\",\"iphone\"]],\"color\",\"silver\"]",
+        "expected": "1"
+      },
+      {
+        "input": "[[[\"phone\",\"blue\",\"pixel\"],[\"computer\",\"silver\",\"phone\"],[\"phone\",\"gold\",\"iphone\"]],\"type\",\"phone\"]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:53.351Z"
+  },
+  "count-nodes-equal-to-average-of-subtree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,8,5,0,1,null,6]]",
+        "expected": "5"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:50.119Z"
+  },
+  "count-number-of-distinct-integers-after-reverse-operations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,13,10,12,31]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[2,2,2]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:26.597Z"
+  },
+  "count-number-of-maximum-bitwise-or-subsets": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[2,2,2]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[3,2,1,5]]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:41.691Z"
+  },
+  "count-number-of-nice-subarrays": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,1,2,1,1],3]",
+        "expected": "2"
+      },
+      {
+        "input": "[[2,4,6],1]",
+        "expected": "0"
+      },
+      {
+        "input": "[[2,2,2,1,2,2,1,2,2,2],2]",
+        "expected": "16"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:39.790Z"
+  },
+  "count-number-of-pairs-with-absolute-difference-k": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,2,1],1]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,3],3]",
+        "expected": "0"
+      },
+      {
+        "input": "[[3,2,1,5,4],2]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:52.469Z"
+  },
+  "count-of-matches-in-tournament": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[7]",
+        "expected": "6"
+      },
+      {
+        "input": "[14]",
+        "expected": "13"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:33.036Z"
+  },
+  "count-pairs-whose-sum-is-less-than-target": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[-1,1,2,3,1],2]",
+        "expected": "3"
+      },
+      {
+        "input": "[[-6,2,5,-2,-7,-1,3],-2]",
+        "expected": "10"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:09.319Z"
+  },
+  "count-partitions-with-even-sum-difference": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,10,3,7,6]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,2,2]]",
+        "expected": "0"
+      },
+      {
+        "input": "[[2,4,6,8]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:55.985Z"
+  },
+  "count-servers-that-communicate": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,0],[0,1]]]",
+        "expected": "0"
+      },
+      {
+        "input": "[[[1,0],[1,1]]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[[1,1,0,0],[0,0,1,0],[0,0,1,0],[0,0,0,1]]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:16.263Z"
+  },
+  "count-sorted-vowel-strings": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:45:50.640Z"
+  },
+  "count-square-submatrices-with-all-ones": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1,1,1],[1,1,1,1],[0,1,1,1]]]",
+        "expected": "15"
+      },
+      {
+        "input": "[[[1,0,1],[1,1,0],[1,1,0]]]",
+        "expected": "7"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:33.910Z"
+  },
+  "count-subarrays-with-fixed-bounds": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,5,2,7,5],1,5]",
+        "expected": "2"
+      },
+      {
+        "input": "[[1,1,1,1],1,1]",
+        "expected": "10"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:09.240Z"
+  },
+  "count-submatrices-with-top-left-element-and-sum-less-than-k": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[7,6,3],[6,6,1]],18]",
+        "expected": "4"
+      },
+      {
+        "input": "[[[7,2,9],[1,5,0],[2,6,6]],20]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:50.427Z"
+  },
+  "count-subtrees-with-max-distance-between-cities": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[4,[[1,2],[2,3],[2,4]]]",
+        "expected": "[3,4,0]"
+      },
+      {
+        "input": "[2,[[1,2]]]",
+        "expected": "[1]"
+      },
+      {
+        "input": "[3,[[1,2],[2,3]]]",
+        "expected": "[2,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:17.507Z"
+  },
+  "count-symmetric-integers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[1,100]",
+        "expected": "9"
+      },
+      {
+        "input": "[1200,1230]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:32.155Z"
+  },
+  "count-the-digits-that-divide-a-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[7]",
+        "expected": "1"
+      },
+      {
+        "input": "[121]",
+        "expected": "2"
+      },
+      {
+        "input": "[1248]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:40.058Z"
+  },
+  "count-the-number-of-complete-components": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:46:06.985Z"
+  },
+  "count-the-number-of-consistent-strings": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"ab\",[\"ad\",\"bd\",\"aaab\",\"baa\",\"badab\"]]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"abc\",[\"a\",\"b\",\"c\",\"ab\",\"ac\",\"bc\",\"abc\"]]",
+        "expected": "7"
+      },
+      {
+        "input": "[\"cad\",[\"cc\",\"acd\",\"b\",\"ba\",\"bac\",\"bad\",\"ac\",\"d\"]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:00.928Z"
+  },
+  "count-triplets-that-can-form-two-arrays-of-equal-xor": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,1,6,7]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,1,1,1,1]]",
+        "expected": "10"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:09.234Z"
+  },
+  "counting-bits": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2]",
+        "expected": "[0,1,1]"
+      },
+      {
+        "input": "[5]",
+        "expected": "[0,1,1,2,1,2]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:50.538Z"
+  },
+  "counting-words-with-a-given-prefix": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"pay\",\"attention\",\"practice\",\"attend\"],\"at\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[[\"leetcode\",\"win\",\"loops\",\"success\"],\"code\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:09.853Z"
+  },
+  "course-schedule": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2,[[1,0]]]",
+        "expected": "true"
+      },
+      {
+        "input": "[2,[[1,0],[0,1]]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:05.891Z"
+  },
+  "course-schedule-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2,[[1,0]]]",
+        "expected": "[0,1]"
+      },
+      {
+        "input": "[4,[[1,0],[2,0],[3,1],[3,2]]]",
+        "expected": "[0,1,2,3]"
+      },
+      {
+        "input": "[1,[]]",
+        "expected": "[0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:06.860Z"
+  },
+  "cousins-in-binary-tree-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,4,9,1,10,null,7]]",
+        "expected": "[0,0,0,7,7,null,11]"
+      },
+      {
+        "input": "[[3,1,2]]",
+        "expected": "[0,0,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:26.859Z"
+  },
+  "create-binary-tree-from-descriptions": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[20,15,1],[20,17,0],[50,20,1],[50,80,0],[80,19,1]]]",
+        "expected": "[50,20,80,15,17,19]"
+      },
+      {
+        "input": "[[[1,2,1],[2,3,0],[3,4,1]]]",
+        "expected": "[1,2,null,null,3,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:22.593Z"
+  },
+  "create-target-array-in-the-given-order": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,2,3,4],[0,1,2,2,1]]",
+        "expected": "[0,4,1,3,2]"
+      },
+      {
+        "input": "[[1,2,3,4,0],[0,1,2,3,0]]",
+        "expected": "[0,1,2,3,4]"
+      },
+      {
+        "input": "[[1],[0]]",
+        "expected": "[1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:31.114Z"
+  },
+  "cyclically-rotating-a-grid": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[40,10],[30,20]],1]",
+        "expected": "[[10,20],[40,30]]"
+      },
+      {
+        "input": "[[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],2]",
+        "expected": "[[3,4,8,12],[2,11,10,16],[1,7,6,15],[5,9,13,14]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:59.152Z"
+  },
+  "daily-temperatures": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[73,74,75,71,69,72,76,73]]",
+        "expected": "[1,1,4,2,1,1,0,0]"
+      },
+      {
+        "input": "[[30,40,50,60]]",
+        "expected": "[1,1,1,0]"
+      },
+      {
+        "input": "[[30,60,90]]",
+        "expected": "[1,1,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:21.767Z"
+  },
+  "debounce": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:40:34.358Z",
+    "note": "no result from reference solution"
+  },
+  "decode-the-message": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"the quick brown fox jumps over the lazy dog\",\"vkbs bs t suepuv\"]",
+        "expected": "\"this is a secret\""
+      },
+      {
+        "input": "[\"eljuxhpwnyrdgtqkviszcfmabo\",\"zwx hnfx lqantp mnoeius ycgk vcnjrdb\"]",
+        "expected": "\"the five boxing wizards jump quickly\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:40.878Z"
+  },
+  "decode-ways": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"12\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"226\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"06\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:19.622Z"
+  },
+  "decode-xored-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3],1]",
+        "expected": "[1,0,2,1]"
+      },
+      {
+        "input": "[[6,2,7,3],4]",
+        "expected": "[4,2,0,7,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:16.962Z"
+  },
+  "decompress-run-length-encoded-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "[2,4,4,4]"
+      },
+      {
+        "input": "[[1,1,2,3]]",
+        "expected": "[1,3,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:35.884Z"
+  },
+  "deepest-leaves-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5,null,6,7,null,null,null,null,8]]",
+        "expected": "15"
+      },
+      {
+        "input": "[[6,7,8,2,7,1,3,9,null,1,4,null,null,null,5]]",
+        "expected": "19"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:54.262Z"
+  },
+  "defanging-an-ip-address": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"1.1.1.1\"]",
+        "expected": "\"1[.]1[.]1[.]1\""
+      },
+      {
+        "input": "[\"255.100.50.0\"]",
+        "expected": "\"255[.]100[.]50[.]0\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:45.778Z"
+  },
+  "delete-columns-to-make-sorted-iii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"babca\",\"bbazb\"]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[\"edcba\"]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[\"ghi\",\"def\",\"abc\"]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:50.638Z"
+  },
+  "delete-duplicate-folders-in-system": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"a\"],[\"c\"],[\"d\"],[\"a\",\"b\"],[\"c\",\"b\"],[\"d\",\"a\"]]]",
+        "expected": "[[\"d\"],[\"d\",\"a\"]]"
+      },
+      {
+        "input": "[[[\"a\"],[\"c\"],[\"a\",\"b\"],[\"c\",\"b\"],[\"a\",\"b\",\"x\"],[\"a\",\"b\",\"x\",\"y\"],[\"w\"],[\"w\",\"y\"]]]",
+        "expected": "[[\"a\"],[\"a\",\"b\"],[\"c\"],[\"c\",\"b\"]]"
+      },
+      {
+        "input": "[[[\"a\",\"b\"],[\"c\",\"d\"],[\"c\"],[\"a\"]]]",
+        "expected": "[[\"a\"],[\"a\",\"b\"],[\"c\"],[\"c\",\"d\"]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:37.023Z"
+  },
+  "delete-leaves-with-a-given-value": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,2,null,2,4],2]",
+        "expected": "[1,null,3,null,4]"
+      },
+      {
+        "input": "[[1,3,3,3,2],3]",
+        "expected": "[1,3,null,null,2]"
+      },
+      {
+        "input": "[[1,2,null,2,null,2],2]",
+        "expected": "[1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:13.242Z"
+  },
+  "delete-node-in-a-linked-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,5,1,9],5]",
+        "expected": "[5,1,9]"
+      },
+      {
+        "input": "[[4,5,1,9],1]",
+        "expected": "[5,1,9]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:16.391Z"
+  },
+  "design-a-stack-with-increment-operation": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:45:43.870Z",
+    "note": "class-based / design problem"
+  },
+  "design-browser-history": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:46:00.787Z",
+    "note": "class-based / design problem"
+  },
+  "design-graph-with-shortest-path-calculator": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:48:32.693Z",
+    "note": "class-based / design problem"
+  },
+  "design-parking-system": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:39:18.078Z",
+    "note": "class-based / design problem"
+  },
+  "design-spreadsheet": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:47:00.221Z",
+    "note": "class-based / design problem"
+  },
+  "design-twitter": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:49:55.268Z",
+    "note": "class-based / design problem"
+  },
+  "design-underground-system": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:46:55.603Z",
+    "note": "class-based / design problem"
+  },
+  "detect-squares": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:50:47.802Z",
+    "note": "class-based / design problem"
+  },
+  "diameter-of-tree": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:38.912Z"
+  },
+  "difference-between-element-sum-and-digit-sum-of-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,15,6,3]]",
+        "expected": "9"
+      },
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:55.121Z"
+  },
+  "difference-between-ones-and-zeros-in-row-and-column": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1,1],[1,0,1],[0,0,1]]]",
+        "expected": "[[0,0,4],[0,0,4],[-2,-2,2]]"
+      },
+      {
+        "input": "[[[1,1,1],[1,1,1]]]",
+        "expected": "[[5,5,5],[5,5,5]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:13.918Z"
+  },
+  "different-ways-to-add-parentheses": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:47:24.305Z"
+  },
+  "display-table-of-food-orders-in-a-restaurant": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"David\",\"3\",\"Ceviche\"],[\"Corina\",\"10\",\"Beef Burrito\"],[\"David\",\"3\",\"Fried Chicken\"],[\"Carla\",\"5\",\"Water\"],[\"Carla\",\"5\",\"Ceviche\"],[\"Rous\",\"3\",\"Ceviche\"]]]",
+        "expected": "[[\"Table\",\"Beef Burrito\",\"Ceviche\",\"Fried Chicken\",\"Water\"],[\"3\",\"0\",\"2\",\"1\",\"0\"],[\"5\",\"0\",\"1\",\"0\",\"1\"],[\"10\",\"1\",\"0\",\"0\",\"0\"]]"
+      },
+      {
+        "input": "[[[\"James\",\"12\",\"Fried Chicken\"],[\"Ratesh\",\"12\",\"Fried Chicken\"],[\"Amadeus\",\"12\",\"Fried Chicken\"],[\"Adam\",\"1\",\"Canadian Waffles\"],[\"Brianna\",\"1\",\"Canadian Waffles\"]]]",
+        "expected": "[[\"Table\",\"Canadian Waffles\",\"Fried Chicken\"],[\"1\",\"2\",\"0\"],[\"12\",\"0\",\"3\"]]"
+      },
+      {
+        "input": "[[[\"Laura\",\"2\",\"Bean Burrito\"],[\"Jhon\",\"2\",\"Beef Burrito\"],[\"Melissa\",\"2\",\"Soda\"]]]",
+        "expected": "[[\"Table\",\"Bean Burrito\",\"Beef Burrito\",\"Soda\"],[\"2\",\"1\",\"1\",\"1\"]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:21.733Z"
+  },
+  "distinct-subsequences": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"rabbbit\",\"rabbit\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"babgbag\",\"bag\"]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:32.972Z"
+  },
+  "distribute-coins-in-binary-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,0,0]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[0,3,0]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:12.381Z"
+  },
+  "divide-array-into-arrays-with-max-difference": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,4,8,7,9,3,5,1],2]",
+        "expected": "[[1,1,3],[3,4,5],[7,8,9]]"
+      },
+      {
+        "input": "[[2,4,2,2,5,2],2]",
+        "expected": "[]"
+      },
+      {
+        "input": "[[4,2,9,8,2,12,7,12,10,5,8,5,5,7,9,2,5,11],14]",
+        "expected": "[[2,2,2],[4,5,5],[5,5,7],[7,8,8],[9,9,10],[11,12,12]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:51.738Z"
+  },
+  "divide-nodes-into-the-maximum-number-of-groups": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[6,[[1,2],[1,4],[1,5],[2,6],[2,3],[4,6]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[3,[[1,2],[2,3],[3,1]]]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:19.399Z"
+  },
+  "divide-two-integers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[10,3]",
+        "expected": "3"
+      },
+      {
+        "input": "[7,-3]",
+        "expected": "-2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:21.928Z"
+  },
+  "divisible-and-non-divisible-sums-difference": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[10,3]",
+        "expected": "19"
+      },
+      {
+        "input": "[5,6]",
+        "expected": "15"
+      },
+      {
+        "input": "[5,1]",
+        "expected": "-15"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:37.048Z"
+  },
+  "earliest-possible-day-of-full-bloom": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,4,3],[2,3,1]]",
+        "expected": "9"
+      },
+      {
+        "input": "[[1,2,3,2],[2,1,2,1]]",
+        "expected": "9"
+      },
+      {
+        "input": "[[1],[1]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:57.235Z"
+  },
+  "earliest-time-to-finish-one-task": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,6],[2,3]]]",
+        "expected": "5"
+      },
+      {
+        "input": "[[[100,100],[100,100],[100,100]]]",
+        "expected": "200"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:06.002Z"
+  },
+  "edit-distance": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"horse\",\"ros\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"intention\",\"execution\"]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:31.542Z"
+  },
+  "egg-drop-with-2-eggs-and-n-floors": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2]",
+        "expected": "2"
+      },
+      {
+        "input": "[100]",
+        "expected": "14"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:52.669Z"
+  },
+  "encode-and-decode-tinyurl": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:40:52.159Z"
+  },
+  "encode-decode-strings": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:09.867Z"
+  },
+  "equal-subset-sum": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:23.406Z"
+  },
+  "eval-rpn": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:21.198Z"
+  },
+  "event-emitter": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:46:41.881Z",
+    "note": "Class constructor EventEmitter cannot be invoked without 'new'"
+  },
+  "execute-asynchronous-functions-in-parallel": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:45:54.448Z",
+    "note": "Unexpected token '(', \"[() => new \"... is not valid JSON"
+  },
+  "execution-of-all-suffix-instructions-staying-in-a-grid": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,[0,1],\"RRDDLU\"]",
+        "expected": "[1,5,4,3,1,0]"
+      },
+      {
+        "input": "[2,[1,1],\"LURD\"]",
+        "expected": "[4,1,0,0]"
+      },
+      {
+        "input": "[1,[0,0],\"LRUD\"]",
+        "expected": "[0,0,0,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:18.586Z"
+  },
+  "filter-elements-from-array": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:39:46.442Z",
+    "note": "Unexpected token 'u', \"function gr\"... is not valid JSON"
+  },
+  "final-array-state-after-k-multiplication-operations-i": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:39:23.402Z",
+    "note": "PriorityQueue is not defined"
+  },
+  "final-prices-with-a-special-discount-in-a-shop": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[8,4,6,2,3]]",
+        "expected": "[4,2,4,2,3]"
+      },
+      {
+        "input": "[[1,2,3,4,5]]",
+        "expected": "[1,2,3,4,5]"
+      },
+      {
+        "input": "[[10,1,1,6]]",
+        "expected": "[9,0,1,6]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:13.262Z"
+  },
+  "final-value-of-variable-after-performing-operations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"--X\",\"X++\",\"X++\"]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[\"++X\",\"++X\",\"X++\"]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[\"X++\",\"++X\",\"--X\",\"X--\"]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:39.117Z"
+  },
+  "find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:39:41.754Z",
+    "note": "Cannot read properties of undefined (reading 'left')"
+  },
+  "find-all-duplicates-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,3,2,7,8,2,3,1]]",
+        "expected": "[3,2]"
+      },
+      {
+        "input": "[[1,1,2]]",
+        "expected": "[1]"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:17.478Z"
+  },
+  "find-all-groups-of-farmland": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:46:33.992Z"
+  },
+  "find-anagrams": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:17.776Z"
+  },
+  "find-and-replace-pattern": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"abc\",\"deq\",\"mee\",\"aqq\",\"dkd\",\"ccc\"],\"abb\"]",
+        "expected": "[\"mee\",\"aqq\"]"
+      },
+      {
+        "input": "[[\"a\",\"b\",\"c\"],\"a\"]",
+        "expected": "[\"a\",\"b\",\"c\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:16.645Z"
+  },
+  "find-center-of-star-graph": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2],[2,3],[4,2]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[1,2],[5,1],[1,3],[1,4]]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:28.896Z"
+  },
+  "find-closest-person": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2,7,4]",
+        "expected": "1"
+      },
+      {
+        "input": "[2,5,6]",
+        "expected": "2"
+      },
+      {
+        "input": "[1,5,3]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:56.150Z"
+  },
+  "find-common-elements-between-two-arrays": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,2],[1,2]]",
+        "expected": "[2,1]"
+      },
+      {
+        "input": "[[4,3,2,3,1],[2,2,5,2,3,6]]",
+        "expected": "[3,4]"
+      },
+      {
+        "input": "[[3,4,2,3],[1,5]]",
+        "expected": "[0,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:08.910Z"
+  },
+  "find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:23.365Z"
+  },
+  "find-duplicate": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:35.678Z"
+  },
+  "find-elements-in-a-contaminated-binary-tree": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:41:15.775Z",
+    "note": "class-based / design problem"
+  },
+  "find-first-and-last-position-of-element-in-sorted-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,7,7,8,8,10],8]",
+        "expected": "[3,4]"
+      },
+      {
+        "input": "[[5,7,7,8,8,10],6]",
+        "expected": "[-1,-1]"
+      },
+      {
+        "input": "[[],0]",
+        "expected": "[-1,-1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:26.432Z"
+  },
+  "find-first-palindromic-string-in-the-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"abc\",\"car\",\"ada\",\"racecar\",\"cool\"]]",
+        "expected": "\"ada\""
+      },
+      {
+        "input": "[[\"notapalindrome\",\"racecar\"]]",
+        "expected": "\"racecar\""
+      },
+      {
+        "input": "[[\"def\",\"ghi\"]]",
+        "expected": "\"\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:16.357Z"
+  },
+  "find-indices-of-stable-mountains": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5],2]",
+        "expected": "[3,4]"
+      },
+      {
+        "input": "[[10,1,10,1,10],3]",
+        "expected": "[1,3]"
+      },
+      {
+        "input": "[[10,1,10,1,10],10]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:21.686Z"
+  },
+  "find-kth-bit-in-nth-binary-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,1]",
+        "expected": "\"0\""
+      },
+      {
+        "input": "[4,11]",
+        "expected": "\"1\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:14.355Z"
+  },
+  "find-median": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:56.920Z"
+  },
+  "find-min-rotated": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:27.911Z"
+  },
+  "find-minimum-operations-to-make-all-elements-divisible-by-three": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[3,6,9]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:38.168Z"
+  },
+  "find-missing-and-repeated-values": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,3],[2,2]]]",
+        "expected": "[2,4]"
+      },
+      {
+        "input": "[[[9,1,7],[8,9,2],[3,4,6]]]",
+        "expected": "[9,5]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:28.629Z"
+  },
+  "find-missing-elements": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,4,2,5]]",
+        "expected": "[3]"
+      },
+      {
+        "input": "[[7,8,6,9]]",
+        "expected": "[]"
+      },
+      {
+        "input": "[[5,1]]",
+        "expected": "[2,3,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:29.476Z"
+  },
+  "find-most-frequent-vowel-and-consonant": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"successes\"]",
+        "expected": "6"
+      },
+      {
+        "input": "[\"aeiaeia\"]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:54.187Z"
+  },
+  "find-occurrences-of-an-element-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,1,7],[1,3,2,4],1]",
+        "expected": "[0,-1,2,-1]"
+      },
+      {
+        "input": "[[1,2,3],[10],5]",
+        "expected": "[-1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:20.910Z"
+  },
+  "find-the-count-of-good-integers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,5]",
+        "expected": "27"
+      },
+      {
+        "input": "[1,4]",
+        "expected": "2"
+      },
+      {
+        "input": "[5,6]",
+        "expected": "2468"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:08.219Z"
+  },
+  "find-the-degree-of-each-vertex": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1,1],[1,0,1],[1,1,0]]]",
+        "expected": "[2,2,2]"
+      },
+      {
+        "input": "[[[0,1,0],[1,0,0],[0,0,0]]]",
+        "expected": "[1,1,0]"
+      },
+      {
+        "input": "[[[0]]]",
+        "expected": "[0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:27.633Z"
+  },
+  "find-the-highest-altitude": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[-5,1,5,0,-7]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[-4,-3,-2,-1,4,3,2]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:18.138Z"
+  },
+  "find-the-index-of-the-first-occurrence-in-a-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"sadbutsad\",\"sad\"]",
+        "expected": "0"
+      },
+      {
+        "input": "[\"leetcode\",\"leeto\"]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:20.659Z"
+  },
+  "find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,3,11],[2,4,6]],5]",
+        "expected": "7"
+      },
+      {
+        "input": "[[[1,3,11],[2,4,6]],9]",
+        "expected": "17"
+      },
+      {
+        "input": "[[[1,10,10],[1,4,5],[2,3,6]],7]",
+        "expected": "9"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:03.776Z"
+  },
+  "find-the-longest-substring-containing-vowels-in-even-counts": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"eleetminicoworoep\"]",
+        "expected": "13"
+      },
+      {
+        "input": "[\"leetcodeisgreat\"]",
+        "expected": "5"
+      },
+      {
+        "input": "[\"bcbcbc\"]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:33.079Z"
+  },
+  "find-the-longest-valid-obstacle-course-at-each-position": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,2]]",
+        "expected": "[1,2,3,3]"
+      },
+      {
+        "input": "[[2,2,1]]",
+        "expected": "[1,2,1]"
+      },
+      {
+        "input": "[[3,1,5,6,4,2]]",
+        "expected": "[1,1,2,3,2,2]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:00.562Z"
+  },
+  "find-the-maximum-achievable-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[4,1]",
+        "expected": "6"
+      },
+      {
+        "input": "[3,2]",
+        "expected": "7"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:33.770Z"
+  },
+  "find-the-maximum-number-of-fruits-collected": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3,4],[5,6,8,7],[9,10,11,12],[13,14,15,16]]]",
+        "expected": "100"
+      },
+      {
+        "input": "[[[1,1],[1,1]]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:35.029Z"
+  },
+  "find-the-maximum-sum-of-node-values": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,1],3,[[0,1],[0,2]]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[2,3],7,[[0,1]]]",
+        "expected": "9"
+      },
+      {
+        "input": "[[7,7,7,7,7,7],3,[[0,1],[0,2],[0,3],[0,4],[0,5]]]",
+        "expected": "42"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:05.865Z"
+  },
+  "find-the-minimum-area-to-cover-all-ones-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1,0],[1,0,1]]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[[0,0],[1,0]]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:02.291Z"
+  },
+  "find-the-minimum-area-to-cover-all-ones-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,0,1],[1,1,1]]]",
+        "expected": "5"
+      },
+      {
+        "input": "[[[1,0,1,0],[0,1,0,1]]]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:50.450Z"
+  },
+  "find-the-most-common-response": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"good\",\"ok\",\"good\",\"ok\"],[\"ok\",\"bad\",\"good\",\"ok\",\"ok\"],[\"good\"],[\"bad\"]]]",
+        "expected": "\"good\""
+      },
+      {
+        "input": "[[[\"good\",\"ok\",\"good\"],[\"ok\",\"bad\"],[\"bad\",\"notsure\"],[\"great\",\"good\"]]]",
+        "expected": "\"bad\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:48.358Z"
+  },
+  "find-the-number-of-good-pairs-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,4],[1,3,4],1]",
+        "expected": "5"
+      },
+      {
+        "input": "[[1,2,4,12],[2,4],3]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:33.944Z"
+  },
+  "find-the-number-of-ways-to-place-people-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,1],[2,2],[3,3]]]",
+        "expected": "0"
+      },
+      {
+        "input": "[[[6,2],[4,4],[2,6]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[3,1],[1,3],[1,1]]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:44.734Z"
+  },
+  "find-the-original-array-of-prefix-xor": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,2,0,3,1]]",
+        "expected": "[5,7,2,3,2]"
+      },
+      {
+        "input": "[[13]]",
+        "expected": "[13]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:43.594Z"
+  },
+  "find-the-pivot-integer": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[8]",
+        "expected": "6"
+      },
+      {
+        "input": "[1]",
+        "expected": "1"
+      },
+      {
+        "input": "[4]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:20.092Z"
+  },
+  "find-the-prefix-common-array-of-two-arrays": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,2,4],[3,1,2,4]]",
+        "expected": "[0,2,3,4]"
+      },
+      {
+        "input": "[[2,3,1],[3,1,2]]",
+        "expected": "[0,1,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:45.396Z"
+  },
+  "find-the-punishment-number-of-an-integer": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[10]",
+        "expected": "182"
+      },
+      {
+        "input": "[37]",
+        "expected": "1478"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:24.624Z"
+  },
+  "find-the-sequence-of-strings-appeared-on-the-screen": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abc\"]",
+        "expected": "[\"a\",\"aa\",\"ab\",\"aba\",\"abb\",\"abc\"]"
+      },
+      {
+        "input": "[\"he\"]",
+        "expected": "[\"a\",\"b\",\"c\",\"d\",\"e\",\"f\",\"g\",\"h\",\"ha\",\"hb\",\"hc\",\"hd\",\"he\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:37.521Z"
+  },
+  "find-the-string-with-lcp": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[4,0,2,0],[0,3,0,1],[2,0,2,0],[0,1,0,1]]]",
+        "expected": "\"abab\""
+      },
+      {
+        "input": "[[[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,1]]]",
+        "expected": "\"aaaa\""
+      },
+      {
+        "input": "[[[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,3]]]",
+        "expected": "\"\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:55.784Z"
+  },
+  "find-the-winner-of-the-circular-game": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5,2]",
+        "expected": "3"
+      },
+      {
+        "input": "[6,5]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:17.742Z"
+  },
+  "find-triangular-sum-of-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5]]",
+        "expected": "8"
+      },
+      {
+        "input": "[[5]]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:19.448Z"
+  },
+  "find-unique-binary-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"01\",\"10\"]]",
+        "expected": "\"00\""
+      },
+      {
+        "input": "[[\"00\",\"01\"]]",
+        "expected": "\"11\""
+      },
+      {
+        "input": "[[\"111\",\"011\",\"001\"]]",
+        "expected": "\"000\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:28.575Z"
+  },
+  "find-valid-matrix-given-row-and-column-sums": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,8],[4,7]]",
+        "expected": "[[3,0],[1,7]]"
+      },
+      {
+        "input": "[[5,7,10],[8,6,8]]",
+        "expected": "[[5,0,0],[3,4,0],[0,2,8]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:12.958Z"
+  },
+  "find-words-containing-character": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"leet\",\"code\"],\"e\"]",
+        "expected": "[0,1]"
+      },
+      {
+        "input": "[[\"abc\",\"bcd\",\"aaaa\",\"cbc\"],\"a\"]",
+        "expected": "[0,2]"
+      },
+      {
+        "input": "[[\"abc\",\"bcd\",\"aaaa\",\"cbc\"],\"z\"]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:40.225Z"
+  },
+  "find-xor-sum-of-all-pairs-bitwise-and": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3],[6,5]]",
+        "expected": "0"
+      },
+      {
+        "input": "[[12],[4]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:59.443Z"
+  },
+  "finding-the-users-active-minutes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,5],[1,2],[0,2],[0,5],[1,3]],5]",
+        "expected": "[0,2,0,0,0]"
+      },
+      {
+        "input": "[[[1,1],[2,2],[2,3]],4]",
+        "expected": "[1,1,0,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:32.075Z"
+  },
+  "first-missing-positive": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,0]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[3,4,-1,1]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[7,8,9,11,12]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:32.973Z"
+  },
+  "flip-columns-for-maximum-number-of-equal-rows": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1],[1,1]]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[[0,1],[1,0]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[0,0,0],[0,0,1],[1,1,0]]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:55.242Z"
+  },
+  "flipping-an-image": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,1,0],[1,0,1],[0,0,0]]]",
+        "expected": "[[1,0,0],[0,1,0],[1,1,1]]"
+      },
+      {
+        "input": "[[[1,1,0,0],[1,0,0,1],[0,1,1,1],[1,0,1,0]]]",
+        "expected": "[[1,1,0,0],[0,1,1,0],[0,0,0,1],[1,0,1,0]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:20.963Z"
+  },
+  "function-composition": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:39:25.124Z",
+    "note": "Unexpected token 'x', \"[x => x + 1\"... is not valid JSON"
+  },
+  "gas-station": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5],[3,4,5,1,2]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[2,3,4],[3,4,3]]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:35.944Z"
+  },
+  "gcd-of-odd-and-even-sums": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[4]",
+        "expected": "4"
+      },
+      {
+        "input": "[5]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:59.246Z"
+  },
+  "generate-binary-strings-without-adjacent-zeros": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3]",
+        "expected": "[\"010\",\"011\",\"101\",\"110\",\"111\"]"
+      },
+      {
+        "input": "[1]",
+        "expected": "[\"0\",\"1\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:42.780Z"
+  },
+  "generate-fibonacci-sequence": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5]",
+        "expected": "{}"
+      },
+      {
+        "input": "[0]",
+        "expected": "{}"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:22.511Z"
+  },
+  "generate-parentheses": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3]",
+        "expected": "[\"((()))\",\"(()())\",\"(())()\",\"()(())\",\"()()()\"]"
+      },
+      {
+        "input": "[1]",
+        "expected": "[\"()\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:15.410Z"
+  },
+  "goal-parser-interpretation": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"G()(al)\"]",
+        "expected": "\"Goal\""
+      },
+      {
+        "input": "[\"G()()()()(al)\"]",
+        "expected": "\"Gooooal\""
+      },
+      {
+        "input": "[\"(al)G(al)()()G\"]",
+        "expected": "\"alGalooG\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:02.761Z"
+  },
+  "graph-valid-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5,[[0,1],[0,2],[0,3],[1,4]]]",
+        "expected": "true"
+      },
+      {
+        "input": "[5,[[0,1],[1,2],[2,3],[1,3],[1,4]]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:07.715Z"
+  },
+  "group-anagrams": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]]",
+        "expected": "[[\"eat\",\"tea\",\"ate\"],[\"tan\",\"nat\"],[\"bat\"]]"
+      },
+      {
+        "input": "[[\"\"]]",
+        "expected": "[[\"\"]]"
+      },
+      {
+        "input": "[[\"a\"]]",
+        "expected": "[[\"a\"]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:24.264Z"
+  },
+  "group-by": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:45:27.575Z",
+    "note": "Unexpected token 'u', \"function (i\"... is not valid JSON"
+  },
+  "group-the-people-given-the-group-size-they-belong-to": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,3,3,3,3,1,3]]",
+        "expected": "[[5],[0,1,2],[3,4,6]]"
+      },
+      {
+        "input": "[[2,1,3,3,3,2]]",
+        "expected": "[[1],[0,5],[2,3,4]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:46.261Z"
+  },
+  "groups-of-special-equivalent-strings": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:47:15.179Z"
+  },
+  "hamming-weight": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:49.976Z"
+  },
+  "hand-of-straights": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,6,2,3,4,7,8],3]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,2,3,4,5],4]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:36.878Z"
+  },
+  "happy-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[19]",
+        "expected": "true"
+      },
+      {
+        "input": "[2]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:44.237Z"
+  },
+  "harshad-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[18]",
+        "expected": "9"
+      },
+      {
+        "input": "[23]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:26.766Z"
+  },
+  "hash-divided-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcd\",2]",
+        "expected": "\"bf\""
+      },
+      {
+        "input": "[\"mxz\",3]",
+        "expected": "\"i\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:23.345Z"
+  },
+  "house-robber": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,1]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[2,7,9,3,1]]",
+        "expected": "12"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:16.256Z"
+  },
+  "house-robber-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,2]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[1,2,3,1]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,2,3]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:17.101Z"
+  },
+  "how-many-numbers-are-smaller-than-the-current-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[8,1,2,2,3]]",
+        "expected": "[4,0,1,1,3]"
+      },
+      {
+        "input": "[[6,5,4,8]]",
+        "expected": "[2,1,0,3]"
+      },
+      {
+        "input": "[[7,7,7,7]]",
+        "expected": "[0,0,0,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:13.509Z"
+  },
+  "implement-trie": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:49.694Z"
+  },
+  "increment-submatrices-by-one": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,[[1,1,2,2],[0,0,1,1]]]",
+        "expected": "[[1,1,0],[1,2,1],[0,1,1]]"
+      },
+      {
+        "input": "[2,[[0,0,1,1]]]",
+        "expected": "[[1,1],[1,1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:10.675Z"
+  },
+  "insert-greatest-common-divisors-in-linked-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[18,6,10,3]]",
+        "expected": "[18,6,6,2,10,1,3]"
+      },
+      {
+        "input": "[[7]]",
+        "expected": "[7]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:36.171Z"
+  },
+  "insert-interval": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,3],[6,9]],[2,5]]",
+        "expected": "[[1,5],[6,9]]"
+      },
+      {
+        "input": "[[[1,2],[3,5],[6,7],[8,10],[12,16]],[4,8]]",
+        "expected": "[[1,2],[3,10],[12,16]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:40.471Z"
+  },
+  "insert-into-a-binary-search-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,2,7,1,3],5]",
+        "expected": "[4,2,7,1,3,5]"
+      },
+      {
+        "input": "[[40,20,60,10,30,50,70],25]",
+        "expected": "[40,20,60,10,30,50,70,null,null,25]"
+      },
+      {
+        "input": "[[4,2,7,1,3,null,null,null,null,null,null],5]",
+        "expected": "[4,2,7,1,3,5]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:18.883Z"
+  },
+  "integer-to-roman": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3749]",
+        "expected": "\"MMMDCCXLIX\""
+      },
+      {
+        "input": "[58]",
+        "expected": "\"LVIII\""
+      },
+      {
+        "input": "[1994]",
+        "expected": "\"MCMXCIV\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:07.130Z"
+  },
+  "interleaving-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aabcc\",\"dbbca\",\"aadbbcbcac\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"aabcc\",\"dbbca\",\"aadbbbaccc\"]",
+        "expected": "false"
+      },
+      {
+        "input": "[\"\",\"\",\"\"]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:29.588Z"
+  },
+  "interval-cancellation": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:40:00.942Z",
+    "note": "Unexpected token '(', \"(x) => x * 2\" is not valid JSON"
+  },
+  "invert-binary-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,2,7,1,3,6,9]]",
+        "expected": "[4,7,2,9,6,3,1]"
+      },
+      {
+        "input": "[[2,1,3]]",
+        "expected": "[2,3,1]"
+      },
+      {
+        "input": "[[]]",
+        "expected": "[]"
+      }
+    ],
+    "meta": {
+      "name": "invertTree",
+      "paramTypes": [
+        "TreeNode"
+      ],
+      "returnType": "TreeNode"
+    },
+    "generatedAt": "2026-08-30T18:54:43.272Z"
+  },
+  "is-subsequence": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abc\",\"ahbgdc\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"axc\",\"ahbgdc\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:06.013Z"
+  },
+  "island-perimeter": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]]",
+        "expected": "16"
+      },
+      {
+        "input": "[[[1]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[[1,0]]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:00.274Z"
+  },
+  "jewels-and-stones": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aA\",\"aAAbbbb\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"z\",\"ZZ\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:52.041Z"
+  },
+  "jump-game": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,1,1,4]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[3,2,1,0,4]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:34.968Z"
+  },
+  "jump-game-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,1,1,4]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[2,3,0,1,4]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:20.546Z"
+  },
+  "jump-game-v": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[6,4,14,6,8,13,9,7,10,6,12],2]",
+        "expected": "4"
+      },
+      {
+        "input": "[[3,3,3,3,3],3]",
+        "expected": "1"
+      },
+      {
+        "input": "[[7,6,5,4,3,2,1],1]",
+        "expected": "7"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:33.328Z"
+  },
+  "k-closest-points": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:53.113Z"
+  },
+  "keys-and-rooms": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1],[2],[3],[]]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[[1,3],[3,0,1],[2],[0]]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:30.834Z"
+  },
+  "kids-with-the-greatest-number-of-candies": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,5,1,3],3]",
+        "expected": "[true,true,true,false,true]"
+      },
+      {
+        "input": "[[4,2,1,1,2],1]",
+        "expected": "[true,false,false,false,false]"
+      },
+      {
+        "input": "[[12,1,12],10]",
+        "expected": "[true,false,true]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:04.743Z"
+  },
+  "koko-eating-bananas": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,6,7,11],8]",
+        "expected": "4"
+      },
+      {
+        "input": "[[30,11,23,4,20],5]",
+        "expected": "30"
+      },
+      {
+        "input": "[[30,11,23,4,20],6]",
+        "expected": "23"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:27.010Z"
+  },
+  "kth-largest-array": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:53.656Z"
+  },
+  "kth-largest-stream": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:51.697Z"
+  },
+  "kth-smallest-element-in-a-bst": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1,4,null,2],1]",
+        "expected": "1"
+      },
+      {
+        "input": "[[5,3,6,2,4,null,null,1],3]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:18.466Z"
+  },
+  "kth-smallest-in-bst": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:47.357Z"
+  },
+  "largest-combination-with-bitwise-and-greater-than-zero": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[16,17,71,62,12,24,14]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[8,8]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:32.950Z"
+  },
+  "largest-histogram": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:24.859Z"
+  },
+  "largest-local-values-in-a-matrix": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[9,9,8,1],[5,6,2,6],[8,2,6,4],[6,2,2,2]]]",
+        "expected": "[[9,9],[8,6]]"
+      },
+      {
+        "input": "[[[1,1,1,1,1],[1,1,1,1,1],[1,1,2,1,1],[1,1,1,1,1],[1,1,1,1,1]]]",
+        "expected": "[[2,2,2],[2,2,2],[2,2,2]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:10.172Z"
+  },
+  "largest-magic-square": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[7,1,4,5,6],[2,5,1,6,4],[1,5,4,3,2],[1,2,7,3,4]]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[[5,1,3,1],[9,3,3,1],[1,3,3,8]]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:38.932Z"
+  },
+  "largest-submatrix-with-rearrangements": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,0,1],[1,1,1],[1,0,1]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[[1,0,1,0,1]]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[[1,1,0],[1,0,1]]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:40.965Z"
+  },
+  "last-day-where-you-can-still-cross": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2,2,[[1,1],[2,1],[1,2],[2,2]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[2,2,[[1,1],[1,2],[2,1],[2,2]]]",
+        "expected": "1"
+      },
+      {
+        "input": "[3,3,[[1,2],[2,1],[3,3],[2,2],[1,1],[1,3],[2,3],[3,2],[3,1]]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:12.412Z"
+  },
+  "last-stone-weight": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:49:52.276Z",
+    "note": "MaxPriorityQueue is not defined"
+  },
+  "lca-of-bst": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:44.395Z"
+  },
+  "lcs": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:26.744Z"
+  },
+  "left-and-right-sum-differences": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,4,8,3]]",
+        "expected": "[15,1,11,22]"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "[0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:03.630Z"
+  },
+  "letter-case-permutation": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"a1b2\"]",
+        "expected": "[\"a1b2\",\"a1B2\",\"A1B2\",\"A1b2\"]"
+      },
+      {
+        "input": "[\"3z4\"]",
+        "expected": "[\"3z4\",\"3Z4\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:27.989Z"
+  },
+  "letter-combinations": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:59.729Z"
+  },
+  "letter-combinations-of-a-phone-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"23\"]",
+        "expected": "[\"ad\",\"ae\",\"af\",\"bd\",\"be\",\"bf\",\"cd\",\"ce\",\"cf\"]"
+      },
+      {
+        "input": "[\"2\"]",
+        "expected": "[\"a\",\"b\",\"c\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:11.748Z"
+  },
+  "letter-tile-possibilities": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"AAB\"]",
+        "expected": "8"
+      },
+      {
+        "input": "[\"AAABBC\"]",
+        "expected": "188"
+      },
+      {
+        "input": "[\"V\"]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:20.664Z"
+  },
+  "level-order-traversal": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:45.045Z"
+  },
+  "lexicographical-numbers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[13]",
+        "expected": "[1,10,11,12,13,2,3,4,5,6,7,8,9]"
+      },
+      {
+        "input": "[2]",
+        "expected": "[1,2]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:23.686Z"
+  },
+  "lexicographically-smallest-equivalent-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"parker\",\"morris\",\"parser\"]",
+        "expected": "\"makkek\""
+      },
+      {
+        "input": "[\"hello\",\"world\",\"hold\"]",
+        "expected": "\"hdld\""
+      },
+      {
+        "input": "[\"leetcode\",\"programs\",\"sourcecode\"]",
+        "expected": "\"aauaaaaada\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:29.453Z"
+  },
+  "lexicographically-smallest-string-after-applying-operations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"5525\",9,2]",
+        "expected": "\"2050\""
+      },
+      {
+        "input": "[\"74\",5,1]",
+        "expected": "\"24\""
+      },
+      {
+        "input": "[\"0011\",4,2]",
+        "expected": "\"0011\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:48.884Z"
+  },
+  "linked-list-cycle": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,2,0,-4],1]",
+        "expected": "false"
+      },
+      {
+        "input": "[[1,2],0]",
+        "expected": "false"
+      },
+      {
+        "input": "[[1],-1]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:32.201Z"
+  },
+  "lip-matrix": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:32.420Z"
+  },
+  "lis": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:22.704Z"
+  },
+  "longest-common-prefix": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"flower\",\"flow\",\"flight\"]]",
+        "expected": "\"fl\""
+      },
+      {
+        "input": "[[\"dog\",\"racecar\",\"car\"]]",
+        "expected": "\"\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:09.134Z"
+  },
+  "longest-consecutive": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:11.002Z"
+  },
+  "longest-palindromic-substr": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:18.063Z"
+  },
+  "longest-palindromic-substring": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"babad\"]",
+        "expected": "\"aba\""
+      },
+      {
+        "input": "[\"cbbd\"]",
+        "expected": "\"bb\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:36:59.990Z"
+  },
+  "longest-subsequence-repeated-k-times": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"letsleetcode\",2]",
+        "expected": "\"let\""
+      },
+      {
+        "input": "[\"bb\",2]",
+        "expected": "\"b\""
+      },
+      {
+        "input": "[\"ab\",2]",
+        "expected": "\"\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:56.280Z"
+  },
+  "longest-substring-no-repeat": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:15.814Z"
+  },
+  "longest-substring-without-repeating": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:38:16.398Z"
+  },
+  "longest-substring-without-repeating-characters": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcabcbb\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"bbbbb\"]",
+        "expected": "1"
+      },
+      {
+        "input": "[\"pwwkew\"]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:36:58.209Z"
+  },
+  "longest-valid-parentheses": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"(()\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\")()())\"]",
+        "expected": "4"
+      },
+      {
+        "input": "[\"\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:24.622Z"
+  },
+  "lowest-common-ancestor-of-deepest-leaves": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,5,1,6,2,0,8,null,null,7,4]]",
+        "expected": "[2,7,4]"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "[1]"
+      },
+      {
+        "input": "[[0,1,3,null,2]]",
+        "expected": "[2]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:47.193Z"
+  },
+  "lru-cache": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:49:36.244Z",
+    "note": "class-based / design problem"
+  },
+  "majority-element": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,2,3]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[2,2,1,1,1,2,2]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:07.588Z"
+  },
+  "map-of-highest-peak": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1],[0,0]]]",
+        "expected": "[[1,0],[2,1]]"
+      },
+      {
+        "input": "[[[0,0,1],[1,0,0],[0,0,0]]]",
+        "expected": "[[1,1,0],[0,1,1],[1,2,2]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:28.849Z"
+  },
+  "matrix-block-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3],[4,5,6],[7,8,9]],1]",
+        "expected": "[[12,21,16],[27,45,33],[24,39,28]]"
+      },
+      {
+        "input": "[[[1,2,3],[4,5,6],[7,8,9]],2]",
+        "expected": "[[45,45,45],[45,45,45],[45,45,45]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:19.318Z"
+  },
+  "matrix-diagonal-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3],[4,5,6],[7,8,9]]]",
+        "expected": "25"
+      },
+      {
+        "input": "[[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]]]",
+        "expected": "8"
+      },
+      {
+        "input": "[[[5]]]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:10.690Z"
+  },
+  "max-area-of-island": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,0,1,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,1,1,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,1,1,0,0,1,0,1,0,0],[0,1,0,0,1,1,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,0,1,1,0,0,0,0]]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[[0,0,0,0,0,0,0,0]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:05.355Z"
+  },
+  "max-depth": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:38.362Z"
+  },
+  "max-dot-product-of-two-subsequences": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,1,-2,5],[3,0,-6]]",
+        "expected": "18"
+      },
+      {
+        "input": "[[3,-2],[2,-6,7]]",
+        "expected": "21"
+      },
+      {
+        "input": "[[-1,-1],[1,1]]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:07.169Z"
+  },
+  "max-increase-to-keep-city-skyline": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]]",
+        "expected": "35"
+      },
+      {
+        "input": "[[[0,0,0],[0,0,0],[0,0,0]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:55.798Z"
+  },
+  "max-path-sum": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:48.554Z"
+  },
+  "max-product-subarray": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:21.283Z"
+  },
+  "max-subarray": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:34.427Z"
+  },
+  "maximal-square": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:50:30.449Z"
+  },
+  "maximize-alternating-sum-using-swaps": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:40.467Z"
+  },
+  "maximize-spanning-tree-stability-with-upgrades": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,[[0,1,2,1],[1,2,3,0]],1]",
+        "expected": "2"
+      },
+      {
+        "input": "[3,[[0,1,4,0],[1,2,3,0],[0,2,1,0]],2]",
+        "expected": "6"
+      },
+      {
+        "input": "[3,[[0,1,1,1],[1,2,1,1],[2,0,1,1]],0]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:25.534Z"
+  },
+  "maximize-subarrays-after-removing-one-conflicting-pair": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[4,[[2,3],[1,4]]]",
+        "expected": "9"
+      },
+      {
+        "input": "[5,[[1,2],[2,5],[3,5]]]",
+        "expected": "12"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:41.792Z"
+  },
+  "maximize-the-number-of-target-nodes-after-connecting-trees-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1],[0,2],[2,3],[2,4]],[[0,1],[0,2],[0,3],[2,7],[1,4],[4,5],[4,6]]]",
+        "expected": "[8,7,7,8,8]"
+      },
+      {
+        "input": "[[[0,1],[0,2],[0,3],[0,4]],[[0,1],[1,2],[2,3]]]",
+        "expected": "[3,6,6,6,6]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:47.238Z"
+  },
+  "maximum-69-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[9669]",
+        "expected": "9969"
+      },
+      {
+        "input": "[9996]",
+        "expected": "9999"
+      },
+      {
+        "input": "[9999]",
+        "expected": "9999"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:07.917Z"
+  },
+  "maximum-average-pass-ratio": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:47:01.317Z",
+    "note": "PriorityQueue is not defined"
+  },
+  "maximum-binary-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,2,1,6,0,5]]",
+        "expected": "[6,3,5,null,2,0,null,null,1]"
+      },
+      {
+        "input": "[[3,2,1]]",
+        "expected": "[3,null,2,null,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:57.303Z"
+  },
+  "maximum-candies-you-can-get-from-boxes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,0,1,0],[7,5,4,100],[[],[],[1],[]],[[1,2],[3],[],[]],[0]]",
+        "expected": "16"
+      },
+      {
+        "input": "[[1,0,0,0,0,0],[1,1,1,1,1,1],[[1,2,3,4,5],[],[],[],[],[]],[[1,2,3,4,5],[],[],[],[],[]],[0]]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:16.533Z"
+  },
+  "maximum-difference-between-node-and-ancestor": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[8,3,10,1,6,null,14,null,null,4,7,13]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[1,null,2,null,0,3]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:01.422Z"
+  },
+  "maximum-frequency-stack": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:48:21.490Z",
+    "note": "class-based / design problem"
+  },
+  "maximum-ice-cream-bars": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,2,4,1],7]",
+        "expected": "4"
+      },
+      {
+        "input": "[[10,6,8,7,7,8],5]",
+        "expected": "0"
+      },
+      {
+        "input": "[[1,6,3,1,2,5],20]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:57.305Z"
+  },
+  "maximum-matching-of-players-with-trainers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,7,9],[8,2,5,8]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[1,1,1],[10]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:38.024Z"
+  },
+  "maximum-nesting-depth-of-the-parentheses": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"(1+(2*3)+((8)/4))+1\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"(1)+((2))+(((3)))\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"()(())((()()))\"]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:01.574Z"
+  },
+  "maximum-number-of-achievable-transfer-requests": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5,[[0,1],[1,0],[0,1],[1,2],[2,0],[3,4]]]",
+        "expected": "5"
+      },
+      {
+        "input": "[3,[[0,0],[1,2],[2,1]]]",
+        "expected": "3"
+      },
+      {
+        "input": "[4,[[0,3],[3,1],[1,2],[2,0]]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:39.633Z"
+  },
+  "maximum-number-of-coins-you-can-get": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,4,1,2,7,8]]",
+        "expected": "9"
+      },
+      {
+        "input": "[[2,4,5]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[9,8,7,6,5,1,2,3,4]]",
+        "expected": "18"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:08.253Z"
+  },
+  "maximum-number-of-events-that-can-be-attended-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,4],[3,4,3],[2,3,1]],2]",
+        "expected": "7"
+      },
+      {
+        "input": "[[[1,2,4],[3,4,3],[2,3,10]],2]",
+        "expected": "10"
+      },
+      {
+        "input": "[[[1,1,1],[2,2,2],[3,3,3],[4,4,4]],3]",
+        "expected": "9"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:51.318Z"
+  },
+  "maximum-number-of-k-divisible-components": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5,[[0,2],[1,2],[1,3],[2,4]],[1,8,1,4,4],6]",
+        "expected": "2"
+      },
+      {
+        "input": "[7,[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]],[3,0,6,1,5,2,1],3]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:44.789Z"
+  },
+  "maximum-number-of-words-found-in-sentences": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"alice and bob love leetcode\",\"i think so too\",\"this is great thanks very much\"]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[\"please wait\",\"continue to fight\",\"continue to win\"]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:27.144Z"
+  },
+  "maximum-product-difference-between-two-pairs": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,6,2,7,4]]",
+        "expected": "34"
+      },
+      {
+        "input": "[[4,2,5,9,7,4,8]]",
+        "expected": "64"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:31.046Z"
+  },
+  "maximum-product-of-two-elements-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,4,5,2]]",
+        "expected": "12"
+      },
+      {
+        "input": "[[1,5,4,5]]",
+        "expected": "16"
+      },
+      {
+        "input": "[[3,7]]",
+        "expected": "12"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:24.197Z"
+  },
+  "maximum-score-from-grid-operations": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:43.681Z"
+  },
+  "maximum-score-of-a-good-subarray": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,4,3,7,4,5],3]",
+        "expected": "15"
+      },
+      {
+        "input": "[[5,5,4,5,4,1,1,1],0]",
+        "expected": "20"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:45.608Z"
+  },
+  "maximum-score-words-formed-by-letters": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:47:30.183Z"
+  },
+  "maximum-subgraph-score-in-a-tree": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:00.019Z"
+  },
+  "maximum-substrings-with-distinct-start": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abab\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"abcd\"]",
+        "expected": "4"
+      },
+      {
+        "input": "[\"aaaa\"]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:35.272Z"
+  },
+  "maximum-sum-of-an-hourglass": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[6,2,1,3],[4,2,1,5],[9,2,8,7],[4,1,2,9]]]",
+        "expected": "30"
+      },
+      {
+        "input": "[[[1,2,3],[4,5,6],[7,8,9]]]",
+        "expected": "35"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:22.667Z"
+  },
+  "maximum-twin-sum-of-a-linked-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,4,2,1]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[4,2,2,3]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[1,100000]]",
+        "expected": "100001"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:23.540Z"
+  },
+  "maximum-xor-after-operations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,2,4,6]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[1,2,3,9,2]]",
+        "expected": "11"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:44.463Z"
+  },
+  "maximum-xor-for-each-query": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,1,3],2]",
+        "expected": "[0,3,2,3]"
+      },
+      {
+        "input": "[[2,3,4,7],3]",
+        "expected": "[5,2,6,5]"
+      },
+      {
+        "input": "[[0,1,2,2,5,7],3]",
+        "expected": "[4,3,6,4,6,7]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:11.098Z"
+  },
+  "median-of-two-sorted-arrays": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3],[2]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[1,2],[3,4]]",
+        "expected": "2.5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:36:59.052Z"
+  },
+  "median-two-sorted-arrays": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:30.253Z"
+  },
+  "meeting-rooms": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,30],[5,10],[15,20]]]",
+        "expected": "false"
+      },
+      {
+        "input": "[[[7,10],[2,4]]]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:38.916Z"
+  },
+  "meeting-rooms-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,30],[5,10],[15,20]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[7,10],[2,4]]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:42.783Z"
+  },
+  "merge-in-between-linked-lists": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,1,13,6,9,5],3,4,[1000000,1000001,1000002]]",
+        "expected": "[10,1,13,1000000,1000001,1000002,5]"
+      },
+      {
+        "input": "[[0,1,2,3,4,5,6],2,5,[1000000,1000001,1000002,1000003,1000004]]",
+        "expected": "[0,1,1000000,1000001,1000002,1000003,1000004,6]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:26.708Z"
+  },
+  "merge-intervals": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,3],[2,6],[8,10],[15,18]]]",
+        "expected": "[[1,6],[8,10],[15,18]]"
+      },
+      {
+        "input": "[[[1,4],[4,5]]]",
+        "expected": "[[1,5]]"
+      },
+      {
+        "input": "[[[4,7],[1,4]]]",
+        "expected": "[[1,7]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:41.358Z"
+  },
+  "merge-k-sorted-lists": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:38:16.964Z",
+    "note": "PriorityQueue is not defined"
+  },
+  "merge-nodes-in-between-zeros": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,3,1,0,4,5,2,0]]",
+        "expected": "[4,11]"
+      },
+      {
+        "input": "[[0,1,0,3,0,2,2,0]]",
+        "expected": "[1,3,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:40.711Z"
+  },
+  "merge-sorted-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,0,0,0],3,[2,5,6],3]",
+        "expected": "[1,2,2,3,5,6]"
+      },
+      {
+        "input": "[[1],1,[],0]",
+        "expected": "[1]"
+      },
+      {
+        "input": "[[0],0,[1],1]",
+        "expected": "[1]"
+      }
+    ],
+    "meta": {
+      "name": "merge",
+      "paramTypes": [
+        "integer[]",
+        "integer",
+        "integer[]",
+        "integer"
+      ],
+      "returnType": "void"
+    },
+    "generatedAt": "2026-08-30T18:54:41.660Z"
+  },
+  "merge-triplets": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:37.791Z"
+  },
+  "merge-two-sorted": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:31.626Z"
+  },
+  "merge-two-sorted-lists": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,4],[1,3,4]]",
+        "expected": "[1,1,2,3,4,4]"
+      },
+      {
+        "input": "[[],[]]",
+        "expected": "[]"
+      },
+      {
+        "input": "[[],[0]]",
+        "expected": "[0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:14.497Z"
+  },
+  "min-cost-connect-all": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:11.103Z"
+  },
+  "min-cost-stairs": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:15.700Z"
+  },
+  "min-effort-path": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:13.073Z"
+  },
+  "min-interval-query": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:43.689Z"
+  },
+  "min-stack": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:49:20.484Z",
+    "note": "class-based / design problem"
+  },
+  "min-window-substring": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:18.341Z"
+  },
+  "minimize-maximum-pair-sum-in-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,5,2,3]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[3,5,4,2,4,6]]",
+        "expected": "8"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:22.372Z"
+  },
+  "minimum-absolute-difference-in-sliding-submatrix": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,8],[3,-2]],2]",
+        "expected": "[[2]]"
+      },
+      {
+        "input": "[[[3,-1]],1]",
+        "expected": "[[0,0]]"
+      },
+      {
+        "input": "[[[1,-2,3],[2,3,5]],2]",
+        "expected": "[[1,2]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:52.583Z"
+  },
+  "minimum-add-to-make-parentheses-valid": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"())\"]",
+        "expected": "1"
+      },
+      {
+        "input": "[\"(((\"]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:56.452Z"
+  },
+  "minimum-amount-of-time-to-collect-garbage": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"G\",\"P\",\"GP\",\"GG\"],[2,4,3]]",
+        "expected": "21"
+      },
+      {
+        "input": "[[\"MMM\",\"PGM\",\"GP\"],[3,10]]",
+        "expected": "37"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:05.904Z"
+  },
+  "minimum-average-of-smallest-and-largest-elements": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[7,8,3,4,15,13,4,1]]",
+        "expected": "5.5"
+      },
+      {
+        "input": "[[1,9,8,3,10,5]]",
+        "expected": "5.5"
+      },
+      {
+        "input": "[[1,2,3,7,8,9]]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:54.245Z"
+  },
+  "minimum-bit-flips-to-convert-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[10,7]",
+        "expected": "3"
+      },
+      {
+        "input": "[3,4]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:06.660Z"
+  },
+  "minimum-cost-to-cut-a-stick": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[7,[1,3,4,5]]",
+        "expected": "16"
+      },
+      {
+        "input": "[9,[5,6,1,4,2]]",
+        "expected": "22"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:58.606Z"
+  },
+  "minimum-cost-to-hire-k-workers": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:48.291Z"
+  },
+  "minimum-cost-to-make-at-least-one-valid-path-in-a-grid": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,1,1,1],[2,2,2,2],[1,1,1,1],[2,2,2,2]]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[[1,1,3],[3,2,2],[1,1,4]]]",
+        "expected": "0"
+      },
+      {
+        "input": "[[[1,2],[4,3]]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:58.255Z"
+  },
+  "minimum-cost-to-reach-every-position": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,3,4,1,3,2]]",
+        "expected": "[5,3,3,1,1,1]"
+      },
+      {
+        "input": "[[1,2,4,6,7]]",
+        "expected": "[1,1,1,1,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:25.893Z"
+  },
+  "minimum-cost-to-split-into-ones": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3]",
+        "expected": "3"
+      },
+      {
+        "input": "[4]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:25.844Z"
+  },
+  "minimum-cost-walk-in-weighted-graph": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5,[[0,1,7],[1,3,7],[1,2,1]],[[0,3],[3,4]]]",
+        "expected": "[1,-1]"
+      },
+      {
+        "input": "[3,[[0,2,7],[0,1,15],[1,2,6],[1,2,1]],[[1,2]]]",
+        "expected": "[0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:13.407Z"
+  },
+  "minimum-difference-in-sums-after-removal-of-elements": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:48:04.305Z",
+    "note": "MaxPriorityQueue is not defined"
+  },
+  "minimum-distance-between-three-equal-elements-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,1,1,3]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[1,1,2,3,2,1,2]]",
+        "expected": "8"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:51.347Z"
+  },
+  "minimum-distance-to-type-a-word-using-two-fingers": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:47:53.268Z"
+  },
+  "minimum-edge-toggles-on-a-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,[[0,1],[1,2]],\"010\",\"100\"]",
+        "expected": "[0]"
+      },
+      {
+        "input": "[7,[[0,1],[1,2],[2,3],[3,4],[3,5],[1,6]],\"0011000\",\"0010001\"]",
+        "expected": "[1,2,5]"
+      },
+      {
+        "input": "[2,[[0,1]],\"00\",\"01\"]",
+        "expected": "[-1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:11.265Z"
+  },
+  "minimum-element-after-replacement-with-digit-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,12,13,14]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[999,19,199]]",
+        "expected": "10"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:03.345Z"
+  },
+  "minimum-falling-path-sum-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3],[4,5,6],[7,8,9]]]",
+        "expected": "13"
+      },
+      {
+        "input": "[[[7]]]",
+        "expected": "7"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:57.625Z"
+  },
+  "minimum-index-of-a-valid-split": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,2,2]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[2,1,3,1,1,1,7,1,2,1]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[3,3,3,3,7,2,2]]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:35.094Z"
+  },
+  "minimum-initial-energy-to-finish-tasks": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2],[2,4],[4,8]]]",
+        "expected": "8"
+      },
+      {
+        "input": "[[[1,3],[2,4],[10,11],[10,12],[8,9]]]",
+        "expected": "32"
+      },
+      {
+        "input": "[[[1,7],[2,8],[3,9],[4,10],[5,11],[6,12]]]",
+        "expected": "27"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:39.716Z"
+  },
+  "minimum-insertion-steps-to-make-a-string-palindrome": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:47:46.164Z"
+  },
+  "minimum-length-of-string-after-operations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abaacbcbb\"]",
+        "expected": "5"
+      },
+      {
+        "input": "[\"aa\"]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:43.694Z"
+  },
+  "minimum-number-game": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:39:49.604Z",
+    "note": "MinPriorityQueue is not defined"
+  },
+  "minimum-number-of-changes-to-make-binary-string-beautiful": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"1001\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"10\"]",
+        "expected": "1"
+      },
+      {
+        "input": "[\"0000\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:20.776Z"
+  },
+  "minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:47:49.589Z"
+  },
+  "minimum-number-of-flips-to-make-binary-grid-palindromic-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,0,0],[0,0,0],[0,0,1]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[0,1],[0,1],[0,0]]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[[1],[0]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:47.368Z"
+  },
+  "minimum-number-of-increments-on-subarrays-to-form-a-target-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,2,1]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[3,1,1,2]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[3,1,5,4,2]]",
+        "expected": "7"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:35.786Z"
+  },
+  "minimum-number-of-k-consecutive-bit-flips": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,0],1]",
+        "expected": "2"
+      },
+      {
+        "input": "[[1,1,0],2]",
+        "expected": "-1"
+      },
+      {
+        "input": "[[0,0,0,1,0,1,1,0],3]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:04.582Z"
+  },
+  "minimum-number-of-moves-to-seat-everyone": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1,5],[2,7,4]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[4,1,5,9],[1,3,2,6]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[2,2,6,6],[1,3,2,6]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:18.783Z"
+  },
+  "minimum-number-of-operations-to-make-array-xor-equal-to-k": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,1,3,4],1]",
+        "expected": "2"
+      },
+      {
+        "input": "[[2,0,2,0],0]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:04.633Z"
+  },
+  "minimum-number-of-operations-to-move-all-balls-to-each-box": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"110\"]",
+        "expected": "[1,1,3]"
+      },
+      {
+        "input": "[\"001011\"]",
+        "expected": "[11,8,5,4,3,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:38.866Z"
+  },
+  "minimum-number-of-operations-to-sort-a-binary-tree-by-level": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,4,3,7,6,8,5,null,null,null,null,9,null,10]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[1,3,2,7,6,5,4]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[1,2,3,4,5,6]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:58.239Z"
+  },
+  "minimum-number-of-pushes-to-type-word-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcde\"]",
+        "expected": "5"
+      },
+      {
+        "input": "[\"xyzxyzxyzxyz\"]",
+        "expected": "12"
+      },
+      {
+        "input": "[\"aabbccddeeffgghhiiiiii\"]",
+        "expected": "24"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:42.150Z"
+  },
+  "minimum-number-of-steps-to-make-two-strings-anagram": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"bab\",\"aba\"]",
+        "expected": "1"
+      },
+      {
+        "input": "[\"leetcode\",\"practice\"]",
+        "expected": "5"
+      },
+      {
+        "input": "[\"anagram\",\"mangaar\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:13.825Z"
+  },
+  "minimum-number-of-swaps-to-make-the-string-balanced": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"][][\"]",
+        "expected": "1"
+      },
+      {
+        "input": "[\"]]][[[\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"[]\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:05.088Z"
+  },
+  "minimum-number-of-vertices-to-reach-all-nodes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[6,[[0,1],[0,2],[2,5],[3,4],[4,2]]]",
+        "expected": "[0,3]"
+      },
+      {
+        "input": "[5,[[0,1],[2,1],[3,1],[1,4],[2,4]]]",
+        "expected": "[0,2,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:25.456Z"
+  },
+  "minimum-obstacle-removal-to-reach-corner": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1,1],[1,1,0],[1,1,0]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[0,1,0,0,0],[0,1,0,1,0],[0,0,0,1,0]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:59.118Z"
+  },
+  "minimum-one-bit-operations-to-make-integers-zero": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3]",
+        "expected": "2"
+      },
+      {
+        "input": "[6]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:34.955Z"
+  },
+  "minimum-operations-to-exceed-threshold-value-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,11,10,1,3],10]",
+        "expected": "3"
+      },
+      {
+        "input": "[[1,1,2,4,9],1]",
+        "expected": "0"
+      },
+      {
+        "input": "[[1,1,2,4,9],9]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:25.746Z"
+  },
+  "minimum-operations-to-make-array-equal": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3]",
+        "expected": "2"
+      },
+      {
+        "input": "[6]",
+        "expected": "9"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:12.097Z"
+  },
+  "minimum-operations-to-make-array-sum-divisible-by-k": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,9,7],5]",
+        "expected": "4"
+      },
+      {
+        "input": "[[4,1,3],4]",
+        "expected": "0"
+      },
+      {
+        "input": "[[3,2],6]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:28.789Z"
+  },
+  "minimum-operations-to-make-binary-array-elements-equal-to-one-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,1,1,0,0]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[0,1,1,1]]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:36.147Z"
+  },
+  "minimum-prefix-removal-to-make-array-strictly-increasing": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,-1,2,3,3,4,5]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[4,3,-2,-5]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:08.311Z"
+  },
+  "minimum-score-after-removals-on-a-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,5,5,4,11],[[0,1],[1,2],[1,3],[3,4]]]",
+        "expected": "9"
+      },
+      {
+        "input": "[[5,5,2,4,4,2],[[0,1],[1,2],[5,2],[4,3],[1,3]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:40.767Z"
+  },
+  "minimum-string-length-after-balanced-removals": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aabbab\"]",
+        "expected": "0"
+      },
+      {
+        "input": "[\"aaaa\"]",
+        "expected": "4"
+      },
+      {
+        "input": "[\"aaabb\"]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:58.342Z"
+  },
+  "minimum-suffix-flips": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"10111\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"101\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"00000\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:07.198Z"
+  },
+  "minimum-sum-of-four-digit-number-after-splitting-digits": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2932]",
+        "expected": "52"
+      },
+      {
+        "input": "[4009]",
+        "expected": "13"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:34.795Z"
+  },
+  "minimum-time-visiting-all-points": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,1],[3,4],[-1,0]]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[[3,2],[-2,2]]]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:05.114Z"
+  },
+  "minimum-total-distance-traveled": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,4,6],[[2,2],[6,2]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,-1],[[-2,1],[2,1]]]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:56.731Z"
+  },
+  "mirror-distance-of-an-integer": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[25]",
+        "expected": "27"
+      },
+      {
+        "input": "[10]",
+        "expected": "9"
+      },
+      {
+        "input": "[7]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:31.638Z"
+  },
+  "missing-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,0,1]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[0,1]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[9,6,4,2,3,5,7,0,1]]",
+        "expected": "8"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:52.194Z"
+  },
+  "multiply-strings": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"2\",\"3\"]",
+        "expected": "\"6\""
+      },
+      {
+        "input": "[\"123\",\"456\"]",
+        "expected": "\"56088\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:18.761Z"
+  },
+  "my-calendar-iii": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:47:55.624Z",
+    "note": "class-based / design problem"
+  },
+  "n-queens": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[4]",
+        "expected": "[[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]"
+      },
+      {
+        "input": "[1]",
+        "expected": "[[\"Q\"]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:41.713Z"
+  },
+  "n-queens-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[4]",
+        "expected": "2"
+      },
+      {
+        "input": "[1]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:33.851Z"
+  },
+  "neighboring-bitwise-xor": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,1,0]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,1]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,0]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:45.835Z"
+  },
+  "nested-array-generator": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:45:34.817Z",
+    "note": "inorderTraveral is not defined"
+  },
+  "network-delay-time": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[2,1,1],[2,3,1],[3,4,1]],4,2]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[1,2,1]],2,1]",
+        "expected": "1"
+      },
+      {
+        "input": "[[[1,2,1]],2,2]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:11.673Z"
+  },
+  "next-permutation": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3]]",
+        "expected": "[1,3,2]"
+      },
+      {
+        "input": "[[3,2,1]]",
+        "expected": "[1,2,3]"
+      },
+      {
+        "input": "[[1,1,5]]",
+        "expected": "[1,5,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:23.622Z"
+  },
+  "non-overlapping": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:42.215Z"
+  },
+  "number-of-arithmetic-triplets": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,4,6,7,10],3]",
+        "expected": "2"
+      },
+      {
+        "input": "[[4,5,6,7,8,9],2]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:50.485Z"
+  },
+  "number-of-atoms": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"H2O\"]",
+        "expected": "\"H2O\""
+      },
+      {
+        "input": "[\"Mg(OH)2\"]",
+        "expected": "\"H2MgO2\""
+      },
+      {
+        "input": "[\"K4(ON(SO3)2)2\"]",
+        "expected": "\"K4N2O14S4\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:34.166Z"
+  },
+  "number-of-employees-who-met-the-target": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,2,3,4],2]",
+        "expected": "3"
+      },
+      {
+        "input": "[[5,1,4,2,2],6]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:07.499Z"
+  },
+  "number-of-good-pairs": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,1,1,3]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,1,1,1]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[1,2,3]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:46.867Z"
+  },
+  "number-of-islands": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:01.198Z"
+  },
+  "number-of-laser-beams-in-a-bank": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"011001\",\"000000\",\"010100\",\"001000\"]]",
+        "expected": "8"
+      },
+      {
+        "input": "[[\"000\",\"111\",\"000\"]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:48.267Z"
+  },
+  "number-of-pairs-of-strings-with-concatenation-equal-to-target": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:46:36.000Z"
+  },
+  "number-of-steps-to-reduce-a-number-to-zero": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[14]",
+        "expected": "6"
+      },
+      {
+        "input": "[8]",
+        "expected": "4"
+      },
+      {
+        "input": "[123]",
+        "expected": "12"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:43.611Z"
+  },
+  "number-of-submatrices-that-sum-to-target": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,1,0],[1,1,1],[0,1,0]],0]",
+        "expected": "4"
+      },
+      {
+        "input": "[[[1,-1],[-1,1]],0]",
+        "expected": "5"
+      },
+      {
+        "input": "[[[904]],0]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:42.632Z"
+  },
+  "number-of-substrings-containing-all-three-characters": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcabc\"]",
+        "expected": "10"
+      },
+      {
+        "input": "[\"aaacb\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"abc\"]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:12.440Z"
+  },
+  "number-of-visible-people-in-a-queue": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,6,8,5,11,9]]",
+        "expected": "[3,1,2,1,1,0]"
+      },
+      {
+        "input": "[[5,1,2,3,10]]",
+        "expected": "[4,1,1,1,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:48.340Z"
+  },
+  "number-of-ways-to-paint-n-3-grid": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[1]",
+        "expected": "12"
+      },
+      {
+        "input": "[5000]",
+        "expected": "30228214"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:31.249Z"
+  },
+  "optimal-partition-of-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abacaba\"]",
+        "expected": "4"
+      },
+      {
+        "input": "[\"ssssss\"]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:57.290Z"
+  },
+  "orderly-queue": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"cba\",1]",
+        "expected": "\"acb\""
+      },
+      {
+        "input": "[\"baaca\",3]",
+        "expected": "\"aaabc\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:18.410Z"
+  },
+  "pacific-atlantic": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:04.430Z"
+  },
+  "painting-a-grid-with-three-different-colors": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[1,1]",
+        "expected": "3"
+      },
+      {
+        "input": "[1,2]",
+        "expected": "6"
+      },
+      {
+        "input": "[5,5]",
+        "expected": "580986"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:37.989Z"
+  },
+  "palindrome-ll": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:33.016Z"
+  },
+  "palindrome-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[121]",
+        "expected": "true"
+      },
+      {
+        "input": "[-121]",
+        "expected": "false"
+      },
+      {
+        "input": "[10]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:04.263Z"
+  },
+  "palindrome-partition": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:59.187Z"
+  },
+  "palindrome-partitioning": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aab\"]",
+        "expected": "[[\"a\",\"a\",\"b\"],[\"aa\",\"b\"]]"
+      },
+      {
+        "input": "[\"a\"]",
+        "expected": "[[\"a\"]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:02.236Z"
+  },
+  "palindromic-substrings": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abc\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"aaa\"]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:18.610Z"
+  },
+  "parallel-courses-iii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,[[1,3],[2,3]],[3,2,5]]",
+        "expected": "8"
+      },
+      {
+        "input": "[5,[[1,5],[2,5],[3,5],[3,4],[4,5]],[1,2,3,4,5]]",
+        "expected": "12"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:20.489Z"
+  },
+  "parsing-a-boolean-expression": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"&(|(f))\"]",
+        "expected": "false"
+      },
+      {
+        "input": "[\"|(f,f,f,t)\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"!(&(f,t))\"]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:03.377Z"
+  },
+  "partition-array-according-to-given-pivot": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[9,12,5,10,14,3,10],10]",
+        "expected": "[9,5,3,10,10,12,14]"
+      },
+      {
+        "input": "[[-3,4,3,2],2]",
+        "expected": "[-3,2,4,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:39.770Z"
+  },
+  "partition-array-for-maximum-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,15,7,9,2,5,10],3]",
+        "expected": "84"
+      },
+      {
+        "input": "[[1,4,1,5,7,3,6,1,9,9,3],4]",
+        "expected": "83"
+      },
+      {
+        "input": "[[1],1]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:11.471Z"
+  },
+  "partition-array-such-that-maximum-difference-is-k": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,6,1,2,5],2]",
+        "expected": "2"
+      },
+      {
+        "input": "[[1,2,3],1]",
+        "expected": "2"
+      },
+      {
+        "input": "[[2,2,4,5],0]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:21.446Z"
+  },
+  "partition-labels": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"ababcbacadefegdehijhklij\"]",
+        "expected": "[9,7,8]"
+      },
+      {
+        "input": "[\"eccbbbbdec\"]",
+        "expected": "[10]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:20.368Z"
+  },
+  "partitioning-into-minimum-number-of-deci-binary-numbers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"32\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"82734\"]",
+        "expected": "8"
+      },
+      {
+        "input": "[\"27346209830709182346\"]",
+        "expected": "9"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:37.015Z"
+  },
+  "pascal-s-triangle": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:06.910Z"
+  },
+  "path-in-zigzag-labelled-binary-tree": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:46:31.728Z"
+  },
+  "path-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,4,8,11,null,13,4,7,2,null,null,null,1],22]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,2,3],5]",
+        "expected": "false"
+      },
+      {
+        "input": "[[],0]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:42.547Z"
+  },
+  "perfect-squares": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[12]",
+        "expected": "3"
+      },
+      {
+        "input": "[13]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:23.954Z"
+  },
+  "permutation-difference-between-two-strings": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abc\",\"bac\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"abcde\",\"edbac\"]",
+        "expected": "12"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:08.321Z"
+  },
+  "permutation-in-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"ab\",\"eidbaooo\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"ab\",\"eidboaoo\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:16.948Z"
+  },
+  "permutations": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3]]",
+        "expected": "[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]"
+      },
+      {
+        "input": "[[0,1]]",
+        "expected": "[[0,1],[1,0]]"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "[[1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:21.557Z"
+  },
+  "permutations-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,1,2]]",
+        "expected": "[[1,1,2],[1,2,1],[2,1,1]]"
+      },
+      {
+        "input": "[[1,2,3]]",
+        "expected": "[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:22.414Z"
+  },
+  "plus-one": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3]]",
+        "expected": "[1,2,4]"
+      },
+      {
+        "input": "[[4,3,2,1]]",
+        "expected": "[4,3,2,2]"
+      },
+      {
+        "input": "[[9]]",
+        "expected": "[1,0]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:45.090Z"
+  },
+  "powx-n": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2,10]",
+        "expected": "1024"
+      },
+      {
+        "input": "[2.1,3]",
+        "expected": "9.261000000000001"
+      },
+      {
+        "input": "[2,-2]",
+        "expected": "0.25"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:25.507Z"
+  },
+  "product-except-self": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:10.447Z"
+  },
+  "promise-time-limit": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:41:24.260Z",
+    "note": "Unexpected token 'a', \"async (n) \"... is not valid JSON"
+  },
+  "put-marbles-in-bags": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,5,1],2]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1,3],2]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:54.286Z"
+  },
+  "queries-on-a-permutation-with-key": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:41:06.936Z"
+  },
+  "queries-on-number-of-points-inside-a-circle": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,3],[3,3],[5,3],[2,2]],[[2,3,1],[4,3,1],[1,1,2]]]",
+        "expected": "[3,2,2]"
+      },
+      {
+        "input": "[[[1,1],[2,2],[3,3],[4,4],[5,5]],[[1,2,2],[2,2,2],[4,3,2],[4,3,3]]]",
+        "expected": "[2,3,2,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:49.164Z"
+  },
+  "queue-reconstruction-by-height": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:46:53.695Z"
+  },
+  "range-sum-of-bst": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,5,15,3,7,null,18],7,15]",
+        "expected": "32"
+      },
+      {
+        "input": "[[10,5,15,3,7,13,18,1,null,6],6,10]",
+        "expected": "23"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:12.444Z"
+  },
+  "rearrange-array-elements-by-sign": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1,-2,-5,2,-4]]",
+        "expected": "[3,-2,1,-5,2,-4]"
+      },
+      {
+        "input": "[[-1,1]]",
+        "expected": "[1,-1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:12.019Z"
+  },
+  "reconstruct-itinerary": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"MUC\",\"LHR\"],[\"JFK\",\"MUC\"],[\"SFO\",\"SJC\"],[\"LHR\",\"SFO\"]]]",
+        "expected": "[\"JFK\",\"MUC\",\"LHR\",\"SFO\",\"SJC\"]"
+      },
+      {
+        "input": "[[[\"JFK\",\"SFO\"],[\"JFK\",\"ATL\"],[\"SFO\",\"ATL\"],[\"ATL\",\"JFK\"],[\"ATL\",\"SFO\"]]]",
+        "expected": "[\"JFK\",\"ATL\",\"JFK\",\"SFO\",\"ATL\",\"SFO\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:13.637Z"
+  },
+  "recover-a-tree-from-preorder-traversal": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"1-2--3--4-5--6--7\"]",
+        "expected": "[1,2,5,3,4,6,7]"
+      },
+      {
+        "input": "[\"1-2--3---4-5--6---7\"]",
+        "expected": "[1,2,5,3,null,6,null,4,null,7]"
+      },
+      {
+        "input": "[\"1-401--349---90--88\"]",
+        "expected": "[1,401,null,349,88,90]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:28.389Z"
+  },
+  "reducing-dishes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[-1,-8,0,5,-7]]",
+        "expected": "14"
+      },
+      {
+        "input": "[[4,3,2]]",
+        "expected": "20"
+      },
+      {
+        "input": "[[-1,-4,-5]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:38.857Z"
+  },
+  "redundant-connection": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2],[1,3],[2,3]]]",
+        "expected": "[2,3]"
+      },
+      {
+        "input": "[[[1,2],[2,3],[3,4],[1,4],[1,5]]]",
+        "expected": "[1,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:09.362Z"
+  },
+  "regex-matching": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:33.881Z"
+  },
+  "regions-cut-by-slashes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\" /\",\"/ \"]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[\" /\",\"  \"]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[\"/\\\\\",\"\\\\/\"]]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:10.619Z"
+  },
+  "regular-expression-matching": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aa\",\"a\"]",
+        "expected": "false"
+      },
+      {
+        "input": "[\"aa\",\"a*\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"ab\",\".*\"]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:05.124Z"
+  },
+  "remove-all-occurrences-of-a-substring": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"daabcbaabcbc\",\"abc\"]",
+        "expected": "\"dab\""
+      },
+      {
+        "input": "[\"axxxxyyyyb\",\"xy\"]",
+        "expected": "\"ab\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:56.365Z"
+  },
+  "remove-duplicates-from-sorted-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,1,2]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[0,0,1,1,1,2,2,3,3,4]]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:18.990Z"
+  },
+  "remove-element": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,2,2,3],3]",
+        "expected": "2"
+      },
+      {
+        "input": "[[0,1,2,2,3,0,4,2],2]",
+        "expected": "5"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:19.815Z"
+  },
+  "remove-max-number-of-edges-to-keep-graph-fully-traversable": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:01.202Z"
+  },
+  "remove-nodes-from-linked-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,2,13,3,8]]",
+        "expected": "[13,8]"
+      },
+      {
+        "input": "[[1,1,1,1]]",
+        "expected": "[1,1,1,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:46.453Z"
+  },
+  "remove-nth-from-end": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:34.517Z"
+  },
+  "remove-nth-node-from-end-of-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5],2]",
+        "expected": "[1,2,3,5]"
+      },
+      {
+        "input": "[[1],1]",
+        "expected": "[]"
+      },
+      {
+        "input": "[[1,2],1]",
+        "expected": "[1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:13.644Z"
+  },
+  "remove-outermost-parentheses": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"(()())(())\"]",
+        "expected": "\"()()()\""
+      },
+      {
+        "input": "[\"(()())(())(()(()))\"]",
+        "expected": "\"()()()()(())\""
+      },
+      {
+        "input": "[\"()()\"]",
+        "expected": "\"\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:20.516Z"
+  },
+  "remove-sub-folders-from-the-filesystem": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"/a\",\"/a/b\",\"/c/d\",\"/c/d/e\",\"/c/f\"]]",
+        "expected": "[\"/a\",\"/c/d\",\"/c/f\"]"
+      },
+      {
+        "input": "[[\"/a\",\"/a/b/c\",\"/a/b/d\"]]",
+        "expected": "[\"/a\"]"
+      },
+      {
+        "input": "[[\"/a/b/c\",\"/a/b/ca\",\"/a/b/d\"]]",
+        "expected": "[\"/a/b/c\",\"/a/b/ca\",\"/a/b/d\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:53.544Z"
+  },
+  "removing-stars-from-a-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"leet**cod*e\"]",
+        "expected": "\"lecoe\""
+      },
+      {
+        "input": "[\"erase*****\"]",
+        "expected": "\"\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:49.726Z"
+  },
+  "reorder-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "[1,4,2,3]"
+      },
+      {
+        "input": "[[1,2,3,4,5]]",
+        "expected": "[1,5,2,4,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:33.564Z"
+  },
+  "reorganize-string": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:49:55.916Z"
+  },
+  "replace-elements": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:05.430Z"
+  },
+  "restore-finishing-order": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,1,2,5,4],[1,3,4]]",
+        "expected": "[3,1,4]"
+      },
+      {
+        "input": "[[1,4,5,3,2],[2,5]]",
+        "expected": "[5,2]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:34.610Z"
+  },
+  "restore-the-array-from-adjacent-pairs": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:46:45.299Z"
+  },
+  "return-length-of-arguments-passed": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[{},null,\"3\"]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:26.340Z"
+  },
+  "reveal-cards-in-increasing-order": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:41:18.593Z"
+  },
+  "reverse-bits": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[43261596]",
+        "expected": "964176192"
+      },
+      {
+        "input": "[2147483644]",
+        "expected": "1073741822"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:51.361Z"
+  },
+  "reverse-degree-of-a-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abc\"]",
+        "expected": "148"
+      },
+      {
+        "input": "[\"zaza\"]",
+        "expected": "160"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:58.876Z"
+  },
+  "reverse-integer": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[123]",
+        "expected": "321"
+      },
+      {
+        "input": "[-123]",
+        "expected": "-321"
+      },
+      {
+        "input": "[120]",
+        "expected": "21"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:01.788Z"
+  },
+  "reverse-linked-list": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5]]",
+        "expected": "[5,4,3,2,1]"
+      },
+      {
+        "input": "[[1,2]]",
+        "expected": "[2,1]"
+      },
+      {
+        "input": "[[]]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:30.820Z"
+  },
+  "reverse-nodes-in-k-group": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4,5],2]",
+        "expected": "[2,1,4,3,5]"
+      },
+      {
+        "input": "[[1,2,3,4,5],3]",
+        "expected": "[3,2,1,4,5]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:17.990Z"
+  },
+  "reverse-nodes-k-group": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:36.848Z"
+  },
+  "reverse-odd-levels-of-binary-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,5,8,13,21,34]]",
+        "expected": "[2,5,3,8,13,21,34]"
+      },
+      {
+        "input": "[[7,13,11]]",
+        "expected": "[7,11,13]"
+      },
+      {
+        "input": "[[0,1,2,0,0,0,0,1,1,1,1,2,2,2,2]]",
+        "expected": "[0,2,1,0,0,0,0,2,2,2,2,1,1,1,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:51.103Z"
+  },
+  "reverse-prefix-of-word": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcdefd\",\"d\"]",
+        "expected": "\"dcbaefd\""
+      },
+      {
+        "input": "[\"xyxzxe\",\"z\"]",
+        "expected": "\"zxyxxe\""
+      },
+      {
+        "input": "[\"abcd\",\"z\"]",
+        "expected": "\"abcd\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:31.963Z"
+  },
+  "reverse-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"h\",\"e\",\"l\",\"l\",\"o\"]]",
+        "expected": "[\"o\",\"l\",\"l\",\"e\",\"h\"]"
+      },
+      {
+        "input": "[[\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]]",
+        "expected": "[\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:34:06.164Z"
+  },
+  "reverse-string-prefix": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcd\",2]",
+        "expected": "\"bacd\""
+      },
+      {
+        "input": "[\"xyz\",3]",
+        "expected": "\"zyx\""
+      },
+      {
+        "input": "[\"hey\",1]",
+        "expected": "\"hey\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:53.166Z"
+  },
+  "reverse-words-in-a-string-iii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"Let's take LeetCode contest\"]",
+        "expected": "\"s'teL ekat edoCteeL tsetnoc\""
+      },
+      {
+        "input": "[\"Mr Ding\"]",
+        "expected": "\"rM gniD\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:14.949Z"
+  },
+  "richest-customer-wealth": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3],[3,2,1]]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[[1,5],[7,3],[3,5]]]",
+        "expected": "10"
+      },
+      {
+        "input": "[[[2,8,7],[7,1,3],[1,9,5]]]",
+        "expected": "17"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:59.876Z"
+  },
+  "right-side-view": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:45.608Z"
+  },
+  "robot-bounded": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:48.562Z"
+  },
+  "roman-to-integer": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"III\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"LVIII\"]",
+        "expected": "58"
+      },
+      {
+        "input": "[\"MCMXCIV\"]",
+        "expected": "1994"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:08.023Z"
+  },
+  "root-equals-sum-of-children": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[10,4,6]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[5,3,1]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:00.112Z"
+  },
+  "rotate-image": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3],[4,5,6],[7,8,9]]]",
+        "expected": "[[7,4,1],[8,5,2],[9,6,3]]"
+      },
+      {
+        "input": "[[[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]]",
+        "expected": "[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:23.413Z"
+  },
+  "rotating-the-box": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"#\",\".\",\"#\"]]]",
+        "expected": "[[\".\"],[\"#\"],[\"#\"]]"
+      },
+      {
+        "input": "[[[\"#\",\".\",\"*\",\".\"],[\"#\",\"#\",\"*\",\".\"]]]",
+        "expected": "[[\"#\",\".\"],[\"#\",\"#\"],[\"*\",\"*\"],[\".\",\".\"]]"
+      },
+      {
+        "input": "[[[\"#\",\"#\",\"*\",\".\",\"*\",\".\"],[\"#\",\"#\",\"#\",\"*\",\".\",\".\"],[\"#\",\"#\",\"#\",\".\",\"#\",\".\"]]]",
+        "expected": "[[\".\",\"#\",\"#\"],[\".\",\"#\",\"#\"],[\"#\",\"#\",\"*\"],[\"#\",\"*\",\".\"],[\"#\",\".\",\"*\"],[\"#\",\".\",\".\"]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:14.766Z"
+  },
+  "rotting-oranges": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[2,1,1],[1,1,0],[0,1,1]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[[2,1,1],[0,1,1],[1,0,1]]]",
+        "expected": "-1"
+      },
+      {
+        "input": "[[[0,2]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:03.420Z"
+  },
+  "running-sum-of-1d-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "[1,3,6,10]"
+      },
+      {
+        "input": "[[1,1,1,1,1]]",
+        "expected": "[1,2,3,4,5]"
+      },
+      {
+        "input": "[[3,1,2,10,1]]",
+        "expected": "[3,4,6,16,17]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:22.555Z"
+  },
+  "same-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3],[1,2,3]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,2],[1,null,2]]",
+        "expected": "false"
+      },
+      {
+        "input": "[[1,2,1],[1,1,2]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:40.465Z"
+  },
+  "score-after-flipping-matrix": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,0,1,1],[1,0,1,0],[1,1,0,0]]]",
+        "expected": "39"
+      },
+      {
+        "input": "[[[0]]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:39.878Z"
+  },
+  "score-of-a-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"hello\"]",
+        "expected": "13"
+      },
+      {
+        "input": "[\"zaz\"]",
+        "expected": "50"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:32.736Z"
+  },
+  "search-2d-matrix": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:26.243Z"
+  },
+  "search-in-rotated-sorted-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,5,6,7,0,1,2],0]",
+        "expected": "4"
+      },
+      {
+        "input": "[[4,5,6,7,0,1,2],3]",
+        "expected": "-1"
+      },
+      {
+        "input": "[[1],0]",
+        "expected": "-1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:25.528Z"
+  },
+  "search-insert-position": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,5,6],5]",
+        "expected": "2"
+      },
+      {
+        "input": "[[1,3,5,6],2]",
+        "expected": "1"
+      },
+      {
+        "input": "[[1,3,5,6],7]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:27.291Z"
+  },
+  "search-rotated-sorted": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:28.460Z"
+  },
+  "second-minimum-time-to-reach-destination": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:49:01.594Z"
+  },
+  "separate-the-digits-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[13,25,83,77]]",
+        "expected": "[1,3,2,5,8,3,7,7]"
+      },
+      {
+        "input": "[[7,1,3,9]]",
+        "expected": "[7,1,3,9]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:42.613Z"
+  },
+  "serialize-deserialize": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:49.132Z"
+  },
+  "set-matrix-zeroes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,1,1],[1,0,1],[1,1,1]]]",
+        "expected": "[[1,0,1],[0,0,0],[1,0,1]]"
+      },
+      {
+        "input": "[[[0,1,2,0],[3,4,5,2],[1,3,1,5]]]",
+        "expected": "[[0,0,0,0],[0,4,5,0],[0,3,1,0]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:46.905Z"
+  },
+  "ship-days": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:29.706Z"
+  },
+  "shortest-impossible-sequence-of-rolls": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:10.128Z"
+  },
+  "shortest-path-visiting-all-nodes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3],[0],[0],[0]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[[1],[0,2,4],[1,3,4],[2],[1,2]]]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:27.618Z"
+  },
+  "shuffle-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"codeleet\",[4,5,6,7,0,2,1,3]]",
+        "expected": "\"leetcode\""
+      },
+      {
+        "input": "[\"abc\",[0,1,2]]",
+        "expected": "\"abc\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:51.591Z"
+  },
+  "shuffle-the-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,5,1,3,4,7],3]",
+        "expected": "[2,3,5,4,1,7]"
+      },
+      {
+        "input": "[[1,2,3,4,4,3,2,1],4]",
+        "expected": "[1,4,2,3,3,2,4,1]"
+      },
+      {
+        "input": "[[1,1,2,2],2]",
+        "expected": "[1,2,1,2]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:57.838Z"
+  },
+  "single-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,2,1]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[4,1,2,1,2]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:49.110Z"
+  },
+  "sleep": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:39:16.106Z",
+    "note": "foobar is not defined"
+  },
+  "sliding-puzzle": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:47:43.612Z"
+  },
+  "sliding-window-max": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:18.887Z"
+  },
+  "smallest-even-multiple": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5]",
+        "expected": "10"
+      },
+      {
+        "input": "[6]",
+        "expected": "6"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:01.803Z"
+  },
+  "smallest-range-covering-elements-from-k-lists": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:02.340Z"
+  },
+  "smallest-stable-index-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,0,1,4],3]",
+        "expected": "3"
+      },
+      {
+        "input": "[[3,2,1],1]",
+        "expected": "-1"
+      },
+      {
+        "input": "[[0],0]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:13.318Z"
+  },
+  "smallest-subtree-with-all-the-deepest-nodes": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,5,1,6,2,0,8,null,null,7,4]]",
+        "expected": "[2,7,4]"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "[1]"
+      },
+      {
+        "input": "[[0,1,3,null,2]]",
+        "expected": "[2]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:08.817Z"
+  },
+  "sort-by": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:40:30.412Z",
+    "note": "Unexpected token '(', \"(x) => x\" is not valid JSON"
+  },
+  "sort-characters-by-frequency": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"tree\"]",
+        "expected": "\"eetr\""
+      },
+      {
+        "input": "[\"cccaaa\"]",
+        "expected": "\"cccaaa\""
+      },
+      {
+        "input": "[\"Aabb\"]",
+        "expected": "\"bbAa\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:37.078Z"
+  },
+  "sort-items-by-groups-respecting-dependencies": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[8,2,[-1,-1,1,0,0,1,0,-1],[[],[6],[5],[6],[3,6],[],[],[]]]",
+        "expected": "[7,0,5,2,6,3,4,1]"
+      },
+      {
+        "input": "[8,2,[-1,-1,1,0,0,1,0,-1],[[],[6],[5],[6],[3],[],[4],[]]]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:28.525Z"
+  },
+  "sort-matrix-by-diagonals": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,7,3],[9,8,2],[4,5,6]]]",
+        "expected": "[[8,2,3],[9,6,7],[4,5,1]]"
+      },
+      {
+        "input": "[[[0,1],[1,2]]]",
+        "expected": "[[2,1],[1,0]]"
+      },
+      {
+        "input": "[[[1]]]",
+        "expected": "[[1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:10.249Z"
+  },
+  "sort-the-matrix-diagonally": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[3,3,1,1],[2,2,1,2],[1,1,1,2]]]",
+        "expected": "[[1,1,1,1],[1,2,2,2],[1,2,3,3]]"
+      },
+      {
+        "input": "[[[11,25,66,1,69,7],[23,55,17,45,15,52],[75,31,36,44,58,8],[22,27,33,25,68,4],[84,28,14,11,5,50]]]",
+        "expected": "[[5,17,4,1,52,7],[11,11,25,45,8,69],[14,23,25,44,58,15],[22,27,31,36,50,66],[84,28,75,33,55,68]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:24.970Z"
+  },
+  "sort-the-people": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"Mary\",\"John\",\"Emma\"],[180,165,170]]",
+        "expected": "[\"Mary\",\"Emma\",\"John\"]"
+      },
+      {
+        "input": "[[\"Alice\",\"Bob\",\"Bob\"],[155,185,150]]",
+        "expected": "[\"Bob\",\"Alice\",\"Bob\"]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:04.243Z"
+  },
+  "sort-the-students-by-their-kth-score": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[10,6,9,1],[7,5,11,2],[4,8,3,15]],2]",
+        "expected": "[[7,5,11,2],[10,6,9,1],[4,8,3,15]]"
+      },
+      {
+        "input": "[[[3,4],[5,6]],0]",
+        "expected": "[[5,6],[3,4]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:00.553Z"
+  },
+  "sort-vowels-in-a-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"lEetcOde\"]",
+        "expected": "\"lEOtcede\""
+      },
+      {
+        "input": "[\"lYmpH\"]",
+        "expected": "\"lYmpH\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:21.491Z"
+  },
+  "sorted-array-to-bst": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:41.987Z"
+  },
+  "sorting-the-sentence": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"is2 sentence4 This1 a3\"]",
+        "expected": "\"This is a sentence\""
+      },
+      {
+        "input": "[\"Myself2 Me1 I4 and3\"]",
+        "expected": "\"Me Myself and I\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:14.096Z"
+  },
+  "special-binary-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"11011000\"]",
+        "expected": "\"11100100\""
+      },
+      {
+        "input": "[\"10\"]",
+        "expected": "\"10\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:32.097Z"
+  },
+  "spiral-matrix": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,2,3],[4,5,6],[7,8,9]]]",
+        "expected": "[1,2,3,6,9,8,7,4,5]"
+      },
+      {
+        "input": "[[[1,2,3,4],[5,6,7,8],[9,10,11,12]]]",
+        "expected": "[1,2,3,4,8,12,11,10,9,5,6,7]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:46.011Z"
+  },
+  "spiral-matrix-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3]",
+        "expected": "[[1,2,3],[8,9,4],[7,6,5]]"
+      },
+      {
+        "input": "[1]",
+        "expected": "[[1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:42.819Z"
+  },
+  "spiral-matrix-iii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[1,4,0,0]",
+        "expected": "[[0,0],[0,1],[0,2],[0,3]]"
+      },
+      {
+        "input": "[5,6,1,4]",
+        "expected": "[[1,4],[1,5],[2,5],[2,4],[2,3],[1,3],[0,3],[0,4],[0,5],[3,5],[3,4],[3,3],[3,2],[2,2],[1,2],[0,2],[4,5],[4,4],[4,3],[4,2],[4,1],[3,1],[2,1],[1,1],[0,1],[4,0],[3,0],[2,0],[1,0],[0,0]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:12.960Z"
+  },
+  "spiral-matrix-iv": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,5,[3,0,2,6,8,1,7,9,4,2,5,5,0]]",
+        "expected": "[[3,0,2,6,8],[5,0,-1,-1,1],[5,2,4,9,7]]"
+      },
+      {
+        "input": "[1,4,[0,1,2]]",
+        "expected": "[[0,1,2,-1]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:16.787Z"
+  },
+  "split-a-string-in-balanced-strings": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"RLRRLLRLRL\"]",
+        "expected": "4"
+      },
+      {
+        "input": "[\"RLRRRLLRLL\"]",
+        "expected": "2"
+      },
+      {
+        "input": "[\"LLLLRRRR\"]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:14.717Z"
+  },
+  "stamping-the-sequence": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abc\",\"ababc\"]",
+        "expected": "[1,0,2]"
+      },
+      {
+        "input": "[\"abca\",\"aabcaca\"]",
+        "expected": "[2,3,0,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:02.898Z"
+  },
+  "stone-game": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,3,4,5]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[3,7,2,3]]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:23.399Z"
+  },
+  "stone-game-iii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,7]]",
+        "expected": "\"Bob\""
+      },
+      {
+        "input": "[[1,2,3,-9]]",
+        "expected": "\"Alice\""
+      },
+      {
+        "input": "[[1,2,3,6]]",
+        "expected": "\"Tie\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:53.482Z"
+  },
+  "strictly-palindromic-number": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[9]",
+        "expected": "false"
+      },
+      {
+        "input": "[4]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:37.902Z"
+  },
+  "string-to-integer-atoi": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"42\"]",
+        "expected": "42"
+      },
+      {
+        "input": "[\"   -042\"]",
+        "expected": "-42"
+      },
+      {
+        "input": "[\"1337c0d3\"]",
+        "expected": "1337"
+      },
+      {
+        "input": "[\"0-1\"]",
+        "expected": "0"
+      },
+      {
+        "input": "[\"words and 987\"]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:03.153Z"
+  },
+  "subarrays-with-k-different-integers": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:14.528Z"
+  },
+  "subdomain-visit-count": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:46:14.547Z"
+  },
+  "subrectangle-queries": {
+    "status": "design",
+    "generatedAt": "2026-08-30T18:40:56.619Z",
+    "note": "class-based / design problem"
+  },
+  "subsets": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3]]",
+        "expected": "[[],[3],[2],[2,3],[1],[1,3],[1,2],[1,2,3]]"
+      },
+      {
+        "input": "[[0]]",
+        "expected": "[[],[0]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:15.902Z"
+  },
+  "subsets-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,2]]",
+        "expected": "[[1,2,2],[1,2],[1],[2,2],[2],[]]"
+      },
+      {
+        "input": "[[0]]",
+        "expected": "[[0],[]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:57.457Z"
+  },
+  "substring-with-concatenation-of-all-words": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"barfoothefoobarman\",[\"foo\",\"bar\"]]",
+        "expected": "[0,9]"
+      },
+      {
+        "input": "[\"wordgoodgoodgoodbestword\",[\"word\",\"good\",\"best\",\"word\"]]",
+        "expected": "[]"
+      },
+      {
+        "input": "[\"barfoofoobarthefoobarman\",[\"bar\",\"foo\",\"the\"]]",
+        "expected": "[6,9,12]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:22.752Z"
+  },
+  "subtract-the-product-and-sum-of-digits-of-an-integer": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[234]",
+        "expected": "15"
+      },
+      {
+        "input": "[4421]",
+        "expected": "21"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:29.938Z"
+  },
+  "subtree-of-another": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:41.450Z"
+  },
+  "sudoku-solver": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:38:18.101Z"
+  },
+  "sum-multiples": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[7]",
+        "expected": "21"
+      },
+      {
+        "input": "[10]",
+        "expected": "40"
+      },
+      {
+        "input": "[9]",
+        "expected": "30"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:39.138Z"
+  },
+  "sum-of-all-odd-length-subarrays": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,4,2,5,3]]",
+        "expected": "58"
+      },
+      {
+        "input": "[[1,2]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[10,11,12]]",
+        "expected": "66"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:17.253Z"
+  },
+  "sum-of-all-subset-xor-totals": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[5,1,6]]",
+        "expected": "28"
+      },
+      {
+        "input": "[[3,4,5,6,7,8]]",
+        "expected": "480"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:43.459Z"
+  },
+  "sum-of-beauty-of-all-substrings": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aabcb\"]",
+        "expected": "5"
+      },
+      {
+        "input": "[\"aabcbaa\"]",
+        "expected": "17"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:04.420Z"
+  },
+  "sum-of-distances-in-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[6,[[0,1],[0,2],[2,3],[2,4],[2,5]]]",
+        "expected": "[8,12,6,10,10,10]"
+      },
+      {
+        "input": "[1,[]]",
+        "expected": "[0]"
+      },
+      {
+        "input": "[2,[[1,0]]]",
+        "expected": "[1,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:30.965Z"
+  },
+  "sum-of-k-mirror-numbers": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[2,5]",
+        "expected": "25"
+      },
+      {
+        "input": "[3,7]",
+        "expected": "499"
+      },
+      {
+        "input": "[7,17]",
+        "expected": "20379000"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:49.358Z"
+  },
+  "sum-of-nodes-with-even-valued-grandparent": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[6,7,8,2,7,1,3,9,null,1,4,null,null,null,5]]",
+        "expected": "18"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:41:02.799Z"
+  },
+  "sum-of-primes-between-number-and-its-reverse": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[13]",
+        "expected": "132"
+      },
+      {
+        "input": "[10]",
+        "expected": "17"
+      },
+      {
+        "input": "[8]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:29.756Z"
+  },
+  "sum-of-values-at-indices-with-k-set-bits": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[5,10,1,5,2],1]",
+        "expected": "13"
+      },
+      {
+        "input": "[[4,3,2,1],2]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:37.340Z"
+  },
+  "sum-of-variable-length-subarrays": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,3,1]]",
+        "expected": "11"
+      },
+      {
+        "input": "[[3,1,1,2]]",
+        "expected": "13"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:45.587Z"
+  },
+  "sum-without": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:53.942Z"
+  },
+  "surrounded-regions": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"O\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]]",
+        "expected": "[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]"
+      },
+      {
+        "input": "[[[\"X\"]]]",
+        "expected": "[[\"X\"]]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:05.014Z"
+  },
+  "swap-nodes-in-pairs": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,3,4]]",
+        "expected": "[2,1,4,3]"
+      },
+      {
+        "input": "[[]]",
+        "expected": "[]"
+      },
+      {
+        "input": "[[1]]",
+        "expected": "[1]"
+      },
+      {
+        "input": "[[1,2,3]]",
+        "expected": "[2,1,3]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:17.115Z"
+  },
+  "swim-in-rising-water": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[0,2],[1,3]]]",
+        "expected": "3"
+      },
+      {
+        "input": "[[[0,1,2,3,4],[24,23,22,21,5],[12,13,14,15,16],[11,17,18,19,20],[10,9,8,7,6]]]",
+        "expected": "16"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:48:15.639Z"
+  },
+  "symmetric-tree": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,2,2,3,4,4,3]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[1,2,2,null,3,null,3]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:43.493Z"
+  },
+  "target-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,1,1,1,1],3]",
+        "expected": "5"
+      },
+      {
+        "input": "[[1],1]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:28.709Z"
+  },
+  "task-scheduler": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:49:54.235Z"
+  },
+  "the-earliest-and-latest-rounds-where-players-compete": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[11,2,4]",
+        "expected": "[3,4]"
+      },
+      {
+        "input": "[5,1,5]",
+        "expected": "[1,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:52.417Z"
+  },
+  "the-k-th-lexicographical-string-of-all-happy-strings-of-length-n": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[1,3]",
+        "expected": "\"c\""
+      },
+      {
+        "input": "[1,4]",
+        "expected": "\"\""
+      },
+      {
+        "input": "[3,9]",
+        "expected": "\"cab\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:47.244Z"
+  },
+  "the-two-sneaky-numbers-of-digitville": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,1,0]]",
+        "expected": "[1,0]"
+      },
+      {
+        "input": "[[0,3,2,1,3,2]]",
+        "expected": "[3,2]"
+      },
+      {
+        "input": "[[7,1,5,4,3,4,6,0,9,5,8,2]]",
+        "expected": "[4,5]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:49.470Z"
+  },
+  "time-based-kv-store": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:29.151Z"
+  },
+  "timeout-cancellation": {
+    "status": "parse-failed",
+    "generatedAt": "2026-08-30T18:38:51.436Z",
+    "note": "Unexpected token '(', \"(x) => x * 5\" is not valid JSON"
+  },
+  "to-lower-case": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"Hello\"]",
+        "expected": "\"hello\""
+      },
+      {
+        "input": "[\"here\"]",
+        "expected": "\"here\""
+      },
+      {
+        "input": "[\"LOVELY\"]",
+        "expected": "\"lovely\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:02.484Z"
+  },
+  "top-k-frequent": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:09.302Z"
+  },
+  "total-waviness-of-numbers-in-range-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[120,130]",
+        "expected": "3"
+      },
+      {
+        "input": "[198,202]",
+        "expected": "3"
+      },
+      {
+        "input": "[4848,4848]",
+        "expected": "2"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:31.205Z"
+  },
+  "traffic-signal-color": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[60]",
+        "expected": "\"Red\""
+      },
+      {
+        "input": "[5]",
+        "expected": "\"Invalid\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:27.727Z"
+  },
+  "transform-array-by-parity": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[4,3,2,1]]",
+        "expected": "[0,0,1,1]"
+      },
+      {
+        "input": "[[1,5,1,4,2]]",
+        "expected": "[0,0,1,1,1]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:47.989Z"
+  },
+  "trapping-rain": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:14.700Z"
+  },
+  "trapping-rain-water": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[0,1,0,2,1,0,1,3,2,1,2,1]]",
+        "expected": "6"
+      },
+      {
+        "input": "[[4,2,0,3,2,5]]",
+        "expected": "9"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:36:56.223Z"
+  },
+  "trapping-rain-water-ii": {
+    "status": "exec-failed",
+    "generatedAt": "2026-08-30T18:48:46.566Z",
+    "note": "PriorityQueue is not defined"
+  },
+  "truncate-sentence": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"Hello how are you Contestant\",4]",
+        "expected": "\"Hello how are you\""
+      },
+      {
+        "input": "[\"What is the solution to this problem\",4]",
+        "expected": "\"What is the solution\""
+      },
+      {
+        "input": "[\"chopper is not a tanuki\",5]",
+        "expected": "\"chopper is not a tanuki\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:24.278Z"
+  },
+  "two-sum": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,7,11,15],9]",
+        "expected": "[0,1]"
+      },
+      {
+        "input": "[[3,2,4],6]",
+        "expected": "[1,2]"
+      },
+      {
+        "input": "[[3,3],6]",
+        "expected": "[0,1]"
+      }
+    ],
+    "meta": {
+      "name": "twoSum",
+      "paramTypes": [
+        "integer[]",
+        "integer"
+      ],
+      "returnType": "integer[]"
+    },
+    "generatedAt": "2026-08-30T18:54:40.269Z"
+  },
+  "two-sum-ii-sorted": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:13.575Z"
+  },
+  "unique-length-3-palindromic-subsequences": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aabca\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"adc\"]",
+        "expected": "0"
+      },
+      {
+        "input": "[\"bbcbaba\"]",
+        "expected": "4"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:11.601Z"
+  },
+  "unique-morse-code-words": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"gin\",\"zen\",\"gig\",\"msg\"]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[\"a\"]]",
+        "expected": "1"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:40:23.390Z"
+  },
+  "unique-paths": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[3,7]",
+        "expected": "28"
+      },
+      {
+        "input": "[3,2]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:25.866Z"
+  },
+  "unique-paths-iii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[1,0,0,0],[0,0,0,0],[0,0,2,-1]]]",
+        "expected": "2"
+      },
+      {
+        "input": "[[[1,0,0,0],[0,0,0,0],[0,0,0,2]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[[0,1],[2,0]]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:29.329Z"
+  },
+  "valid-anagram": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"anagram\",\"nagaram\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"rat\",\"car\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:08.477Z"
+  },
+  "valid-arrangement-of-pairs": {
+    "status": "no-solution",
+    "generatedAt": "2026-08-30T18:48:22.105Z"
+  },
+  "valid-palindrome": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"A man, a plan, a canal: Panama\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"race a car\"]",
+        "expected": "false"
+      },
+      {
+        "input": "[\" \"]",
+        "expected": "true"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:11.547Z"
+  },
+  "valid-palindrome-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aba\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"abca\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"abc\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:12.419Z"
+  },
+  "valid-paren-string": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:38.331Z"
+  },
+  "valid-parentheses": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"()\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"()[]{}\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"(]\"]",
+        "expected": "false"
+      },
+      {
+        "input": "[\"([])\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"([)]\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:34:07.518Z"
+  },
+  "valid-sudoku": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]]",
+        "expected": "true"
+      },
+      {
+        "input": "[[[\"8\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:28.174Z"
+  },
+  "validate-bst": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:49:46.805Z"
+  },
+  "vowels-game-in-a-string": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"leetcoder\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"bbcd\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:15.577Z"
+  },
+  "walls-gates": {
+    "status": "no-metadata",
+    "generatedAt": "2026-08-30T18:50:02.872Z"
+  },
+  "water-bottles-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[13,6]",
+        "expected": "15"
+      },
+      {
+        "input": "[10,3]",
+        "expected": "13"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:03.281Z"
+  },
+  "watering-plants": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[2,2,3,3],5]",
+        "expected": "14"
+      },
+      {
+        "input": "[[1,1,1,4,2,3],4]",
+        "expected": "30"
+      },
+      {
+        "input": "[[7,7,7,7,7,7,7],8]",
+        "expected": "49"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:45:43.050Z"
+  },
+  "weighted-word-mapping": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"abcd\",\"def\",\"xyz\"],[5,3,12,14,1,2,3,2,10,6,6,9,7,8,7,10,8,9,6,9,9,8,3,7,7,2]]",
+        "expected": "\"rij\""
+      },
+      {
+        "input": "[[\"a\",\"b\",\"c\"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]",
+        "expected": "\"yyy\""
+      },
+      {
+        "input": "[[\"abcd\"],[7,5,3,4,3,5,4,9,4,2,2,7,10,2,5,10,6,1,2,2,4,1,3,4,4,5]]",
+        "expected": "\"g\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:44.575Z"
+  },
+  "widest-vertical-area-between-two-points-containing-no-points": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[8,7],[9,9],[7,4],[9,7]]]",
+        "expected": "1"
+      },
+      {
+        "input": "[[[3,1],[9,0],[1,0],[1,4],[5,3],[8,8]]]",
+        "expected": "3"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:19.644Z"
+  },
+  "wildcard-matching": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"aa\",\"a\"]",
+        "expected": "false"
+      },
+      {
+        "input": "[\"aa\",\"*\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"cb\",\"?a\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:38:19.675Z"
+  },
+  "word-break": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"leetcode\",[\"leet\",\"code\"]]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"applepenapple\",[\"apple\",\"pen\"]]",
+        "expected": "true"
+      },
+      {
+        "input": "[\"catsandog\",[\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:21.857Z"
+  },
+  "word-ladder": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"hit\",\"cog\",[\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]]",
+        "expected": "5"
+      },
+      {
+        "input": "[\"hit\",\"cog\",[\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]]",
+        "expected": "0"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:50:10.197Z"
+  },
+  "word-search": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]],\"ABCCED\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[[[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]],\"SEE\"]",
+        "expected": "true"
+      },
+      {
+        "input": "[[[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]],\"ABCB\"]",
+        "expected": "false"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:58.329Z"
+  },
+  "word-search-ii": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[[\"o\",\"a\",\"a\",\"n\"],[\"e\",\"t\",\"a\",\"e\"],[\"i\",\"h\",\"k\",\"r\"],[\"i\",\"f\",\"l\",\"v\"]],[\"oath\",\"pea\",\"eat\",\"rain\"]]",
+        "expected": "[\"oath\",\"eat\"]"
+      },
+      {
+        "input": "[[[\"a\",\"b\"],[\"c\",\"d\"]],[\"abcb\"]]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:49:50.816Z"
+  },
+  "words-within-two-edits-of-dictionary": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[\"word\",\"note\",\"ants\",\"wood\"],[\"wood\",\"joke\",\"moat\"]]",
+        "expected": "[\"word\",\"note\",\"wood\"]"
+      },
+      {
+        "input": "[[\"yes\"],[\"not\"]]",
+        "expected": "[]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:20.048Z"
+  },
+  "xor-after-range-multiplication-queries-i": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,1,1],[[0,2,1,4]]]",
+        "expected": "4"
+      },
+      {
+        "input": "[[2,3,1,5,4],[[1,4,2,3],[0,2,1,2]]]",
+        "expected": "31"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:47:22.388Z"
+  },
+  "xor-operation-in-an-array": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[5,0]",
+        "expected": "8"
+      },
+      {
+        "input": "[4,3]",
+        "expected": "8"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:39:11.547Z"
+  },
+  "xor-queries-of-a-subarray": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[1,3,4,8],[[0,1],[1,2],[0,3],[3,3]]]",
+        "expected": "[2,7,14,8]"
+      },
+      {
+        "input": "[[4,8,2,10],[[2,3],[1,3],[0,0],[0,3]]]",
+        "expected": "[8,0,4,4]"
+      }
+    ],
+    "generatedAt": "2026-08-30T18:46:04.162Z"
+  },
+  "zigzag-conversion": {
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"PAYPALISHIRING\",3]",
+        "expected": "\"PAHNAPLSIIGYIR\""
+      },
+      {
+        "input": "[\"PAYPALISHIRING\",4]",
+        "expected": "\"PINALSIGYAHRPI\""
+      },
+      {
+        "input": "[\"A\",1]",
+        "expected": "\"A\""
+      }
+    ],
+    "generatedAt": "2026-08-30T18:37:00.875Z"
+  }
+}

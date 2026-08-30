@@ -1508,6 +1508,206 @@ function once<T extends unknown[], R>(fn: (...a: T) => R) {
       ]
     },
     {
+      id: 'core-data-structures',
+      title: '🗂️ Структури даних (CS) у JS/TS',
+      interviewQuestions: [
+        {
+          question: 'Як hash-таблиця влаштована всередині, і чому середня складність операцій O(1), а гірша — O(n)? Що таке load factor і rehash?',
+          answer: 'Всередині — масив «бакетів». Хеш-функція перетворює ключ на число, за модулем довжини масиву це дає індекс бакета — тож доступ іде напряму, без перебору. Коли два різні ключі дають один бакет (колізія), їх зберігають разом: <strong>ланцюжком</strong> (список/масив у бакеті) або <strong>відкритою адресацією</strong> (кладуть у наступний вільний слот). У середньому в бакеті 0–1 елемент → O(1); якщо хеш поганий і всі ключі впали в один бакет, операція вироджується в лінійний пошук по ланцюжку → O(n). <code>load factor</code> = записи / бакети; коли він перевищує поріг (типово ~0.75), масив бакетів збільшують і <strong>всі</strong> ключі перехешовують під новий розмір (<code>rehash</code>, разова O(n)) — саме тому <code>Map.set</code> це <em>амортизоване</em> O(1).',
+        },
+        {
+          question: 'Object чи Map як словник — у чому реальна різниця, і коли що брати?',
+          answer: '<code>Map</code>: ключі будь-якого типу (об\'єкт, функція, число — не лише рядок), гарантований порядок вставки при ітерації, <code>.size</code> без ручного підрахунку, немає колізій з успадкованими іменами (<code>toString</code>, <code>constructor</code>), оптимізований під часті додавання/видалення. <code>Object</code>: ключі лише string/symbol (число мовчки стає рядком), швидший літерал і доступ через прихований клас для <strong>малого фіксованого</strong> набору відомих полів, зручна деструктуризація та JSON. Правило: динамічний набір пар, що росте/зменшується в рантаймі, або нерядкові ключі → <code>Map</code>; структура запису з відомими полями → <code>Object</code>.',
+        },
+        {
+          question: 'Чому array.shift() — це O(n), і як зробити чергу з O(1) на видалення в JS?',
+          answer: '<code>shift()</code> прибирає нульовий елемент і <strong>зсуває всі інші</strong> на одну позицію вліво (переіндексація), тому вартість пропорційна довжині — O(n). Для O(1)-черги: (1) не робити <code>shift</code>, а тримати індекс голови (<code>const first = q[head++]</code>) і періодично обрізати масив; (2) реалізація на двозв\'язному списку з вказівниками на голову й хвіст; (3) кільцевий буфер фіксованого розміру. <code>push</code> у кінець лишається амортизованим O(1) у будь-якому варіанті.',
+        },
+        {
+          question: 'Коли брати Heap / Priority Queue замість того, щоб просто відсортувати масив?',
+          answer: 'Коли потрібен <strong>лише екстремум</strong> (min/max) або <strong>top-K</strong>, а не повний порядок, і дані надходять/змінюються динамічно. Повне сортування — O(n log n) і його треба повторювати після кожної вставки. Купа дає peek за O(1), вставку й зняття екстремуму за O(log n), тож потоковий top-K — O(n log k), медіана потоку (дві купи) — O(log n) на елемент, Dijkstra бере наступний найближчий вузол за O(log n). У JS вбудованої немає, тому на співбесіді або пишуть бінарну купу на масиві (<code>sift-up</code>/<code>sift-down</code>, діти за індексами <code>2i+1</code>/<code>2i+2</code>), або емулюють через відсортовану вставку, якщо K малий.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `
+            <p>Класичні структури даних із курсу CS — але подані як воно є в JS/TS: що це, коли брати, складність (Big-O) і як виглядає в мові. API-деталі <code>Map</code>/<code>Set</code>/<code>Array</code> — вище в розділі «Built-in Objects»; тут — структури як концепції.</p>
+            <div class="grid2">
+              <div class="card">
+                <h4>Hash Table — <code>Map</code> / <code>Object</code> / <code>Set</code></h4>
+                <p>Хеш-функція перетворює ключ на індекс бакета в масиві → доступ без перебору. Колізії розв'язують <strong>ланцюжками</strong> (список у бакеті) або <strong>відкритою адресацією</strong> (наступний вільний слот). Коли заповненість (load factor) переходить поріг — масив бакетів збільшують і всі ключі перехешовують (rehash).</p>
+                <p><strong>Коли:</strong> підрахунок частот, «бачив раніше», Two Sum, дедуплікація, кеш, індекс за ключем.</p>
+                <p><strong>Big-O:</strong> вставка / пошук / видалення O(1) у середньому · O(n) у гіршому (усі ключі в один бакет).</p>
+                <pre><code>const m = new Map();
+m.set('a', 1); m.get('a'); m.has('a'); m.delete('a');
+const seen = new Set(); seen.add(x); seen.has(x);</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Dynamic Array — <code>Array</code></h4>
+                <p>JS-масив = зростаючий масив: рушій тримає суцільний блок і збільшує місткість, коли воно закінчується — тому <code>push</code> це <strong>амортизоване</strong> O(1). Операції не з кінця зсувають хвіст.</p>
+                <p><strong>Коли:</strong> прямий доступ за індексом, ітерація, база для two pointers / sliding window.</p>
+                <p><strong>Big-O:</strong> доступ O(1) · <code>push</code>/<code>pop</code> O(1) аморт. · <code>shift</code>/<code>unshift</code>/<code>splice</code> O(n) · пошук значення O(n).</p>
+                <pre><code>const a = [1, 2, 3];
+a.push(4);          // O(1) аморт.
+a.splice(1, 0, 9);  // O(n) — зсув хвоста
+// діри (a[100]=1) → «розріджений» масив, повільніше</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Linked List (зв'язний список)</h4>
+                <p>Вузли зі значенням і посиланням <code>next</code> (одно-) чи ще й <code>prev</code> (двозв'язний). Немає суцільної пам'яті й індексів — лише хід по посиланнях.</p>
+                <p><strong>Коли:</strong> O(1) вставка/видалення, коли вже тримаєш вузол; реверс списку; виявлення циклу (Floyd — повільний + швидкий вказівник); основа LRU.</p>
+                <p><strong>Big-O:</strong> доступ / пошук O(n) · вставка / видалення за вузлом O(1).</p>
+                <pre><code>class ListNode {
+  constructor(val) { this.val = val; this.next = null; }
+}</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Stack (стек, LIFO)</h4>
+                <p>Останній прийшов — перший вийшов. У JS — звичайний масив: <code>push</code> / <code>pop</code> / <code>at(-1)</code>.</p>
+                <p><strong>Коли:</strong> валідація дужок, монотонний стек, ітеративний DFS, історія/undo, обчислення виразів.</p>
+                <p><strong>Big-O:</strong> push / pop / peek O(1).</p>
+                <pre><code>const st = [];
+st.push(x); st.pop(); const top = st.at(-1);</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Queue / Deque (черга)</h4>
+                <p>FIFO: перший прийшов — перший вийшов; deque — обидва кінці. Пастка: <code>array.shift()</code> це <strong>O(n)</strong> (зсуває всі елементи). Для O(1) — тримай індекс голови, двозв'язний список або кільцевий буфер.</p>
+                <p><strong>Коли:</strong> BFS, обхід по рівнях, черга задач, sliding-window maximum (монотонна черга).</p>
+                <p><strong>Big-O:</strong> enqueue / dequeue O(1) (з індексом голови) · <code>shift()</code> O(n).</p>
+                <pre><code>const q = []; let head = 0;
+q.push(x);                // enqueue
+const first = q[head++];  // dequeue, O(1)</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Set — множина унікальних</h4>
+                <p>Лише унікальні значення, порівняння — SameValueZero (як <code>===</code>, але <code>NaN</code> дорівнює <code>NaN</code>). Порядок ітерації = порядок вставки.</p>
+                <p><strong>Коли:</strong> дедуплікація (<code>[...new Set(a)]</code>), швидка перевірка належності, операції над множинами.</p>
+                <p><strong>Big-O:</strong> add / has / delete O(1) у середньому.</p>
+                <pre><code>const s = new Set([1, 2, 2, 3]);  // {1,2,3}
+const inter = [...a].filter(x =&gt; b.has(x));</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Heap / Priority Queue</h4>
+                <p>Бінарна купа — повне дерево на масиві, де батько ≤ (min-heap) обох дітей; корінь = екстремум. Вбудованої в JS немає — пишуть на масиві: <code>sift-up</code> при вставці, <code>sift-down</code> при знятті кореня. Діти вузла <code>i</code> — <code>2i+1</code>, <code>2i+2</code>.</p>
+                <p><strong>Коли:</strong> top-K, k-й найбільший, медіана потоку (дві купи), Dijkstra / A*, злиття k відсортованих списків, планувальник за пріоритетом.</p>
+                <p><strong>Big-O:</strong> push / pop O(log n) · peek O(1) · побудова з масиву O(n).</p>
+                <pre><code>// peek = heap[0]
+// push: у кінець + sift-up
+// pop:  heap[0] = останній; sift-down</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Binary Tree / BST</h4>
+                <p>Вузли з <code>left</code>/<code>right</code>. У BST: ліве піддерево &lt; вузол &lt; праве — <code>in-order</code> обхід дає відсортовану послідовність.</p>
+                <p><strong>Коли:</strong> ієрархії, впорядкований пошук/діапазони, обходи (in/pre/post-order, BFS по рівнях), парсери.</p>
+                <p><strong>Big-O:</strong> пошук / вставка O(h): O(log n) збалансоване, O(n) якщо виродилось у список.</p>
+                <pre><code>class TreeNode {
+  constructor(val) { this.val = val; this.left = this.right = null; }
+}</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Trie (префіксне дерево)</h4>
+                <p>Дерево, де ребро — символ, а шлях від кореня — префікс. Спільні префікси зберігаються один раз.</p>
+                <p><strong>Коли:</strong> автодоповнення, перевірка префікса/слова у словнику, пошук по сітці слів, T9.</p>
+                <p><strong>Big-O:</strong> вставка / пошук O(L), де L — довжина ключа (не залежить від кількості слів).</p>
+                <pre><code>const root = { children: {}, end: false };
+// для кожного символу: спускайся/створюй node.children[c]</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>Graph (граф)</h4>
+                <p>Вузли + ребра. Найпоширеніше подання в JS — список суміжності через <code>Map</code>: вузол → масив сусідів. Матриця суміжності — коли граф щільний або треба O(1) перевірка ребра.</p>
+                <p><strong>Коли:</strong> зв'язність, найкоротший шлях (BFS для незваженого), цикли, топологічне сортування, залежності, острови на сітці.</p>
+                <p><strong>Big-O:</strong> обхід DFS/BFS O(V + E) · пам'ять списку суміжності O(V + E).</p>
+                <pre><code>const g = new Map();
+const addEdge = (u, v) =&gt; {
+  if (!g.has(u)) g.set(u, []);
+  g.get(u).push(v);
+};</code></pre>
+              </div>
+
+              <div class="card">
+                <h4>LRU Cache</h4>
+                <p>Кеш фіксованого розміру, що витісняє <strong>найдавніше використаний</strong> запис. Трюк у JS: <code>Map</code> зберігає порядок вставки, тож «свіжість» = позиція. На <code>get</code> — <code>delete</code> + повторний <code>set</code> (ключ стає останнім); при переповненні видаляємо перший ключ.</p>
+                <p><strong>Коли:</strong> кеш запитів/обчислень, класичний інтерв'ю-таск (LeetCode 146).</p>
+                <p><strong>Big-O:</strong> <code>get</code> / <code>put</code> O(1).</p>
+                <pre><code>get(k) {
+  if (!m.has(k)) return -1;
+  const v = m.get(k);
+  m.delete(k); m.set(k, v);   // «підняти»
+  return v;
+}</code></pre>
+              </div>
+            </div>
+          `,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          code: `// ── Hash Table з нуля (chaining + rehash) ──────────────────────
+class HashTable<V> {
+  private buckets: [string, V][][] = Array.from({ length: 8 }, () => []);
+  private count = 0;
+
+  private hash(key: string): number {
+    let h = 0;
+    for (const ch of key) h = (h * 31 + ch.charCodeAt(0)) | 0;
+    return Math.abs(h) % this.buckets.length;
+  }
+
+  set(key: string, value: V): void {
+    const bucket = this.buckets[this.hash(key)];
+    const pair = bucket.find(([k]) => k === key);
+    if (pair) { pair[1] = value; return; }
+    bucket.push([key, value]);
+    if (++this.count / this.buckets.length > 0.75) this.rehash();
+  }
+
+  get(key: string): V | undefined {
+    return this.buckets[this.hash(key)].find(([k]) => k === key)?.[1];
+  }
+
+  private rehash(): void {
+    const entries = this.buckets.flat();
+    this.buckets = Array.from({ length: this.buckets.length * 2 }, () => []);
+    this.count = 0;
+    for (const [k, v] of entries) this.set(k, v);
+  }
+}
+
+// ── LRU Cache на Map (порядок вставки = свіжість) ──────────────
+class LRUCache<K, V> {
+  private m = new Map<K, V>();
+  constructor(private capacity: number) {}
+
+  get(key: K): V | undefined {
+    if (!this.m.has(key)) return undefined;
+    const v = this.m.get(key)!;
+    this.m.delete(key);
+    this.m.set(key, v);                       // перемістити в «найсвіжіші»
+    return v;
+  }
+
+  put(key: K, value: V): void {
+    if (this.m.has(key)) this.m.delete(key);
+    this.m.set(key, value);
+    if (this.m.size > this.capacity) {
+      this.m.delete(this.m.keys().next().value!); // викинути найдавніший
+    }
+  }
+}`,
+        },
+      ],
+    },
+    {
       id: 'web-app-architectures',
       title: '🏗️ SPA vs MPA vs PWA',
       interviewQuestions: [

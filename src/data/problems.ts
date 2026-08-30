@@ -5,7 +5,9 @@
 //
 // AUTO-GENERATED from prisma/dev.db by scripts/export-problems.ts, then enriched
 // by scripts/merge-leetcode-catalog.ts (adds `approach` + NeetCode-catalog
-// stubs). Do not edit by hand; re-run the generators instead.
+// stubs, and folds in `testCases` from src/data/testcases.generated.json).
+// Do not edit by hand; re-run the generators instead. After export-problems.ts
+// you MUST run `npm run merge:leetcode` to re-apply the catalog + test cases.
 
 export interface StaticProblem {
   id: number
@@ -22,6 +24,8 @@ export interface StaticProblem {
   solution?: string
   editorial?: string
   approach?: string
+  /** JSON string: {name, paramTypes, returnType} — LeetCode signature for the runner. */
+  signature?: string
 }
 
 const rawProblems: Omit<StaticProblem, 'id'>[] = [
@@ -33,9 +37,10 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nvar twoSum = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,7,11,15],9]\",\"expected\":\"[0,1]\"},{\"input\":\"[[3,2,4],6]\",\"expected\":\"[1,2]\"},{\"input\":\"[[3,3],6]\",\"expected\":\"[0,1]\"}]",
     solution: "var twoSum = function(nums, target) {\n    const map = new Map();\n\n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        if (map.has(complement)) {\n            return [map.get(complement), i];\n        }\n        map.set(nums[i], i);\n    }\n\n    return [];\n};",
     approach: "HashMap зберігає value → index. Для кожного числа перевіряй target - num в мапі.\n\n**Складність:** Time O(n), Space O(n)",
+    signature: "{\"name\":\"twoSum\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
     slug: "reverse-string",
@@ -45,7 +50,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Two Pointers\"]",
     companies: "[\"Apple\",\"Microsoft\"]",
     starterCode: "/**\n * @param {character[]} s\n * @return {void} Do not return anything, modify s in-place instead.\n */\nvar reverseString = function(s) {\n    // Your solution here\n};",
-    testCases: "[{\"input\":\"s = [\\\"h\\\",\\\"e\\\",\\\"l\\\",\\\"l\\\",\\\"o\\\"]\",\"expected\":\"[\\\"o\\\",\\\"l\\\",\\\"l\\\",\\\"e\\\",\\\"h\\\"]\"},{\"input\":\"s = [\\\"H\\\",\\\"a\\\",\\\"n\\\",\\\"n\\\",\\\"a\\\",\\\"h\\\"]\",\"expected\":\"[\\\"h\\\",\\\"a\\\",\\\"n\\\",\\\"n\\\",\\\"a\\\",\\\"H\\\"]\"}]",
+    testCases: "[{\"input\":\"[[\\\"h\\\",\\\"e\\\",\\\"l\\\",\\\"l\\\",\\\"o\\\"]]\",\"expected\":\"[\\\"o\\\",\\\"l\\\",\\\"l\\\",\\\"e\\\",\\\"h\\\"]\"},{\"input\":\"[[\\\"H\\\",\\\"a\\\",\\\"n\\\",\\\"n\\\",\\\"a\\\",\\\"h\\\"]]\",\"expected\":\"[\\\"h\\\",\\\"a\\\",\\\"n\\\",\\\"n\\\",\\\"a\\\",\\\"H\\\"]\"}]",
     solution: "var reverseString = function(s) {\n    let left = 0;\n    let right = s.length - 1;\n\n    while (left < right) {\n        [s[left], s[right]] = [s[right], s[left]];\n        left++;\n        right--;\n    }\n};",
     editorial: "## Approach: Two Pointers\nUse two pointers, one at the start and one at the end of the array. Swap the characters and move the pointers towards each other.\n\n**Time Complexity:** O(n)\n**Space Complexity:** O(1)",
   },
@@ -57,7 +62,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[\"Amazon\",\"Google\",\"Facebook\"]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {boolean}\n */\nvar containsDuplicate = function(nums) {\n    // Your solution here\n};",
-    testCases: "[{\"input\":\"nums = [1,2,3,1]\",\"expected\":\"true\"},{\"input\":\"nums = [1,2,3,4]\",\"expected\":\"false\"},{\"input\":\"nums = [99,99]\",\"expected\":\"true\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,1]]\",\"expected\":\"true\"},{\"input\":\"[[1,2,3,4]]\",\"expected\":\"false\"},{\"input\":\"[[1,1,1,3,3,4,3,2,4,2]]\",\"expected\":\"true\"}]",
     solution: "var containsDuplicate = function(nums) {\n    const seen = new Set();\n\n    for (const num of nums) {\n        if (seen.has(num)) {\n            return true;\n        }\n        seen.add(num);\n    }\n\n    return false;\n};",
     editorial: "## Approach 1: Hash Set\nUse a Set to track numbers we've seen. If we encounter a number already in the set, return true.\n\n**Time Complexity:** O(n)\n**Space Complexity:** O(n)\n\n## Approach 2: Sorting\nSort the array and check if adjacent elements are equal.\n\n**Time Complexity:** O(n log n)\n**Space Complexity:** O(1)",
     approach: "Set — додавай і перевіряй наявність. Знайшов існуючий → true.\n\n**Складність:** Time O(n), Space O(n)",
@@ -70,7 +75,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {boolean}\n */\nvar isValid = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"()\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"()[]{}\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"(]\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"([])\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"([)]\\\"]\",\"expected\":\"false\"}]",
     solution: "var isValid = function(s) {\n    const stack = [];\n    const pairs = { ')': '(', '}': '{', ']': '[' };\n\n    for (const char of s) {\n        if (char === '(' || char === '{' || char === '[') {\n            stack.push(char);\n        } else {\n            if (stack.length === 0 || stack.pop() !== pairs[char]) {\n                return false;\n            }\n        }\n    }\n\n    return stack.length === 0;\n};",
     approach: "Push open, pop+check close. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
@@ -82,9 +87,10 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\"]",
     companies: "[\"Microsoft\",\"Amazon\",\"LinkedIn\"]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number} m\n * @param {number[]} nums2\n * @param {number} n\n * @return {void} Do not return anything, modify nums1 in-place instead.\n */\nvar merge = function(nums1, m, nums2, n) {\n    // Your solution here\n};",
-    testCases: "[{\"input\":\"[[1,2,3,0,0,0], 3, [2,5,6], 3]\",\"expected\":\"[1,2,2,3,5,6]\"},{\"input\":\"[[1], 1, [], 0]\",\"expected\":\"[1]\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,0,0,0],3,[2,5,6],3]\",\"expected\":\"[1,2,2,3,5,6]\"},{\"input\":\"[[1],1,[],0]\",\"expected\":\"[1]\"},{\"input\":\"[[0],0,[1],1]\",\"expected\":\"[1]\"}]",
     solution: "var merge = function(nums1, m, nums2, n) {\n    let p1 = m - 1;\n    let p2 = n - 1;\n    let p = m + n - 1;\n\n    while (p1 >= 0 && p2 >= 0) {\n        if (nums1[p1] > nums2[p2]) {\n            nums1[p] = nums1[p1];\n            p1--;\n        } else {\n            nums1[p] = nums2[p2];\n            p2--;\n        }\n        p--;\n    }\n\n    while (p2 >= 0) {\n        nums1[p] = nums2[p2];\n        p2--;\n        p--;\n    }\n};",
     editorial: "## Approach: Two Pointers\nStart from the end of both arrays and merge backwards. This avoids overwriting elements in nums1.\n\n**Time Complexity:** O(m + n)\n**Space Complexity:** O(1)",
+    signature: "{\"name\":\"merge\",\"paramTypes\":[\"integer[]\",\"integer\",\"integer[]\",\"integer\"],\"returnType\":\"void\"}",
   },
   {
     slug: "longest-substring-without-repeating",
@@ -106,9 +112,10 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Math\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} l1\n * @param {ListNode} l2\n * @return {ListNode}\n */\nvar addTwoNumbers = function(l1, l2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,4,3],[5,6,4]]\",\"expected\":\"[7,0,8]\"},{\"input\":\"[[0],[0]]\",\"expected\":\"[0]\"},{\"input\":\"[[9,9,9,9,9,9,9],[9,9,9,9]]\",\"expected\":\"[8,9,9,9,0,0,0,1]\"}]",
     solution: "var addTwoNumbers = function(l1, l2) {\n    const dummy = new ListNode(0);\n    let current = dummy;\n    let carry = 0;\n\n    while (l1 || l2 || carry) {\n        const val1 = l1 ? l1.val : 0;\n        const val2 = l2 ? l2.val : 0;\n        const sum = val1 + val2 + carry;\n\n        carry = Math.floor(sum / 10);\n        current.next = new ListNode(sum % 10);\n        current = current.next;\n\n        l1 = l1 ? l1.next : null;\n        l2 = l2 ? l2.next : null;\n    }\n\n    return dummy.next;\n};",
     approach: "Dummy + carry. O(max(m,n))\n\n**Складність:** Time O(max(m,n)), Space O(max(m,n))",
+    signature: "{\"name\":\"addTwoNumbers\",\"paramTypes\":[\"ListNode\",\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
   {
     slug: "trapping-rain-water",
@@ -120,7 +127,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Dynamic Programming\",\"Stack\",\"Monotonic Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} height\n * @return {number}\n */\nvar trap = function(height) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,0,2,1,0,1,3,2,1,2,1]]\",\"expected\":\"6\"},{\"input\":\"[[4,2,0,3,2,5]]\",\"expected\":\"9\"}]",
     solution: "var trap = function(height) {\n    if (height.length === 0) return 0;\n\n    let left = 0, right = height.length - 1;\n    let leftMax = 0, rightMax = 0;\n    let water = 0;\n\n    while (left < right) {\n        if (height[left] < height[right]) {\n            if (height[left] >= leftMax) {\n                leftMax = height[left];\n            } else {\n                water += leftMax - height[left];\n            }\n            left++;\n        } else {\n            if (height[right] >= rightMax) {\n                rightMax = height[right];\n            } else {\n                water += rightMax - height[right];\n            }\n            right--;\n        }\n    }\n\n    return water;\n};",
   },
   {
@@ -131,7 +138,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Sliding Window\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar lengthOfLongestSubstring = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abcabcbb\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"bbbbb\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"pwwkew\\\"]\",\"expected\":\"3\"}]",
   },
   {
     slug: "median-of-two-sorted-arrays",
@@ -141,7 +148,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\",\"Divide and Conquer\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number}\n */\nvar findMedianSortedArrays = function(nums1, nums2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3],[2]]\",\"expected\":\"2\"},{\"input\":\"[[1,2],[3,4]]\",\"expected\":\"2.5\"}]",
   },
   {
     slug: "longest-palindromic-substring",
@@ -151,7 +158,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\",\"String\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar longestPalindrome = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"babad\\\"]\",\"expected\":\"\\\"aba\\\"\"},{\"input\":\"[\\\"cbbd\\\"]\",\"expected\":\"\\\"bb\\\"\"}]",
   },
   {
     slug: "zigzag-conversion",
@@ -161,7 +168,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} numRows\n * @return {string}\n */\nvar convert = function(s, numRows) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"PAYPALISHIRING\\\",3]\",\"expected\":\"\\\"PAHNAPLSIIGYIR\\\"\"},{\"input\":\"[\\\"PAYPALISHIRING\\\",4]\",\"expected\":\"\\\"PINALSIGYAHRPI\\\"\"},{\"input\":\"[\\\"A\\\",1]\",\"expected\":\"\\\"A\\\"\"}]",
   },
   {
     slug: "reverse-integer",
@@ -171,7 +178,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @return {number}\n */\nvar reverse = function(x) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[123]\",\"expected\":\"321\"},{\"input\":\"[-123]\",\"expected\":\"-321\"},{\"input\":\"[120]\",\"expected\":\"21\"}]",
     approach: "% 10 digit extraction. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -182,7 +189,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar myAtoi = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"42\\\"]\",\"expected\":\"42\"},{\"input\":\"[\\\"   -042\\\"]\",\"expected\":\"-42\"},{\"input\":\"[\\\"1337c0d3\\\"]\",\"expected\":\"1337\"},{\"input\":\"[\\\"0-1\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"words and 987\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "palindrome-number",
@@ -192,7 +199,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @return {boolean}\n */\nvar isPalindrome = function(x) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[121]\",\"expected\":\"true\"},{\"input\":\"[-121]\",\"expected\":\"false\"},{\"input\":\"[10]\",\"expected\":\"false\"}]",
   },
   {
     slug: "regular-expression-matching",
@@ -202,7 +209,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Dynamic Programming\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function(s, p) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aa\\\",\\\"a\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"aa\\\",\\\"a*\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"ab\\\",\\\".*\\\"]\",\"expected\":\"true\"}]",
   },
   {
     slug: "container-with-most-water",
@@ -212,7 +219,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} height\n * @return {number}\n */\nvar maxArea = function(height) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,8,6,2,5,4,8,3,7]]\",\"expected\":\"49\"},{\"input\":\"[[1,1]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "integer-to-roman",
@@ -222,7 +229,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Math\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {string}\n */\nvar intToRoman = function(num) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3749]\",\"expected\":\"\\\"MMMDCCXLIX\\\"\"},{\"input\":\"[58]\",\"expected\":\"\\\"LVIII\\\"\"},{\"input\":\"[1994]\",\"expected\":\"\\\"MCMXCIV\\\"\"}]",
   },
   {
     slug: "roman-to-integer",
@@ -232,7 +239,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Math\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar romanToInt = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"III\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"LVIII\\\"]\",\"expected\":\"58\"},{\"input\":\"[\\\"MCMXCIV\\\"]\",\"expected\":\"1994\"}]",
   },
   {
     slug: "longest-common-prefix",
@@ -242,7 +249,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Trie\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} strs\n * @return {string}\n */\nvar longestCommonPrefix = function(strs) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"flower\\\",\\\"flow\\\",\\\"flight\\\"]]\",\"expected\":\"\\\"fl\\\"\"},{\"input\":\"[[\\\"dog\\\",\\\"racecar\\\",\\\"car\\\"]]\",\"expected\":\"\\\"\\\"\"}]",
     approach: "Vertical scan. O(n·m)\n\n**Складність:** Time O(n·m), Space O(1)",
   },
   {
@@ -253,7 +260,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar threeSum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[-1,0,1,2,-1,-4]]\",\"expected\":\"[[-1,-1,2],[-1,0,1]]\"},{\"input\":\"[[0,1,1]]\",\"expected\":\"[]\"},{\"input\":\"[[0,0,0]]\",\"expected\":\"[[0,0,0]]\"}]",
     approach: "Sort + fix i + two pointers. O(n²)\n\n**Складність:** Time O(n²), Space O(1) (без виводу)",
   },
   {
@@ -264,7 +271,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar threeSumClosest = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[-1,2,1,-4],1]\",\"expected\":\"2\"},{\"input\":\"[[0,0,0],1]\",\"expected\":\"0\"}]",
   },
   {
     slug: "letter-combinations-of-a-phone-number",
@@ -274,7 +281,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} digits\n * @return {string[]}\n */\nvar letterCombinations = function(digits) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"23\\\"]\",\"expected\":\"[\\\"ad\\\",\\\"ae\\\",\\\"af\\\",\\\"bd\\\",\\\"be\\\",\\\"bf\\\",\\\"cd\\\",\\\"ce\\\",\\\"cf\\\"]\"},{\"input\":\"[\\\"2\\\"]\",\"expected\":\"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\"}]",
   },
   {
     slug: "4sum",
@@ -284,7 +291,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[][]}\n */\nvar fourSum = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,0,-1,0,-2,2],0]\",\"expected\":\"[[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]\"},{\"input\":\"[[2,2,2,2,2],8]\",\"expected\":\"[[2,2,2,2]]\"}]",
   },
   {
     slug: "remove-nth-node-from-end-of-list",
@@ -294,7 +301,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Two Pointers\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @param {number} n\n * @return {ListNode}\n */\nvar removeNthFromEnd = function(head, n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5],2]\",\"expected\":\"[1,2,3,5]\"},{\"input\":\"[[1],1]\",\"expected\":\"[]\"},{\"input\":\"[[1,2],1]\",\"expected\":\"[1]\"}]",
   },
   {
     slug: "merge-two-sorted-lists",
@@ -304,7 +311,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} list1\n * @param {ListNode} list2\n * @return {ListNode}\n */\nvar mergeTwoLists = function(list1, list2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,4],[1,3,4]]\",\"expected\":\"[1,1,2,3,4,4]\"},{\"input\":\"[[],[]]\",\"expected\":\"[]\"},{\"input\":\"[[],[0]]\",\"expected\":\"[0]\"}]",
   },
   {
     slug: "generate-parentheses",
@@ -316,7 +323,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Dynamic Programming\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string[]}\n */\nvar generateParenthesis = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3]\",\"expected\":\"[\\\"((()))\\\",\\\"(()())\\\",\\\"(())()\\\",\\\"()(())\\\",\\\"()()()\\\"]\"},{\"input\":\"[1]\",\"expected\":\"[\\\"()\\\"]\"}]",
     approach: "Backtrack, open≤n, close≤open. O(4^n/√n)\n\n**Складність:** Time O(4^n / √n), Space O(n)",
   },
   {
@@ -327,7 +334,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Divide and Conquer\",\"Heap (Priority Queue)\",\"Merge Sort\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode[]} lists\n * @return {ListNode}\n */\nvar mergeKLists = function(lists) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Min-heap or divide&conquer. O(n log k)\n\n**Складність:** Time O(n log k), Space O(k)",
   },
   {
@@ -338,7 +345,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar swapPairs = function(head) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[2,1,4,3]\"},{\"input\":\"[[]]\",\"expected\":\"[]\"},{\"input\":\"[[1]]\",\"expected\":\"[1]\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"[2,1,3]\"}]",
   },
   {
     slug: "reverse-nodes-in-k-group",
@@ -350,7 +357,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @param {number} k\n * @return {ListNode}\n */\nvar reverseKGroup = function(head, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5],2]\",\"expected\":\"[2,1,4,3,5]\"},{\"input\":\"[[1,2,3,4,5],3]\",\"expected\":\"[3,2,1,4,5]\"}]",
   },
   {
     slug: "remove-duplicates-from-sorted-array",
@@ -360,7 +367,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar removeDuplicates = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,1,2]]\",\"expected\":\"2\"},{\"input\":\"[[0,0,1,1,1,2,2,3,3,4]]\",\"expected\":\"5\"}]",
   },
   {
     slug: "remove-element",
@@ -370,7 +377,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} val\n * @return {number}\n */\nvar removeElement = function(nums, val) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,2,2,3],3]\",\"expected\":\"2\"},{\"input\":\"[[0,1,2,2,3,0,4,2],2]\",\"expected\":\"5\"}]",
   },
   {
     slug: "find-the-index-of-the-first-occurrence-in-a-string",
@@ -380,7 +387,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\",\"String\",\"String Matching\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} haystack\n * @param {string} needle\n * @return {number}\n */\nvar strStr = function(haystack, needle) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"sadbutsad\\\",\\\"sad\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"leetcode\\\",\\\"leeto\\\"]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "divide-two-integers",
@@ -390,7 +397,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} dividend\n * @param {number} divisor\n * @return {number}\n */\nvar divide = function(dividend, divisor) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[10,3]\",\"expected\":\"3\"},{\"input\":\"[7,-3]\",\"expected\":\"-2\"}]",
   },
   {
     slug: "substring-with-concatenation-of-all-words",
@@ -400,7 +407,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Sliding Window\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string[]} words\n * @return {number[]}\n */\nvar findSubstring = function(s, words) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"barfoothefoobarman\\\",[\\\"foo\\\",\\\"bar\\\"]]\",\"expected\":\"[0,9]\"},{\"input\":\"[\\\"wordgoodgoodgoodbestword\\\",[\\\"word\\\",\\\"good\\\",\\\"best\\\",\\\"word\\\"]]\",\"expected\":\"[]\"},{\"input\":\"[\\\"barfoofoobarthefoobarman\\\",[\\\"bar\\\",\\\"foo\\\",\\\"the\\\"]]\",\"expected\":\"[6,9,12]\"}]",
   },
   {
     slug: "next-permutation",
@@ -410,7 +417,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {void} Do not return anything, modify nums in-place instead.\n */\nvar nextPermutation = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[1,3,2]\"},{\"input\":\"[[3,2,1]]\",\"expected\":\"[1,2,3]\"},{\"input\":\"[[1,1,5]]\",\"expected\":\"[1,5,1]\"}]",
   },
   {
     slug: "longest-valid-parentheses",
@@ -420,7 +427,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Dynamic Programming\",\"Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar longestValidParentheses = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"(()\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\")()())\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "search-in-rotated-sorted-array",
@@ -430,7 +437,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar search = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,5,6,7,0,1,2],0]\",\"expected\":\"4\"},{\"input\":\"[[4,5,6,7,0,1,2],3]\",\"expected\":\"-1\"},{\"input\":\"[[1],0]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "find-first-and-last-position-of-element-in-sorted-array",
@@ -440,7 +447,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nvar searchRange = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,7,7,8,8,10],8]\",\"expected\":\"[3,4]\"},{\"input\":\"[[5,7,7,8,8,10],6]\",\"expected\":\"[-1,-1]\"},{\"input\":\"[[],0]\",\"expected\":\"[-1,-1]\"}]",
   },
   {
     slug: "search-insert-position",
@@ -450,7 +457,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar searchInsert = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,5,6],5]\",\"expected\":\"2\"},{\"input\":\"[[1,3,5,6],2]\",\"expected\":\"1\"},{\"input\":\"[[1,3,5,6],7]\",\"expected\":\"4\"}]",
     approach: "Return lo. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -461,7 +468,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} board\n * @return {boolean}\n */\nvar isValidSudoku = function(board) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"5\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\"6\\\",\\\".\\\",\\\".\\\",\\\"1\\\",\\\"9\\\",\\\"5\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\".\\\",\\\"9\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\"],[\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"3\\\"],[\\\"4\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"1\\\"],[\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\"],[\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\"8\\\",\\\".\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"4\\\",\\\"1\\\",\\\"9\\\",\\\".\\\",\\\".\\\",\\\"5\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\"9\\\"]]]\",\"expected\":\"true\"},{\"input\":\"[[[\\\"8\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\"6\\\",\\\".\\\",\\\".\\\",\\\"1\\\",\\\"9\\\",\\\"5\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\".\\\",\\\"9\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\"],[\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"3\\\"],[\\\"4\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"1\\\"],[\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\"],[\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\"8\\\",\\\".\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"4\\\",\\\"1\\\",\\\"9\\\",\\\".\\\",\\\".\\\",\\\"5\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\"9\\\"]]]\",\"expected\":\"false\"}]",
     approach: "HashSet per row/col/box. O(1)\n\n**Складність:** Time O(1) (фіксовані 81 клітинка), Space O(1)",
   },
   {
@@ -474,7 +481,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Backtracking\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} board\n * @return {void} Do not return anything, modify board in-place instead.\n */\nvar solveSudoku = function(board) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "count-and-say",
@@ -484,7 +491,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string}\n */\nvar countAndSay = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[1]\",\"expected\":\"\\\"1\\\"\"},{\"input\":\"[4]\",\"expected\":\"\\\"1211\\\"\"}]",
   },
   {
     slug: "combination-sum",
@@ -496,7 +503,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candidates\n * @param {number} target\n * @return {number[][]}\n */\nvar combinationSum = function(candidates, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,6,7],7]\",\"expected\":\"[[2,2,3],[7]]\"},{\"input\":\"[[2,3,5],8]\",\"expected\":\"[[2,2,2,2],[2,3,3],[3,5]]\"},{\"input\":\"[[2],1]\",\"expected\":\"[]\"}]",
     approach: "Backtrack, repeat allowed. O(2^t)\n\n**Складність:** Time O(2^t), Space O(t)",
   },
   {
@@ -507,7 +514,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candidates\n * @param {number} target\n * @return {number[][]}\n */\nvar combinationSum2 = function(candidates, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,1,2,7,6,1,5],8]\",\"expected\":\"[[1,1,6],[1,2,5],[1,7],[2,6]]\"},{\"input\":\"[[2,5,2,1,2],5]\",\"expected\":\"[[1,2,2],[5]]\"}]",
     approach: "Sort + skip same level. O(2^n)\n\n**Складність:** Time O(2^n), Space O(n)",
   },
   {
@@ -518,7 +525,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar firstMissingPositive = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,0]]\",\"expected\":\"3\"},{\"input\":\"[[3,4,-1,1]]\",\"expected\":\"2\"},{\"input\":\"[[7,8,9,11,12]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "multiply-strings",
@@ -528,7 +535,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} num1\n * @param {string} num2\n * @return {string}\n */\nvar multiply = function(num1, num2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"2\\\",\\\"3\\\"]\",\"expected\":\"\\\"6\\\"\"},{\"input\":\"[\\\"123\\\",\\\"456\\\"]\",\"expected\":\"\\\"56088\\\"\"}]",
     approach: "Simulate digit mult. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m+n)",
   },
   {
@@ -539,7 +546,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Dynamic Programming\",\"Greedy\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function(s, p) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aa\\\",\\\"a\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"aa\\\",\\\"*\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"cb\\\",\\\"?a\\\"]\",\"expected\":\"false\"}]",
   },
   {
     slug: "jump-game-ii",
@@ -549,7 +556,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar jump = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,1,1,4]]\",\"expected\":\"2\"},{\"input\":\"[[2,3,0,1,4]]\",\"expected\":\"2\"}]",
     approach: "Greedy farthest reach. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -562,7 +569,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar permute = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\"},{\"input\":\"[[0,1]]\",\"expected\":\"[[0,1],[1,0]]\"},{\"input\":\"[[1]]\",\"expected\":\"[[1]]\"}]",
     approach: "Backtrack used[]. O(n!)\n\n**Складність:** Time O(n·n!), Space O(n)",
   },
   {
@@ -573,7 +580,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar permuteUnique = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,1,2]]\",\"expected\":\"[[1,1,2],[1,2,1],[2,1,1]]\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\"}]",
   },
   {
     slug: "rotate-image",
@@ -585,7 +592,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {void} Do not return anything, modify matrix in-place instead.\n */\nvar rotate = function(matrix) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"[[7,4,1],[8,5,2],[9,6,3]]\"},{\"input\":\"[[[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]]\",\"expected\":\"[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]\"}]",
     approach: "Transpose + reverse rows. O(n²)\n\n**Складність:** Time O(n²), Space O(1)",
   },
   {
@@ -596,7 +603,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} strs\n * @return {string[][]}\n */\nvar groupAnagrams = function(strs) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"eat\\\",\\\"tea\\\",\\\"tan\\\",\\\"ate\\\",\\\"nat\\\",\\\"bat\\\"]]\",\"expected\":\"[[\\\"eat\\\",\\\"tea\\\",\\\"ate\\\"],[\\\"tan\\\",\\\"nat\\\"],[\\\"bat\\\"]]\"},{\"input\":\"[[\\\"\\\"]]\",\"expected\":\"[[\\\"\\\"]]\"},{\"input\":\"[[\\\"a\\\"]]\",\"expected\":\"[[\\\"a\\\"]]\"}]",
     solution: "function groupAnagrams(strs: string[]): string[][] {\n  const map = new Map<string, string[]>();\n  for (const str of strs) {\n    const key = str.split('').sort().join('');\n    if (!map.has(key)) map.set(key, []);\n    map.get(key)!.push(str);\n  }\n  return Array.from(map.values());\n}",
     approach: "Map: ключ = відсортований рядок (або підрахунок частот), значення = масив анаграм.\n\n**Складність:** Time O(n·k log k), Space O(n·k)",
   },
@@ -608,7 +615,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @param {number} n\n * @return {number}\n */\nvar myPow = function(x, n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2,10]\",\"expected\":\"1024\"},{\"input\":\"[2.1,3]\",\"expected\":\"9.261000000000001\"},{\"input\":\"[2,-2]\",\"expected\":\"0.25\"}]",
     approach: "Fast power (divide by 2). O(log n)\n\n**Складність:** Time O(log n), Space O(log n)",
   },
   {
@@ -621,7 +628,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {...(null|boolean|number|string|Array|Object)} args\n * @return {number}\n */\nvar argumentsLength = function(...args) {\n    \n};\n\n/**\n * argumentsLength(1, 2, 3); // 3\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5]]\",\"expected\":\"1\"},{\"input\":\"[[{},null,\\\"3\\\"]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "find-the-degree-of-each-vertex",
@@ -633,7 +640,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Graph Theory\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number[]}\n */\nvar findDegrees = function(matrix) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1,1],[1,0,1],[1,1,0]]]\",\"expected\":\"[2,2,2]\"},{\"input\":\"[[[0,1,0],[1,0,0],[0,0,0]]]\",\"expected\":\"[1,1,0]\"},{\"input\":\"[[[0]]]\",\"expected\":\"[0]\"}]",
   },
   {
     slug: "minimum-operations-to-make-array-sum-divisible-by-k",
@@ -645,7 +652,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minOperations = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,9,7],5]\",\"expected\":\"4\"},{\"input\":\"[[4,1,3],4]\",\"expected\":\"0\"},{\"input\":\"[[3,2],6]\",\"expected\":\"5\"}]",
   },
   {
     slug: "concatenate-array-with-reverse",
@@ -657,7 +664,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar concatWithReverse = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[1,2,3,3,2,1]\"},{\"input\":\"[[1]]\",\"expected\":\"[1,1]\"}]",
   },
   {
     slug: "add-two-promises",
@@ -669,7 +676,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Promise} promise1\n * @param {Promise} promise2\n * @return {Promise}\n */\nvar addTwoPromises = async function(promise1, promise2) {\n    \n};\n\n/**\n * addTwoPromises(Promise.resolve(2), Promise.resolve(2))\n *   .then(console.log); // 4\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "mirror-distance-of-an-integer",
@@ -681,7 +688,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar mirrorDistance = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[25]\",\"expected\":\"27\"},{\"input\":\"[10]\",\"expected\":\"9\"},{\"input\":\"[7]\",\"expected\":\"0\"}]",
   },
   {
     slug: "score-of-a-string",
@@ -693,7 +700,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar scoreOfString = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"hello\\\"]\",\"expected\":\"13\"},{\"input\":\"[\\\"zaz\\\"]\",\"expected\":\"50\"}]",
   },
   {
     slug: "find-the-maximum-achievable-number",
@@ -705,7 +712,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @param {number} t\n * @return {number}\n */\nvar theMaximumAchievableX = function(num, t) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[4,1]\",\"expected\":\"6\"},{\"input\":\"[3,2]\",\"expected\":\"7\"}]",
   },
   {
     slug: "restore-finishing-order",
@@ -717,7 +724,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} order\n * @param {number[]} friends\n * @return {number[]}\n */\nvar recoverOrder = function(order, friends) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1,2,5,4],[1,3,4]]\",\"expected\":\"[3,1,4]\"},{\"input\":\"[[1,4,5,3,2],[2,5]]\",\"expected\":\"[5,2]\"}]",
   },
   {
     slug: "build-array-from-permutation",
@@ -729,7 +736,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar buildArray = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,2,1,5,3,4]]\",\"expected\":\"[0,1,2,4,5,3]\"},{\"input\":\"[[5,0,1,2,3,4]]\",\"expected\":\"[4,5,0,1,2,3]\"}]",
   },
   {
     slug: "divisible-and-non-divisible-sums-difference",
@@ -741,7 +748,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} m\n * @return {number}\n */\nvar differenceOfSums = function(n, m) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[10,3]\",\"expected\":\"19\"},{\"input\":\"[5,6]\",\"expected\":\"15\"},{\"input\":\"[5,1]\",\"expected\":\"-15\"}]",
   },
   {
     slug: "find-minimum-operations-to-make-all-elements-divisible-by-three",
@@ -753,7 +760,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumOperations = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"3\"},{\"input\":\"[[3,6,9]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "final-value-of-variable-after-performing-operations",
@@ -765,7 +772,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} operations\n * @return {number}\n */\nvar finalValueAfterOperations = function(operations) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"--X\\\",\\\"X++\\\",\\\"X++\\\"]]\",\"expected\":\"1\"},{\"input\":\"[[\\\"++X\\\",\\\"++X\\\",\\\"X++\\\"]]\",\"expected\":\"3\"},{\"input\":\"[[\\\"X++\\\",\\\"++X\\\",\\\"--X\\\",\\\"X--\\\"]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "find-words-containing-character",
@@ -777,7 +784,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {character} x\n * @return {number[]}\n */\nvar findWordsContaining = function(words, x) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"leet\\\",\\\"code\\\"],\\\"e\\\"]\",\"expected\":\"[0,1]\"},{\"input\":\"[[\\\"abc\\\",\\\"bcd\\\",\\\"aaaa\\\",\\\"cbc\\\"],\\\"a\\\"]\",\"expected\":\"[0,2]\"},{\"input\":\"[[\\\"abc\\\",\\\"bcd\\\",\\\"aaaa\\\",\\\"cbc\\\"],\\\"z\\\"]\",\"expected\":\"[]\"}]",
   },
   {
     slug: "concatenation-of-array",
@@ -789,7 +796,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar getConcatenation = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,1]]\",\"expected\":\"[1,2,1,1,2,1]\"},{\"input\":\"[[1,3,2,1]]\",\"expected\":\"[1,3,2,1,1,3,2,1]\"}]",
     approach: "[...arr, ...arr]. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -802,7 +809,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} celsius\n * @return {number[]}\n */\nvar convertTemperature = function(celsius) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[36.5]\",\"expected\":\"[309.65,97.7]\"},{\"input\":\"[122.11]\",\"expected\":\"[395.26,251.798]\"}]",
   },
   {
     slug: "sum-of-all-subset-xor-totals",
@@ -814,7 +821,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Backtracking\",\"Bit Manipulation\",\"Combinatorics\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar subsetXORSum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3]]\",\"expected\":\"6\"},{\"input\":\"[[5,1,6]]\",\"expected\":\"28\"},{\"input\":\"[[3,4,5,6,7,8]]\",\"expected\":\"480\"}]",
   },
   {
     slug: "compute-alternating-sum",
@@ -826,7 +833,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar alternatingSum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,5,7]]\",\"expected\":\"-4\"},{\"input\":\"[[100]]\",\"expected\":\"100\"}]",
   },
   {
     slug: "defanging-an-ip-address",
@@ -838,7 +845,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} address\n * @return {string}\n */\nvar defangIPaddr = function(address) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"1.1.1.1\\\"]\",\"expected\":\"\\\"1[.]1[.]1[.]1\\\"\"},{\"input\":\"[\\\"255.100.50.0\\\"]\",\"expected\":\"\\\"255[.]100[.]50[.]0\\\"\"}]",
   },
   {
     slug: "number-of-good-pairs",
@@ -850,7 +857,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Math\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar numIdenticalPairs = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,1,1,3]]\",\"expected\":\"4\"},{\"input\":\"[[1,1,1,1]]\",\"expected\":\"6\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "transform-array-by-parity",
@@ -862,7 +869,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar transformArray = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,3,2,1]]\",\"expected\":\"[0,0,1,1]\"},{\"input\":\"[[1,5,1,4,2]]\",\"expected\":\"[0,0,1,1,1]\"}]",
   },
   {
     slug: "the-two-sneaky-numbers-of-digitville",
@@ -874,7 +881,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar getSneakyNumbers = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,1,0]]\",\"expected\":\"[1,0]\"},{\"input\":\"[[0,3,2,1,3,2]]\",\"expected\":\"[3,2]\"},{\"input\":\"[[7,1,5,4,3,4,6,0,9,5,8,2]]\",\"expected\":\"[4,5]\"}]",
   },
   {
     slug: "timeout-cancellation",
@@ -886,7 +893,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {Array} args\n * @param {number} t\n * @return {Function}\n */\nvar cancellable = function(fn, args, t) {\n    \n};\n\n/**\n *  const result = [];\n *\n *  const fn = (x) => x * 5;\n *  const args = [2], t = 20, cancelTimeMs = 50;\n *\n *  const start = performance.now();\n *\n *  const log = (...argsArr) => {\n *      const diff = Math.floor(performance.now() - start);\n *      result.push({\"time\": diff, \"returned\": fn(...argsArr)});\n *  }\n *       \n *  const cancel = cancellable(log, args, t);\n *\n *  const maxT = Math.max(t, cancelTimeMs);\n *           \n *  setTimeout(cancel, cancelTimeMs);\n *\n *  setTimeout(() => {\n *      console.log(result); // [{\"time\":20,\"returned\":10}]\n *  }, maxT + 15)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "jewels-and-stones",
@@ -898,7 +905,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} jewels\n * @param {string} stones\n * @return {number}\n */\nvar numJewelsInStones = function(jewels, stones) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aA\\\",\\\"aAAbbbb\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"z\\\",\\\"ZZ\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "reverse-string-prefix",
@@ -910,7 +917,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar reversePrefix = function(s, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abcd\\\",2]\",\"expected\":\"\\\"bacd\\\"\"},{\"input\":\"[\\\"xyz\\\",3]\",\"expected\":\"\\\"zyx\\\"\"},{\"input\":\"[\\\"hey\\\",1]\",\"expected\":\"\\\"hey\\\"\"}]",
   },
   {
     slug: "find-most-frequent-vowel-and-consonant",
@@ -922,7 +929,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar maxFreqSum = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"successes\\\"]\",\"expected\":\"6\"},{\"input\":\"[\\\"aeiaeia\\\"]\",\"expected\":\"3\"}]",
   },
   {
     slug: "array-wrapper",
@@ -934,7 +941,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {void}\n */\nvar ArrayWrapper = function(nums) {\n    \n};\n\n/**\n * @return {number}\n */\nArrayWrapper.prototype.valueOf = function() {\n    \n}\n\n/**\n * @return {string}\n */\nArrayWrapper.prototype.toString = function() {\n    \n}\n\n/**\n * const obj1 = new ArrayWrapper([1,2]);\n * const obj2 = new ArrayWrapper([3,4]);\n * obj1 + obj2; // 10\n * String(obj1); // \"[1,2]\"\n * String(obj2); // \"[3,4]\"\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-closest-person",
@@ -946,7 +953,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @param {number} y\n * @param {number} z\n * @return {number}\n */\nvar findClosest = function(x, y, z) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2,7,4]\",\"expected\":\"1\"},{\"input\":\"[2,5,6]\",\"expected\":\"2\"},{\"input\":\"[1,5,3]\",\"expected\":\"0\"}]",
   },
   {
     slug: "convert-date-to-binary",
@@ -958,7 +965,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} date\n * @return {string}\n */\nvar convertDateToBinary = function(date) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"2080-02-29\\\"]\",\"expected\":\"\\\"100000100000-10-11101\\\"\"},{\"input\":\"[\\\"1900-01-01\\\"]\",\"expected\":\"\\\"11101101100-1-1\\\"\"}]",
   },
   {
     slug: "shuffle-the-array",
@@ -970,7 +977,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} n\n * @return {number[]}\n */\nvar shuffle = function(nums, n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,5,1,3,4,7],3]\",\"expected\":\"[2,3,5,4,1,7]\"},{\"input\":\"[[1,2,3,4,4,3,2,1],4]\",\"expected\":\"[1,4,2,3,3,2,4,1]\"},{\"input\":\"[[1,1,2,2],2]\",\"expected\":\"[1,2,1,2]\"}]",
   },
   {
     slug: "reverse-degree-of-a-string",
@@ -982,7 +989,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar reverseDegree = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"148\"},{\"input\":\"[\\\"zaza\\\"]\",\"expected\":\"160\"}]",
   },
   {
     slug: "richest-customer-wealth",
@@ -994,7 +1001,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} accounts\n * @return {number}\n */\nvar maximumWealth = function(accounts) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3],[3,2,1]]]\",\"expected\":\"6\"},{\"input\":\"[[[1,5],[7,3],[3,5]]]\",\"expected\":\"10\"},{\"input\":\"[[[2,8,7],[7,1,3],[1,9,5]]]\",\"expected\":\"17\"}]",
   },
   {
     slug: "count-the-number-of-consistent-strings",
@@ -1006,7 +1013,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Bit Manipulation\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} allowed\n * @param {string[]} words\n * @return {number}\n */\nvar countConsistentStrings = function(allowed, words) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"ab\\\",[\\\"ad\\\",\\\"bd\\\",\\\"aaab\\\",\\\"baa\\\",\\\"badab\\\"]]\",\"expected\":\"2\"},{\"input\":\"[\\\"abc\\\",[\\\"a\\\",\\\"b\\\",\\\"c\\\",\\\"ab\\\",\\\"ac\\\",\\\"bc\\\",\\\"abc\\\"]]\",\"expected\":\"7\"},{\"input\":\"[\\\"cad\\\",[\\\"cc\\\",\\\"acd\\\",\\\"b\\\",\\\"ba\\\",\\\"bac\\\",\\\"bad\\\",\\\"ac\\\",\\\"d\\\"]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "smallest-even-multiple",
@@ -1018,7 +1025,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Number Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar smallestEvenMultiple = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5]\",\"expected\":\"10\"},{\"input\":\"[6]\",\"expected\":\"6\"}]",
   },
   {
     slug: "goal-parser-interpretation",
@@ -1030,7 +1037,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} command\n * @return {string}\n */\nvar interpret = function(command) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"G()(al)\\\"]\",\"expected\":\"\\\"Goal\\\"\"},{\"input\":\"[\\\"G()()()()(al)\\\"]\",\"expected\":\"\\\"Gooooal\\\"\"},{\"input\":\"[\\\"(al)G(al)()()G\\\"]\",\"expected\":\"\\\"alGalooG\\\"\"}]",
   },
   {
     slug: "left-and-right-sum-differences",
@@ -1042,7 +1049,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar leftRightDifference = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,4,8,3]]\",\"expected\":\"[15,1,11,22]\"},{\"input\":\"[[1]]\",\"expected\":\"[0]\"}]",
   },
   {
     slug: "kids-with-the-greatest-number-of-candies",
@@ -1054,7 +1061,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candies\n * @param {number} extraCandies\n * @return {boolean[]}\n */\nvar kidsWithCandies = function(candies, extraCandies) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,5,1,3],3]\",\"expected\":\"[true,true,true,false,true]\"},{\"input\":\"[[4,2,1,1,2],1]\",\"expected\":\"[true,false,false,false,false]\"},{\"input\":\"[[12,1,12],10]\",\"expected\":\"[true,false,true]\"}]",
   },
   {
     slug: "add-two-integers",
@@ -1066,7 +1073,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num1\n * @param {number} num2\n * @return {number}\n */\nvar sum = function(num1, num2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[12,5]\",\"expected\":\"17\"},{\"input\":\"[-10,4]\",\"expected\":\"-6\"}]",
   },
   {
     slug: "minimum-bit-flips-to-convert-number",
@@ -1078,7 +1085,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} start\n * @param {number} goal\n * @return {number}\n */\nvar minBitFlips = function(start, goal) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[10,7]\",\"expected\":\"3\"},{\"input\":\"[3,4]\",\"expected\":\"3\"}]",
   },
   {
     slug: "number-of-employees-who-met-the-target",
@@ -1090,7 +1097,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} hours\n * @param {number} target\n * @return {number}\n */\nvar numberOfEmployeesWhoMetTarget = function(hours, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,2,3,4],2]\",\"expected\":\"3\"},{\"input\":\"[[5,1,4,2,2],6]\",\"expected\":\"0\"}]",
   },
   {
     slug: "permutation-difference-between-two-strings",
@@ -1102,7 +1109,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} t\n * @return {number}\n */\nvar findPermutationDifference = function(s, t) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abc\\\",\\\"bac\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"abcde\\\",\\\"edbac\\\"]\",\"expected\":\"12\"}]",
   },
   {
     slug: "count-pairs-whose-sum-is-less-than-target",
@@ -1114,7 +1121,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Binary Search\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar countPairs = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[-1,1,2,3,1],2]\",\"expected\":\"3\"},{\"input\":\"[[-6,2,5,-2,-7,-1,3],-2]\",\"expected\":\"10\"}]",
   },
   {
     slug: "largest-local-values-in-a-matrix",
@@ -1126,7 +1133,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[][]}\n */\nvar largestLocal = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[9,9,8,1],[5,6,2,6],[8,2,6,4],[6,2,2,2]]]\",\"expected\":\"[[9,9],[8,6]]\"},{\"input\":\"[[[1,1,1,1,1],[1,1,1,1,1],[1,1,2,1,1],[1,1,1,1,1],[1,1,1,1,1]]]\",\"expected\":\"[[2,2,2],[2,2,2],[2,2,2]]\"}]",
   },
   {
     slug: "xor-operation-in-an-array",
@@ -1138,7 +1145,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} start\n * @return {number}\n */\nvar xorOperation = function(n, start) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5,0]\",\"expected\":\"8\"},{\"input\":\"[4,3]\",\"expected\":\"8\"}]",
   },
   {
     slug: "range-sum-of-bst",
@@ -1150,7 +1157,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Search Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} low\n * @param {number} high\n * @return {number}\n */\nvar rangeSumBST = function(root, low, high) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,5,15,3,7,null,18],7,15]\",\"expected\":\"32\"},{\"input\":\"[[10,5,15,3,7,13,18,1,null,6],6,10]\",\"expected\":\"23\"}]",
   },
   {
     slug: "how-many-numbers-are-smaller-than-the-current-number",
@@ -1162,7 +1169,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Sorting\",\"Counting Sort\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar smallerNumbersThanCurrent = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[8,1,2,2,3]]\",\"expected\":\"[4,0,1,1,3]\"},{\"input\":\"[[6,5,4,8]]\",\"expected\":\"[2,1,0,3]\"},{\"input\":\"[[7,7,7,7]]\",\"expected\":\"[0,0,0,0]\"}]",
   },
   {
     slug: "split-a-string-in-balanced-strings",
@@ -1174,7 +1181,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Greedy\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar balancedStringSplit = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"RLRRLLRLRL\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"RLRRRLLRLL\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"LLLLRRRR\\\"]\",\"expected\":\"1\"}]",
   },
   {
     slug: "sleep",
@@ -1186,7 +1193,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {number} millis\n * @return {Promise}\n */\nasync function sleep(millis) {\n    \n}\n\n/** \n * let t = Date.now()\n * sleep(100).then(() => console.log(Date.now() - t)) // 100\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "decode-xored-array",
@@ -1198,7 +1205,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} encoded\n * @param {number} first\n * @return {number[]}\n */\nvar decode = function(encoded, first) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3],1]\",\"expected\":\"[1,0,2,1]\"},{\"input\":\"[[6,2,7,3],4]\",\"expected\":\"[4,2,0,7,4]\"}]",
   },
   {
     slug: "design-parking-system",
@@ -1210,7 +1217,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Design\",\"Simulation\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} big\n * @param {number} medium\n * @param {number} small\n */\nvar ParkingSystem = function(big, medium, small) {\n    \n};\n\n/** \n * @param {number} carType\n * @return {boolean}\n */\nParkingSystem.prototype.addCar = function(carType) {\n    \n};\n\n/** \n * Your ParkingSystem object will be instantiated and called as such:\n * var obj = new ParkingSystem(big, medium, small)\n * var param_1 = obj.addCar(carType)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "minimum-number-of-moves-to-seat-everyone",
@@ -1222,7 +1229,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\",\"Counting Sort\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} seats\n * @param {number[]} students\n * @return {number}\n */\nvar minMovesToSeat = function(seats, students) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1,5],[2,7,4]]\",\"expected\":\"4\"},{\"input\":\"[[4,1,5,9],[1,3,2,6]]\",\"expected\":\"7\"},{\"input\":\"[[2,2,6,6],[1,3,2,6]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "widest-vertical-area-between-two-points-containing-no-points",
@@ -1234,7 +1241,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @return {number}\n */\nvar maxWidthOfVerticalArea = function(points) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[8,7],[9,9],[7,4],[9,7]]]\",\"expected\":\"1\"},{\"input\":\"[[[3,1],[9,0],[1,0],[1,4],[5,3],[8,8]]]\",\"expected\":\"3\"}]",
   },
   {
     slug: "remove-outermost-parentheses",
@@ -1246,7 +1253,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar removeOuterParentheses = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"(()())(())\\\"]\",\"expected\":\"\\\"()()()\\\"\"},{\"input\":\"[\\\"(()())(())(()(()))\\\"]\",\"expected\":\"\\\"()()()()(())\\\"\"},{\"input\":\"[\\\"()()\\\"]\",\"expected\":\"\\\"\\\"\"}]",
   },
   {
     slug: "find-indices-of-stable-mountains",
@@ -1258,7 +1265,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} height\n * @param {number} threshold\n * @return {number[]}\n */\nvar stableMountains = function(height, threshold) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5],2]\",\"expected\":\"[3,4]\"},{\"input\":\"[[10,1,10,1,10],3]\",\"expected\":\"[1,3]\"},{\"input\":\"[[10,1,10,1,10],10]\",\"expected\":\"[]\"}]",
   },
   {
     slug: "running-sum-of-1d-array",
@@ -1270,7 +1277,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar runningSum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[1,3,6,10]\"},{\"input\":\"[[1,1,1,1,1]]\",\"expected\":\"[1,2,3,4,5]\"},{\"input\":\"[[3,1,2,10,1]]\",\"expected\":\"[3,4,6,16,17]\"}]",
   },
   {
     slug: "final-array-state-after-k-multiplication-operations-i",
@@ -1282,7 +1289,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Heap (Priority Queue)\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @param {number} multiplier\n * @return {number[]}\n */\nvar getFinalState = function(nums, k, multiplier) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "truncate-sentence",
@@ -1294,7 +1301,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar truncateSentence = function(s, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"Hello how are you Contestant\\\",4]\",\"expected\":\"\\\"Hello how are you\\\"\"},{\"input\":\"[\\\"What is the solution to this problem\\\",4]\",\"expected\":\"\\\"What is the solution\\\"\"},{\"input\":\"[\\\"chopper is not a tanuki\\\",5]\",\"expected\":\"\\\"chopper is not a tanuki\\\"\"}]",
   },
   {
     slug: "function-composition",
@@ -1306,7 +1313,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Function[]} functions\n * @return {Function}\n */\nvar compose = function(functions) {\n    \n    return function(x) {\n        \n    }\n};\n\n/**\n * const fn = compose([x => x + 1, x => 2 * x])\n * fn(4) // 9\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "minimum-operations-to-exceed-threshold-value-i",
@@ -1318,7 +1325,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minOperations = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,11,10,1,3],10]\",\"expected\":\"3\"},{\"input\":\"[[1,1,2,4,9],1]\",\"expected\":\"0\"},{\"input\":\"[[1,1,2,4,9],9]\",\"expected\":\"4\"}]",
   },
   {
     slug: "maximum-number-of-words-found-in-sentences",
@@ -1330,7 +1337,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} sentences\n * @return {number}\n */\nvar mostWordsFound = function(sentences) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"alice and bob love leetcode\\\",\\\"i think so too\\\",\\\"this is great thanks very much\\\"]]\",\"expected\":\"6\"},{\"input\":\"[[\\\"please wait\\\",\\\"continue to fight\\\",\\\"continue to win\\\"]]\",\"expected\":\"3\"}]",
   },
   {
     slug: "allow-one-function-call",
@@ -1342,7 +1349,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @return {Function}\n */\nvar once = function(fn) {\n    \n    return function(...args){\n        \n    }\n};\n\n/**\n * let fn = (a,b,c) => (a + b + c)\n * let onceFn = once(fn)\n *\n * onceFn(1,2,3); // 6\n * onceFn(2,3,6); // returns undefined without calling fn\n */\n",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-center-of-star-graph",
@@ -1354,7 +1361,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} edges\n * @return {number}\n */\nvar findCenter = function(edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2],[2,3],[4,2]]]\",\"expected\":\"2\"},{\"input\":\"[[[1,2],[5,1],[1,3],[1,4]]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "subtract-the-product-and-sum-of-digits-of-an-integer",
@@ -1366,7 +1373,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar subtractProductAndSum = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[234]\",\"expected\":\"15\"},{\"input\":\"[4421]\",\"expected\":\"21\"}]",
   },
   {
     slug: "create-target-array-in-the-given-order",
@@ -1378,7 +1385,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[]} index\n * @return {number[]}\n */\nvar createTargetArray = function(nums, index) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,2,3,4],[0,1,2,2,1]]\",\"expected\":\"[0,4,1,3,2]\"},{\"input\":\"[[1,2,3,4,0],[0,1,2,3,0]]\",\"expected\":\"[0,1,2,3,4]\"},{\"input\":\"[[1],[0]]\",\"expected\":\"[1]\"}]",
   },
   {
     slug: "reverse-prefix-of-word",
@@ -1390,7 +1397,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\",\"String\",\"Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} word\n * @param {character} ch\n * @return {string}\n */\nvar reversePrefix = function(word, ch) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abcdefd\\\",\\\"d\\\"]\",\"expected\":\"\\\"dcbaefd\\\"\"},{\"input\":\"[\\\"xyxzxe\\\",\\\"z\\\"]\",\"expected\":\"\\\"zxyxxe\\\"\"},{\"input\":\"[\\\"abcd\\\",\\\"z\\\"]\",\"expected\":\"\\\"abcd\\\"\"}]",
   },
   {
     slug: "count-of-matches-in-tournament",
@@ -1402,7 +1409,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar numberOfMatches = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[7]\",\"expected\":\"6\"},{\"input\":\"[14]\",\"expected\":\"13\"}]",
   },
   {
     slug: "find-the-number-of-good-pairs-i",
@@ -1414,7 +1421,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @param {number} k\n * @return {number}\n */\nvar numberOfPairs = function(nums1, nums2, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,4],[1,3,4],1]\",\"expected\":\"5\"},{\"input\":\"[[1,2,4,12],[2,4],3]\",\"expected\":\"2\"}]",
   },
   {
     slug: "minimum-sum-of-four-digit-number-after-splitting-digits",
@@ -1426,7 +1433,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar minimumSum = function(num) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2932]\",\"expected\":\"52\"},{\"input\":\"[4009]\",\"expected\":\"13\"}]",
   },
   {
     slug: "decompress-run-length-encoded-list",
@@ -1438,7 +1445,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar decompressRLElist = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[2,4,4,4]\"},{\"input\":\"[[1,1,2,3]]\",\"expected\":\"[1,3,3]\"}]",
   },
   {
     slug: "apply-transform-over-each-element-in-array",
@@ -1450,7 +1457,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {Function} fn\n * @return {number[]}\n */\nvar map = function(arr, fn) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "sum-of-values-at-indices-with-k-set-bits",
@@ -1462,7 +1469,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar sumIndicesWithKSetBits = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,10,1,5,2],1]\",\"expected\":\"13\"},{\"input\":\"[[4,3,2,1],2]\",\"expected\":\"1\"}]",
   },
   {
     slug: "check-if-two-string-arrays-are-equivalent",
@@ -1474,7 +1481,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} word1\n * @param {string[]} word2\n * @return {boolean}\n */\nvar arrayStringsAreEqual = function(word1, word2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"ab\\\",\\\"c\\\"],[\\\"a\\\",\\\"bc\\\"]]\",\"expected\":\"true\"},{\"input\":\"[[\\\"a\\\",\\\"cb\\\"],[\\\"ab\\\",\\\"c\\\"]]\",\"expected\":\"false\"},{\"input\":\"[[\\\"abc\\\",\\\"d\\\",\\\"defg\\\"],[\\\"abcddefg\\\"]]\",\"expected\":\"true\"}]",
   },
   {
     slug: "sum-multiples",
@@ -1486,7 +1493,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar sumOfMultiples = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[7]\",\"expected\":\"21\"},{\"input\":\"[10]\",\"expected\":\"40\"},{\"input\":\"[9]\",\"expected\":\"30\"}]",
   },
   {
     slug: "count-the-digits-that-divide-a-number",
@@ -1498,7 +1505,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar countDigits = function(num) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[7]\",\"expected\":\"1\"},{\"input\":\"[121]\",\"expected\":\"2\"},{\"input\":\"[1248]\",\"expected\":\"4\"}]",
   },
   {
     slug: "decode-the-message",
@@ -1510,7 +1517,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} key\n * @param {string} message\n * @return {string}\n */\nvar decodeMessage = function(key, message) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"the quick brown fox jumps over the lazy dog\\\",\\\"vkbs bs t suepuv\\\"]\",\"expected\":\"\\\"this is a secret\\\"\"},{\"input\":\"[\\\"eljuxhpwnyrdgtqkviszcfmabo\\\",\\\"zwx hnfx lqantp mnoeius ycgk vcnjrdb\\\"]\",\"expected\":\"\\\"the five boxing wizards jump quickly\\\"\"}]",
   },
   {
     slug: "find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree",
@@ -1522,7 +1529,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val) {\n *     this.val = val;\n *     this.left = this.right = null;\n * }\n */\n/**\n * @param {TreeNode} original\n * @param {TreeNode} cloned\n * @param {TreeNode} target\n * @return {TreeNode}\n */\n\nvar getTargetCopy = function(original, cloned, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "separate-the-digits-in-an-array",
@@ -1534,7 +1541,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar separateDigits = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[13,25,83,77]]\",\"expected\":\"[1,3,2,5,8,3,7,7]\"},{\"input\":\"[[7,1,3,9]]\",\"expected\":\"[7,1,3,9]\"}]",
   },
   {
     slug: "number-of-steps-to-reduce-a-number-to-zero",
@@ -1546,7 +1553,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar numberOfSteps = function(num) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[14]\",\"expected\":\"6\"},{\"input\":\"[8]\",\"expected\":\"4\"},{\"input\":\"[123]\",\"expected\":\"12\"}]",
   },
   {
     slug: "weighted-word-mapping",
@@ -1558,7 +1565,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {number[]} weights\n * @return {string}\n */\nvar mapWordWeights = function(words, weights) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"abcd\\\",\\\"def\\\",\\\"xyz\\\"],[5,3,12,14,1,2,3,2,10,6,6,9,7,8,7,10,8,9,6,9,9,8,3,7,7,2]]\",\"expected\":\"\\\"rij\\\"\"},{\"input\":\"[[\\\"a\\\",\\\"b\\\",\\\"c\\\"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]\",\"expected\":\"\\\"yyy\\\"\"},{\"input\":\"[[\\\"abcd\\\"],[7,5,3,4,3,5,4,9,4,2,2,7,10,2,5,10,6,1,2,2,4,1,3,4,4,5]]\",\"expected\":\"\\\"g\\\"\"}]",
   },
   {
     slug: "sum-of-variable-length-subarrays",
@@ -1570,7 +1577,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar subarraySum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,1]]\",\"expected\":\"11\"},{\"input\":\"[[3,1,1,2]]\",\"expected\":\"13\"}]",
   },
   {
     slug: "filter-elements-from-array",
@@ -1582,7 +1589,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {Function} fn\n * @return {number[]}\n */\nvar filter = function(arr, fn) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "array-reduce-transformation",
@@ -1594,7 +1601,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {Function} fn\n * @param {number} init\n * @return {number}\n */\nvar reduce = function(nums, fn, init) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "count-good-triplets",
@@ -1606,7 +1613,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number} a\n * @param {number} b\n * @param {number} c\n * @return {number}\n */\nvar countGoodTriplets = function(arr, a, b, c) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,0,1,1,9,7],7,2,3]\",\"expected\":\"4\"},{\"input\":\"[[1,1,2,2,3],0,0,1]\",\"expected\":\"0\"}]",
   },
   {
     slug: "minimum-number-game",
@@ -1618,7 +1625,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\",\"Heap (Priority Queue)\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar numberGame = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "number-of-arithmetic-triplets",
@@ -1630,7 +1637,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Two Pointers\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} diff\n * @return {number}\n */\nvar arithmeticTriplets = function(nums, diff) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,4,6,7,10],3]\",\"expected\":\"2\"},{\"input\":\"[[4,5,6,7,8,9],2]\",\"expected\":\"2\"}]",
   },
   {
     slug: "shuffle-string",
@@ -1642,7 +1649,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number[]} indices\n * @return {string}\n */\nvar restoreString = function(s, indices) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"codeleet\\\",[4,5,6,7,0,2,1,3]]\",\"expected\":\"\\\"leetcode\\\"\"},{\"input\":\"[\\\"abc\\\",[0,1,2]]\",\"expected\":\"\\\"abc\\\"\"}]",
   },
   {
     slug: "count-number-of-pairs-with-absolute-difference-k",
@@ -1654,7 +1661,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar countKDifference = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,2,1],1]\",\"expected\":\"4\"},{\"input\":\"[[1,3],3]\",\"expected\":\"0\"},{\"input\":\"[[3,2,1,5,4],2]\",\"expected\":\"3\"}]",
   },
   {
     slug: "count-items-matching-a-rule",
@@ -1666,7 +1673,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[][]} items\n * @param {string} ruleKey\n * @param {string} ruleValue\n * @return {number}\n */\nvar countMatches = function(items, ruleKey, ruleValue) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"phone\\\",\\\"blue\\\",\\\"pixel\\\"],[\\\"computer\\\",\\\"silver\\\",\\\"lenovo\\\"],[\\\"phone\\\",\\\"gold\\\",\\\"iphone\\\"]],\\\"color\\\",\\\"silver\\\"]\",\"expected\":\"1\"},{\"input\":\"[[[\\\"phone\\\",\\\"blue\\\",\\\"pixel\\\"],[\\\"computer\\\",\\\"silver\\\",\\\"phone\\\"],[\\\"phone\\\",\\\"gold\\\",\\\"iphone\\\"]],\\\"type\\\",\\\"phone\\\"]\",\"expected\":\"2\"}]",
   },
   {
     slug: "minimum-average-of-smallest-and-largest-elements",
@@ -1678,7 +1685,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumAverage = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[7,8,3,4,15,13,4,1]]\",\"expected\":\"5.5\"},{\"input\":\"[[1,9,8,3,10,5]]\",\"expected\":\"5.5\"},{\"input\":\"[[1,2,3,7,8,9]]\",\"expected\":\"5\"}]",
   },
   {
     slug: "difference-between-element-sum-and-digit-sum-of-an-array",
@@ -1690,7 +1697,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar differenceOfSum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,15,6,3]]\",\"expected\":\"9\"},{\"input\":\"[[1,2,3,4]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "count-partitions-with-even-sum-difference",
@@ -1702,7 +1709,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countPartitions = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,10,3,7,6]]\",\"expected\":\"4\"},{\"input\":\"[[1,2,2]]\",\"expected\":\"0\"},{\"input\":\"[[2,4,6,8]]\",\"expected\":\"3\"}]",
   },
   {
     slug: "construct-the-minimum-bitwise-array-i",
@@ -1714,7 +1721,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar minBitwiseArray = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,5,7]]\",\"expected\":\"[-1,1,4,3]\"},{\"input\":\"[[11,13,31]]\",\"expected\":\"[9,12,15]\"}]",
   },
   {
     slug: "bitwise-or-of-even-numbers-in-an-array",
@@ -1726,7 +1733,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar evenNumberBitwiseORs = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5,6]]\",\"expected\":\"6\"},{\"input\":\"[[7,9,11]]\",\"expected\":\"0\"},{\"input\":\"[[1,8,16]]\",\"expected\":\"24\"}]",
   },
   {
     slug: "gcd-of-odd-and-even-sums",
@@ -1738,7 +1745,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Number Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar gcdOfOddEvenSums = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[4]\",\"expected\":\"4\"},{\"input\":\"[5]\",\"expected\":\"5\"}]",
   },
   {
     slug: "root-equals-sum-of-children",
@@ -1750,7 +1757,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {boolean}\n */\nvar checkTree = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,4,6]]\",\"expected\":\"true\"},{\"input\":\"[[5,3,1]]\",\"expected\":\"false\"}]",
   },
   {
     slug: "interval-cancellation",
@@ -1762,7 +1769,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {Array} args\n * @param {number} t\n * @return {Function}\n */\nvar cancellable = function(fn, args, t) {\n    \n};\n\n/**\n *  const result = [];\n *\n *  const fn = (x) => x * 2;\n *  const args = [4], t = 35, cancelTimeMs = 190;\n *\n *  const start = performance.now();\n *\n *  const log = (...argsArr) => {\n *      const diff = Math.floor(performance.now() - start);\n *      result.push({\"time\": diff, \"returned\": fn(...argsArr)});\n *  }\n *       \n *  const cancel = cancellable(log, args, t);\n *\n *  setTimeout(cancel, cancelTimeMs);\n *   \n *  setTimeout(() => {\n *      console.log(result); // [\n *                           //     {\"time\":0,\"returned\":8},\n *                           //     {\"time\":35,\"returned\":8},\n *                           //     {\"time\":70,\"returned\":8},\n *                           //     {\"time\":105,\"returned\":8},\n *                           //     {\"time\":140,\"returned\":8},\n *                           //     {\"time\":175,\"returned\":8}\n *                           // ]\n *  }, cancelTimeMs + t + 15)    \n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-nesting-depth-of-the-parentheses",
@@ -1774,7 +1781,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar maxDepth = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"(1+(2*3)+((8)/4))+1\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"(1)+((2))+(((3)))\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"()(())((()()))\\\"]\",\"expected\":\"3\"}]",
   },
   {
     slug: "to-lower-case",
@@ -1786,7 +1793,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar toLowerCase = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"Hello\\\"]\",\"expected\":\"\\\"hello\\\"\"},{\"input\":\"[\\\"here\\\"]\",\"expected\":\"\\\"here\\\"\"},{\"input\":\"[\\\"LOVELY\\\"]\",\"expected\":\"\\\"lovely\\\"\"}]",
   },
   {
     slug: "minimum-element-after-replacement-with-digit-sum",
@@ -1798,7 +1805,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minElement = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,12,13,14]]\",\"expected\":\"1\"},{\"input\":\"[[1,2,3,4]]\",\"expected\":\"1\"},{\"input\":\"[[999,19,199]]\",\"expected\":\"10\"}]",
   },
   {
     slug: "sort-the-people",
@@ -1810,7 +1817,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} names\n * @param {number[]} heights\n * @return {string[]}\n */\nvar sortPeople = function(names, heights) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"Mary\\\",\\\"John\\\",\\\"Emma\\\"],[180,165,170]]\",\"expected\":\"[\\\"Mary\\\",\\\"Emma\\\",\\\"John\\\"]\"},{\"input\":\"[[\\\"Alice\\\",\\\"Bob\\\",\\\"Bob\\\"],[155,185,150]]\",\"expected\":\"[\\\"Bob\\\",\\\"Alice\\\",\\\"Bob\\\"]\"}]",
   },
   {
     slug: "minimum-time-visiting-all-points",
@@ -1822,7 +1829,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Geometry\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @return {number}\n */\nvar minTimeToVisitAllPoints = function(points) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,1],[3,4],[-1,0]]]\",\"expected\":\"7\"},{\"input\":\"[[[3,2],[-2,2]]]\",\"expected\":\"5\"}]",
   },
   {
     slug: "earliest-time-to-finish-one-task",
@@ -1834,7 +1841,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} tasks\n * @return {number}\n */\nvar earliestTime = function(tasks) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,6],[2,3]]]\",\"expected\":\"5\"},{\"input\":\"[[[100,100],[100,100],[100,100]]]\",\"expected\":\"200\"}]",
   },
   {
     slug: "chunk-array",
@@ -1846,7 +1853,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Array} arr\n * @param {number} size\n * @return {Array}\n */\nvar chunk = function(arr, size) {\n    \n};\n",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-69-number",
@@ -1858,7 +1865,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar maximum69Number  = function(num) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[9669]\",\"expected\":\"9969\"},{\"input\":\"[9996]\",\"expected\":\"9999\"},{\"input\":\"[9999]\",\"expected\":\"9999\"}]",
   },
   {
     slug: "find-common-elements-between-two-arrays",
@@ -1870,7 +1877,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number[]}\n */\nvar findIntersectionValues = function(nums1, nums2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,2],[1,2]]\",\"expected\":\"[2,1]\"},{\"input\":\"[[4,3,2,3,1],[2,2,5,2,3,6]]\",\"expected\":\"[3,4]\"},{\"input\":\"[[3,4,2,3],[1,5]]\",\"expected\":\"[0,0]\"}]",
   },
   {
     slug: "counting-words-with-a-given-prefix",
@@ -1882,7 +1889,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"String Matching\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {string} pref\n * @return {number}\n */\nvar prefixCount = function(words, pref) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"pay\\\",\\\"attention\\\",\\\"practice\\\",\\\"attend\\\"],\\\"at\\\"]\",\"expected\":\"2\"},{\"input\":\"[[\\\"leetcode\\\",\\\"win\\\",\\\"loops\\\",\\\"success\\\"],\\\"code\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "matrix-diagonal-sum",
@@ -1894,7 +1901,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @return {number}\n */\nvar diagonalSum = function(mat) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"25\"},{\"input\":\"[[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]]]\",\"expected\":\"8\"},{\"input\":\"[[[5]]]\",\"expected\":\"5\"}]",
   },
   {
     slug: "check-if-the-sentence-is-pangram",
@@ -1906,7 +1913,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} sentence\n * @return {boolean}\n */\nvar checkIfPangram = function(sentence) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"thequickbrownfoxjumpsoverthelazydog\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"leetcode\\\"]\",\"expected\":\"false\"}]",
   },
   {
     slug: "cells-in-a-range-on-an-excel-sheet",
@@ -1918,7 +1925,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string[]}\n */\nvar cellsInRange = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"K1:L2\\\"]\",\"expected\":\"[\\\"K1\\\",\\\"K2\\\",\\\"L1\\\",\\\"L2\\\"]\"},{\"input\":\"[\\\"A1:F1\\\"]\",\"expected\":\"[\\\"A1\\\",\\\"B1\\\",\\\"C1\\\",\\\"D1\\\",\\\"E1\\\",\\\"F1\\\"]\"}]",
   },
   {
     slug: "final-prices-with-a-special-discount-in-a-shop",
@@ -1930,7 +1937,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Stack\",\"Monotonic Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} prices\n * @return {number[]}\n */\nvar finalPrices = function(prices) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[8,4,6,2,3]]\",\"expected\":\"[4,2,4,2,3]\"},{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"[1,2,3,4,5]\"},{\"input\":\"[[10,1,1,6]]\",\"expected\":\"[9,0,1,6]\"}]",
   },
   {
     slug: "sorting-the-sentence",
@@ -1942,7 +1949,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar sortSentence = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"is2 sentence4 This1 a3\\\"]\",\"expected\":\"\\\"This is a sentence\\\"\"},{\"input\":\"[\\\"Myself2 Me1 I4 and3\\\"]\",\"expected\":\"\\\"Me Myself and I\\\"\"}]",
   },
   {
     slug: "reverse-words-in-a-string-iii",
@@ -1954,7 +1961,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar reverseWords = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"Let's take LeetCode contest\\\"]\",\"expected\":\"\\\"s'teL ekat edoCteeL tsetnoc\\\"\"},{\"input\":\"[\\\"Mr Ding\\\"]\",\"expected\":\"\\\"rM gniD\\\"\"}]",
   },
   {
     slug: "find-first-palindromic-string-in-the-array",
@@ -1966,7 +1973,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @return {string}\n */\nvar firstPalindrome = function(words) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"abc\\\",\\\"car\\\",\\\"ada\\\",\\\"racecar\\\",\\\"cool\\\"]]\",\"expected\":\"\\\"ada\\\"\"},{\"input\":\"[[\\\"notapalindrome\\\",\\\"racecar\\\"]]\",\"expected\":\"\\\"racecar\\\"\"},{\"input\":\"[[\\\"def\\\",\\\"ghi\\\"]]\",\"expected\":\"\\\"\\\"\"}]",
   },
   {
     slug: "sum-of-all-odd-length-subarrays",
@@ -1978,7 +1985,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @return {number}\n */\nvar sumOddLengthSubarrays = function(arr) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,4,2,5,3]]\",\"expected\":\"58\"},{\"input\":\"[[1,2]]\",\"expected\":\"3\"},{\"input\":\"[[10,11,12]]\",\"expected\":\"66\"}]",
   },
   {
     slug: "find-the-highest-altitude",
@@ -1990,7 +1997,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} gain\n * @return {number}\n */\nvar largestAltitude = function(gain) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[-5,1,5,0,-7]]\",\"expected\":\"1\"},{\"input\":\"[[-4,-3,-2,-1,4,3,2]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "count-equal-and-divisible-pairs-in-an-array",
@@ -2002,7 +2009,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar countPairs = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1,2,2,2,1,3],2]\",\"expected\":\"4\"},{\"input\":\"[[1,2,3,4],1]\",\"expected\":\"0\"}]",
   },
   {
     slug: "find-the-pivot-integer",
@@ -2014,7 +2021,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar pivotInteger = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[8]\",\"expected\":\"6\"},{\"input\":\"[1]\",\"expected\":\"1\"},{\"input\":\"[4]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "flipping-an-image",
@@ -2026,7 +2033,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Bit Manipulation\",\"Matrix\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} image\n * @return {number[][]}\n */\nvar flipAndInvertImage = function(image) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,1,0],[1,0,1],[0,0,0]]]\",\"expected\":\"[[1,0,0],[0,1,0],[1,1,1]]\"},{\"input\":\"[[[1,1,0,0],[1,0,0,1],[0,1,1,1],[1,0,1,0]]]\",\"expected\":\"[[1,1,0,0],[0,1,1,0],[0,0,0,1],[1,0,1,0]]\"}]",
   },
   {
     slug: "generate-fibonacci-sequence",
@@ -2038,7 +2045,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @return {Generator<number>}\n */\nvar fibGenerator = function*() {\n    \n};\n\n/**\n * const gen = fibGenerator();\n * gen.next().value; // 0\n * gen.next().value; // 1\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5]\",\"expected\":\"{}\"},{\"input\":\"[0]\",\"expected\":\"{}\"}]",
   },
   {
     slug: "unique-morse-code-words",
@@ -2050,7 +2057,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @return {number}\n */\nvar uniqueMorseRepresentations = function(words) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"gin\\\",\\\"zen\\\",\\\"gig\\\",\\\"msg\\\"]]\",\"expected\":\"2\"},{\"input\":\"[[\\\"a\\\"]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "maximum-product-of-two-elements-in-an-array",
@@ -2062,7 +2069,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\",\"Heap (Priority Queue)\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maxProduct = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,4,5,2]]\",\"expected\":\"12\"},{\"input\":\"[[1,5,4,5]]\",\"expected\":\"16\"},{\"input\":\"[[3,7]]\",\"expected\":\"12\"}]",
   },
   {
     slug: "count-asterisks",
@@ -2074,7 +2081,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar countAsterisks = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"l|*e*et|c**o|*de|\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"iamprogrammer\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"yo|uar|e**|b|e***au|tifu|l\\\"]\",\"expected\":\"5\"}]",
   },
   {
     slug: "minimum-cost-to-reach-every-position",
@@ -2086,7 +2093,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} cost\n * @return {number[]}\n */\nvar minCosts = function(cost) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,3,4,1,3,2]]\",\"expected\":\"[5,3,3,1,1,1]\"},{\"input\":\"[[1,2,4,6,7]]\",\"expected\":\"[1,1,1,1,1]\"}]",
   },
   {
     slug: "harshad-number",
@@ -2098,7 +2105,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @return {number}\n */\nvar sumOfTheDigitsOfHarshadNumber = function(x) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[18]\",\"expected\":\"9\"},{\"input\":\"[23]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "traffic-signal-color",
@@ -2110,7 +2117,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} timer\n * @return {string}\n */\nvar trafficSignal = function(timer) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[60]\",\"expected\":\"\\\"Red\\\"\"},{\"input\":\"[5]\",\"expected\":\"\\\"Invalid\\\"\"}]",
   },
   {
     slug: "find-missing-and-repeated-values",
@@ -2122,7 +2129,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Math\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[]}\n */\nvar findMissingAndRepeatedValues = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,3],[2,2]]]\",\"expected\":\"[2,4]\"},{\"input\":\"[[[9,1,7],[8,9,2],[3,4,6]]]\",\"expected\":\"[9,5]\"}]",
   },
   {
     slug: "find-missing-elements",
@@ -2134,7 +2141,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar findMissingElements = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,4,2,5]]\",\"expected\":\"[3]\"},{\"input\":\"[[7,8,6,9]]\",\"expected\":\"[]\"},{\"input\":\"[[5,1]]\",\"expected\":\"[2,3,4]\"}]",
   },
   {
     slug: "sort-by",
@@ -2146,7 +2153,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Array} arr\n * @param {Function} fn\n * @return {Array}\n */\nvar sortBy = function(arr, fn) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-product-difference-between-two-pairs",
@@ -2158,7 +2165,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\r\n * @param {number[]} nums\r\n * @return {number}\r\n */\r\nvar maxProductDifference = function(nums) {\r\n    \r\n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,6,2,7,4]]\",\"expected\":\"34\"},{\"input\":\"[[4,2,5,9,7,4,8]]\",\"expected\":\"64\"}]",
   },
   {
     slug: "count-symmetric-integers",
@@ -2170,7 +2177,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} low\n * @param {number} high\n * @return {number}\n */\nvar countSymmetricIntegers = function(low, high) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[1,100]\",\"expected\":\"9\"},{\"input\":\"[1200,1230]\",\"expected\":\"4\"}]",
   },
   {
     slug: "check-if-a-string-is-an-acronym-of-words",
@@ -2182,7 +2189,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {string} s\n * @return {boolean}\n */\nvar isAcronym = function(words, s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"alice\\\",\\\"bob\\\",\\\"charlie\\\"],\\\"abc\\\"]\",\"expected\":\"true\"},{\"input\":\"[[\\\"an\\\",\\\"apple\\\"],\\\"a\\\"]\",\"expected\":\"false\"},{\"input\":\"[[\\\"never\\\",\\\"gonna\\\",\\\"give\\\",\\\"up\\\",\\\"on\\\",\\\"you\\\"],\\\"ngguoy\\\"]\",\"expected\":\"true\"}]",
   },
   {
     slug: "debounce",
@@ -2194,7 +2201,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {number} t milliseconds\n * @return {Function}\n */\nvar debounce = function(fn, t) {\n    \n    return function(...args) {\n        \n    }\n};\n\n/**\n * const log = debounce(console.log, 100);\n * log('Hello'); // cancelled\n * log('Hello'); // cancelled\n * log('Hello'); // Logged at t=100ms\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-substrings-with-distinct-start",
@@ -2206,7 +2213,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar maxDistinct = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abab\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"abcd\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"aaaa\\\"]\",\"expected\":\"1\"}]",
   },
   {
     slug: "insert-greatest-common-divisors-in-linked-list",
@@ -2218,7 +2225,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Math\",\"Number Theory\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar insertGreatestCommonDivisors = function(head) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[18,6,10,3]]\",\"expected\":\"[18,6,6,2,10,1,3]\"},{\"input\":\"[[7]]\",\"expected\":\"[7]\"}]",
   },
   {
     slug: "partitioning-into-minimum-number-of-deci-binary-numbers",
@@ -2230,7 +2237,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} n\n * @return {number}\n */\nvar minPartitions = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"32\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"82734\\\"]\",\"expected\":\"8\"},{\"input\":\"[\\\"27346209830709182346\\\"]\",\"expected\":\"9\"}]",
   },
   {
     slug: "strictly-palindromic-number",
@@ -2242,7 +2249,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Two Pointers\",\"Brainteaser\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {boolean}\n */\nvar isStrictlyPalindromic = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[9]\",\"expected\":\"false\"},{\"input\":\"[4]\",\"expected\":\"false\"}]",
   },
   {
     slug: "minimum-number-of-operations-to-move-all-balls-to-each-box",
@@ -2254,7 +2261,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} boxes\n * @return {number[]}\n */\nvar minOperations = function(boxes) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"110\\\"]\",\"expected\":\"[1,1,3]\"},{\"input\":\"[\\\"001011\\\"]\",\"expected\":\"[11,8,5,4,3,4]\"}]",
   },
   {
     slug: "partition-array-according-to-given-pivot",
@@ -2266,7 +2273,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} pivot\n * @return {number[]}\n */\nvar pivotArray = function(nums, pivot) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[9,12,5,10,14,3,10],10]\",\"expected\":\"[9,5,3,10,10,12,14]\"},{\"input\":\"[[-3,4,3,2],2]\",\"expected\":\"[-3,2,4,3]\"}]",
   },
   {
     slug: "merge-nodes-in-between-zeros",
@@ -2278,7 +2285,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar mergeNodes = function(head) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,3,1,0,4,5,2,0]]\",\"expected\":\"[4,11]\"},{\"input\":\"[[0,1,0,3,0,2,2,0]]\",\"expected\":\"[1,3,4]\"}]",
   },
   {
     slug: "count-number-of-maximum-bitwise-or-subsets",
@@ -2290,7 +2297,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\",\"Bit Manipulation\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countMaxOrSubsets = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1]]\",\"expected\":\"2\"},{\"input\":\"[[2,2,2]]\",\"expected\":\"7\"},{\"input\":\"[[3,2,1,5]]\",\"expected\":\"6\"}]",
   },
   {
     slug: "generate-binary-strings-without-adjacent-zeros",
@@ -2302,7 +2309,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Backtracking\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string[]}\n */\nvar validStrings = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3]\",\"expected\":\"[\\\"010\\\",\\\"011\\\",\\\"101\\\",\\\"110\\\",\\\"111\\\"]\"},{\"input\":\"[1]\",\"expected\":\"[\\\"0\\\",\\\"1\\\"]\"}]",
   },
   {
     slug: "find-the-original-array-of-prefix-xor",
@@ -2314,7 +2321,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} pref\n * @return {number[]}\n */\nvar findArray = function(pref) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,2,0,3,1]]\",\"expected\":\"[5,7,2,3,2]\"},{\"input\":\"[[13]]\",\"expected\":\"[13]\"}]",
   },
   {
     slug: "binary-search-tree-to-greater-sum-tree",
@@ -2326,7 +2333,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Search Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar bstToGst = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]]\",\"expected\":\"[30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]\"},{\"input\":\"[[0,null,1]]\",\"expected\":\"[1,null,1]\"}]",
   },
   {
     slug: "find-the-prefix-common-array-of-two-arrays",
@@ -2338,7 +2345,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} A\n * @param {number[]} B\n * @return {number[]}\n */\nvar findThePrefixCommonArray = function(A, B) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,2,4],[3,1,2,4]]\",\"expected\":\"[0,2,3,4]\"},{\"input\":\"[[2,3,1],[3,1,2]]\",\"expected\":\"[0,1,3]\"}]",
   },
   {
     slug: "group-the-people-given-the-group-size-they-belong-to",
@@ -2350,7 +2357,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} groupSizes\n * @return {number[][]}\n */\nvar groupThePeople = function(groupSizes) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,3,3,3,3,1,3]]\",\"expected\":\"[[5],[0,1,2],[3,4,6]]\"},{\"input\":\"[[2,1,3,3,3,2]]\",\"expected\":\"[[1],[0,5],[2,3,4]]\"}]",
   },
   {
     slug: "the-k-th-lexicographical-string-of-all-happy-strings-of-length-n",
@@ -2362,7 +2369,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {string}\n */\nvar getHappyString = function(n, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[1,3]\",\"expected\":\"\\\"c\\\"\"},{\"input\":\"[1,4]\",\"expected\":\"\\\"\\\"\"},{\"input\":\"[3,9]\",\"expected\":\"\\\"cab\\\"\"}]",
   },
   {
     slug: "number-of-laser-beams-in-a-bank",
@@ -2374,7 +2381,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"String\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} bank\n * @return {number}\n */\nvar numberOfBeams = function(bank) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"011001\\\",\\\"000000\\\",\\\"010100\\\",\\\"001000\\\"]]\",\"expected\":\"8\"},{\"input\":\"[[\\\"000\\\",\\\"111\\\",\\\"000\\\"]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "queries-on-number-of-points-inside-a-circle",
@@ -2386,7 +2393,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Geometry\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @param {number[][]} queries\n * @return {number[]}\n */\nvar countPoints = function(points, queries) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,3],[3,3],[5,3],[2,2]],[[2,3,1],[4,3,1],[1,1,2]]]\",\"expected\":\"[3,2,2]\"},{\"input\":\"[[[1,1],[2,2],[3,3],[4,4],[5,5]],[[1,2,2],[2,2,2],[4,3,2],[4,3,3]]]\",\"expected\":\"[2,3,2,4]\"}]",
   },
   {
     slug: "count-nodes-equal-to-average-of-subtree",
@@ -2398,7 +2405,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar averageOfSubtree = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,8,5,0,1,null,6]]\",\"expected\":\"5\"},{\"input\":\"[[1]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "reverse-odd-levels-of-binary-tree",
@@ -2410,7 +2417,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar reverseOddLevels = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,5,8,13,21,34]]\",\"expected\":\"[2,5,3,8,13,21,34]\"},{\"input\":\"[[7,13,11]]\",\"expected\":\"[7,11,13]\"},{\"input\":\"[[0,1,2,0,0,0,0,1,1,1,1,2,2,2,2]]\",\"expected\":\"[0,2,1,0,0,0,0,2,2,2,2,1,1,1,1]\"}]",
   },
   {
     slug: "encode-and-decode-tinyurl",
@@ -2422,7 +2429,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Design\",\"Hash Function\"]",
     companies: "[]",
     starterCode: "/**\n * Encodes a URL to a shortened URL.\n *\n * @param {string} longUrl\n * @return {string}\n */\nvar encode = function(longUrl) {\n    \n};\n\n/**\n * Decodes a shortened URL to its original URL.\n *\n * @param {string} shortUrl\n * @return {string}\n */\nvar decode = function(shortUrl) {\n    \n};\n\n/**\n * Your functions will be called as such:\n * decode(encode(url));\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "count-digit-appearances",
@@ -2434,7 +2441,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} digit\n * @return {number}\n */\nvar countDigitOccurrences = function(nums, digit) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[12,54,32,22],2]\",\"expected\":\"4\"},{\"input\":\"[[1,34,7],9]\",\"expected\":\"0\"}]",
   },
   {
     slug: "deepest-leaves-sum",
@@ -2446,7 +2453,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar deepestLeavesSum = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5,null,6,7,null,null,null,null,8]]\",\"expected\":\"15\"},{\"input\":\"[[6,7,8,2,7,1,3,9,null,1,4,null,null,null,5]]\",\"expected\":\"19\"}]",
   },
   {
     slug: "max-increase-to-keep-city-skyline",
@@ -2458,7 +2465,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maxIncreaseKeepingSkyline = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]]\",\"expected\":\"35\"},{\"input\":\"[[[0,0,0],[0,0,0],[0,0,0]]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "subrectangle-queries",
@@ -2470,7 +2477,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Design\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} rectangle\n */\nvar SubrectangleQueries = function(rectangle) {\n    \n};\n\n/** \n * @param {number} row1 \n * @param {number} col1 \n * @param {number} row2 \n * @param {number} col2 \n * @param {number} newValue\n * @return {void}\n */\nSubrectangleQueries.prototype.updateSubrectangle = function(row1, col1, row2, col2, newValue) {\n    \n};\n\n/** \n * @param {number} row \n * @param {number} col\n * @return {number}\n */\nSubrectangleQueries.prototype.getValue = function(row, col) {\n    \n};\n\n/** \n * Your SubrectangleQueries object will be instantiated and called as such:\n * var obj = new SubrectangleQueries(rectangle)\n * obj.updateSubrectangle(row1,col1,row2,col2,newValue)\n * var param_2 = obj.getValue(row,col)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-binary-tree",
@@ -2482,7 +2489,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Divide and Conquer\",\"Stack\",\"Tree\",\"Monotonic Stack\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[]} nums\n * @return {TreeNode}\n */\nvar constructMaximumBinaryTree = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,2,1,6,0,5]]\",\"expected\":\"[6,3,5,null,2,0,null,null,1]\"},{\"input\":\"[[3,2,1]]\",\"expected\":\"[3,null,2,null,1]\"}]",
   },
   {
     slug: "balance-a-binary-search-tree",
@@ -2494,7 +2501,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Divide and Conquer\",\"Greedy\",\"Tree\",\"Depth-First Search\",\"Binary Search Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar balanceBST = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,null,2,null,3,null,4]]\",\"expected\":\"[2,1,3,null,null,null,4]\"},{\"input\":\"[[2,1,3]]\",\"expected\":\"[2,1,3]\"}]",
   },
   {
     slug: "convert-an-array-into-a-2d-array-with-conditions",
@@ -2506,7 +2513,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar findMatrix = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,4,1,2,3,1]]\",\"expected\":\"[[1,2,3,4],[1,3],[1]]\"},{\"input\":\"[[2,1,1]]\",\"expected\":\"[[1,2],[1]]\"}]",
   },
   {
     slug: "sort-the-students-by-their-kth-score",
@@ -2518,7 +2525,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} score\n * @param {number} k\n * @return {number[][]}\n */\nvar sortTheStudents = function(score, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[10,6,9,1],[7,5,11,2],[4,8,3,15]],2]\",\"expected\":\"[[7,5,11,2],[10,6,9,1],[4,8,3,15]]\"},{\"input\":\"[[[3,4],[5,6]],0]\",\"expected\":\"[[5,6],[3,4]]\"}]",
   },
   {
     slug: "sum-of-nodes-with-even-valued-grandparent",
@@ -2530,7 +2537,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar sumEvenGrandparent = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[6,7,8,2,7,1,3,9,null,1,4,null,null,null,5]]\",\"expected\":\"18\"},{\"input\":\"[[1]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "construct-smallest-number-from-di-string",
@@ -2542,7 +2549,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Backtracking\",\"Stack\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} pattern\n * @return {string}\n */\nvar smallestNumber = function(pattern) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"IIIDIDDD\\\"]\",\"expected\":\"\\\"123549876\\\"\"},{\"input\":\"[\\\"DDD\\\"]\",\"expected\":\"\\\"4321\\\"\"}]",
   },
   {
     slug: "minimum-number-of-operations-to-make-array-xor-equal-to-k",
@@ -2554,7 +2561,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minOperations = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,1,3,4],1]\",\"expected\":\"2\"},{\"input\":\"[[2,0,2,0],0]\",\"expected\":\"0\"}]",
   },
   {
     slug: "minimum-amount-of-time-to-collect-garbage",
@@ -2566,7 +2573,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} garbage\n * @param {number[]} travel\n * @return {number}\n */\nvar garbageCollection = function(garbage, travel) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"G\\\",\\\"P\\\",\\\"GP\\\",\\\"GG\\\"],[2,4,3]]\",\"expected\":\"21\"},{\"input\":\"[[\\\"MMM\\\",\\\"PGM\\\",\\\"GP\\\"],[3,10]]\",\"expected\":\"37\"}]",
   },
   {
     slug: "queries-on-a-permutation-with-key",
@@ -2578,7 +2585,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Indexed Tree\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} queries\n * @param {number} m\n * @return {number[]}\n */\nvar processQueries = function(queries, m) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-number-of-coins-you-can-get",
@@ -2590,7 +2597,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Greedy\",\"Sorting\",\"Game Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} piles\n * @return {number}\n */\nvar maxCoins = function(piles) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,4,1,2,7,8]]\",\"expected\":\"9\"},{\"input\":\"[[2,4,5]]\",\"expected\":\"4\"},{\"input\":\"[[9,8,7,6,5,1,2,3,4]]\",\"expected\":\"18\"}]",
   },
   {
     slug: "count-triplets-that-can-form-two-arrays-of-equal-xor",
@@ -2602,7 +2609,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Math\",\"Bit Manipulation\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @return {number}\n */\nvar countTriplets = function(arr) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,1,6,7]]\",\"expected\":\"4\"},{\"input\":\"[[1,1,1,1,1]]\",\"expected\":\"10\"}]",
   },
   {
     slug: "sort-matrix-by-diagonals",
@@ -2614,7 +2621,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[][]}\n */\nvar sortMatrix = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,7,3],[9,8,2],[4,5,6]]]\",\"expected\":\"[[8,2,3],[9,6,7],[4,5,1]]\"},{\"input\":\"[[[0,1],[1,2]]]\",\"expected\":\"[[2,1],[1,0]]\"},{\"input\":\"[[[1]]]\",\"expected\":\"[[1]]\"}]",
   },
   {
     slug: "maximum-xor-for-each-query",
@@ -2626,7 +2633,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} maximumBit\n * @return {number[]}\n */\nvar getMaximumXor = function(nums, maximumBit) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,1,3],2]\",\"expected\":\"[0,3,2,3]\"},{\"input\":\"[[2,3,4,7],3]\",\"expected\":\"[5,2,6,5]\"},{\"input\":\"[[0,1,2,2,5,7],3]\",\"expected\":\"[4,3,6,4,6,7]\"}]",
   },
   {
     slug: "rearrange-array-elements-by-sign",
@@ -2638,7 +2645,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar rearrangeArray = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1,-2,-5,2,-4]]\",\"expected\":\"[3,-2,1,-5,2,-4]\"},{\"input\":\"[[-1,1]]\",\"expected\":\"[1,-1]\"}]",
   },
   {
     slug: "spiral-matrix-iii",
@@ -2650,7 +2657,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} rows\n * @param {number} cols\n * @param {number} rStart\n * @param {number} cStart\n * @return {number[][]}\n */\nvar spiralMatrixIII = function(rows, cols, rStart, cStart) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[1,4,0,0]\",\"expected\":\"[[0,0],[0,1],[0,2],[0,3]]\"},{\"input\":\"[5,6,1,4]\",\"expected\":\"[[1,4],[1,5],[2,5],[2,4],[2,3],[1,3],[0,3],[0,4],[0,5],[3,5],[3,4],[3,3],[3,2],[2,2],[1,2],[0,2],[4,5],[4,4],[4,3],[4,2],[4,1],[3,1],[2,1],[1,1],[0,1],[4,0],[3,0],[2,0],[1,0],[0,0]]\"}]",
   },
   {
     slug: "difference-between-ones-and-zeros-in-row-and-column",
@@ -2662,7 +2669,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[][]}\n */\nvar onesMinusZeros = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1,1],[1,0,1],[0,0,1]]]\",\"expected\":\"[[0,0,4],[0,0,4],[-2,-2,2]]\"},{\"input\":\"[[[1,1,1],[1,1,1]]]\",\"expected\":\"[[5,5,5],[5,5,5]]\"}]",
   },
   {
     slug: "construct-binary-search-tree-from-preorder-traversal",
@@ -2674,7 +2681,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Stack\",\"Tree\",\"Binary Search Tree\",\"Monotonic Stack\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[]} preorder\n * @return {TreeNode}\n */\nvar bstFromPreorder = function(preorder) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[8,5,1,7,10,12]]\",\"expected\":\"[8,5,10,1,7,null,12]\"},{\"input\":\"[[1,3]]\",\"expected\":\"[1,null,3]\"}]",
   },
   {
     slug: "find-elements-in-a-contaminated-binary-tree",
@@ -2686,7 +2693,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Design\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n */\nvar FindElements = function(root) {\n    \n};\n\n/** \n * @param {number} target\n * @return {boolean}\n */\nFindElements.prototype.find = function(target) {\n    \n};\n\n/** \n * Your FindElements object will be instantiated and called as such:\n * var obj = new FindElements(root)\n * var param_1 = obj.find(target)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "delete-node-in-a-linked-list",
@@ -2698,7 +2705,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val) {\n *     this.val = val;\n *     this.next = null;\n * }\n */\n/**\n * @param {ListNode} node\n * @return {void} Do not return anything, modify node in-place instead.\n */\nvar deleteNode = function(node) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,5,1,9],5]\",\"expected\":\"[5,1,9]\"},{\"input\":\"[[4,5,1,9],1]\",\"expected\":\"[5,1,9]\"}]",
   },
   {
     slug: "arithmetic-subarrays",
@@ -2710,7 +2717,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[]} l\n * @param {number[]} r\n * @return {boolean[]}\n */\nvar checkArithmeticSubarrays = function(nums, l, r) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,6,5,9,3,7],[0,0,2],[2,3,5]]\",\"expected\":\"[true,false,true]\"},{\"input\":\"[[-12,-9,-3,-12,-6,15,20,-25,-20,-15,-10],[0,1,6,4,8,7],[4,4,9,7,9,10]]\",\"expected\":\"[false,true,false,false,true,true]\"}]",
   },
   {
     slug: "reveal-cards-in-increasing-order",
@@ -2722,7 +2729,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Queue\",\"Sorting\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} deck\n * @return {number[]}\n */\nvar deckRevealedIncreasing = function(deck) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "all-paths-from-source-to-target",
@@ -2734,7 +2741,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Backtracking\",\"Depth-First Search\",\"Breadth-First Search\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} graph\n * @return {number[][]}\n */\nvar allPathsSourceTarget = function(graph) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2],[3],[3],[]]]\",\"expected\":\"[[0,1,3],[0,2,3]]\"},{\"input\":\"[[[4,3,1],[3,2,4],[3],[4],[]]]\",\"expected\":\"[[0,4],[0,3,4],[0,1,3,4],[0,1,2,3,4],[0,1,4]]\"}]",
   },
   {
     slug: "letter-tile-possibilities",
@@ -2746,7 +2753,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Backtracking\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} tiles\n * @return {number}\n */\nvar numTilePossibilities = function(tiles) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"AAB\\\"]\",\"expected\":\"8\"},{\"input\":\"[\\\"AAABBC\\\"]\",\"expected\":\"188\"},{\"input\":\"[\\\"V\\\"]\",\"expected\":\"1\"}]",
   },
   {
     slug: "sort-vowels-in-a-string",
@@ -2758,7 +2765,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar sortVowels = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"lEetcOde\\\"]\",\"expected\":\"\\\"lEOtcede\\\"\"},{\"input\":\"[\\\"lYmpH\\\"]\",\"expected\":\"\\\"lYmpH\\\"\"}]",
   },
   {
     slug: "minimize-maximum-pair-sum-in-array",
@@ -2770,7 +2777,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minPairSum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,5,2,3]]\",\"expected\":\"7\"},{\"input\":\"[[3,5,4,2,4,6]]\",\"expected\":\"8\"}]",
   },
   {
     slug: "hash-divided-string",
@@ -2782,7 +2789,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar stringHash = function(s, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abcd\\\",2]\",\"expected\":\"\\\"bf\\\"\"},{\"input\":\"[\\\"mxz\\\",3]\",\"expected\":\"\\\"i\\\"\"}]",
   },
   {
     slug: "promise-time-limit",
@@ -2794,7 +2801,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {number} t\n * @return {Function}\n */\nvar timeLimit = function(fn, t) {\n    \n    return async function(...args) {\n        \n    }\n};\n\n/**\n * const limited = timeLimit((t) => new Promise(res => setTimeout(res, t)), 100);\n * limited(150).catch(console.log) // \"Time Limit Exceeded\" at t=100ms\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "sort-the-matrix-diagonally",
@@ -2806,7 +2813,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @return {number[][]}\n */\nvar diagonalSort = function(mat) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[3,3,1,1],[2,2,1,2],[1,1,1,2]]]\",\"expected\":\"[[1,1,1,1],[1,2,2,2],[1,2,3,3]]\"},{\"input\":\"[[[11,25,66,1,69,7],[23,55,17,45,15,52],[75,31,36,44,58,8],[22,27,33,25,68,4],[84,28,14,11,5,50]]]\",\"expected\":\"[[5,17,4,1,52,7],[11,11,25,45,8,69],[14,23,25,44,58,15],[22,27,31,36,50,66],[84,28,75,33,55,68]]\"}]",
   },
   {
     slug: "minimum-cost-to-split-into-ones",
@@ -2818,7 +2825,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar minCost = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3]\",\"expected\":\"3\"},{\"input\":\"[4]\",\"expected\":\"6\"}]",
   },
   {
     slug: "merge-in-between-linked-lists",
@@ -2830,7 +2837,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} list1\n * @param {number} a\n * @param {number} b\n * @param {ListNode} list2\n * @return {ListNode}\n */\nvar mergeInBetween = function(list1, a, b, list2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,1,13,6,9,5],3,4,[1000000,1000001,1000002]]\",\"expected\":\"[10,1,13,1000000,1000001,1000002,5]\"},{\"input\":\"[[0,1,2,3,4,5,6],2,5,[1000000,1000001,1000002,1000003,1000004]]\",\"expected\":\"[0,1,1000000,1000001,1000002,1000003,1000004,6]\"}]",
   },
   {
     slug: "all-possible-full-binary-trees",
@@ -2842,7 +2849,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\",\"Tree\",\"Recursion\",\"Memoization\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number} n\n * @return {TreeNode[]}\n */\nvar allPossibleFBT = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[7]\",\"expected\":\"[{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}]\"},{\"input\":\"[3]\",\"expected\":\"[{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}]\"}]",
   },
   {
     slug: "minimum-operations-to-make-array-equal",
@@ -2854,7 +2861,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar minOperations = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3]\",\"expected\":\"2\"},{\"input\":\"[6]\",\"expected\":\"9\"}]",
   },
   {
     slug: "find-valid-matrix-given-row-and-column-sums",
@@ -2866,7 +2873,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} rowSum\n * @param {number[]} colSum\n * @return {number[][]}\n */\nvar restoreMatrix = function(rowSum, colSum) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,8],[4,7]]\",\"expected\":\"[[3,0],[1,7]]\"},{\"input\":\"[[5,7,10],[8,6,8]]\",\"expected\":\"[[5,0,0],[3,4,0],[0,2,8]]\"}]",
   },
   {
     slug: "minimum-number-of-steps-to-make-two-strings-anagram",
@@ -2878,7 +2885,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} t\n * @return {number}\n */\nvar minSteps = function(s, t) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"bab\\\",\\\"aba\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"leetcode\\\",\\\"practice\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"anagram\\\",\\\"mangaar\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "rotating-the-box",
@@ -2890,7 +2897,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} boxGrid\n * @return {character[][]}\n */\nvar rotateTheBox = function(boxGrid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"#\\\",\\\".\\\",\\\"#\\\"]]]\",\"expected\":\"[[\\\".\\\"],[\\\"#\\\"],[\\\"#\\\"]]\"},{\"input\":\"[[[\\\"#\\\",\\\".\\\",\\\"*\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\",\\\"*\\\",\\\".\\\"]]]\",\"expected\":\"[[\\\"#\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\"],[\\\"*\\\",\\\"*\\\"],[\\\".\\\",\\\".\\\"]]\"},{\"input\":\"[[[\\\"#\\\",\\\"#\\\",\\\"*\\\",\\\".\\\",\\\"*\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\",\\\"#\\\",\\\"*\\\",\\\".\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\",\\\"#\\\",\\\".\\\",\\\"#\\\",\\\".\\\"]]]\",\"expected\":\"[[\\\".\\\",\\\"#\\\",\\\"#\\\"],[\\\".\\\",\\\"#\\\",\\\"#\\\"],[\\\"#\\\",\\\"#\\\",\\\"*\\\"],[\\\"#\\\",\\\"*\\\",\\\".\\\"],[\\\"#\\\",\\\".\\\",\\\"*\\\"],[\\\"#\\\",\\\".\\\",\\\".\\\"]]\"}]",
   },
   {
     slug: "subsets",
@@ -2902,7 +2909,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar subsets = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[[],[3],[2],[2,3],[1],[1,3],[1,2],[1,2,3]]\"},{\"input\":\"[[0]]\",\"expected\":\"[[],[0]]\"}]",
     approach: "Include/exclude. O(2^n)\n\n**Складність:** Time O(n·2^n), Space O(n)",
   },
   {
@@ -2915,7 +2922,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Linked List\",\"Matrix\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {number} m\n * @param {number} n\n * @param {ListNode} head\n * @return {number[][]}\n */\nvar spiralMatrix = function(m, n, head) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,5,[3,0,2,6,8,1,7,9,4,2,5,5,0]]\",\"expected\":\"[[3,0,2,6,8],[5,0,-1,-1,1],[5,2,4,9,7]]\"},{\"input\":\"[1,4,[0,1,2]]\",\"expected\":\"[[0,1,2,-1]]\"}]",
   },
   {
     slug: "find-the-winner-of-the-circular-game",
@@ -2927,7 +2934,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Recursion\",\"Queue\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {number}\n */\nvar findTheWinner = function(n, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5,2]\",\"expected\":\"3\"},{\"input\":\"[6,5]\",\"expected\":\"1\"}]",
   },
   {
     slug: "execution-of-all-suffix-instructions-staying-in-a-grid",
@@ -2939,7 +2946,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[]} startPos\n * @param {string} s\n * @return {number[]}\n */\nvar executeInstructions = function(n, startPos, s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,[0,1],\\\"RRDDLU\\\"]\",\"expected\":\"[1,5,4,3,1,0]\"},{\"input\":\"[2,[1,1],\\\"LURD\\\"]\",\"expected\":\"[4,1,0,0]\"},{\"input\":\"[1,[0,0],\\\"LRUD\\\"]\",\"expected\":\"[0,0,0,0]\"}]",
   },
   {
     slug: "find-triangular-sum-of-an-array",
@@ -2951,7 +2958,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Simulation\",\"Combinatorics\",\"Number Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar triangularSum = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"8\"},{\"input\":\"[[5]]\",\"expected\":\"5\"}]",
   },
   {
     slug: "partition-labels",
@@ -2963,7 +2970,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Two Pointers\",\"String\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number[]}\n */\nvar partitionLabels = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"ababcbacadefegdehijhklij\\\"]\",\"expected\":\"[9,7,8]\"},{\"input\":\"[\\\"eccbbbbdec\\\"]\",\"expected\":\"[10]\"}]",
     approach: "Last occurrence + greedy. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -2976,7 +2983,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar partitionArray = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,6,1,2,5],2]\",\"expected\":\"2\"},{\"input\":\"[[1,2,3],1]\",\"expected\":\"2\"},{\"input\":\"[[2,2,4,5],0]\",\"expected\":\"3\"}]",
   },
   {
     slug: "create-binary-tree-from-descriptions",
@@ -2988,7 +2995,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[][]} descriptions\n * @return {TreeNode}\n */\nvar createBinaryTree = function(descriptions) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[20,15,1],[20,17,0],[50,20,1],[50,80,0],[80,19,1]]]\",\"expected\":\"[50,20,80,15,17,19]\"},{\"input\":\"[[[1,2,1],[2,3,0],[3,4,1]]]\",\"expected\":\"[1,2,null,null,3,4]\"}]",
   },
   {
     slug: "maximum-twin-sum-of-a-linked-list",
@@ -3000,7 +3007,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Two Pointers\",\"Stack\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {number}\n */\nvar pairSum = function(head) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,4,2,1]]\",\"expected\":\"6\"},{\"input\":\"[[4,2,2,3]]\",\"expected\":\"7\"},{\"input\":\"[[1,100000]]\",\"expected\":\"100001\"}]",
   },
   {
     slug: "find-the-punishment-number-of-an-integer",
@@ -3012,7 +3019,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar punishmentNumber = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[10]\",\"expected\":\"182\"},{\"input\":\"[37]\",\"expected\":\"1478\"}]",
   },
   {
     slug: "minimum-number-of-vertices-to-reach-all-nodes",
@@ -3024,7 +3031,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[]}\n */\nvar findSmallestSetOfVertices = function(n, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[6,[[0,1],[0,2],[2,5],[3,4],[4,2]]]\",\"expected\":\"[0,3]\"},{\"input\":\"[5,[[0,1],[2,1],[3,1],[1,4],[2,4]]]\",\"expected\":\"[0,2,3]\"}]",
   },
   {
     slug: "count-number-of-distinct-integers-after-reverse-operations",
@@ -3036,7 +3043,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Math\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countDistinctIntegers = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,13,10,12,31]]\",\"expected\":\"6\"},{\"input\":\"[[2,2,2]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "group-by",
@@ -3048,7 +3055,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @return {Object}\n */\nArray.prototype.groupBy = function(fn) {\n    \n};\n\n/**\n * [1,2,3].groupBy(String) // {\"1\":[1],\"2\":[2],\"3\":[3]}\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-unique-binary-string",
@@ -3060,7 +3067,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} nums\n * @return {string}\n */\nvar findDifferentBinaryString = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"01\\\",\\\"10\\\"]]\",\"expected\":\"\\\"00\\\"\"},{\"input\":\"[[\\\"00\\\",\\\"01\\\"]]\",\"expected\":\"\\\"11\\\"\"},{\"input\":\"[[\\\"111\\\",\\\"011\\\",\\\"001\\\"]]\",\"expected\":\"\\\"000\\\"\"}]",
   },
   {
     slug: "lexicographically-smallest-equivalent-string",
@@ -3072,7 +3079,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Union-Find\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s1\n * @param {string} s2\n * @param {string} baseStr\n * @return {string}\n */\nvar smallestEquivalentString = function(s1, s2, baseStr) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"parker\\\",\\\"morris\\\",\\\"parser\\\"]\",\"expected\":\"\\\"makkek\\\"\"},{\"input\":\"[\\\"hello\\\",\\\"world\\\",\\\"hold\\\"]\",\"expected\":\"\\\"hdld\\\"\"},{\"input\":\"[\\\"leetcode\\\",\\\"programs\\\",\\\"sourcecode\\\"]\",\"expected\":\"\\\"aauaaaaada\\\"\"}]",
   },
   {
     slug: "build-an-array-with-stack-operations",
@@ -3084,7 +3091,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Stack\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} target\n * @param {number} n\n * @return {string[]}\n */\nvar buildArray = function(target, n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3],3]\",\"expected\":\"[\\\"Push\\\",\\\"Push\\\",\\\"Pop\\\",\\\"Push\\\"]\"},{\"input\":\"[[1,2,3],3]\",\"expected\":\"[\\\"Push\\\",\\\"Push\\\",\\\"Push\\\"]\"},{\"input\":\"[[1,2],4]\",\"expected\":\"[\\\"Push\\\",\\\"Push\\\"]\"}]",
   },
   {
     slug: "total-waviness-of-numbers-in-range-i",
@@ -3096,7 +3103,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Dynamic Programming\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} num1\n * @param {number} num2\n * @return {number}\n */\nvar totalWaviness = function(num1, num2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[120,130]\",\"expected\":\"3\"},{\"input\":\"[198,202]\",\"expected\":\"3\"},{\"input\":\"[4848,4848]\",\"expected\":\"2\"}]",
   },
   {
     slug: "finding-the-users-active-minutes",
@@ -3108,7 +3115,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} logs\n * @param {number} k\n * @return {number[]}\n */\nvar findingUsersActiveMinutes = function(logs, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,5],[1,2],[0,2],[0,5],[1,3]],5]\",\"expected\":\"[0,2,0,0,0]\"},{\"input\":\"[[[1,1],[2,2],[2,3]],4]\",\"expected\":\"[1,1,0,0]\"}]",
   },
   {
     slug: "largest-combination-with-bitwise-and-greater-than-zero",
@@ -3120,7 +3127,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Bit Manipulation\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candidates\n * @return {number}\n */\nvar largestCombination = function(candidates) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[16,17,71,62,12,24,14]]\",\"expected\":\"4\"},{\"input\":\"[[8,8]]\",\"expected\":\"2\"}]",
   },
   {
     slug: "count-square-submatrices-with-all-ones",
@@ -3132,7 +3139,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number}\n */\nvar countSquares = function(matrix) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1,1,1],[1,1,1,1],[0,1,1,1]]]\",\"expected\":\"15\"},{\"input\":\"[[[1,0,1],[1,1,0],[1,1,0]]]\",\"expected\":\"7\"}]",
   },
   {
     slug: "nested-array-generator",
@@ -3144,7 +3151,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Array} arr\n * @return {Generator}\n */\nvar inorderTraversal = function*(arr) {\n    \n};\n\n/**\n * const gen = inorderTraversal([1, [2, 3]]);\n * gen.next().value; // 1\n * gen.next().value; // 2\n * gen.next().value; // 3\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "minimum-operations-to-make-binary-array-elements-equal-to-one-i",
@@ -3156,7 +3163,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\",\"Queue\",\"Sliding Window\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minOperations = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,1,1,0,0]]\",\"expected\":\"3\"},{\"input\":\"[[0,1,1,1]]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "find-the-sequence-of-strings-appeared-on-the-screen",
@@ -3168,7 +3175,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} target\n * @return {string[]}\n */\nvar stringSequence = function(target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"[\\\"a\\\",\\\"aa\\\",\\\"ab\\\",\\\"aba\\\",\\\"abb\\\",\\\"abc\\\"]\"},{\"input\":\"[\\\"he\\\"]\",\"expected\":\"[\\\"a\\\",\\\"b\\\",\\\"c\\\",\\\"d\\\",\\\"e\\\",\\\"f\\\",\\\"g\\\",\\\"h\\\",\\\"ha\\\",\\\"hb\\\",\\\"hc\\\",\\\"hd\\\",\\\"he\\\"]\"}]",
   },
   {
     slug: "all-elements-in-two-binary-search-trees",
@@ -3180,7 +3187,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Search Tree\",\"Sorting\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root1\n * @param {TreeNode} root2\n * @return {number[]}\n */\nvar getAllElements = function(root1, root2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,1,4],[1,0,3]]\",\"expected\":\"[0,1,1,2,3,4]\"},{\"input\":\"[[1,null,8],[8,1]]\",\"expected\":\"[1,1,8,8]\"}]",
   },
   {
     slug: "score-after-flipping-matrix",
@@ -3192,7 +3199,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Bit Manipulation\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar matrixScore = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,0,1,1],[1,0,1,0],[1,1,0,0]]]\",\"expected\":\"39\"},{\"input\":\"[[[0]]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "largest-submatrix-with-rearrangements",
@@ -3204,7 +3211,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number}\n */\nvar largestSubmatrix = function(matrix) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,0,1],[1,1,1],[1,0,1]]]\",\"expected\":\"4\"},{\"input\":\"[[[1,0,1,0,1]]]\",\"expected\":\"3\"},{\"input\":\"[[[1,1,0],[1,0,1]]]\",\"expected\":\"2\"}]",
   },
   {
     slug: "minimum-number-of-pushes-to-type-word-ii",
@@ -3216,7 +3223,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Greedy\",\"Sorting\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} word\n * @return {number}\n */\nvar minimumPushes = function(word) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abcde\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"xyzxyzxyzxyz\\\"]\",\"expected\":\"12\"},{\"input\":\"[\\\"aabbccddeeffgghhiiiiii\\\"]\",\"expected\":\"24\"}]",
   },
   {
     slug: "watering-plants",
@@ -3228,7 +3235,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} plants\n * @param {number} capacity\n * @return {number}\n */\nvar wateringPlants = function(plants, capacity) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,2,3,3],5]\",\"expected\":\"14\"},{\"input\":\"[[1,1,1,4,2,3],4]\",\"expected\":\"30\"},{\"input\":\"[[7,7,7,7,7,7,7],8]\",\"expected\":\"49\"}]",
   },
   {
     slug: "design-a-stack-with-increment-operation",
@@ -3240,7 +3247,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Stack\",\"Design\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} maxSize\n */\nvar CustomStack = function(maxSize) {\n    \n};\n\n/** \n * @param {number} x\n * @return {void}\n */\nCustomStack.prototype.push = function(x) {\n    \n};\n\n/**\n * @return {number}\n */\nCustomStack.prototype.pop = function() {\n    \n};\n\n/** \n * @param {number} k \n * @param {number} val\n * @return {void}\n */\nCustomStack.prototype.increment = function(k, val) {\n    \n};\n\n/** \n * Your CustomStack object will be instantiated and called as such:\n * var obj = new CustomStack(maxSize)\n * obj.push(x)\n * var param_2 = obj.pop()\n * obj.increment(k,val)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-xor-after-operations",
@@ -3252,7 +3259,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maximumXOR = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,2,4,6]]\",\"expected\":\"7\"},{\"input\":\"[[1,2,3,9,2]]\",\"expected\":\"11\"}]",
   },
   {
     slug: "neighboring-bitwise-xor",
@@ -3264,7 +3271,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} derived\n * @return {boolean}\n */\nvar doesValidArrayExist = function(derived) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,1,0]]\",\"expected\":\"true\"},{\"input\":\"[[1,1]]\",\"expected\":\"true\"},{\"input\":\"[[1,0]]\",\"expected\":\"false\"}]",
   },
   {
     slug: "lowest-common-ancestor-of-deepest-leaves",
@@ -3276,7 +3283,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar lcaDeepestLeaves = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,5,1,6,2,0,8,null,null,7,4]]\",\"expected\":\"[2,7,4]\"},{\"input\":\"[[1]]\",\"expected\":\"[1]\"},{\"input\":\"[[0,1,3,null,2]]\",\"expected\":\"[2]\"}]",
   },
   {
     slug: "check-if-number-is-a-sum-of-powers-of-three",
@@ -3288,7 +3295,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {boolean}\n */\nvar checkPowersOfThree = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[12]\",\"expected\":\"true\"},{\"input\":\"[91]\",\"expected\":\"true\"},{\"input\":\"[21]\",\"expected\":\"false\"}]",
   },
   {
     slug: "lexicographically-smallest-string-after-applying-operations",
@@ -3300,7 +3307,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Depth-First Search\",\"Breadth-First Search\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} a\n * @param {number} b\n * @return {string}\n */\nvar findLexSmallestString = function(s, a, b) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"5525\\\",9,2]\",\"expected\":\"\\\"2050\\\"\"},{\"input\":\"[\\\"74\\\",5,1]\",\"expected\":\"\\\"24\\\"\"},{\"input\":\"[\\\"0011\\\",4,2]\",\"expected\":\"\\\"0011\\\"\"}]",
   },
   {
     slug: "removing-stars-from-a-string",
@@ -3312,7 +3319,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar removeStars = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"leet**cod*e\\\"]\",\"expected\":\"\\\"lecoe\\\"\"},{\"input\":\"[\\\"erase*****\\\"]\",\"expected\":\"\\\"\\\"\"}]",
   },
   {
     slug: "count-sorted-vowel-strings",
@@ -3324,7 +3331,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Dynamic Programming\",\"Combinatorics\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar countVowelStrings = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "divide-array-into-arrays-with-max-difference",
@@ -3336,7 +3343,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number[][]}\n */\nvar divideArray = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,4,8,7,9,3,5,1],2]\",\"expected\":\"[[1,1,3],[3,4,5],[7,8,9]]\"},{\"input\":\"[[2,4,2,2,5,2],2]\",\"expected\":\"[]\"},{\"input\":\"[[4,2,9,8,2,12,7,12,10,5,8,5,5,7,9,2,5,11],14]\",\"expected\":\"[[2,2,2],[4,5,5],[5,5,7],[7,8,8],[9,9,10],[11,12,12]]\"}]",
   },
   {
     slug: "minimum-absolute-difference-in-sliding-submatrix",
@@ -3348,7 +3355,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Sorting\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @param {number} k\n * @return {number[][]}\n */\nvar minAbsDiff = function(grid, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,8],[3,-2]],2]\",\"expected\":\"[[2]]\"},{\"input\":\"[[[3,-1]],1]\",\"expected\":\"[[0,0]]\"},{\"input\":\"[[[1,-2,3],[2,3,5]],2]\",\"expected\":\"[[1,2]]\"}]",
   },
   {
     slug: "remove-sub-folders-from-the-filesystem",
@@ -3360,7 +3367,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Depth-First Search\",\"Trie\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} folder\n * @return {string[]}\n */\nvar removeSubfolders = function(folder) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"/a\\\",\\\"/a/b\\\",\\\"/c/d\\\",\\\"/c/d/e\\\",\\\"/c/f\\\"]]\",\"expected\":\"[\\\"/a\\\",\\\"/c/d\\\",\\\"/c/f\\\"]\"},{\"input\":\"[[\\\"/a\\\",\\\"/a/b/c\\\",\\\"/a/b/d\\\"]]\",\"expected\":\"[\\\"/a\\\"]\"},{\"input\":\"[[\\\"/a/b/c\\\",\\\"/a/b/ca\\\",\\\"/a/b/d\\\"]]\",\"expected\":\"[\\\"/a/b/c\\\",\\\"/a/b/ca\\\",\\\"/a/b/d\\\"]\"}]",
   },
   {
     slug: "execute-asynchronous-functions-in-parallel",
@@ -3372,7 +3379,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Array<Function>} functions\n * @return {Promise<any>}\n */\nvar promiseAll = function(functions) {\n    \n};\n\n/**\n * const promise = promiseAll([() => new Promise(res => res(42))])\n * promise.then(console.log); // [42]\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "flip-columns-for-maximum-number-of-equal-rows",
@@ -3384,7 +3391,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number}\n */\nvar maxEqualRowsAfterFlips = function(matrix) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1],[1,1]]]\",\"expected\":\"1\"},{\"input\":\"[[[0,1],[1,0]]]\",\"expected\":\"2\"},{\"input\":\"[[[0,0,0],[0,0,1],[1,1,0]]]\",\"expected\":\"2\"}]",
   },
   {
     slug: "remove-all-occurrences-of-a-substring",
@@ -3396,7 +3403,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} part\n * @return {string}\n */\nvar removeOccurrences = function(s, part) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"daabcbaabcbc\\\",\\\"abc\\\"]\",\"expected\":\"\\\"dab\\\"\"},{\"input\":\"[\\\"axxxxyyyyb\\\",\\\"xy\\\"]\",\"expected\":\"\\\"ab\\\"\"}]",
   },
   {
     slug: "optimal-partition-of-string",
@@ -3408,7 +3415,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar partitionString = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abacaba\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"ssssss\\\"]\",\"expected\":\"6\"}]",
   },
   {
     slug: "minimum-string-length-after-balanced-removals",
@@ -3420,7 +3427,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minLengthAfterRemovals = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aabbab\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"aaaa\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"aaabb\\\"]\",\"expected\":\"1\"}]",
   },
   {
     slug: "construct-quad-tree",
@@ -3432,7 +3439,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Divide and Conquer\",\"Tree\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * // Definition for a QuadTree node.\n * function _Node(val,isLeaf,topLeft,topRight,bottomLeft,bottomRight) {\n *    this.val = val;\n *    this.isLeaf = isLeaf;\n *    this.topLeft = topLeft;\n *    this.topRight = topRight;\n *    this.bottomLeft = bottomLeft;\n *    this.bottomRight = bottomRight;\n * };\n */\n\n/**\n * @param {number[][]} grid\n * @return {_Node}\n */\nvar construct = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "design-browser-history",
@@ -3444,7 +3451,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Linked List\",\"Stack\",\"Design\",\"Doubly-Linked List\",\"Data Stream\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} homepage\n */\nvar BrowserHistory = function(homepage) {\n    \n};\n\n/** \n * @param {string} url\n * @return {void}\n */\nBrowserHistory.prototype.visit = function(url) {\n    \n};\n\n/** \n * @param {number} steps\n * @return {string}\n */\nBrowserHistory.prototype.back = function(steps) {\n    \n};\n\n/** \n * @param {number} steps\n * @return {string}\n */\nBrowserHistory.prototype.forward = function(steps) {\n    \n};\n\n/** \n * Your BrowserHistory object will be instantiated and called as such:\n * var obj = new BrowserHistory(homepage)\n * obj.visit(url)\n * var param_2 = obj.back(steps)\n * var param_3 = obj.forward(steps)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-difference-between-node-and-ancestor",
@@ -3456,7 +3463,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar maxAncestorDiff = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[8,3,10,1,6,null,14,null,null,4,7,13]]\",\"expected\":\"7\"},{\"input\":\"[[1,null,2,null,0,3]]\",\"expected\":\"3\"}]",
   },
   {
     slug: "find-the-minimum-area-to-cover-all-ones-i",
@@ -3468,7 +3475,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minimumArea = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1,0],[1,0,1]]]\",\"expected\":\"6\"},{\"input\":\"[[[0,0],[1,0]]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "water-bottles-ii",
@@ -3480,7 +3487,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} numBottles\n * @param {number} numExchange\n * @return {number}\n */\nvar maxBottlesDrunk = function(numBottles, numExchange) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[13,6]\",\"expected\":\"15\"},{\"input\":\"[10,3]\",\"expected\":\"13\"}]",
   },
   {
     slug: "xor-queries-of-a-subarray",
@@ -3492,7 +3499,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number[][]} queries\n * @return {number[]}\n */\nvar xorQueries = function(arr, queries) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,4,8],[[0,1],[1,2],[0,3],[3,3]]]\",\"expected\":\"[2,7,14,8]\"},{\"input\":\"[[4,8,2,10],[[2,3],[1,3],[0,0],[0,3]]]\",\"expected\":\"[8,0,4,4]\"}]",
   },
   {
     slug: "minimum-number-of-swaps-to-make-the-string-balanced",
@@ -3504,7 +3511,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\",\"String\",\"Stack\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minSwaps = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"][][\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"]]][[[\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"[]\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "construct-binary-tree-from-preorder-and-postorder-traversal",
@@ -3516,7 +3523,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Divide and Conquer\",\"Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[]} preorder\n * @param {number[]} postorder\n * @return {TreeNode}\n */\nvar constructFromPrePost = function(preorder, postorder) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,4,5,3,6,7],[4,5,2,6,7,3,1]]\",\"expected\":\"[1,2,3,4,5,6,7]\"},{\"input\":\"[[1],[1]]\",\"expected\":\"[1]\"}]",
   },
   {
     slug: "count-the-number-of-complete-components",
@@ -3528,7 +3535,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Depth-First Search\",\"Breadth-First Search\",\"Union-Find\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar countCompleteComponents = function(n, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "call-function-with-custom-context",
@@ -3540,7 +3547,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "/**\n * @param {Object} context\n * @param {Array} args\n * @return {null|boolean|number|string|Array|Object}\n */\nFunction.prototype.callPolyfill = function(context, ...args) {\n    \n}\n\n/**\n * function increment() { this.count++; return this.count; }\n * increment.callPolyfill({count: 1}); // 2\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "smallest-subtree-with-all-the-deepest-nodes",
@@ -3552,7 +3559,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar subtreeWithAllDeepest = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,5,1,6,2,0,8,null,null,7,4]]\",\"expected\":\"[2,7,4]\"},{\"input\":\"[[1]]\",\"expected\":\"[1]\"},{\"input\":\"[[0,1,3,null,2]]\",\"expected\":\"[2]\"}]",
   },
   {
     slug: "battleships-in-a-board",
@@ -3564,7 +3571,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Depth-First Search\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} board\n * @return {number}\n */\nvar countBattleships = function(board) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"X\\\",\\\".\\\",\\\".\\\",\\\"X\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"X\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"X\\\"]]]\",\"expected\":\"2\"},{\"input\":\"[[[\\\".\\\"]]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "regions-cut-by-slashes",
@@ -3576,7 +3583,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Depth-First Search\",\"Breadth-First Search\",\"Union-Find\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} grid\n * @return {number}\n */\nvar regionsBySlashes = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\" /\\\",\\\"/ \\\"]]\",\"expected\":\"2\"},{\"input\":\"[[\\\" /\\\",\\\"  \\\"]]\",\"expected\":\"1\"},{\"input\":\"[[\\\"/\\\\\\\\\\\",\\\"\\\\\\\\/\\\"]]\",\"expected\":\"5\"}]",
   },
   {
     slug: "partition-array-for-maximum-sum",
@@ -3588,7 +3595,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number} k\n * @return {number}\n */\nvar maxSumAfterPartitioning = function(arr, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,15,7,9,2,5,10],3]\",\"expected\":\"84\"},{\"input\":\"[[1,4,1,5,7,3,6,1,9,9,3],4]\",\"expected\":\"83\"},{\"input\":\"[[1],1]\",\"expected\":\"1\"}]",
   },
   {
     slug: "distribute-coins-in-binary-tree",
@@ -3600,7 +3607,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar distributeCoins = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,0,0]]\",\"expected\":\"2\"},{\"input\":\"[[0,3,0]]\",\"expected\":\"3\"}]",
   },
   {
     slug: "delete-leaves-with-a-given-value",
@@ -3612,7 +3619,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} target\n * @return {TreeNode}\n */\nvar removeLeafNodes = function(root, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,2,null,2,4],2]\",\"expected\":\"[1,null,3,null,4]\"},{\"input\":\"[[1,3,3,3,2],3]\",\"expected\":\"[1,3,null,null,2]\"},{\"input\":\"[[1,2,null,2,null,2],2]\",\"expected\":\"[1]\"}]",
   },
   {
     slug: "subdomain-visit-count",
@@ -3624,7 +3631,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} cpdomains\n * @return {string[]}\n */\nvar subdomainVisits = function(cpdomains) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "vowels-game-in-a-string",
@@ -3636,7 +3643,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"String\",\"Brainteaser\",\"Game Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {boolean}\n */\nvar doesAliceWin = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"leetcoder\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"bbcd\\\"]\",\"expected\":\"false\"}]",
   },
   {
     slug: "find-and-replace-pattern",
@@ -3648,7 +3655,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {string} pattern\n * @return {string[]}\n */\nvar findAndReplacePattern = function(words, pattern) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"abc\\\",\\\"deq\\\",\\\"mee\\\",\\\"aqq\\\",\\\"dkd\\\",\\\"ccc\\\"],\\\"abb\\\"]\",\"expected\":\"[\\\"mee\\\",\\\"aqq\\\"]\"},{\"input\":\"[[\\\"a\\\",\\\"b\\\",\\\"c\\\"],\\\"a\\\"]\",\"expected\":\"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\"}]",
   },
   {
     slug: "find-all-duplicates-in-an-array",
@@ -3660,7 +3667,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar findDuplicates = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,3,2,7,8,2,3,1]]\",\"expected\":\"[3,2]\"},{\"input\":\"[[1,1,2]]\",\"expected\":\"[1]\"},{\"input\":\"[[1]]\",\"expected\":\"[]\"}]",
   },
   {
     slug: "kth-smallest-element-in-a-bst",
@@ -3672,7 +3679,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Binary Search Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} k\n * @return {number}\n */\nvar kthSmallest = function(root, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1,4,null,2],1]\",\"expected\":\"1\"},{\"input\":\"[[5,3,6,2,4,null,null,1],3]\",\"expected\":\"3\"}]",
   },
   {
     slug: "matrix-block-sum",
@@ -3684,7 +3691,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @param {number} k\n * @return {number[][]}\n */\nvar matrixBlockSum = function(mat, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]],1]\",\"expected\":\"[[12,21,16],[27,45,33],[24,39,28]]\"},{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]],2]\",\"expected\":\"[[45,45,45],[45,45,45],[45,45,45]]\"}]",
   },
   {
     slug: "binary-search-tree-iterator",
@@ -3696,7 +3703,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\",\"Tree\",\"Design\",\"Binary Search Tree\",\"Binary Tree\",\"Iterator\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n */\nvar BSTIterator = function(root) {\n    \n};\n\n/**\n * @return {number}\n */\nBSTIterator.prototype.next = function() {\n    \n};\n\n/**\n * @return {boolean}\n */\nBSTIterator.prototype.hasNext = function() {\n    \n};\n\n/** \n * Your BSTIterator object will be instantiated and called as such:\n * var obj = new BSTIterator(root)\n * var param_1 = obj.next()\n * var param_2 = obj.hasNext()\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "minimum-number-of-changes-to-make-binary-string-beautiful",
@@ -3708,7 +3715,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minChanges = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"1001\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"10\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"0000\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "display-table-of-food-orders-in-a-restaurant",
@@ -3720,7 +3727,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Sorting\",\"Ordered Set\"]",
     companies: "[]",
     starterCode: "/**\r\n * @param {string[][]} orders\r\n * @return {string[][]}\r\n */\r\nvar displayTable = function(orders) {\r\n    \r\n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"David\\\",\\\"3\\\",\\\"Ceviche\\\"],[\\\"Corina\\\",\\\"10\\\",\\\"Beef Burrito\\\"],[\\\"David\\\",\\\"3\\\",\\\"Fried Chicken\\\"],[\\\"Carla\\\",\\\"5\\\",\\\"Water\\\"],[\\\"Carla\\\",\\\"5\\\",\\\"Ceviche\\\"],[\\\"Rous\\\",\\\"3\\\",\\\"Ceviche\\\"]]]\",\"expected\":\"[[\\\"Table\\\",\\\"Beef Burrito\\\",\\\"Ceviche\\\",\\\"Fried Chicken\\\",\\\"Water\\\"],[\\\"3\\\",\\\"0\\\",\\\"2\\\",\\\"1\\\",\\\"0\\\"],[\\\"5\\\",\\\"0\\\",\\\"1\\\",\\\"0\\\",\\\"1\\\"],[\\\"10\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"]]\"},{\"input\":\"[[[\\\"James\\\",\\\"12\\\",\\\"Fried Chicken\\\"],[\\\"Ratesh\\\",\\\"12\\\",\\\"Fried Chicken\\\"],[\\\"Amadeus\\\",\\\"12\\\",\\\"Fried Chicken\\\"],[\\\"Adam\\\",\\\"1\\\",\\\"Canadian Waffles\\\"],[\\\"Brianna\\\",\\\"1\\\",\\\"Canadian Waffles\\\"]]]\",\"expected\":\"[[\\\"Table\\\",\\\"Canadian Waffles\\\",\\\"Fried Chicken\\\"],[\\\"1\\\",\\\"2\\\",\\\"0\\\"],[\\\"12\\\",\\\"0\\\",\\\"3\\\"]]\"},{\"input\":\"[[[\\\"Laura\\\",\\\"2\\\",\\\"Bean Burrito\\\"],[\\\"Jhon\\\",\\\"2\\\",\\\"Beef Burrito\\\"],[\\\"Melissa\\\",\\\"2\\\",\\\"Soda\\\"]]]\",\"expected\":\"[[\\\"Table\\\",\\\"Bean Burrito\\\",\\\"Beef Burrito\\\",\\\"Soda\\\"],[\\\"2\\\",\\\"1\\\",\\\"1\\\",\\\"1\\\"]]\"}]",
   },
   {
     slug: "maximum-sum-of-an-hourglass",
@@ -3732,7 +3739,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maxSum = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[6,2,1,3],[4,2,1,5],[9,2,8,7],[4,1,2,9]]]\",\"expected\":\"30\"},{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"35\"}]",
   },
   {
     slug: "lexicographical-numbers",
@@ -3744,7 +3751,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Depth-First Search\",\"Trie\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number[]}\n */\nvar lexicalOrder = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[13]\",\"expected\":\"[1,10,11,12,13,2,3,4,5,6,7,8,9]\"},{\"input\":\"[2]\",\"expected\":\"[1,2]\"}]",
   },
   {
     slug: "cache-with-time-limit",
@@ -3756,7 +3763,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "var TimeLimitedCache = function() {\n    \n};\n\n/** \n * @param {number} key\n * @param {number} value\n * @param {number} duration time until expiration in ms\n * @return {boolean} if un-expired key already existed\n */\nTimeLimitedCache.prototype.set = function(key, value, duration) {\n    \n};\n\n/** \n * @param {number} key\n * @return {number} value associated with key\n */\nTimeLimitedCache.prototype.get = function(key) {\n    \n};\n\n/** \n * @return {number} count of non-expired keys\n */\nTimeLimitedCache.prototype.count = function() {\n    \n};\n\n/**\n * const timeLimitedCache = new TimeLimitedCache()\n * timeLimitedCache.set(1, 42, 1000); // false\n * timeLimitedCache.get(1) // 42\n * timeLimitedCache.count() // 1\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "count-complete-subarrays-in-an-array",
@@ -3768,7 +3775,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Sliding Window\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countCompleteSubarrays = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,1,2,2]]\",\"expected\":\"4\"},{\"input\":\"[[5,5,5,5]]\",\"expected\":\"10\"}]",
   },
   {
     slug: "cousins-in-binary-tree-ii",
@@ -3780,7 +3787,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar replaceValueInTree = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,4,9,1,10,null,7]]\",\"expected\":\"[0,0,0,7,7,null,11]\"},{\"input\":\"[[3,1,2]]\",\"expected\":\"[0,0,0]\"}]",
   },
   {
     slug: "letter-case-permutation",
@@ -3792,7 +3799,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Backtracking\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string[]}\n */\nvar letterCasePermutation = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"a1b2\\\"]\",\"expected\":\"[\\\"a1b2\\\",\\\"a1B2\\\",\\\"A1B2\\\",\\\"A1b2\\\"]\"},{\"input\":\"[\\\"3z4\\\"]\",\"expected\":\"[\\\"3z4\\\",\\\"3Z4\\\"]\"}]",
   },
   {
     slug: "map-of-highest-peak",
@@ -3804,7 +3811,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Breadth-First Search\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} isWater\n * @return {number[][]}\n */\nvar highestPeak = function(isWater) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1],[0,0]]]\",\"expected\":\"[[1,0],[2,1]]\"},{\"input\":\"[[[0,0,1],[1,0,0],[0,0,0]]]\",\"expected\":\"[[1,1,0],[0,1,1],[1,2,2]]\"}]",
   },
   {
     slug: "sum-of-primes-between-number-and-its-reverse",
@@ -3816,7 +3823,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Number Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar sumOfPrimesInRange = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[13]\",\"expected\":\"132\"},{\"input\":\"[10]\",\"expected\":\"17\"},{\"input\":\"[8]\",\"expected\":\"0\"}]",
   },
   {
     slug: "keys-and-rooms",
@@ -3828,7 +3835,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Depth-First Search\",\"Breadth-First Search\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} rooms\n * @return {boolean}\n */\nvar canVisitAllRooms = function(rooms) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1],[2],[3],[]]]\",\"expected\":\"true\"},{\"input\":\"[[[1,3],[3,0,1],[2],[0]]]\",\"expected\":\"false\"}]",
   },
   {
     slug: "path-in-zigzag-labelled-binary-tree",
@@ -3840,7 +3847,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} label\n * @return {number[]}\n */\nvar pathInZigZagTree = function(label) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-the-longest-substring-containing-vowels-in-even-counts",
@@ -3852,7 +3859,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Bit Manipulation\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar findTheLongestSubstring = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"eleetminicoworoep\\\"]\",\"expected\":\"13\"},{\"input\":\"[\\\"leetcodeisgreat\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"bcbcbc\\\"]\",\"expected\":\"6\"}]",
   },
   {
     slug: "find-all-groups-of-farmland",
@@ -3864,7 +3871,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Depth-First Search\",\"Breadth-First Search\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} land\n * @return {number[][]}\n */\nvar findFarmland = function(land) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "minimum-index-of-a-valid-split",
@@ -3876,7 +3883,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumIndex = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,2,2]]\",\"expected\":\"2\"},{\"input\":\"[[2,1,3,1,1,1,7,1,2,1]]\",\"expected\":\"4\"},{\"input\":\"[[3,3,3,3,7,2,2]]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "number-of-pairs-of-strings-with-concatenation-equal-to-target",
@@ -3888,7 +3895,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} nums\n * @param {string} target\n * @return {number}\n */\nvar numOfPairs = function(nums, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "sort-characters-by-frequency",
@@ -3900,7 +3907,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Sorting\",\"Heap (Priority Queue)\",\"Bucket Sort\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar frequencySort = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"tree\\\"]\",\"expected\":\"\\\"eetr\\\"\"},{\"input\":\"[\\\"cccaaa\\\"]\",\"expected\":\"\\\"cccaaa\\\"\"},{\"input\":\"[\\\"Aabb\\\"]\",\"expected\":\"\\\"bbAa\\\"\"}]",
   },
   {
     slug: "maximum-matching-of-players-with-trainers",
@@ -3912,7 +3919,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} players\n * @param {number[]} trainers\n * @return {number}\n */\nvar matchPlayersAndTrainers = function(players, trainers) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,7,9],[8,2,5,8]]\",\"expected\":\"2\"},{\"input\":\"[[1,1,1],[10]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "largest-magic-square",
@@ -3924,7 +3931,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar largestMagicSquare = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[7,1,4,5,6],[2,5,1,6,4],[1,5,4,3,2],[1,2,7,3,4]]]\",\"expected\":\"3\"},{\"input\":\"[[[5,1,3,1],[9,3,3,1],[1,3,3,8]]]\",\"expected\":\"2\"}]",
   },
   {
     slug: "count-number-of-nice-subarrays",
@@ -3936,7 +3943,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Math\",\"Sliding Window\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar numberOfSubarrays = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,1,2,1,1],3]\",\"expected\":\"2\"},{\"input\":\"[[2,4,6],1]\",\"expected\":\"0\"},{\"input\":\"[[2,2,2,1,2,2,1,2,2,2],2]\",\"expected\":\"16\"}]",
   },
   {
     slug: "event-emitter",
@@ -3948,7 +3955,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[]",
     companies: "[]",
     starterCode: "class EventEmitter {\n    \n    /**\n     * @param {string} eventName\n     * @param {Function} callback\n     * @return {Object}\n     */\n    subscribe(eventName, callback) {\n        \n        return {\n            unsubscribe: () => {\n                \n            }\n        };\n    }\n    \n    /**\n     * @param {string} eventName\n     * @param {Array} args\n     * @return {Array}\n     */\n    emit(eventName, args = []) {\n        \n    }\n}\n\n/**\n * const emitter = new EventEmitter();\n *\n * // Subscribe to the onClick event with onClickCallback\n * function onClickCallback() { return 99 }\n * const sub = emitter.subscribe('onClick', onClickCallback);\n *\n * emitter.emit('onClick'); // [99]\n * sub.unsubscribe(); // undefined\n * emitter.emit('onClick'); // []\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "spiral-matrix-ii",
@@ -3960,7 +3967,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number[][]}\n */\nvar generateMatrix = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3]\",\"expected\":\"[[1,2,3],[8,9,4],[7,6,5]]\"},{\"input\":\"[1]\",\"expected\":\"[[1]]\"}]",
   },
   {
     slug: "minimum-length-of-string-after-operations",
@@ -3972,7 +3979,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minimumLength = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abaacbcbb\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"aa\\\"]\",\"expected\":\"2\"}]",
   },
   {
     slug: "restore-the-array-from-adjacent-pairs",
@@ -3984,7 +3991,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Depth-First Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} adjacentPairs\n * @return {number[]}\n */\nvar restoreArray = function(adjacentPairs) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "remove-nodes-from-linked-list",
@@ -3996,7 +4003,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\",\"Stack\",\"Recursion\",\"Monotonic Stack\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar removeNodes = function(head) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,2,13,3,8]]\",\"expected\":\"[13,8]\"},{\"input\":\"[[1,1,1,1]]\",\"expected\":\"[1,1,1,1]\"}]",
   },
   {
     slug: "minimum-number-of-flips-to-make-binary-grid-palindromic-i",
@@ -4008,7 +4015,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minFlips = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,0,0],[0,0,0],[0,0,1]]]\",\"expected\":\"2\"},{\"input\":\"[[[0,1],[0,1],[0,0]]]\",\"expected\":\"1\"},{\"input\":\"[[[1],[0]]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "find-the-most-common-response",
@@ -4020,7 +4027,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[][]} responses\n * @return {string}\n */\nvar findCommonResponse = function(responses) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"good\\\",\\\"ok\\\",\\\"good\\\",\\\"ok\\\"],[\\\"ok\\\",\\\"bad\\\",\\\"good\\\",\\\"ok\\\",\\\"ok\\\"],[\\\"good\\\"],[\\\"bad\\\"]]]\",\"expected\":\"\\\"good\\\"\"},{\"input\":\"[[[\\\"good\\\",\\\"ok\\\",\\\"good\\\"],[\\\"ok\\\",\\\"bad\\\"],[\\\"bad\\\",\\\"notsure\\\"],[\\\"great\\\",\\\"good\\\"]]]\",\"expected\":\"\\\"bad\\\"\"}]",
   },
   {
     slug: "count-submatrices-with-top-left-element-and-sum-less-than-k",
@@ -4032,7 +4039,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @param {number} k\n * @return {number}\n */\nvar countSubmatrices = function(grid, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[7,6,3],[6,6,1]],18]\",\"expected\":\"4\"},{\"input\":\"[[[7,2,9],[1,5,0],[2,6,6]],20]\",\"expected\":\"6\"}]",
   },
   {
     slug: "minimum-distance-between-three-equal-elements-ii",
@@ -4044,7 +4051,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumDistance = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,1,1,3]]\",\"expected\":\"6\"},{\"input\":\"[[1,1,2,3,2,1,2]]\",\"expected\":\"8\"},{\"input\":\"[[1]]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "egg-drop-with-2-eggs-and-n-floors",
@@ -4056,7 +4063,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar twoEggDrop = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2]\",\"expected\":\"2\"},{\"input\":\"[100]\",\"expected\":\"14\"}]",
   },
   {
     slug: "queue-reconstruction-by-height",
@@ -4068,7 +4075,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Indexed Tree\",\"Segment Tree\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} people\n * @return {number[][]}\n */\nvar reconstructQueue = function(people) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "combinations",
@@ -4080,7 +4087,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {number[][]}\n */\nvar combine = function(n, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[4,2]\",\"expected\":\"[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]\"},{\"input\":\"[1,1]\",\"expected\":\"[[1]]\"}]",
     approach: "Backtrack C(n,k). O(C(n,k))\n\n**Складність:** Time O(C(n,k)), Space O(k)",
   },
   {
@@ -4093,7 +4100,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Design\"]",
     companies: "[]",
     starterCode: "\nvar UndergroundSystem = function() {\n    \n};\n\n/** \n * @param {number} id \n * @param {string} stationName \n * @param {number} t\n * @return {void}\n */\nUndergroundSystem.prototype.checkIn = function(id, stationName, t) {\n    \n};\n\n/** \n * @param {number} id \n * @param {string} stationName \n * @param {number} t\n * @return {void}\n */\nUndergroundSystem.prototype.checkOut = function(id, stationName, t) {\n    \n};\n\n/** \n * @param {string} startStation \n * @param {string} endStation\n * @return {number}\n */\nUndergroundSystem.prototype.getAverageTime = function(startStation, endStation) {\n    \n};\n\n/** \n * Your UndergroundSystem object will be instantiated and called as such:\n * var obj = new UndergroundSystem()\n * obj.checkIn(id,stationName,t)\n * obj.checkOut(id,stationName,t)\n * var param_3 = obj.getAverageTime(startStation,endStation)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "minimum-add-to-make-parentheses-valid",
@@ -4105,7 +4112,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minAddToMakeValid = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"())\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"(((\\\"]\",\"expected\":\"3\"}]",
   },
   {
     slug: "maximum-ice-cream-bars",
@@ -4117,7 +4124,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\",\"Counting Sort\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} costs\n * @param {number} coins\n * @return {number}\n */\nvar maxIceCream = function(costs, coins) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,2,4,1],7]\",\"expected\":\"4\"},{\"input\":\"[[10,6,8,7,7,8],5]\",\"expected\":\"0\"},{\"input\":\"[[1,6,3,1,2,5],20]\",\"expected\":\"6\"}]",
   },
   {
     slug: "minimum-number-of-operations-to-sort-a-binary-tree-by-level",
@@ -4129,7 +4136,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar minimumOperations = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,4,3,7,6,8,5,null,null,null,null,9,null,10]]\",\"expected\":\"3\"},{\"input\":\"[[1,3,2,7,6,5,4]]\",\"expected\":\"3\"},{\"input\":\"[[1,2,3,4,5,6]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "cyclically-rotating-a-grid",
@@ -4141,7 +4148,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\r\n * @param {number[][]} grid\r\n * @param {number} k\r\n * @return {number[][]}\r\n */\r\nvar rotateGrid = function(grid, k) {\r\n    \r\n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[40,10],[30,20]],1]\",\"expected\":\"[[10,20],[40,30]]\"},{\"input\":\"[[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],2]\",\"expected\":\"[[3,4,8,12],[2,11,10,16],[1,7,6,15],[5,9,13,14]]\"}]",
   },
   {
     slug: "design-spreadsheet",
@@ -4153,7 +4160,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Design\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} rows\n */\nvar Spreadsheet = function(rows) {\n    \n};\n\n/** \n * @param {string} cell \n * @param {number} value\n * @return {void}\n */\nSpreadsheet.prototype.setCell = function(cell, value) {\n    \n};\n\n/** \n * @param {string} cell\n * @return {void}\n */\nSpreadsheet.prototype.resetCell = function(cell) {\n    \n};\n\n/** \n * @param {string} formula\n * @return {number}\n */\nSpreadsheet.prototype.getValue = function(formula) {\n    \n};\n\n/** \n * Your Spreadsheet object will be instantiated and called as such:\n * var obj = new Spreadsheet(rows)\n * obj.setCell(cell,value)\n * obj.resetCell(cell)\n * var param_3 = obj.getValue(formula)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-average-pass-ratio",
@@ -4165,7 +4172,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Heap (Priority Queue)\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} classes\n * @param {number} extraStudents\n * @return {number}\n */\nvar maxAverageRatio = function(classes, extraStudents) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "palindrome-partitioning",
@@ -4177,7 +4184,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Dynamic Programming\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string[][]}\n */\nvar partition = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aab\\\"]\",\"expected\":\"[[\\\"a\\\",\\\"a\\\",\\\"b\\\"],[\\\"aa\\\",\\\"b\\\"]]\"},{\"input\":\"[\\\"a\\\"]\",\"expected\":\"[[\\\"a\\\"]]\"}]",
   },
   {
     slug: "check-if-strings-can-be-made-equal-with-operations-ii",
@@ -4189,7 +4196,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s1\n * @param {string} s2\n * @return {boolean}\n */\nvar checkStrings = function(s1, s2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abcdba\\\",\\\"cabdab\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"abe\\\",\\\"bea\\\"]\",\"expected\":\"false\"}]",
   },
   {
     slug: "sum-of-beauty-of-all-substrings",
@@ -4201,7 +4208,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar beautySum = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aabcb\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"aabcbaa\\\"]\",\"expected\":\"17\"}]",
   },
   {
     slug: "max-area-of-island",
@@ -4213,7 +4220,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Depth-First Search\",\"Breadth-First Search\",\"Union-Find\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maxAreaOfIsland = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,0,1,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,1,1,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,1,1,0,0,1,0,1,0,0],[0,1,0,0,1,1,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,0,1,1,0,0,0,0]]]\",\"expected\":\"6\"},{\"input\":\"[[[0,0,0,0,0,0,0,0]]]\",\"expected\":\"0\"}]",
     approach: "DFS count cells. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -4226,7 +4233,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} weights\n * @param {number} days\n * @return {number}\n */\nvar shipWithinDays = function(weights, days) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5,6,7,8,9,10],5]\",\"expected\":\"15\"},{\"input\":\"[[3,2,2,4,1,4],3]\",\"expected\":\"6\"},{\"input\":\"[[1,2,3,1,1],4]\",\"expected\":\"3\"}]",
   },
   {
     slug: "minimum-suffix-flips",
@@ -4238,7 +4245,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} target\n * @return {number}\n */\nvar minFlips = function(target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"10111\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"101\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"00000\\\"]\",\"expected\":\"0\"}]",
   },
   {
     slug: "minimum-prefix-removal-to-make-array-strictly-increasing",
@@ -4250,7 +4257,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumPrefixLength = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,-1,2,3,3,4,5]]\",\"expected\":\"4\"},{\"input\":\"[[4,3,-2,-5]]\",\"expected\":\"3\"},{\"input\":\"[[1,2,3,4]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "count-good-nodes-in-binary-tree",
@@ -4262,7 +4269,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Breadth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar goodNodes = function(root) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1,4,3,null,1,5]]\",\"expected\":\"4\"},{\"input\":\"[[3,3,null,4,2]]\",\"expected\":\"3\"},{\"input\":\"[[1]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "increment-submatrices-by-one",
@@ -4274,7 +4281,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} queries\n * @return {number[][]}\n */\nvar rangeAddQueries = function(n, queries) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,[[1,1,2,2],[0,0,1,1]]]\",\"expected\":\"[[1,1,0],[1,2,1],[0,1,1]]\"},{\"input\":\"[2,[[0,0,1,1]]]\",\"expected\":\"[[1,1],[1,1]]\"}]",
   },
   {
     slug: "unique-length-3-palindromic-subsequences",
@@ -4286,7 +4293,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Bit Manipulation\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar countPalindromicSubsequence = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aabca\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"adc\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"bbcbaba\\\"]\",\"expected\":\"4\"}]",
   },
   {
     slug: "number-of-substrings-containing-all-three-characters",
@@ -4298,7 +4305,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Sliding Window\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar numberOfSubstrings = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abcabc\\\"]\",\"expected\":\"10\"},{\"input\":\"[\\\"aaacb\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"1\"}]",
   },
   {
     slug: "smallest-stable-index-ii",
@@ -4310,7 +4317,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar firstStableIndex = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,0,1,4],3]\",\"expected\":\"3\"},{\"input\":\"[[3,2,1],1]\",\"expected\":\"-1\"},{\"input\":\"[[0],0]\",\"expected\":\"0\"}]",
   },
   {
     slug: "find-kth-bit-in-nth-binary-string",
@@ -4322,7 +4329,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Recursion\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {character}\n */\nvar findKthBit = function(n, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,1]\",\"expected\":\"\\\"0\\\"\"},{\"input\":\"[4,11]\",\"expected\":\"\\\"1\\\"\"}]",
   },
   {
     slug: "groups-of-special-equivalent-strings",
@@ -4334,7 +4341,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @return {number}\n */\nvar numSpecialEquivGroups = function(words) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "count-servers-that-communicate",
@@ -4346,7 +4353,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Depth-First Search\",\"Breadth-First Search\",\"Union-Find\",\"Matrix\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar countServers = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,0],[0,1]]]\",\"expected\":\"0\"},{\"input\":\"[[[1,0],[1,1]]]\",\"expected\":\"3\"},{\"input\":\"[[[1,1,0,0],[0,0,1,0],[0,0,1,0],[0,0,0,1]]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "complex-number-multiplication",
@@ -4358,7 +4365,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"String\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} num1\n * @param {string} num2\n * @return {string}\n */\nvar complexNumberMultiply = function(num1, num2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"1+1i\\\",\\\"1+1i\\\"]\",\"expected\":\"\\\"0+2i\\\"\"},{\"input\":\"[\\\"1+-1i\\\",\\\"1+-1i\\\"]\",\"expected\":\"\\\"0+-2i\\\"\"}]",
   },
   {
     slug: "insert-into-a-binary-search-tree",
@@ -4370,7 +4377,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Binary Search Tree\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} val\n * @return {TreeNode}\n */\nvar insertIntoBST = function(root, val) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,2,7,1,3],5]\",\"expected\":\"[4,2,7,1,3,5]\"},{\"input\":\"[[40,20,60,10,30,50,70],25]\",\"expected\":\"[40,20,60,10,30,50,70,null,null,25]\"},{\"input\":\"[[4,2,7,1,3,null,null,null,null,null,null],5]\",\"expected\":\"[4,2,7,1,3,5]\"}]",
   },
   {
     slug: "words-within-two-edits-of-dictionary",
@@ -4382,7 +4389,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Trie\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} queries\n * @param {string[]} dictionary\n * @return {string[]}\n */\nvar twoEditWords = function(queries, dictionary) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"word\\\",\\\"note\\\",\\\"ants\\\",\\\"wood\\\"],[\\\"wood\\\",\\\"joke\\\",\\\"moat\\\"]]\",\"expected\":\"[\\\"word\\\",\\\"note\\\",\\\"wood\\\"]\"},{\"input\":\"[[\\\"yes\\\"],[\\\"not\\\"]]\",\"expected\":\"[]\"}]",
   },
   {
     slug: "find-occurrences-of-an-element-in-an-array",
@@ -4394,7 +4401,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[]} queries\n * @param {number} x\n * @return {number[]}\n */\nvar occurrencesOfElement = function(nums, queries, x) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,1,7],[1,3,2,4],1]\",\"expected\":\"[0,-1,2,-1]\"},{\"input\":\"[[1,2,3],[10],5]\",\"expected\":\"[-1]\"}]",
   },
   {
     slug: "xor-after-range-multiplication-queries-i",
@@ -4406,7 +4413,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Divide and Conquer\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[][]} queries\n * @return {number}\n */\nvar xorAfterQueries = function(nums, queries) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,1,1],[[0,2,1,4]]]\",\"expected\":\"4\"},{\"input\":\"[[2,3,1,5,4],[[1,4,2,3],[0,2,1,2]]]\",\"expected\":\"31\"}]",
   },
   {
     slug: "stone-game",
@@ -4418,7 +4425,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Dynamic Programming\",\"Game Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} piles\n * @return {boolean}\n */\nvar stoneGame = function(piles) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,3,4,5]]\",\"expected\":\"true\"},{\"input\":\"[[3,7,2,3]]\",\"expected\":\"true\"}]",
   },
   {
     slug: "different-ways-to-add-parentheses",
@@ -4430,7 +4437,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"String\",\"Dynamic Programming\",\"Recursion\",\"Memoization\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} expression\n * @return {number[]}\n */\nvar diffWaysToCompute = function(expression) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "combination-sum-iii",
@@ -4442,7 +4449,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} k\n * @param {number} n\n * @return {number[][]}\n */\nvar combinationSum3 = function(k, n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,7]\",\"expected\":\"[[1,2,4]]\"},{\"input\":\"[3,9]\",\"expected\":\"[[1,2,6],[1,3,5],[2,3,4]]\"},{\"input\":\"[4,1]\",\"expected\":\"[]\"}]",
   },
   {
     slug: "average-waiting-time",
@@ -4454,7 +4461,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Simulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} customers\n * @return {number}\n */\nvar averageWaitingTime = function(customers) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2],[2,5],[4,3]]]\",\"expected\":\"5\"},{\"input\":\"[[[5,2],[5,4],[10,3],[20,1]]]\",\"expected\":\"3.25\"}]",
   },
   {
     slug: "append-characters-to-string-to-make-subsequence",
@@ -4466,7 +4473,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\",\"String\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} t\n * @return {number}\n */\nvar appendCharacters = function(s, t) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"coaching\\\",\\\"coding\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"abcde\\\",\\\"a\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"z\\\",\\\"abcde\\\"]\",\"expected\":\"5\"}]",
   },
   {
     slug: "recover-a-tree-from-preorder-traversal",
@@ -4478,7 +4485,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Tree\",\"Depth-First Search\",\"Binary Tree\"]",
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {string} traversal\n * @return {TreeNode}\n */\nvar recoverFromPreorder = function(traversal) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"1-2--3--4-5--6--7\\\"]\",\"expected\":\"[1,2,5,3,4,6,7]\"},{\"input\":\"[\\\"1-2--3---4-5--6---7\\\"]\",\"expected\":\"[1,2,5,3,null,6,null,4,null,7]\"},{\"input\":\"[\\\"1-401--349---90--88\\\"]\",\"expected\":\"[1,401,null,349,88,90]\"}]",
   },
   {
     slug: "unique-paths-iii",
@@ -4490,7 +4497,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\",\"Bit Manipulation\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar uniquePathsIII = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,0,0,0],[0,0,0,0],[0,0,2,-1]]]\",\"expected\":\"2\"},{\"input\":\"[[[1,0,0,0],[0,0,0,0],[0,0,0,2]]]\",\"expected\":\"4\"},{\"input\":\"[[[0,1],[2,0]]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "maximum-score-words-formed-by-letters",
@@ -4502,7 +4509,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Dynamic Programming\",\"Backtracking\",\"Bit Manipulation\",\"Counting\",\"Bitmask\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {character[]} letters\n * @param {number[]} score\n * @return {number}\n */\nvar maxScoreWords = function(words, letters, score) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "number-of-ways-to-paint-n-3-grid",
@@ -4514,7 +4521,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar numOfWays = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[1]\",\"expected\":\"12\"},{\"input\":\"[5000]\",\"expected\":\"30228214\"}]",
   },
   {
     slug: "special-binary-string",
@@ -4526,7 +4533,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Divide and Conquer\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar makeLargestSpecial = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"11011000\\\"]\",\"expected\":\"\\\"11100100\\\"\"},{\"input\":\"[\\\"10\\\"]\",\"expected\":\"\\\"10\\\"\"}]",
   },
   {
     slug: "build-a-matrix-with-conditions",
@@ -4538,7 +4545,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Graph Theory\",\"Topological Sort\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} k\n * @param {number[][]} rowConditions\n * @param {number[][]} colConditions\n * @return {number[][]}\n */\nvar buildMatrix = function(k, rowConditions, colConditions) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,[[1,2],[3,2]],[[2,1],[3,2]]]\",\"expected\":\"[[0,0,1],[3,0,0],[0,2,0]]\"},{\"input\":\"[3,[[1,2],[2,3],[3,1],[2,3]],[[2,1]]]\",\"expected\":\"[]\"}]",
   },
   {
     slug: "n-queens-ii",
@@ -4550,7 +4557,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar totalNQueens = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[4]\",\"expected\":\"2\"},{\"input\":\"[1]\",\"expected\":\"1\"}]",
   },
   {
     slug: "minimum-one-bit-operations-to-make-integers-zero",
@@ -4562,7 +4569,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Dynamic Programming\",\"Bit Manipulation\",\"Recursion\",\"Memoization\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar minimumOneBitOperations = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3]\",\"expected\":\"2\"},{\"input\":\"[6]\",\"expected\":\"4\"}]",
   },
   {
     slug: "minimum-number-of-increments-on-subarrays-to-form-a-target-array",
@@ -4574,7 +4581,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Stack\",\"Greedy\",\"Monotonic Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} target\n * @return {number}\n */\nvar minNumberOperations = function(target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,2,1]]\",\"expected\":\"3\"},{\"input\":\"[[3,1,1,2]]\",\"expected\":\"4\"},{\"input\":\"[[3,1,5,4,2]]\",\"expected\":\"7\"}]",
   },
   {
     slug: "delete-duplicate-folders-in-system",
@@ -4586,7 +4593,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"String\",\"Trie\",\"Hash Function\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[][]} paths\n * @return {string[][]}\n */\nvar deleteDuplicateFolder = function(paths) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"a\\\"],[\\\"c\\\"],[\\\"d\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"b\\\"],[\\\"d\\\",\\\"a\\\"]]]\",\"expected\":\"[[\\\"d\\\"],[\\\"d\\\",\\\"a\\\"]]\"},{\"input\":\"[[[\\\"a\\\"],[\\\"c\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"b\\\"],[\\\"a\\\",\\\"b\\\",\\\"x\\\"],[\\\"a\\\",\\\"b\\\",\\\"x\\\",\\\"y\\\"],[\\\"w\\\"],[\\\"w\\\",\\\"y\\\"]]]\",\"expected\":\"[[\\\"a\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\"],[\\\"c\\\",\\\"b\\\"]]\"},{\"input\":\"[[[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"d\\\"],[\\\"c\\\"],[\\\"a\\\"]]]\",\"expected\":\"[[\\\"a\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\"],[\\\"c\\\",\\\"d\\\"]]\"}]",
   },
   {
     slug: "painting-a-grid-with-three-different-colors",
@@ -4598,7 +4605,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} m\n * @param {number} n\n * @return {number}\n */\nvar colorTheGrid = function(m, n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[1,1]\",\"expected\":\"3\"},{\"input\":\"[1,2]\",\"expected\":\"6\"},{\"input\":\"[5,5]\",\"expected\":\"580986\"}]",
   },
   {
     slug: "reducing-dishes",
@@ -4610,7 +4617,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} satisfaction\n * @return {number}\n */\nvar maxSatisfaction = function(satisfaction) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[-1,-8,0,5,-7]]\",\"expected\":\"14\"},{\"input\":\"[[4,3,2]]\",\"expected\":\"20\"},{\"input\":\"[[-1,-4,-5]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "minimum-initial-energy-to-finish-tasks",
@@ -4622,7 +4629,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} tasks\n * @return {number}\n */\nvar minimumEffort = function(tasks) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2],[2,4],[4,8]]]\",\"expected\":\"8\"},{\"input\":\"[[[1,3],[2,4],[10,11],[10,12],[8,9]]]\",\"expected\":\"32\"},{\"input\":\"[[[1,7],[2,8],[3,9],[4,10],[5,11],[6,12]]]\",\"expected\":\"27\"}]",
   },
   {
     slug: "minimum-score-after-removals-on-a-tree",
@@ -4634,7 +4641,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\",\"Tree\",\"Depth-First Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[][]} edges\n * @return {number}\n */\nvar minimumScore = function(nums, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,5,5,4,11],[[0,1],[1,2],[1,3],[3,4]]]\",\"expected\":\"9\"},{\"input\":\"[[5,5,2,4,4,2],[[0,1],[1,2],[5,2],[4,3],[1,3]]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "n-queens",
@@ -4646,7 +4653,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string[][]}\n */\nvar solveNQueens = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[4]\",\"expected\":\"[[\\\".Q..\\\",\\\"...Q\\\",\\\"Q...\\\",\\\"..Q.\\\"],[\\\"..Q.\\\",\\\"Q...\\\",\\\"...Q\\\",\\\".Q..\\\"]]\"},{\"input\":\"[1]\",\"expected\":\"[[\\\"Q\\\"]]\"}]",
     approach: "Backtrack rows, check col/diag. O(n!)\n\n**Складність:** Time O(n!), Space O(n²)",
   },
   {
@@ -4659,7 +4666,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Matrix\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @param {number} target\n * @return {number}\n */\nvar numSubmatrixSumTarget = function(matrix, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1,0],[1,1,1],[0,1,0]],0]\",\"expected\":\"4\"},{\"input\":\"[[[1,-1],[-1,1]],0]\",\"expected\":\"5\"},{\"input\":\"[[[904]],0]\",\"expected\":\"0\"}]",
   },
   {
     slug: "sliding-puzzle",
@@ -4671,7 +4678,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Backtracking\",\"Breadth-First Search\",\"Memoization\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} board\n * @return {number}\n */\nvar slidingPuzzle = function(board) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximum-number-of-k-divisible-components",
@@ -4683,7 +4690,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number[]} values\n * @param {number} k\n * @return {number}\n */\nvar maxKDivisibleComponents = function(n, edges, values, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5,[[0,2],[1,2],[1,3],[2,4]],[1,8,1,4,4],6]\",\"expected\":\"2\"},{\"input\":\"[7,[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]],[3,0,6,1,5,2,1],3]\",\"expected\":\"3\"}]",
   },
   {
     slug: "minimum-insertion-steps-to-make-a-string-palindrome",
@@ -4695,7 +4702,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minInsertions = function(s) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximize-the-number-of-target-nodes-after-connecting-trees-ii",
@@ -4707,7 +4714,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Breadth-First Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} edges1\n * @param {number[][]} edges2\n * @return {number[]}\n */\nvar maxTargetNodes = function(edges1, edges2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1],[0,2],[2,3],[2,4]],[[0,1],[0,2],[0,3],[2,7],[1,4],[4,5],[4,6]]]\",\"expected\":\"[8,7,7,8,8]\"},{\"input\":\"[[[0,1],[0,2],[0,3],[0,4]],[[0,1],[1,2],[2,3]]]\",\"expected\":\"[3,6,6,6,6]\"}]",
   },
   {
     slug: "number-of-visible-people-in-a-queue",
@@ -4719,7 +4726,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Stack\",\"Monotonic Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} heights\n * @return {number[]}\n */\nvar canSeePersonsCount = function(heights) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[10,6,8,5,11,9]]\",\"expected\":\"[3,1,2,1,1,0]\"},{\"input\":\"[[5,1,2,3,10]]\",\"expected\":\"[4,1,1,1,0]\"}]",
   },
   {
     slug: "minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix",
@@ -4731,7 +4738,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Bit Manipulation\",\"Breadth-First Search\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @return {number}\n */\nvar minFlips = function(mat) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "delete-columns-to-make-sorted-iii",
@@ -4743,7 +4750,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string[]} strs\n * @return {number}\n */\nvar minDeletionSize = function(strs) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"babca\\\",\\\"bbazb\\\"]]\",\"expected\":\"3\"},{\"input\":\"[[\\\"edcba\\\"]]\",\"expected\":\"4\"},{\"input\":\"[[\\\"ghi\\\",\\\"def\\\",\\\"abc\\\"]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "cherry-pickup-ii",
@@ -4755,7 +4762,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar cherryPickup = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[3,1,1],[2,5,1],[1,5,5],[2,1,1]]]\",\"expected\":\"24\"},{\"input\":\"[[[1,0,0,0,0,0,1],[2,0,0,0,0,3,0],[2,0,9,0,0,0,0],[0,3,0,5,4,0,0],[1,0,2,3,0,0,6]]]\",\"expected\":\"28\"}]",
   },
   {
     slug: "the-earliest-and-latest-rounds-where-players-compete",
@@ -4767,7 +4774,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\",\"Memoization\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} firstPlayer\n * @param {number} secondPlayer\n * @return {number[]}\n */\nvar earliestAndLatest = function(n, firstPlayer, secondPlayer) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[11,2,4]\",\"expected\":\"[3,4]\"},{\"input\":\"[5,1,5]\",\"expected\":\"[1,1]\"}]",
   },
   {
     slug: "minimum-distance-to-type-a-word-using-two-fingers",
@@ -4779,7 +4786,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} word\n * @return {number}\n */\nvar minimumDistance = function(word) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "put-marbles-in-bags",
@@ -4791,7 +4798,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\",\"Heap (Priority Queue)\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} weights\n * @param {number} k\n * @return {number}\n */\nvar putMarbles = function(weights, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,5,1],2]\",\"expected\":\"4\"},{\"input\":\"[[1,3],2]\",\"expected\":\"0\"}]",
   },
   {
     slug: "my-calendar-iii",
@@ -4803,7 +4810,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\",\"Design\",\"Segment Tree\",\"Prefix Sum\",\"Ordered Set\"]",
     companies: "[]",
     starterCode: "\nvar MyCalendarThree = function() {\n    \n};\n\n/** \n * @param {number} startTime \n * @param {number} endTime\n * @return {number}\n */\nMyCalendarThree.prototype.book = function(startTime, endTime) {\n    \n};\n\n/** \n * Your MyCalendarThree object will be instantiated and called as such:\n * var obj = new MyCalendarThree()\n * var param_1 = obj.book(startTime,endTime)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "longest-subsequence-repeated-k-times",
@@ -4815,7 +4822,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Two Pointers\",\"String\",\"Backtracking\",\"Counting\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar longestSubsequenceRepeatedK = function(s, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"letsleetcode\\\",2]\",\"expected\":\"\\\"let\\\"\"},{\"input\":\"[\\\"bb\\\",2]\",\"expected\":\"\\\"b\\\"\"},{\"input\":\"[\\\"ab\\\",2]\",\"expected\":\"\\\"\\\"\"}]",
   },
   {
     slug: "earliest-possible-day-of-full-bloom",
@@ -4827,7 +4834,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} plantTime\n * @param {number[]} growTime\n * @return {number}\n */\nvar earliestFullBloom = function(plantTime, growTime) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,4,3],[2,3,1]]\",\"expected\":\"9\"},{\"input\":\"[[1,2,3,2],[2,1,2,1]]\",\"expected\":\"9\"},{\"input\":\"[[1],[1]]\",\"expected\":\"2\"}]",
   },
   {
     slug: "minimum-cost-to-make-at-least-one-valid-path-in-a-grid",
@@ -4839,7 +4846,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Breadth-First Search\",\"Graph Theory\",\"Heap (Priority Queue)\",\"Matrix\",\"Shortest Path\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minCost = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,1,1,1],[2,2,2,2],[1,1,1,1],[2,2,2,2]]]\",\"expected\":\"3\"},{\"input\":\"[[[1,1,3],[3,2,2],[1,1,4]]]\",\"expected\":\"0\"},{\"input\":\"[[[1,2],[4,3]]]\",\"expected\":\"1\"}]",
   },
   {
     slug: "minimum-obstacle-removal-to-reach-corner",
@@ -4851,7 +4858,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Breadth-First Search\",\"Graph Theory\",\"Heap (Priority Queue)\",\"Matrix\",\"Shortest Path\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minimumObstacles = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1,1],[1,1,0],[1,1,0]]]\",\"expected\":\"2\"},{\"input\":\"[[[0,1,0,0,0],[0,1,0,1,0],[0,0,0,1,0]]]\",\"expected\":\"0\"}]",
   },
   {
     slug: "maximum-subgraph-score-in-a-tree",
@@ -4863,7 +4870,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Tree\",\"Depth-First Search\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number[]} good\n * @return {number[]}\n */\nvar maxSubgraphScore = function(n, edges, good) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "remove-max-number-of-edges-to-keep-graph-fully-traversable",
@@ -4875,7 +4882,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Union-Find\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar maxNumEdgesToRemove = function(n, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "smallest-range-covering-elements-from-k-lists",
@@ -4887,7 +4894,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Greedy\",\"Sliding Window\",\"Sorting\",\"Heap (Priority Queue)\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} nums\n * @return {number[]}\n */\nvar smallestRange = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "parsing-a-boolean-expression",
@@ -4899,7 +4906,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\",\"Recursion\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} expression\n * @return {boolean}\n */\nvar parseBoolExpr = function(expression) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"&(|(f))\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"|(f,f,f,t)\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"!(&(f,t))\\\"]\",\"expected\":\"true\"}]",
   },
   {
     slug: "minimum-difference-in-sums-after-removal-of-elements",
@@ -4911,7 +4918,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Heap (Priority Queue)\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumDifference = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-the-maximum-sum-of-node-values",
@@ -4923,7 +4930,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Greedy\",\"Bit Manipulation\",\"Tree\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @param {number[][]} edges\n * @return {number}\n */\nvar maximumValueSum = function(nums, k, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,1],3,[[0,1],[0,2]]]\",\"expected\":\"6\"},{\"input\":\"[[2,3],7,[[0,1]]]\",\"expected\":\"9\"},{\"input\":\"[[7,7,7,7,7,7],3,[[0,1],[0,2],[0,3],[0,4],[0,5]]]\",\"expected\":\"42\"}]",
   },
   {
     slug: "max-dot-product-of-two-subsequences",
@@ -4935,7 +4942,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number}\n */\nvar maxDotProduct = function(nums1, nums2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,1,-2,5],[3,0,-6]]\",\"expected\":\"18\"},{\"input\":\"[[3,-2],[2,-6,7]]\",\"expected\":\"21\"},{\"input\":\"[[-1,-1],[1,1]]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "find-the-count-of-good-integers",
@@ -4947,7 +4954,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Math\",\"Combinatorics\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {number}\n */\nvar countGoodIntegers = function(n, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,5]\",\"expected\":\"27\"},{\"input\":\"[1,4]\",\"expected\":\"2\"},{\"input\":\"[5,6]\",\"expected\":\"2468\"}]",
   },
   {
     slug: "count-subarrays-with-fixed-bounds",
@@ -4959,7 +4966,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Queue\",\"Sliding Window\",\"Monotonic Queue\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} minK\n * @param {number} maxK\n * @return {number}\n */\nvar countSubarrays = function(nums, minK, maxK) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,3,5,2,7,5],1,5]\",\"expected\":\"2\"},{\"input\":\"[[1,1,1,1],1,1]\",\"expected\":\"10\"}]",
   },
   {
     slug: "shortest-impossible-sequence-of-rolls",
@@ -4971,7 +4978,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Greedy\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} rolls\n * @param {number} k\n * @return {number}\n */\nvar shortestSequence = function(rolls, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "minimum-edge-toggles-on-a-tree",
@@ -4983,7 +4990,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tree\",\"Depth-First Search\",\"Graph Theory\",\"Topological Sort\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {string} start\n * @param {string} target\n * @return {number[]}\n */\nvar minimumFlips = function(n, edges, start, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,[[0,1],[1,2]],\\\"010\\\",\\\"100\\\"]\",\"expected\":\"[0]\"},{\"input\":\"[7,[[0,1],[1,2],[2,3],[3,4],[3,5],[1,6]],\\\"0011000\\\",\\\"0010001\\\"]\",\"expected\":\"[1,2,5]\"},{\"input\":\"[2,[[0,1]],\\\"00\\\",\\\"01\\\"]\",\"expected\":\"[-1]\"}]",
   },
   {
     slug: "last-day-where-you-can-still-cross",
@@ -4995,7 +5002,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\",\"Depth-First Search\",\"Breadth-First Search\",\"Union-Find\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} row\n * @param {number} col\n * @param {number[][]} cells\n * @return {number}\n */\nvar latestDayToCross = function(row, col, cells) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2,2,[[1,1],[2,1],[1,2],[2,2]]]\",\"expected\":\"2\"},{\"input\":\"[2,2,[[1,1],[1,2],[2,1],[2,2]]]\",\"expected\":\"1\"},{\"input\":\"[3,3,[[1,2],[2,1],[3,3],[2,2],[1,1],[1,3],[2,3],[3,2],[3,1]]]\",\"expected\":\"3\"}]",
   },
   {
     slug: "minimum-cost-walk-in-weighted-graph",
@@ -5007,7 +5014,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\",\"Union-Find\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number[][]} query\n * @return {number[]}\n */\nvar minimumCost = function(n, edges, query) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5,[[0,1,7],[1,3,7],[1,2,1]],[[0,3],[3,4]]]\",\"expected\":\"[1,-1]\"},{\"input\":\"[3,[[0,2,7],[0,1,15],[1,2,6],[1,2,1]],[[1,2]]]\",\"expected\":\"[0]\"}]",
   },
   {
     slug: "subarrays-with-k-different-integers",
@@ -5019,7 +5026,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Hash Table\",\"Sliding Window\",\"Counting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar subarraysWithKDistinct = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "swim-in-rising-water",
@@ -5031,7 +5038,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\",\"Depth-First Search\",\"Breadth-First Search\",\"Union-Find\",\"Heap (Priority Queue)\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar swimInWater = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,2],[1,3]]]\",\"expected\":\"3\"},{\"input\":\"[[[0,1,2,3,4],[24,23,22,21,5],[12,13,14,15,16],[11,17,18,19,20],[10,9,8,7,6]]]\",\"expected\":\"16\"}]",
     approach: "BS + DFS or Dijkstra. O(n² log n)\n\n**Складність:** Time O(n² log n), Space O(n²)",
   },
   {
@@ -5044,7 +5051,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Breadth-First Search\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} status\n * @param {number[]} candies\n * @param {number[][]} keys\n * @param {number[][]} containedBoxes\n * @param {number[]} initialBoxes\n * @return {number}\n */\nvar maxCandies = function(status, candies, keys, containedBoxes, initialBoxes) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,0,1,0],[7,5,4,100],[[],[],[1],[]],[[1,2],[3],[],[]],[0]]\",\"expected\":\"16\"},{\"input\":\"[[1,0,0,0,0,0],[1,1,1,1,1,1],[[1,2,3,4,5],[],[],[],[],[]],[[1,2,3,4,5],[],[],[],[],[]],[0]]\",\"expected\":\"6\"}]",
   },
   {
     slug: "count-subtrees-with-max-distance-between-cities",
@@ -5056,7 +5063,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\",\"Bit Manipulation\",\"Tree\",\"Enumeration\",\"Bitmask\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[]}\n */\nvar countSubgraphsForEachDiameter = function(n, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[4,[[1,2],[2,3],[2,4]]]\",\"expected\":\"[3,4,0]\"},{\"input\":\"[2,[[1,2]]]\",\"expected\":\"[1]\"},{\"input\":\"[3,[[1,2],[2,3]]]\",\"expected\":\"[2,1]\"}]",
   },
   {
     slug: "orderly-queue",
@@ -5068,7 +5075,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"String\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar orderlyQueue = function(s, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"cba\\\",1]\",\"expected\":\"\\\"acb\\\"\"},{\"input\":\"[\\\"baaca\\\",3]\",\"expected\":\"\\\"aaabc\\\"\"}]",
   },
   {
     slug: "divide-nodes-into-the-maximum-number-of-groups",
@@ -5080,7 +5087,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Depth-First Search\",\"Breadth-First Search\",\"Union-Find\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar magnificentSets = function(n, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[6,[[1,2],[1,4],[1,5],[2,6],[2,3],[4,6]]]\",\"expected\":\"4\"},{\"input\":\"[3,[[1,2],[2,3],[3,1]]]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "parallel-courses-iii",
@@ -5092,7 +5099,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Graph Theory\",\"Topological Sort\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} relations\n * @param {number[]} time\n * @return {number}\n */\nvar minimumTime = function(n, relations, time) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,[[1,3],[2,3]],[3,2,5]]\",\"expected\":\"8\"},{\"input\":\"[5,[[1,5],[2,5],[3,5],[3,4],[4,5]],[1,2,3,4,5]]\",\"expected\":\"12\"}]",
   },
   {
     slug: "maximum-frequency-stack",
@@ -5104,7 +5111,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"Stack\",\"Design\",\"Ordered Set\"]",
     companies: "[]",
     starterCode: "\nvar FreqStack = function() {\n    \n};\n\n/** \n * @param {number} val\n * @return {void}\n */\nFreqStack.prototype.push = function(val) {\n    \n};\n\n/**\n * @return {number}\n */\nFreqStack.prototype.pop = function() {\n    \n};\n\n/** \n * Your FreqStack object will be instantiated and called as such:\n * var obj = new FreqStack()\n * obj.push(val)\n * var param_2 = obj.pop()\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "valid-arrangement-of-pairs",
@@ -5116,7 +5123,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Depth-First Search\",\"Graph Theory\",\"Eulerian Circuit\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} pairs\n * @return {number[][]}\n */\nvar validArrangement = function(pairs) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree",
@@ -5128,7 +5135,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Union-Find\",\"Graph Theory\",\"Sorting\",\"Minimum Spanning Tree\",\"Strongly Connected Component\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[][]}\n */\nvar findCriticalAndPseudoCriticalEdges = function(n, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "count-fertile-pyramids-in-a-land",
@@ -5140,7 +5147,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar countPyramids = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximize-spanning-tree-stability-with-upgrades",
@@ -5152,7 +5159,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\",\"Greedy\",\"Union-Find\",\"Graph Theory\",\"Minimum Spanning Tree\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number} k\n * @return {number}\n */\nvar maxStability = function(n, edges, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,[[0,1,2,1],[1,2,3,0]],1]\",\"expected\":\"2\"},{\"input\":\"[3,[[0,1,4,0],[1,2,3,0],[0,2,1,0]],2]\",\"expected\":\"6\"},{\"input\":\"[3,[[0,1,1,1],[1,2,1,1],[2,0,1,1]],0]\",\"expected\":\"-1\"}]",
   },
   {
     slug: "chalkboard-xor-game",
@@ -5164,7 +5171,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Bit Manipulation\",\"Brainteaser\",\"Game Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {boolean}\n */\nvar xorGame = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "shortest-path-visiting-all-nodes",
@@ -5176,7 +5183,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\",\"Bit Manipulation\",\"Breadth-First Search\",\"Graph Theory\",\"Bitmask\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} graph\n * @return {number}\n */\nvar shortestPathLength = function(graph) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3],[0],[0],[0]]]\",\"expected\":\"4\"},{\"input\":\"[[[1],[0,2,4],[1,3,4],[2],[1,2]]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "sort-items-by-groups-respecting-dependencies",
@@ -5188,7 +5195,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Depth-First Search\",\"Breadth-First Search\",\"Graph Theory\",\"Topological Sort\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} m\n * @param {number[]} group\n * @param {number[][]} beforeItems\n * @return {number[]}\n */\nvar sortItems = function(n, m, group, beforeItems) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[8,2,[-1,-1,1,0,0,1,0,-1],[[],[6],[5],[6],[3,6],[],[],[]]]\",\"expected\":\"[7,0,5,2,6,3,4,1]\"},{\"input\":\"[8,2,[-1,-1,1,0,0,1,0,-1],[[],[6],[5],[6],[3],[],[4],[]]]\",\"expected\":\"[]\"}]",
   },
   {
     slug: "build-array-where-you-can-find-the-maximum-exactly-k-comparisons",
@@ -5200,7 +5207,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} m\n * @param {number} k\n * @return {number}\n */\nvar numOfArrays = function(n, m, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "sum-of-distances-in-tree",
@@ -5212,7 +5219,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Dynamic Programming\",\"Tree\",\"Depth-First Search\",\"Graph Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[]}\n */\nvar sumOfDistancesInTree = function(n, edges) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[6,[[0,1],[0,2],[2,3],[2,4],[2,5]]]\",\"expected\":\"[8,12,6,10,10,10]\"},{\"input\":\"[1,[]]\",\"expected\":\"[0]\"},{\"input\":\"[2,[[1,0]]]\",\"expected\":\"[1,1]\"}]",
   },
   {
     slug: "count-good-triplets-in-an-array",
@@ -5224,7 +5231,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\",\"Divide and Conquer\",\"Binary Indexed Tree\",\"Segment Tree\",\"Merge Sort\",\"Ordered Set\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number}\n */\nvar goodTriplets = function(nums1, nums2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,0,1,3],[0,1,2,3]]\",\"expected\":\"1\"},{\"input\":\"[[4,0,1,3,2],[4,1,0,2,3]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "design-graph-with-shortest-path-calculator",
@@ -5236,7 +5243,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graph Theory\",\"Design\",\"Heap (Priority Queue)\",\"Shortest Path\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n */\nvar Graph = function(n, edges) {\n    \n};\n\n/** \n * @param {number[]} edge\n * @return {void}\n */\nGraph.prototype.addEdge = function(edge) {\n    \n};\n\n/** \n * @param {number} node1 \n * @param {number} node2\n * @return {number}\n */\nGraph.prototype.shortestPath = function(node1, node2) {\n    \n};\n\n/** \n * Your Graph object will be instantiated and called as such:\n * var obj = new Graph(n, edges)\n * obj.addEdge(edge)\n * var param_2 = obj.shortestPath(node1,node2)\n */",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "jump-game-v",
@@ -5248,7 +5255,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number} d\n * @return {number}\n */\nvar maxJumps = function(arr, d) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[6,4,14,6,8,13,9,7,10,6,12],2]\",\"expected\":\"4\"},{\"input\":\"[[3,3,3,3,3],3]\",\"expected\":\"1\"},{\"input\":\"[[7,6,5,4,3,2,1],1]\",\"expected\":\"7\"}]",
   },
   {
     slug: "number-of-atoms",
@@ -5260,7 +5267,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Stack\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} formula\n * @return {string}\n */\nvar countOfAtoms = function(formula) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"H2O\\\"]\",\"expected\":\"\\\"H2O\\\"\"},{\"input\":\"[\\\"Mg(OH)2\\\"]\",\"expected\":\"\\\"H2MgO2\\\"\"},{\"input\":\"[\\\"K4(ON(SO3)2)2\\\"]\",\"expected\":\"\\\"K4N2O14S4\\\"\"}]",
   },
   {
     slug: "find-the-maximum-number-of-fruits-collected",
@@ -5272,7 +5279,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} fruits\n * @return {number}\n */\nvar maxCollectedFruits = function(fruits) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3,4],[5,6,8,7],[9,10,11,12],[13,14,15,16]]]\",\"expected\":\"100\"},{\"input\":\"[[[1,1],[1,1]]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "check-if-it-is-a-good-array",
@@ -5284,7 +5291,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Number Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {boolean}\n */\nvar isGoodArray = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[12,5,7,23]]\",\"expected\":\"true\"},{\"input\":\"[[29,6,10]]\",\"expected\":\"true\"},{\"input\":\"[[3,6]]\",\"expected\":\"false\"}]",
   },
   {
     slug: "count-all-valid-pickup-and-delivery-options",
@@ -5296,7 +5303,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Dynamic Programming\",\"Combinatorics\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar countOrders = function(n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "count-all-possible-routes",
@@ -5308,7 +5315,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Memoization\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} locations\n * @param {number} start\n * @param {number} finish\n * @param {number} fuel\n * @return {number}\n */\nvar countRoutes = function(locations, start, finish, fuel) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,6,8,4],1,3,5]\",\"expected\":\"4\"},{\"input\":\"[[4,3,1],1,0,6]\",\"expected\":\"5\"},{\"input\":\"[[5,2,1],0,2,3]\",\"expected\":\"0\"}]",
   },
   {
     slug: "maximum-number-of-achievable-transfer-requests",
@@ -5320,7 +5327,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Backtracking\",\"Bit Manipulation\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} requests\n * @return {number}\n */\nvar maximumRequests = function(n, requests) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5,[[0,1],[1,0],[0,1],[1,2],[2,0],[3,4]]]\",\"expected\":\"5\"},{\"input\":\"[3,[[0,0],[1,2],[2,1]]]\",\"expected\":\"3\"},{\"input\":\"[4,[[0,3],[3,1],[1,2],[2,0]]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "maximize-alternating-sum-using-swaps",
@@ -5332,7 +5339,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Union-Find\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[][]} swaps\n * @return {number}\n */\nvar maxAlternatingSum = function(nums, swaps) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "maximize-subarrays-after-removing-one-conflicting-pair",
@@ -5344,7 +5351,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Segment Tree\",\"Enumeration\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} conflictingPairs\n * @return {number}\n */\nvar maxSubarrays = function(n, conflictingPairs) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[4,[[2,3],[1,4]]]\",\"expected\":\"9\"},{\"input\":\"[5,[[1,2],[2,5],[3,5]]]\",\"expected\":\"12\"}]",
   },
   {
     slug: "maximum-score-from-grid-operations",
@@ -5356,7 +5363,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Matrix\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maximumScore = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-the-number-of-ways-to-place-people-ii",
@@ -5368,7 +5375,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Geometry\",\"Sorting\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @return {number}\n */\nvar numberOfPairs = function(points) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,1],[2,2],[3,3]]]\",\"expected\":\"0\"},{\"input\":\"[[[6,2],[4,4],[2,6]]]\",\"expected\":\"2\"},{\"input\":\"[[[3,1],[1,3],[1,1]]]\",\"expected\":\"2\"}]",
   },
   {
     slug: "maximum-score-of-a-good-subarray",
@@ -5380,7 +5387,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Binary Search\",\"Stack\",\"Monotonic Stack\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar maximumScore = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,4,3,7,4,5],3]\",\"expected\":\"15\"},{\"input\":\"[[5,5,4,5,4,1,1,1],0]\",\"expected\":\"20\"}]",
   },
   {
     slug: "trapping-rain-water-ii",
@@ -5392,7 +5399,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Breadth-First Search\",\"Heap (Priority Queue)\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} heightMap\n * @return {number}\n */\nvar trapRainWater = function(heightMap) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "brace-expansion-ii",
@@ -5404,7 +5411,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Hash Table\",\"String\",\"Backtracking\",\"Stack\",\"Breadth-First Search\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} expression\n * @return {string[]}\n */\nvar braceExpansionII = function(expression) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"{a,b}{c,{d,e}}\\\"]\",\"expected\":\"[\\\"ac\\\",\\\"ad\\\",\\\"ae\\\",\\\"bc\\\",\\\"bd\\\",\\\"be\\\"]\"},{\"input\":\"[\\\"{{a,z},a{b,c},{ab,z}}\\\"]\",\"expected\":\"[\\\"a\\\",\\\"ab\\\",\\\"ac\\\",\\\"z\\\"]\"}]",
   },
   {
     slug: "minimum-cost-to-hire-k-workers",
@@ -5416,7 +5423,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Greedy\",\"Sorting\",\"Heap (Priority Queue)\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} quality\n * @param {number[]} wage\n * @param {number} k\n * @return {number}\n */\nvar mincostToHireWorkers = function(quality, wage, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "sum-of-k-mirror-numbers",
@@ -5428,7 +5435,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} k\n * @param {number} n\n * @return {number}\n */\nvar kMirror = function(k, n) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2,5]\",\"expected\":\"25\"},{\"input\":\"[3,7]\",\"expected\":\"499\"},{\"input\":\"[7,17]\",\"expected\":\"20379000\"}]",
   },
   {
     slug: "find-the-minimum-area-to-cover-all-ones-ii",
@@ -5440,7 +5447,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Matrix\",\"Enumeration\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minimumSum = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,0,1],[1,1,1]]]\",\"expected\":\"5\"},{\"input\":\"[[[1,0,1,0],[0,1,0,1]]]\",\"expected\":\"5\"}]",
   },
   {
     slug: "maximum-number-of-events-that-can-be-attended-ii",
@@ -5452,7 +5459,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\",\"Dynamic Programming\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} events\n * @param {number} k\n * @return {number}\n */\nvar maxValue = function(events, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,4],[3,4,3],[2,3,1]],2]\",\"expected\":\"7\"},{\"input\":\"[[[1,2,4],[3,4,3],[2,3,10]],2]\",\"expected\":\"10\"},{\"input\":\"[[[1,1,1],[2,2,2],[3,3,3],[4,4,4]],3]\",\"expected\":\"9\"}]",
   },
   {
     slug: "burst-balloons",
@@ -5464,7 +5471,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maxCoins = function(nums) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,1,5,8]]\",\"expected\":\"167\"},{\"input\":\"[[1,5]]\",\"expected\":\"10\"}]",
     approach: "Interval DP, k=last burst. O(n³)\n\n**Складність:** Time O(n³), Space O(n²)",
   },
   {
@@ -5477,7 +5484,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Dynamic Programming\",\"Game Theory\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} stoneValue\n * @return {string}\n */\nvar stoneGameIII = function(stoneValue) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,7]]\",\"expected\":\"\\\"Bob\\\"\"},{\"input\":\"[[1,2,3,-9]]\",\"expected\":\"\\\"Alice\\\"\"},{\"input\":\"[[1,2,3,6]]\",\"expected\":\"\\\"Tie\\\"\"}]",
   },
   {
     slug: "checking-existence-of-edge-length-limited-paths",
@@ -5489,7 +5496,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Two Pointers\",\"Union-Find\",\"Graph Theory\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edgeList\n * @param {number[][]} queries\n * @return {boolean[]}\n */\nvar distanceLimitedPathsExist = function(n, edgeList, queries) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "find-the-string-with-lcp",
@@ -5501,7 +5508,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"String\",\"Dynamic Programming\",\"Greedy\",\"Union-Find\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} lcp\n * @return {string}\n */\nvar findTheString = function(lcp) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[4,0,2,0],[0,3,0,1],[2,0,2,0],[0,1,0,1]]]\",\"expected\":\"\\\"abab\\\"\"},{\"input\":\"[[[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,1]]]\",\"expected\":\"\\\"aaaa\\\"\"},{\"input\":\"[[[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,3]]]\",\"expected\":\"\\\"\\\"\"}]",
   },
   {
     slug: "minimum-total-distance-traveled",
@@ -5513,7 +5520,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} robot\n * @param {number[][]} factory\n * @return {number}\n */\nvar minimumTotalDistance = function(robot, factory) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,4,6],[[2,2],[6,2]]]\",\"expected\":\"4\"},{\"input\":\"[[1,-1],[[-2,1],[2,1]]]\",\"expected\":\"2\"}]",
   },
   {
     slug: "minimum-falling-path-sum-ii",
@@ -5525,7 +5532,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minFallingPathSum = function(grid) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"13\"},{\"input\":\"[[[7]]]\",\"expected\":\"7\"}]",
   },
   {
     slug: "minimum-cost-to-cut-a-stick",
@@ -5537,7 +5544,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Dynamic Programming\",\"Sorting\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[]} cuts\n * @return {number}\n */\nvar minCost = function(n, cuts) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[7,[1,3,4,5]]\",\"expected\":\"16\"},{\"input\":\"[9,[5,6,1,4,2]]\",\"expected\":\"22\"}]",
   },
   {
     slug: "find-xor-sum-of-all-pairs-bitwise-and",
@@ -5549,7 +5556,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Math\",\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr1\n * @param {number[]} arr2\n * @return {number}\n */\nvar getXORSum = function(arr1, arr2) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3],[6,5]]\",\"expected\":\"0\"},{\"input\":\"[[12],[4]]\",\"expected\":\"4\"}]",
   },
   {
     slug: "find-the-longest-valid-obstacle-course-at-each-position",
@@ -5561,7 +5568,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\",\"Binary Indexed Tree\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} obstacles\n * @return {number[]}\n */\nvar longestObstacleCourseAtEachPosition = function(obstacles) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,2]]\",\"expected\":\"[1,2,3,3]\"},{\"input\":\"[[2,2,1]]\",\"expected\":\"[1,2,1]\"},{\"input\":\"[[3,1,5,6,4,2]]\",\"expected\":\"[1,1,2,3,2,2]\"}]",
   },
   {
     slug: "second-minimum-time-to-reach-destination",
@@ -5573,7 +5580,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Breadth-First Search\",\"Graph Theory\",\"Shortest Path\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number} time\n * @param {number} change\n * @return {number}\n */\nvar secondMinimum = function(n, edges, time, change) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
   },
   {
     slug: "stamping-the-sequence",
@@ -5585,7 +5592,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"String\",\"Stack\",\"Greedy\",\"Queue\"]",
     companies: "[]",
     starterCode: "/**\n * @param {string} stamp\n * @param {string} target\n * @return {number[]}\n */\nvar movesToStamp = function(stamp, target) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abc\\\",\\\"ababc\\\"]\",\"expected\":\"[1,0,2]\"},{\"input\":\"[\\\"abca\\\",\\\"aabcaca\\\"]\",\"expected\":\"[2,3,0,1]\"}]",
   },
   {
     slug: "find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows",
@@ -5597,7 +5604,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Binary Search\",\"Heap (Priority Queue)\",\"Matrix\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @param {number} k\n * @return {number}\n */\nvar kthSmallest = function(mat, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,3,11],[2,4,6]],5]\",\"expected\":\"7\"},{\"input\":\"[[[1,3,11],[2,4,6]],9]\",\"expected\":\"17\"},{\"input\":\"[[[1,10,10],[1,4,5],[2,3,6]],7]\",\"expected\":\"9\"}]",
   },
   {
     slug: "minimum-number-of-k-consecutive-bit-flips",
@@ -5609,7 +5616,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Array\",\"Bit Manipulation\",\"Queue\",\"Sliding Window\",\"Prefix Sum\"]",
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minKBitFlips = function(nums, k) {\n    \n};",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[0,1,0],1]\",\"expected\":\"2\"},{\"input\":\"[[1,1,0],2]\",\"expected\":\"-1\"},{\"input\":\"[[0,0,0,1,0,1,1,0],3]\",\"expected\":\"3\"}]",
   },
   {
     slug: "replace-elements",
@@ -5620,7 +5627,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Iterate right→left, track max. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5632,7 +5639,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abc\\\",\\\"ahbgdc\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"axc\\\",\\\"ahbgdc\\\"]\",\"expected\":\"false\"}]",
     approach: "Two pointers. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5644,7 +5651,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "[1] + [prev[i-1]+prev[i]] + [1]. O(n²)\n\n**Складність:** Time O(n²), Space O(n²)",
   },
   {
@@ -5656,7 +5663,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,2,3]]\",\"expected\":\"3\"},{\"input\":\"[[2,2,1,1,1,2,2]]\",\"expected\":\"2\"}]",
     approach: "Boyer-Moore voting. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5668,7 +5675,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"anagram\\\",\\\"nagaram\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"rat\\\",\\\"car\\\"]\",\"expected\":\"false\"}]",
     solution: "function isAnagram(s: string, t: string): boolean {\n  if (s.length !== t.length) return false;\n  const freq = new Map<string, number>();\n  for (const ch of s) freq.set(ch, (freq.get(ch) ?? 0) + 1);\n  for (const ch of t) {\n    if (!freq.has(ch)) return false;\n    freq.set(ch, freq.get(ch)! - 1);\n    if (freq.get(ch) === 0) freq.delete(ch);\n  }\n  return freq.size === 0;\n}",
     approach: "Підрахуй частоти символів. Один рядок +1, другий -1. Усі нулі → анаграма.\n\n**Складність:** Time O(n), Space O(1)",
   },
@@ -5681,7 +5688,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     solution: "function topKFrequent(nums: number[], k: number): number[] {\n  const freq = new Map<number, number>();\n  for (const num of nums) freq.set(num, (freq.get(num) ?? 0) + 1);\n\n  const buckets: number[][] = Array.from({ length: nums.length + 1 }, () => []);\n  freq.forEach((count, num) => buckets[count].push(num));\n\n  const result: number[] = [];\n  for (let i = buckets.length - 1; i >= 0 && result.length < k; i--) {\n    result.push(...buckets[i]);\n  }\n  return result.slice(0, k);\n}",
     approach: "Підрахуй частоти → bucket sort за частотою (індекс = частота). Збирай з кінця. O(n) — швидше за heap.\n\n**Складність:** Time O(n), Space O(n)",
   },
@@ -5694,7 +5701,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Prefix length + string. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -5706,7 +5713,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Prefix * suffix. O(n)\n\n**Складність:** Time O(n), Space O(1) (без output-масиву)",
   },
   {
@@ -5718,7 +5725,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Arrays & Hashing\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     solution: "function longestConsecutive(nums: number[]): number {\n  const set = new Set(nums);\n  let longest = 0;\n\n  for (const num of set) {\n    if (!set.has(num - 1)) {\n      let current = num;\n      let streak = 1;\n      while (set.has(current + 1)) {\n        current++;\n        streak++;\n      }\n      longest = Math.max(longest, streak);\n    }\n  }\n  return longest;\n}",
     approach: "Set усіх чисел. Для кожного перевір, чи num-1 НЕ в Set — це початок. Рахуй довжину вперед.\n\n**Складність:** Time O(n), Space O(n)",
   },
@@ -5731,7 +5738,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"A man, a plan, a canal: Panama\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"race a car\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\" \\\"]\",\"expected\":\"true\"}]",
     solution: "function isPalindrome(s: string): boolean {\n  let left = 0, right = s.length - 1;\n  const isAlnum = (c: string) => /[a-zA-Z0-9]/.test(c);\n  while (left < right) {\n    while (left < right && !isAlnum(s[left])) left++;\n    while (left < right && !isAlnum(s[right])) right--;\n    if (s[left].toLowerCase() !== s[right].toLowerCase()) return false;\n    left++; right--;\n  }\n  return true;\n}",
     approach: "Two pointers з кінців. Пропускай не-alphanumeric. Порівнюй у нижньому регістрі.\n\n**Складність:** Time O(n), Space O(1)",
   },
@@ -5744,7 +5751,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aba\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"abca\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"false\"}]",
     solution: "function validPalindrome(s: string): boolean {\n  const isPal = (l: number, r: number): boolean => {\n    while (l < r) {\n      if (s[l] !== s[r]) return false;\n      l++; r--;\n    }\n    return true;\n  };\n  let left = 0, right = s.length - 1;\n  while (left < right) {\n    if (s[left] !== s[right]) {\n      return isPal(left + 1, right) || isPal(left, right - 1);\n    }\n    left++; right--;\n  }\n  return true;\n}",
     approach: "Two pointers; при mismatch спробуй пропустити лівий АБО правий і перевір решту.\n\n**Складність:** Time O(n), Space O(1)",
   },
@@ -5757,7 +5764,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "l++/r-- по сумі. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5769,7 +5776,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Рухай менший pointer. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5781,7 +5788,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Two Pointers\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "leftMax/rightMax two pointers. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5793,7 +5800,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Sliding Window\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Track min, max profit. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5805,7 +5812,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Sliding Window\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Set + shrink window. O(n)\n\n**Складність:** Time O(n), Space O(min(n, k))",
   },
   {
@@ -5817,7 +5824,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Sliding Window\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "maxCount freq, shrink if needed. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5829,7 +5836,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Sliding Window\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"ab\\\",\\\"eidbaooo\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"ab\\\",\\\"eidboaoo\\\"]\",\"expected\":\"false\"}]",
     approach: "Fixed window, freq compare. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5841,7 +5848,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Sliding Window\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Window + freq compare. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -5853,7 +5860,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Sliding Window\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Expand+shrink, track chars. O(n)\n\n**Складність:** Time O(n), Space O(k)",
   },
   {
@@ -5865,7 +5872,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Sliding Window\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Monotonic deque. O(n)\n\n**Складність:** Time O(n), Space O(k)",
   },
   {
@@ -5877,7 +5884,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[\\\"5\\\",\\\"2\\\",\\\"C\\\",\\\"D\\\",\\\"+\\\"]]\",\"expected\":\"30\"},{\"input\":\"[[\\\"5\\\",\\\"-2\\\",\\\"4\\\",\\\"C\\\",\\\"D\\\",\\\"9\\\",\\\"+\\\",\\\"+\\\"]]\",\"expected\":\"27\"},{\"input\":\"[[\\\"1\\\",\\\"C\\\"]]\",\"expected\":\"0\"}]",
     approach: "Simulate stack. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -5889,7 +5896,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Parallel min stack. O(1)\n\n**Складність:** Time O(1) на операцію, Space O(n)",
   },
   {
@@ -5901,7 +5908,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Pop2, push result. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -5913,7 +5920,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[73,74,75,71,69,72,76,73]]\",\"expected\":\"[1,1,4,2,1,1,0,0]\"},{\"input\":\"[[30,40,50,60]]\",\"expected\":\"[1,1,1,0]\"},{\"input\":\"[[30,60,90]]\",\"expected\":\"[1,1,0]\"}]",
     approach: "Monotonic stack (decreasing). O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -5925,7 +5932,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[12,[10,8,0,5,3],[2,4,1,1,3]]\",\"expected\":\"3\"},{\"input\":\"[10,[3],[3]]\",\"expected\":\"1\"},{\"input\":\"[100,[0,2,4],[4,2,1]]\",\"expected\":\"1\"}]",
     approach: "Sort desc, track speed. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -5937,7 +5944,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,10,-5]]\",\"expected\":\"[5,10]\"},{\"input\":\"[[8,-8]]\",\"expected\":\"[]\"},{\"input\":\"[[10,2,-5]]\",\"expected\":\"[10]\"},{\"input\":\"[[3,5,-6,2,-1,4]]\",\"expected\":\"[-6,2,4]\"}]",
     approach: "Resolve collisions. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -5949,7 +5956,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Stack\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Monotonic stack. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -5961,7 +5968,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[-1,0,3,5,9,12],9]\",\"expected\":\"4\"},{\"input\":\"[[-1,0,3,5,9,12],2]\",\"expected\":\"-1\"}]",
     approach: "Classic. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -5973,7 +5980,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Flatten index. O(log mn)\n\n**Складність:** Time O(log(m·n)), Space O(1)",
   },
   {
@@ -5985,7 +5992,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,6,7,11],8]\",\"expected\":\"4\"},{\"input\":\"[[30,11,23,4,20],5]\",\"expected\":\"30\"},{\"input\":\"[[30,11,23,4,20],6]\",\"expected\":\"23\"}]",
     approach: "BS on speed [1..max]. O(n log max)\n\n**Складність:** Time O(n log max), Space O(1)",
   },
   {
@@ -5997,7 +6004,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Compare mid vs right. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -6009,7 +6016,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Which half sorted? O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -6021,7 +6028,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "BS on timestamps. O(log n)\n\n**Складність:** Time O(log n) на get, O(1) на set, Space O(n)",
   },
   {
@@ -6033,7 +6040,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "BS capacity [max..sum]. O(n log sum)\n\n**Складність:** Time O(n log sum), Space O(1)",
   },
   {
@@ -6045,7 +6052,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Binary Search\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "BS on smaller, partition. O(log min(m,n))\n\n**Складність:** Time O(log min(m,n)), Space O(1)",
   },
   {
@@ -6057,7 +6064,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"[5,4,3,2,1]\"},{\"input\":\"[[1,2]]\",\"expected\":\"[2,1]\"},{\"input\":\"[[]]\",\"expected\":\"[]\"}]",
     approach: "prev/cur/next iterative. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6069,7 +6076,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Dummy head, compare. O(n+m)\n\n**Складність:** Time O(n+m), Space O(1)",
   },
   {
@@ -6081,7 +6088,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,2,0,-4],1]\",\"expected\":\"false\"},{\"input\":\"[[1,2],0]\",\"expected\":\"false\"},{\"input\":\"[[1],-1]\",\"expected\":\"false\"}]",
     approach: "Floyd slow/fast. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6093,7 +6100,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Find mid, reverse, compare. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6105,7 +6112,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[1,4,2,3]\"},{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"[1,5,2,4,3]\"}]",
     approach: "Find mid, reverse, merge. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6117,7 +6124,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Two pointers n apart. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6129,7 +6136,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "3 pass or HashMap. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6141,7 +6148,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Floyd cycle (indices). O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6153,7 +6160,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "HashMap + DLL. O(1)\n\n**Складність:** Time O(1) на операцію, Space O(capacity)",
   },
   {
@@ -6165,7 +6172,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Linked List\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Count k, reverse, recurse. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6177,8 +6184,9 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[4,2,7,1,3,6,9]]\",\"expected\":\"[4,7,2,9,6,3,1]\"},{\"input\":\"[[2,1,3]]\",\"expected\":\"[2,3,1]\"},{\"input\":\"[[]]\",\"expected\":\"[]\"}]",
     approach: "Swap left/right recursively. O(n)\n\n**Складність:** Time O(n), Space O(h)",
+    signature: "{\"name\":\"invertTree\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
   {
     slug: "max-depth",
@@ -6189,7 +6197,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "max(left,right)+1. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6201,7 +6209,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "max(leftH+rightH) globally. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6213,7 +6221,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,9,20,null,null,15,7]]\",\"expected\":\"true\"},{\"input\":\"[[1,2,2,3,3,null,null,4,4]]\",\"expected\":\"false\"},{\"input\":\"[[]]\",\"expected\":\"true\"}]",
     approach: "Height DFS, return -1. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6225,7 +6233,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3],[1,2,3]]\",\"expected\":\"true\"},{\"input\":\"[[1,2],[1,null,2]]\",\"expected\":\"false\"},{\"input\":\"[[1,2,1],[1,1,2]]\",\"expected\":\"false\"}]",
     approach: "Recursive equal check. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6237,7 +6245,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "isSameTree per node. O(n·m)\n\n**Складність:** Time O(n·m), Space O(h)",
   },
   {
@@ -6249,7 +6257,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "mid=root, recurse. O(n)\n\n**Складність:** Time O(n), Space O(log n)",
   },
   {
@@ -6261,7 +6269,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[5,4,8,11,null,13,4,7,2,null,null,null,1],22]\",\"expected\":\"true\"},{\"input\":\"[[1,2,3],5]\",\"expected\":\"false\"},{\"input\":\"[[],0]\",\"expected\":\"false\"}]",
     approach: "DFS subtract target. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6273,7 +6281,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,2,3,4,4,3]]\",\"expected\":\"true\"},{\"input\":\"[[1,2,2,null,3,null,3]]\",\"expected\":\"false\"}]",
     approach: "Compare mirror recursive. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6285,7 +6293,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Both → right. O(h)\n\n**Складність:** Time O(h), Space O(1)",
   },
   {
@@ -6297,7 +6305,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "BFS queue. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6309,7 +6317,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "BFS, last of each level. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6321,7 +6329,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "DFS track max by path. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6333,7 +6341,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "DFS min/max bounds. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6345,7 +6353,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Inorder traversal. O(h+k)\n\n**Складність:** Time O(h+k), Space O(h)",
   },
   {
@@ -6357,7 +6365,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "preorder[0]=root, find inorder. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6369,7 +6377,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "DFS maxGain. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6381,7 +6389,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Trees\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "BFS or preorder. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6393,7 +6401,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tries\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "TrieNode={children:Map,isEnd}. O(m)\n\n**Складність:** Time O(m) на операцію, Space O(n·m)",
   },
   {
@@ -6405,7 +6413,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tries\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Trie+DFS for '.'. O(m·26^k)\n\n**Складність:** Time O(m) / O(26^k·m) з '.', Space O(n·m)",
   },
   {
@@ -6417,7 +6425,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Tries\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"o\\\",\\\"a\\\",\\\"a\\\",\\\"n\\\"],[\\\"e\\\",\\\"t\\\",\\\"a\\\",\\\"e\\\"],[\\\"i\\\",\\\"h\\\",\\\"k\\\",\\\"r\\\"],[\\\"i\\\",\\\"f\\\",\\\"l\\\",\\\"v\\\"]],[\\\"oath\\\",\\\"pea\\\",\\\"eat\\\",\\\"rain\\\"]]\",\"expected\":\"[\\\"oath\\\",\\\"eat\\\"]\"},{\"input\":\"[[[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"d\\\"]],[\\\"abcb\\\"]]\",\"expected\":\"[]\"}]",
     approach: "Trie+DFS+backtrack. O(m·n·4^L)\n\n**Складність:** Time O(m·n·4^L), Space O(Σm)",
   },
   {
@@ -6429,7 +6437,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Min-heap size k. O(log k)\n\n**Складність:** Time O(log k) на add, Space O(k)",
   },
   {
@@ -6441,7 +6449,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Max-heap, pop2, push diff. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -6453,7 +6461,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Min-heap by dist. O(n log k)\n\n**Складність:** Time O(n log k), Space O(k)",
   },
   {
@@ -6465,7 +6473,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Min-heap or QuickSelect. O(n log k)\n\n**Складність:** Time O(n log k), Space O(k)",
   },
   {
@@ -6477,7 +6485,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Freq count formula. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6489,7 +6497,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Heap merge k feeds. O(k log k)\n\n**Складність:** Time O(k log k) на getNewsFeed, Space O(n)",
   },
   {
@@ -6501,7 +6509,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Max-heap, alternate. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -6513,7 +6521,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Heap / Priority Queue\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Two heaps balance. O(log n)\n\n**Складність:** Time O(log n) на addNum, O(1) на findMedian, Space O(n)",
   },
   {
@@ -6525,7 +6533,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Backtracking\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,2]]\",\"expected\":\"[[1,2,2],[1,2],[1],[2,2],[2],[]]\"},{\"input\":\"[[0]]\",\"expected\":\"[[0],[]]\"}]",
     approach: "Sort + skip dupes. O(2^n)\n\n**Складність:** Time O(n·2^n), Space O(n)",
   },
   {
@@ -6537,7 +6545,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Backtracking\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"A\\\",\\\"B\\\",\\\"C\\\",\\\"E\\\"],[\\\"S\\\",\\\"F\\\",\\\"C\\\",\\\"S\\\"],[\\\"A\\\",\\\"D\\\",\\\"E\\\",\\\"E\\\"]],\\\"ABCCED\\\"]\",\"expected\":\"true\"},{\"input\":\"[[[\\\"A\\\",\\\"B\\\",\\\"C\\\",\\\"E\\\"],[\\\"S\\\",\\\"F\\\",\\\"C\\\",\\\"S\\\"],[\\\"A\\\",\\\"D\\\",\\\"E\\\",\\\"E\\\"]],\\\"SEE\\\"]\",\"expected\":\"true\"},{\"input\":\"[[[\\\"A\\\",\\\"B\\\",\\\"C\\\",\\\"E\\\"],[\\\"S\\\",\\\"F\\\",\\\"C\\\",\\\"S\\\"],[\\\"A\\\",\\\"D\\\",\\\"E\\\",\\\"E\\\"]],\\\"ABCB\\\"]\",\"expected\":\"false\"}]",
     approach: "DFS+backtrack, mark visited. O(m·n·4^L)\n\n**Складність:** Time O(m·n·4^L), Space O(L)",
   },
   {
@@ -6549,7 +6557,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Backtracking\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Backtrack + isPalin. O(n·2^n)\n\n**Складність:** Time O(n·2^n), Space O(n)",
   },
   {
@@ -6561,7 +6569,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Backtracking\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Backtrack per digit. O(4^n)\n\n**Складність:** Time O(4^n), Space O(n)",
   },
   {
@@ -6573,7 +6581,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]]\",\"expected\":\"16\"},{\"input\":\"[[[1]]]\",\"expected\":\"4\"},{\"input\":\"[[[1,0]]]\",\"expected\":\"4\"}]",
     approach: "Count 4 sides − adjacent. O(m·n)\n\n**Складність:** Time O(m·n), Space O(1)",
   },
   {
@@ -6585,7 +6593,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"1\\\",\\\"1\\\",\\\"1\\\",\\\"1\\\",\\\"0\\\"],[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"1\\\",\\\"0\\\"],[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"],[\\\"0\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"]]]\",\"expected\":\"1\"},{\"input\":\"[[[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"],[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"],[\\\"0\\\",\\\"0\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\"],[\\\"0\\\",\\\"0\\\",\\\"0\\\",\\\"1\\\",\\\"1\\\"]]]\",\"expected\":\"3\"}]",
     approach: "DFS/BFS flood fill. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -6597,7 +6605,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "BFS+HashMap old→new. O(n)\n\n**Складність:** Time O(V+E), Space O(V)",
   },
   {
@@ -6609,7 +6617,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Multi-source BFS. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -6621,7 +6629,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[2,1,1],[1,1,0],[0,1,1]]]\",\"expected\":\"4\"},{\"input\":\"[[[2,1,1],[0,1,1],[1,0,1]]]\",\"expected\":\"-1\"},{\"input\":\"[[[0,2]]]\",\"expected\":\"0\"}]",
     approach: "Multi-source BFS. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -6633,7 +6641,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Reverse BFS from edges. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -6645,7 +6653,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"O\\\",\\\"O\\\",\\\"X\\\"],[\\\"X\\\",\\\"X\\\",\\\"O\\\",\\\"X\\\"],[\\\"X\\\",\\\"O\\\",\\\"X\\\",\\\"X\\\"]]]\",\"expected\":\"[[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"O\\\",\\\"X\\\",\\\"X\\\"]]\"},{\"input\":\"[[[\\\"X\\\"]]]\",\"expected\":\"[[\\\"X\\\"]]\"}]",
     approach: "Mark border-O's, flip rest. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -6657,7 +6665,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2,[[1,0]]]\",\"expected\":\"true\"},{\"input\":\"[2,[[1,0],[0,1]]]\",\"expected\":\"false\"}]",
     approach: "Cycle detection (topo). O(V+E)\n\n**Складність:** Time O(V+E), Space O(V+E)",
   },
   {
@@ -6669,7 +6677,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2,[[1,0]]]\",\"expected\":\"[0,1]\"},{\"input\":\"[4,[[1,0],[2,0],[3,1],[3,2]]]\",\"expected\":\"[0,1,2,3]\"},{\"input\":\"[1,[]]\",\"expected\":\"[0]\"}]",
     approach: "Topological sort (Kahn's). O(V+E)\n\n**Складність:** Time O(V+E), Space O(V+E)",
   },
   {
@@ -6681,7 +6689,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5,[[0,1],[0,2],[0,3],[1,4]]]\",\"expected\":\"true\"},{\"input\":\"[5,[[0,1],[1,2],[2,3],[1,3],[1,4]]]\",\"expected\":\"false\"}]",
     approach: "V-1 edges, no cycle. O(V+E)\n\n**Складність:** Time O(V+E), Space O(V+E)",
   },
   {
@@ -6693,7 +6701,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Union-Find or DFS. O(V+E)\n\n**Складність:** Time O(V+E), Space O(V)",
   },
   {
@@ -6705,7 +6713,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2],[1,3],[2,3]]]\",\"expected\":\"[2,3]\"},{\"input\":\"[[[1,2],[2,3],[3,4],[1,4],[1,5]]]\",\"expected\":\"[1,4]\"}]",
     approach: "Union-Find. O(n α(n))\n\n**Складність:** Time O(n·α(n)), Space O(n)",
   },
   {
@@ -6717,7 +6725,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"hit\\\",\\\"cog\\\",[\\\"hot\\\",\\\"dot\\\",\\\"dog\\\",\\\"lot\\\",\\\"log\\\",\\\"cog\\\"]]\",\"expected\":\"5\"},{\"input\":\"[\\\"hit\\\",\\\"cog\\\",[\\\"hot\\\",\\\"dot\\\",\\\"dog\\\",\\\"lot\\\",\\\"log\\\"]]\",\"expected\":\"0\"}]",
     approach: "BFS level by level. O(n·m²)\n\n**Складність:** Time O(n·m²), Space O(n·m)",
   },
   {
@@ -6729,7 +6737,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Advanced Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Kruskal or Prim. O(E log E)\n\n**Складність:** Time O(E log E), Space O(V+E)",
   },
   {
@@ -6741,7 +6749,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Advanced Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[2,1,1],[2,3,1],[3,4,1]],4,2]\",\"expected\":\"2\"},{\"input\":\"[[[1,2,1]],2,1]\",\"expected\":\"1\"},{\"input\":\"[[[1,2,1]],2,2]\",\"expected\":\"-1\"}]",
     approach: "Dijkstra. O(E log V)\n\n**Складність:** Time O(E log V), Space O(V+E)",
   },
   {
@@ -6753,7 +6761,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Advanced Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Bellman-Ford K+1 iters. O(K·E)\n\n**Складність:** Time O(K·E), Space O(V)",
   },
   {
@@ -6765,7 +6773,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Advanced Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Dijkstra on grid. O(m·n log(m·n))\n\n**Складність:** Time O(m·n log(m·n)), Space O(m·n)",
   },
   {
@@ -6777,7 +6785,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Advanced Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[\\\"MUC\\\",\\\"LHR\\\"],[\\\"JFK\\\",\\\"MUC\\\"],[\\\"SFO\\\",\\\"SJC\\\"],[\\\"LHR\\\",\\\"SFO\\\"]]]\",\"expected\":\"[\\\"JFK\\\",\\\"MUC\\\",\\\"LHR\\\",\\\"SFO\\\",\\\"SJC\\\"]\"},{\"input\":\"[[[\\\"JFK\\\",\\\"SFO\\\"],[\\\"JFK\\\",\\\"ATL\\\"],[\\\"SFO\\\",\\\"ATL\\\"],[\\\"ATL\\\",\\\"JFK\\\"],[\\\"ATL\\\",\\\"SFO\\\"]]]\",\"expected\":\"[\\\"JFK\\\",\\\"ATL\\\",\\\"JFK\\\",\\\"SFO\\\",\\\"ATL\\\",\\\"SFO\\\"]\"}]",
     approach: "Eulerian path (Hierholzer). O(E log E)\n\n**Складність:** Time O(E log E), Space O(E)",
   },
   {
@@ -6789,7 +6797,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Advanced Graphs\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Topological sort. O(n)\n\n**Складність:** Time O(C), Space O(1) (26 літер)",
   },
   {
@@ -6801,7 +6809,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2]\",\"expected\":\"2\"},{\"input\":\"[3]\",\"expected\":\"3\"}]",
     approach: "dp[i]=dp[i-1]+dp[i-2]. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6813,7 +6821,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "dp[i]=cost+min(dp[i-1],dp[i-2]). O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6825,7 +6833,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,1]]\",\"expected\":\"4\"},{\"input\":\"[[2,7,9,3,1]]\",\"expected\":\"12\"}]",
     approach: "dp[i]=max(skip,take). O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6837,7 +6845,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,2]]\",\"expected\":\"3\"},{\"input\":\"[[1,2,3,1]]\",\"expected\":\"4\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"3\"}]",
     approach: "Two passes (skip first or last). O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6849,7 +6857,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Expand around center. O(n²)\n\n**Складність:** Time O(n²), Space O(1)",
   },
   {
@@ -6861,7 +6869,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"aaa\\\"]\",\"expected\":\"6\"}]",
     approach: "Expand, count. O(n²)\n\n**Складність:** Time O(n²), Space O(1)",
   },
   {
@@ -6873,7 +6881,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"12\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"226\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"06\\\"]\",\"expected\":\"0\"}]",
     approach: "dp[i] += valid 1-digit + 2-digit. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6885,7 +6893,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,5],11]\",\"expected\":\"3\"},{\"input\":\"[[2],3]\",\"expected\":\"-1\"},{\"input\":\"[[1],0]\",\"expected\":\"0\"}]",
     approach: "dp[amt]=min(dp[amt-coin]+1). O(n·amt)\n\n**Складність:** Time O(n·amount), Space O(amount)",
   },
   {
@@ -6897,7 +6905,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Track min/max ending. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6909,7 +6917,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"leetcode\\\",[\\\"leet\\\",\\\"code\\\"]]\",\"expected\":\"true\"},{\"input\":\"[\\\"applepenapple\\\",[\\\"apple\\\",\\\"pen\\\"]]\",\"expected\":\"true\"},{\"input\":\"[\\\"catsandog\\\",[\\\"cats\\\",\\\"dog\\\",\\\"sand\\\",\\\"and\\\",\\\"cat\\\"]]\",\"expected\":\"false\"}]",
     approach: "dp[i] = any dp[j], s[j..i] in set. O(n²)\n\n**Складність:** Time O(n²), Space O(n)",
   },
   {
@@ -6921,7 +6929,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "dp[i]=max(dp[j]+1). O(n²) or O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -6933,7 +6941,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Subset sum DP, target=sum/2. O(n·sum)\n\n**Складність:** Time O(n·sum), Space O(sum)",
   },
   {
@@ -6945,7 +6953,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[12]\",\"expected\":\"3\"},{\"input\":\"[13]\",\"expected\":\"2\"}]",
     approach: "dp[i]=min(dp[i-j²]+1). O(n√n)\n\n**Складність:** Time O(n√n), Space O(n)",
   },
   {
@@ -6957,7 +6965,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"1-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3],4]\",\"expected\":\"7\"},{\"input\":\"[[9],3]\",\"expected\":\"0\"}]",
     approach: "Unbounded knapsack (order). O(n·target)\n\n**Складність:** Time O(n·target), Space O(target)",
   },
   {
@@ -6969,7 +6977,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[3,7]\",\"expected\":\"28\"},{\"input\":\"[3,2]\",\"expected\":\"3\"}]",
     approach: "dp[i][j]=dp[i-1][j]+dp[i][j-1]. O(m·n)\n\n**Складність:** Time O(m·n), Space O(n)",
   },
   {
@@ -6981,7 +6989,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "dp[i][j] = dp[i-1][j-1]+1 or max. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -6993,7 +7001,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "States: hold/sold/rest. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7005,7 +7013,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[5,[1,2,5]]\",\"expected\":\"4\"},{\"input\":\"[3,[2]]\",\"expected\":\"0\"},{\"input\":\"[10,[10]]\",\"expected\":\"1\"}]",
     approach: "Unbounded knapsack. O(n·amt)\n\n**Складність:** Time O(n·amount), Space O(amount)",
   },
   {
@@ -7017,7 +7025,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,1,1,1,1],3]\",\"expected\":\"5\"},{\"input\":\"[[1],1]\",\"expected\":\"1\"}]",
     approach: "+/- assignment DP. O(n·sum)\n\n**Складність:** Time O(n·sum), Space O(sum)",
   },
   {
@@ -7029,7 +7037,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"aabcc\\\",\\\"dbbca\\\",\\\"aadbbcbcac\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"aabcc\\\",\\\"dbbca\\\",\\\"aadbbbaccc\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"\\\",\\\"\\\",\\\"\\\"]\",\"expected\":\"true\"}]",
     approach: "Can form s3 from s1+s2. O(m·n)\n\n**Складність:** Time O(m·n), Space O(n)",
   },
   {
@@ -7041,7 +7049,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "dp[i][j]=min(top,left,diag)+1. O(m·n)\n\n**Складність:** Time O(m·n), Space O(n)",
   },
   {
@@ -7053,7 +7061,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"horse\\\",\\\"ros\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"intention\\\",\\\"execution\\\"]\",\"expected\":\"5\"}]",
     approach: "dp[i][j] = edit ops. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7065,7 +7073,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "DFS+memo. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7077,7 +7085,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"rabbbit\\\",\\\"rabbit\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"babgbag\\\",\\\"bag\\\"]\",\"expected\":\"5\"}]",
     approach: "dp[i][j] = ways s[0..j] in t[0..i]. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7089,7 +7097,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"2-D DP\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "dp[i][j] with * handling. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7101,7 +7109,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Greedy\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Kadane's algorithm. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7113,7 +7121,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Greedy\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,3,1,1,4]]\",\"expected\":\"true\"},{\"input\":\"[[3,2,1,0,4]]\",\"expected\":\"false\"}]",
     approach: "Track maxReach. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7125,7 +7133,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Greedy\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,4,5],[3,4,5,1,2]]\",\"expected\":\"3\"},{\"input\":\"[[2,3,4],[3,4,3]]\",\"expected\":\"-1\"}]",
     approach: "Sum≥0 → solution; track start. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7137,7 +7145,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Greedy\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3,6,2,3,4,7,8],3]\",\"expected\":\"true\"},{\"input\":\"[[1,2,3,4,5],4]\",\"expected\":\"false\"}]",
     approach: "Sort+greedy groups. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -7149,7 +7157,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Greedy\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Check valid, max each pos. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7161,7 +7169,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Greedy\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Track min/max open count. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7173,7 +7181,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Intervals\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,30],[5,10],[15,20]]]\",\"expected\":\"false\"},{\"input\":\"[[[7,10],[2,4]]]\",\"expected\":\"true\"}]",
     approach: "Sort by start, check overlap. O(n log n)\n\n**Складність:** Time O(n log n), Space O(1)",
   },
   {
@@ -7185,7 +7193,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Intervals\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,3],[6,9]],[2,5]]\",\"expected\":\"[[1,5],[6,9]]\"},{\"input\":\"[[[1,2],[3,5],[6,7],[8,10],[12,16]],[4,8]]\",\"expected\":\"[[1,2],[3,10],[12,16]]\"}]",
     approach: "Iterate, merge overlapping. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -7197,7 +7205,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Intervals\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,3],[2,6],[8,10],[15,18]]]\",\"expected\":\"[[1,6],[8,10],[15,18]]\"},{\"input\":\"[[[1,4],[4,5]]]\",\"expected\":\"[[1,5]]\"},{\"input\":\"[[[4,7],[1,4]]]\",\"expected\":\"[[1,7]]\"}]",
     approach: "Sort by start, merge. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -7209,7 +7217,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Intervals\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Sort by end, greedy count. O(n log n)\n\n**Складність:** Time O(n log n), Space O(1)",
   },
   {
@@ -7221,7 +7229,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Intervals\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[0,30],[5,10],[15,20]]]\",\"expected\":\"2\"},{\"input\":\"[[[7,10],[2,4]]]\",\"expected\":\"1\"}]",
     approach: "Min-heap end times. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -7233,7 +7241,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Intervals\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Offline + min-heap. O((n+q) log n)\n\n**Складність:** Time O((n+q) log n), Space O(n)",
   },
   {
@@ -7245,7 +7253,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math & Geometry\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[19]\",\"expected\":\"true\"},{\"input\":\"[2]\",\"expected\":\"false\"}]",
     approach: "Floyd cycle (digit sum). O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -7257,7 +7265,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math & Geometry\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[1,2,4]\"},{\"input\":\"[[4,3,2,1]]\",\"expected\":\"[4,3,2,2]\"},{\"input\":\"[[9]]\",\"expected\":\"[1,0]\"}]",
     approach: "Iterate right, carry. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7269,7 +7277,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math & Geometry\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"[1,2,3,6,9,8,7,4,5]\"},{\"input\":\"[[[1,2,3,4],[5,6,7,8],[9,10,11,12]]]\",\"expected\":\"[1,2,3,4,8,12,11,10,9,5,6,7]\"}]",
     approach: "4 boundaries, shrink. O(m·n)\n\n**Складність:** Time O(m·n), Space O(1)",
   },
   {
@@ -7281,7 +7289,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math & Geometry\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[[1,1,1],[1,0,1],[1,1,1]]]\",\"expected\":\"[[1,0,1],[0,0,0],[1,0,1]]\"},{\"input\":\"[[[0,1,2,0],[3,4,5,2],[1,3,1,5]]]\",\"expected\":\"[[0,0,0,0],[0,4,5,0],[0,3,1,0]]\"}]",
     approach: "Mark rows/cols first. O(m·n)\n\n**Складність:** Time O(m·n), Space O(1)",
   },
   {
@@ -7293,7 +7301,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math & Geometry\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "Count points (x,y). O(n)\n\n**Складність:** Time O(n) на count, Space O(n)",
   },
   {
@@ -7305,7 +7313,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Math & Geometry\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "After 4 cycles → returns or infinite. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7317,7 +7325,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[2,2,1]]\",\"expected\":\"1\"},{\"input\":\"[[4,1,2,1,2]]\",\"expected\":\"4\"},{\"input\":\"[[1]]\",\"expected\":\"1\"}]",
     approach: "XOR all. a^a=0, a^0=a. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7329,7 +7337,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "n &= (n-1) clears lowest bit. O(k)\n\n**Складність:** Time O(k), Space O(1)",
   },
   {
@@ -7341,7 +7349,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[2]\",\"expected\":\"[0,1,1]\"},{\"input\":\"[5]\",\"expected\":\"[0,1,1,2,1,2]\"}]",
     approach: "dp[i]=dp[i>>1]+(i&1). O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -7353,7 +7361,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[43261596]\",\"expected\":\"964176192\"},{\"input\":\"[2147483644]\",\"expected\":\"1073741822\"}]",
     approach: "32 iters: (result<<1)|(n&1). O(1)\n\n**Складність:** Time O(1) (32 ітерації), Space O(1)",
   },
   {
@@ -7365,7 +7373,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[[3,0,1]]\",\"expected\":\"2\"},{\"input\":\"[[0,1]]\",\"expected\":\"2\"},{\"input\":\"[[9,6,4,2,3,5,7,0,1]]\",\"expected\":\"8\"}]",
     approach: "XOR 0..n ^ nums. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7377,7 +7385,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[{\"input\":\"[\\\"11\\\",\\\"1\\\"]\",\"expected\":\"\\\"100\\\"\"},{\"input\":\"[\\\"1010\\\",\\\"1011\\\"]\",\"expected\":\"\\\"10101\\\"\"}]",
     approach: "Simulate with carry. O(n)\n\n**Складність:** Time O(max(m,n)), Space O(max(m,n))",
   },
   {
@@ -7389,7 +7397,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     tags: "[\"Bit Manipulation\"]",
     companies: "[]",
     starterCode: "",
-    testCases: "[{\"input\":\"placeholder\",\"expected\":\"placeholder\"}]",
+    testCases: "[]",
     approach: "XOR (no carry) + AND<<1. O(1)\n\n**Складність:** Time O(1), Space O(1)",
   },
 ]

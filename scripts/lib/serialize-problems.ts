@@ -10,7 +10,9 @@ export const HEADER = `// Static problem data. Replaces the database for the DB-
 //
 // AUTO-GENERATED from prisma/dev.db by scripts/export-problems.ts, then enriched
 // by scripts/merge-leetcode-catalog.ts (adds \`approach\` + NeetCode-catalog
-// stubs). Do not edit by hand; re-run the generators instead.
+// stubs, and folds in \`testCases\` from src/data/testcases.generated.json).
+// Do not edit by hand; re-run the generators instead. After export-problems.ts
+// you MUST run \`npm run merge:leetcode\` to re-apply the catalog + test cases.
 
 export interface StaticProblem {
   id: number
@@ -27,6 +29,8 @@ export interface StaticProblem {
   solution?: string
   editorial?: string
   approach?: string
+  /** JSON string: {name, paramTypes, returnType} — LeetCode signature for the runner. */
+  signature?: string
 }
 
 `
@@ -61,6 +65,7 @@ export function serialize(row: Record<string, unknown>): string {
   if (has(row.solution)) lines.push(`    solution: ${str(row.solution)},`)
   if (has(row.editorial)) lines.push(`    editorial: ${str(row.editorial)},`)
   if (has(row.approach)) lines.push(`    approach: ${str(row.approach)},`)
+  if (has(row.signature)) lines.push(`    signature: ${str(row.signature)},`)
   lines.push('  },')
   return lines.join('\n')
 }
