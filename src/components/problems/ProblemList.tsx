@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/Badge'
 import { GlassCard } from '@/components/glass/GlassCard'
@@ -27,13 +27,26 @@ const difficultyColors = {
 
 type SortOption = 'default' | 'a-z' | 'z-a' | 'easiest' | 'hardest'
 type DifficultyFilter = 'all' | 'easy' | 'medium' | 'hard'
-type StatusFilter = 'all' | 'solved' | 'unsolved'
+
+const HIDE_SOLVED_KEY = 'problemsHideSolved'
 
 export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('all')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [hideSolved, setHideSolved] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState<SortOption>('default')
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(HIDE_SOLVED_KEY) === '1') setHideSolved(true)
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(HIDE_SOLVED_KEY, hideSolved ? '1' : '0')
+    } catch {}
+  }, [hideSolved])
 
   const solvedSet = useMemo(() => new Set(solvedSlugs), [solvedSlugs])
 
@@ -46,10 +59,8 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
       result = result.filter((p) => p.difficulty === diffMap[difficultyFilter])
     }
 
-    // Status filter
-    if (statusFilter === 'solved') {
-      result = result.filter((p) => solvedSet.has(p.slug))
-    } else if (statusFilter === 'unsolved') {
+    // Hide solved toggle
+    if (hideSolved) {
       result = result.filter((p) => !solvedSet.has(p.slug))
     }
 
@@ -73,7 +84,7 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
     }
 
     return result
-  }, [problems, difficultyFilter, statusFilter, searchTerm, sortBy, solvedSet])
+  }, [problems, difficultyFilter, hideSolved, searchTerm, sortBy, solvedSet])
 
   if (problems.length === 0) {
     return (
@@ -106,21 +117,28 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
 
         {/* Status and Sort */}
         <div className="flex flex-wrap gap-2">
-          <div className="flex gap-2">
-            {(['all', 'solved', 'unsolved'] as StatusFilter[]).map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
-                  statusFilter === status
-                    ? 'glass text-slate-100'
-                    : 'text-slate-400 hover:text-slate-200'
+          <button
+            type="button"
+            role="switch"
+            aria-checked={hideSolved}
+            onClick={() => setHideSolved((v) => !v)}
+            className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium transition-all ${
+              hideSolved ? 'glass text-slate-100' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <span
+              className={`inline-flex h-4 w-7 items-center rounded-full p-0.5 transition-colors ${
+                hideSolved ? 'bg-emerald-400/80' : 'bg-slate-600/60'
+              }`}
+            >
+              <span
+                className={`h-3 w-3 rounded-full bg-white transition-transform ${
+                  hideSolved ? 'translate-x-3' : 'translate-x-0'
                 }`}
-              >
-                {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-              </button>
-            ))}
-          </div>
+              />
+            </span>
+            Приховати пройдені
+          </button>
 
           <div className="flex-1 flex gap-2">
             <input

@@ -266,6 +266,18 @@ x &amp; (x - 1)  // прибрати молодший біт</code></pre>
               </div>
 
               <div class="card">
+                <h4>Digit Manipulation (робота з цифрами)</h4>
+                <p>Розбір числа по цифрах без переводу в рядок: <code>x % 10</code> — остання цифра, <code>(x / 10) | 0</code> (або <code>Math.trunc(x / 10)</code>) — відкинути останню, <code>res = res * 10 + d</code> — доклеїти цифру справа.</p>
+                <p><strong>Коли:</strong> reverse integer, паліндром-число, сума/добуток цифр, happy number, plus one, підрахунок цифр.</p>
+                <p><strong>Big-O:</strong> O(log₁₀ x) — кількість цифр числа.</p>
+                <pre><code>let rev = 0;
+while (x !== 0) {
+  rev = rev * 10 + (x % 10); // взяти останню цифру
+  x = (x / 10) | 0;          // відкинути її (трунк до нуля)
+}</code></pre>
+              </div>
+
+              <div class="card">
                 <h4>Intervals</h4>
                 <p>Відрізки [start, end]: сортуй за початком, потім об'єднуй або шукай перетини.</p>
                 <p><strong>Коли:</strong> merge intervals, insert interval, кількість переговорних (meeting rooms).</p>
