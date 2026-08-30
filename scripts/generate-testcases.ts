@@ -33,6 +33,16 @@ interface MetaData {
 
 const SIDECAR = resolve('src/data/testcases.generated.json')
 const RATE_LIMIT_MS = 350
+
+/**
+ * Hand-seeded problems (prisma/seed.ts) kept short slugs that predate the
+ * LeetCode import. Map them to the canonical slug so metadata / example
+ * testcases can still be fetched.
+ */
+const SLUG_ALIASES: Record<string, string> = {
+  'longest-substring-without-repeating':
+    'longest-substring-without-repeating-characters',
+}
 const RAW = 'https://raw.githubusercontent.com/doocs/leetcode/main/solution'
 const API = 'https://api.github.com/repos/doocs/leetcode/contents/solution'
 
@@ -124,7 +134,7 @@ async function generateForProblem(
   title: string,
 ): Promise<SidecarEntry> {
   const now = new Date().toISOString()
-  const q = (await lc.problem(slug)) as {
+  const q = (await lc.problem(SLUG_ALIASES[slug] ?? slug)) as {
     metaData?: string
     exampleTestcases?: string
     questionFrontendId?: string

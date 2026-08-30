@@ -92,7 +92,7 @@
   },
   "add-search-words": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:31.748Z"
+    "generatedAt": "2026-08-30T20:08:55.844Z"
   },
   "add-two-integers": {
     "status": "ok",
@@ -144,12 +144,12 @@
   },
   "add-two-promises": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T18:58:47.870Z",
+    "generatedAt": "2026-08-30T20:07:15.602Z",
     "note": "Unexpected token 'e', \"new Promise\"... is not valid JSON"
   },
   "alien-dictionary": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:05:55.861Z"
+    "generatedAt": "2026-08-30T20:09:08.548Z"
   },
   "all-elements-in-two-binary-search-trees": {
     "status": "ok",
@@ -217,7 +217,7 @@
   },
   "allow-one-function-call": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T18:59:35.195Z",
+    "generatedAt": "2026-08-30T20:07:21.153Z",
     "note": "Unexpected token '(', \"(a,b,c) =>\"... is not valid JSON"
   },
   "append-characters-to-string-to-make-subsequence": {
@@ -248,7 +248,7 @@
   },
   "apply-transform-over-each-element-in-array": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T18:59:42.369Z",
+    "generatedAt": "2026-08-30T20:07:21.851Z",
     "note": "Unexpected token 'u', \"function pl\"... is not valid JSON"
   },
   "arithmetic-subarrays": {
@@ -276,12 +276,12 @@
   },
   "array-reduce-transformation": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T18:59:51.699Z",
+    "generatedAt": "2026-08-30T20:07:24.249Z",
     "note": "Unexpected token 'u', \"function su\"... is not valid JSON"
   },
   "array-wrapper": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T18:59:06.338Z",
+    "generatedAt": "2026-08-30T20:07:16.896Z",
     "note": "Class constructor ArrayWrapper cannot be invoked without 'new'"
   },
   "asteroid-collision": {
@@ -428,7 +428,7 @@
   },
   "best-time-to-buy-stock": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:57.416Z"
+    "generatedAt": "2026-08-30T20:08:35.040Z"
   },
   "binary-search": {
     "status": "ok",
@@ -454,7 +454,7 @@
   },
   "binary-search-tree-iterator": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:02:24.500Z",
+    "generatedAt": "2026-08-30T20:07:46.831Z",
     "note": "class-based / design problem"
   },
   "binary-search-tree-to-greater-sum-tree": {
@@ -596,11 +596,11 @@
   },
   "build-array-where-you-can-find-the-maximum-exactly-k-comparisons": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:15.027Z"
+    "generatedAt": "2026-08-30T20:08:19.475Z"
   },
   "build-from-pre-inorder": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:29.479Z"
+    "generatedAt": "2026-08-30T20:08:53.582Z"
   },
   "burst-balloons": {
     "status": "ok",
@@ -625,16 +625,16 @@
   },
   "buy-sell-cooldown": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:08.865Z"
+    "generatedAt": "2026-08-30T20:09:13.275Z"
   },
   "cache-with-time-limit": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:02:28.326Z",
+    "generatedAt": "2026-08-30T20:07:47.425Z",
     "note": "foobar is not defined"
   },
   "call-function-with-custom-context": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T19:02:13.129Z",
+    "generatedAt": "2026-08-30T20:07:44.951Z",
     "note": "Unexpected token 'u', \"function ad\"... is not valid JSON"
   },
   "capacity-to-ship-packages-within-d-days": {
@@ -713,15 +713,15 @@
   },
   "chalkboard-xor-game": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:12.410Z"
+    "generatedAt": "2026-08-30T20:08:18.409Z"
   },
   "char-replacement": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:58.536Z"
+    "generatedAt": "2026-08-30T20:08:36.157Z"
   },
   "cheapest-flights-k-stops": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:53.668Z"
+    "generatedAt": "2026-08-30T20:09:07.378Z"
   },
   "check-if-a-string-is-an-acronym-of-words": {
     "status": "ok",
@@ -870,7 +870,7 @@
   },
   "checking-existence-of-edge-length-limited-paths": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:38.774Z"
+    "generatedAt": "2026-08-30T20:08:27.816Z"
   },
   "cherry-pickup-ii": {
     "status": "ok",
@@ -895,7 +895,7 @@
   },
   "chunk-array": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:00:09.141Z",
+    "generatedAt": "2026-08-30T20:07:26.528Z",
     "note": "chunkify is not defined"
   },
   "climbing-stairs": {
@@ -921,7 +921,7 @@
   },
   "clone-graph": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:05:43.719Z",
+    "generatedAt": "2026-08-30T20:09:03.782Z",
     "note": "_Node is not defined"
   },
   "coin-change": {
@@ -1181,7 +1181,7 @@
   },
   "connected-components": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:50.018Z"
+    "generatedAt": "2026-08-30T20:09:06.245Z"
   },
   "construct-binary-search-tree-from-preorder-traversal": {
     "status": "ok",
@@ -1228,7 +1228,7 @@
   },
   "construct-quad-tree": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:05.128Z"
+    "generatedAt": "2026-08-30T20:07:41.788Z"
   },
   "construct-smallest-number-from-di-string": {
     "status": "ok",
@@ -1274,7 +1274,7 @@
   },
   "container-water": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:56.282Z"
+    "generatedAt": "2026-08-30T20:08:33.919Z"
   },
   "container-with-most-water": {
     "status": "ok",
@@ -1387,7 +1387,7 @@
   },
   "copy-random-pointer": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:16.032Z"
+    "generatedAt": "2026-08-30T20:08:45.565Z"
   },
   "count-all-possible-routes": {
     "status": "ok",
@@ -1419,7 +1419,7 @@
   },
   "count-all-valid-pickup-and-delivery-options": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:21.630Z"
+    "generatedAt": "2026-08-30T20:08:21.130Z"
   },
   "count-and-say": {
     "status": "ok",
@@ -1534,11 +1534,11 @@
   },
   "count-fertile-pyramids-in-a-land": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:09.637Z"
+    "generatedAt": "2026-08-30T20:08:17.375Z"
   },
   "count-good-nodes": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:27.690Z"
+    "generatedAt": "2026-08-30T20:08:51.893Z"
   },
   "count-good-nodes-in-binary-tree": {
     "status": "ok",
@@ -1848,7 +1848,7 @@
   },
   "count-sorted-vowel-strings": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:01:56.579Z"
+    "generatedAt": "2026-08-30T20:07:38.066Z"
   },
   "count-square-submatrices-with-all-ones": {
     "status": "ok",
@@ -1943,8 +1943,26 @@
     "generatedAt": "2026-08-30T19:04:03.307Z"
   },
   "count-symmetric-integers": {
-    "status": "no-solution",
-    "generatedAt": "2026-08-30T19:00:33.997Z"
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[1,100]",
+        "expected": "9"
+      },
+      {
+        "input": "[1200,1230]",
+        "expected": "4"
+      }
+    ],
+    "meta": {
+      "name": "countSymmetricIntegers",
+      "paramTypes": [
+        "integer",
+        "integer"
+      ],
+      "returnType": "integer"
+    },
+    "generatedAt": "2026-08-30T20:05:56.707Z"
   },
   "count-the-digits-that-divide-a-number": {
     "status": "ok",
@@ -1973,7 +1991,7 @@
   },
   "count-the-number-of-complete-components": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:11.930Z"
+    "generatedAt": "2026-08-30T20:07:43.891Z"
   },
   "count-the-number-of-consistent-strings": {
     "status": "ok",
@@ -2230,7 +2248,7 @@
   },
   "debounce": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:00:35.786Z",
+    "generatedAt": "2026-08-30T20:07:28.082Z",
     "note": "no result from reference solution"
   },
   "decode-the-message": {
@@ -2465,47 +2483,47 @@
   },
   "design-a-stack-with-increment-operation": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:01:50.641Z",
+    "generatedAt": "2026-08-30T20:07:37.323Z",
     "note": "class-based / design problem"
   },
   "design-browser-history": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:02:06.309Z",
+    "generatedAt": "2026-08-30T20:07:43.229Z",
     "note": "class-based / design problem"
   },
   "design-graph-with-shortest-path-calculator": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:04:17.632Z",
+    "generatedAt": "2026-08-30T20:08:20.470Z",
     "note": "class-based / design problem"
   },
   "design-parking-system": {
     "status": "design",
-    "generatedAt": "2026-08-30T18:59:26.118Z",
+    "generatedAt": "2026-08-30T20:07:18.763Z",
     "note": "class-based / design problem"
   },
   "design-spreadsheet": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:02:57.575Z",
+    "generatedAt": "2026-08-30T20:07:55.942Z",
     "note": "class-based / design problem"
   },
   "design-twitter": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:05:37.254Z",
+    "generatedAt": "2026-08-30T20:09:00.448Z",
     "note": "class-based / design problem"
   },
   "design-underground-system": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:02:52.889Z",
+    "generatedAt": "2026-08-30T20:07:55.152Z",
     "note": "class-based / design problem"
   },
   "detect-squares": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:06:28.955Z",
+    "generatedAt": "2026-08-30T20:09:19.122Z",
     "note": "class-based / design problem"
   },
   "diameter-of-tree": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:19.819Z"
+    "generatedAt": "2026-08-30T20:08:48.429Z"
   },
   "difference-between-element-sum-and-digit-sum-of-an-array": {
     "status": "ok",
@@ -2551,7 +2569,7 @@
   },
   "different-ways-to-add-parentheses": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:17.106Z"
+    "generatedAt": "2026-08-30T20:07:58.482Z"
   },
   "display-table-of-food-orders-in-a-restaurant": {
     "status": "ok",
@@ -2809,28 +2827,28 @@
   },
   "encode-and-decode-tinyurl": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:00:52.571Z"
+    "generatedAt": "2026-08-30T20:07:29.082Z"
   },
   "encode-decode-strings": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:52.323Z"
+    "generatedAt": "2026-08-30T20:08:31.682Z"
   },
   "equal-subset-sum": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:05.192Z"
+    "generatedAt": "2026-08-30T20:09:12.138Z"
   },
   "eval-rpn": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:03.089Z"
+    "generatedAt": "2026-08-30T20:08:39.147Z"
   },
   "event-emitter": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:02:42.396Z",
+    "generatedAt": "2026-08-30T20:07:52.063Z",
     "note": "Class constructor EventEmitter cannot be invoked without 'new'"
   },
   "execute-asynchronous-functions-in-parallel": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T19:02:01.210Z",
+    "generatedAt": "2026-08-30T20:07:40.927Z",
     "note": "Unexpected token '(', \"[() => new \"... is not valid JSON"
   },
   "execution-of-all-suffix-instructions-staying-in-a-grid": {
@@ -2862,12 +2880,12 @@
   },
   "filter-elements-from-array": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T18:59:51.090Z",
+    "generatedAt": "2026-08-30T20:07:23.604Z",
     "note": "Unexpected token 'u', \"function gr\"... is not valid JSON"
   },
   "final-array-state-after-k-multiplication-operations-i": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T18:59:30.795Z",
+    "generatedAt": "2026-08-30T20:07:19.452Z",
     "note": "PriorityQueue is not defined"
   },
   "final-prices-with-a-special-discount-in-a-shop": {
@@ -2922,7 +2940,7 @@
   },
   "find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T18:59:47.024Z",
+    "generatedAt": "2026-08-30T20:07:22.506Z",
     "note": "Cannot read properties of undefined (reading 'left')"
   },
   "find-all-duplicates-in-an-array": {
@@ -2952,11 +2970,11 @@
   },
   "find-all-groups-of-farmland": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:35.953Z"
+    "generatedAt": "2026-08-30T20:07:49.506Z"
   },
   "find-anagrams": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:59.907Z"
+    "generatedAt": "2026-08-30T20:08:36.725Z"
   },
   "find-and-replace-pattern": {
     "status": "ok",
@@ -3056,15 +3074,15 @@
   },
   "find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:08.463Z"
+    "generatedAt": "2026-08-30T20:08:16.145Z"
   },
   "find-duplicate": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:16.580Z"
+    "generatedAt": "2026-08-30T20:08:46.108Z"
   },
   "find-elements-in-a-contaminated-binary-tree": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:01:11.503Z",
+    "generatedAt": "2026-08-30T20:07:32.979Z",
     "note": "class-based / design problem"
   },
   "find-first-and-last-position-of-element-in-sorted-array": {
@@ -3168,11 +3186,11 @@
   },
   "find-median": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:38.858Z"
+    "generatedAt": "2026-08-30T20:09:02.067Z"
   },
   "find-min-rotated": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:09.089Z"
+    "generatedAt": "2026-08-30T20:08:41.009Z"
   },
   "find-minimum-operations-to-make-all-elements-divisible-by-three": {
     "status": "ok",
@@ -4004,7 +4022,7 @@
   },
   "function-composition": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T18:59:32.630Z",
+    "generatedAt": "2026-08-30T20:07:20.508Z",
     "note": "Unexpected token 'x', \"[x => x + 1\"... is not valid JSON"
   },
   "gas-station": {
@@ -4187,7 +4205,7 @@
   },
   "group-by": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T19:01:37.119Z",
+    "generatedAt": "2026-08-30T20:07:35.553Z",
     "note": "Unexpected token 'u', \"function (i\"... is not valid JSON"
   },
   "group-the-people-given-the-group-size-they-belong-to": {
@@ -4213,11 +4231,11 @@
   },
   "groups-of-special-equivalent-strings": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:10.202Z"
+    "generatedAt": "2026-08-30T20:07:57.461Z"
   },
   "hamming-weight": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:30.908Z"
+    "generatedAt": "2026-08-30T20:09:20.351Z"
   },
   "hand-of-straights": {
     "status": "ok",
@@ -4378,7 +4396,7 @@
   },
   "implement-trie": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:31.183Z"
+    "generatedAt": "2026-08-30T20:08:55.271Z"
   },
   "increment-submatrices-by-one": {
     "status": "ok",
@@ -4525,7 +4543,7 @@
   },
   "interval-cancellation": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T19:00:03.070Z",
+    "generatedAt": "2026-08-30T20:07:25.923Z",
     "note": "Unexpected token '(', \"(x) => x * 2\" is not valid JSON"
   },
   "invert-binary-tree": {
@@ -4692,7 +4710,7 @@
   },
   "k-closest-points": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:35.047Z"
+    "generatedAt": "2026-08-30T20:08:58.285Z"
   },
   "keys-and-rooms": {
     "status": "ok",
@@ -4769,11 +4787,11 @@
   },
   "kth-largest-array": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:35.624Z"
+    "generatedAt": "2026-08-30T20:08:58.834Z"
   },
   "kth-largest-stream": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:33.107Z"
+    "generatedAt": "2026-08-30T20:08:56.392Z"
   },
   "kth-smallest-element-in-a-bst": {
     "status": "ok",
@@ -4799,7 +4817,7 @@
   },
   "kth-smallest-in-bst": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:28.934Z"
+    "generatedAt": "2026-08-30T20:08:53.015Z"
   },
   "largest-combination-with-bitwise-and-greater-than-zero": {
     "status": "ok",
@@ -4824,7 +4842,7 @@
   },
   "largest-histogram": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:06.242Z"
+    "generatedAt": "2026-08-30T20:08:39.890Z"
   },
   "largest-local-values-in-a-matrix": {
     "status": "ok",
@@ -4922,16 +4940,16 @@
   },
   "last-stone-weight": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:05:33.869Z",
+    "generatedAt": "2026-08-30T20:08:56.955Z",
     "note": "MaxPriorityQueue is not defined"
   },
   "lca-of-bst": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:24.913Z"
+    "generatedAt": "2026-08-30T20:08:50.213Z"
   },
   "lcs": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:08.170Z"
+    "generatedAt": "2026-08-30T20:09:12.713Z"
   },
   "left-and-right-sum-differences": {
     "status": "ok",
@@ -4977,7 +4995,7 @@
   },
   "letter-combinations": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:41.548Z"
+    "generatedAt": "2026-08-30T20:09:03.232Z"
   },
   "letter-combinations-of-a-phone-number": {
     "status": "ok",
@@ -5027,7 +5045,7 @@
   },
   "level-order-traversal": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:26.255Z"
+    "generatedAt": "2026-08-30T20:08:50.773Z"
   },
   "lexicographical-numbers": {
     "status": "ok",
@@ -5132,11 +5150,11 @@
   },
   "lip-matrix": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:14.223Z"
+    "generatedAt": "2026-08-30T20:09:15.022Z"
   },
   "lis": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:04.648Z"
+    "generatedAt": "2026-08-30T20:09:11.595Z"
   },
   "longest-common-prefix": {
     "status": "ok",
@@ -5161,11 +5179,11 @@
   },
   "longest-consecutive": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:53.432Z"
+    "generatedAt": "2026-08-30T20:08:32.799Z"
   },
   "longest-palindromic-substr": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:59.969Z"
+    "generatedAt": "2026-08-30T20:09:10.440Z"
   },
   "longest-palindromic-substring": {
     "status": "ok",
@@ -5216,11 +5234,32 @@
   },
   "longest-substring-no-repeat": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:57.967Z"
+    "generatedAt": "2026-08-30T20:08:35.610Z"
   },
   "longest-substring-without-repeating": {
-    "status": "no-metadata",
-    "generatedAt": "2026-08-30T18:58:03.381Z"
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[\"abcabcbb\"]",
+        "expected": "3"
+      },
+      {
+        "input": "[\"bbbbb\"]",
+        "expected": "1"
+      },
+      {
+        "input": "[\"pwwkew\"]",
+        "expected": "3"
+      }
+    ],
+    "meta": {
+      "name": "lengthOfLongestSubstring",
+      "paramTypes": [
+        "string"
+      ],
+      "returnType": "integer"
+    },
+    "generatedAt": "2026-08-30T20:05:17.042Z"
   },
   "longest-substring-without-repeating-characters": {
     "status": "ok",
@@ -5299,7 +5338,7 @@
   },
   "lru-cache": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:05:17.144Z",
+    "generatedAt": "2026-08-30T20:08:46.672Z",
     "note": "class-based / design problem"
   },
   "majority-element": {
@@ -5414,7 +5453,7 @@
   },
   "max-depth": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:19.271Z"
+    "generatedAt": "2026-08-30T20:08:47.874Z"
   },
   "max-dot-product-of-two-subsequences": {
     "status": "ok",
@@ -5465,23 +5504,23 @@
   },
   "max-path-sum": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:30.078Z"
+    "generatedAt": "2026-08-30T20:08:54.152Z"
   },
   "max-product-subarray": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:03.181Z"
+    "generatedAt": "2026-08-30T20:09:11.002Z"
   },
   "max-subarray": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:16.230Z"
+    "generatedAt": "2026-08-30T20:09:16.171Z"
   },
   "maximal-square": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:06:11.827Z"
+    "generatedAt": "2026-08-30T20:09:13.834Z"
   },
   "maximize-alternating-sum-using-swaps": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:24.408Z"
+    "generatedAt": "2026-08-30T20:08:22.135Z"
   },
   "maximize-spanning-tree-stability-with-upgrades": {
     "status": "ok",
@@ -5581,7 +5620,7 @@
   },
   "maximum-average-pass-ratio": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:02:58.204Z",
+    "generatedAt": "2026-08-30T20:07:56.598Z",
     "note": "PriorityQueue is not defined"
   },
   "maximum-binary-tree": {
@@ -5653,7 +5692,7 @@
   },
   "maximum-frequency-stack": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:04:06.816Z",
+    "generatedAt": "2026-08-30T20:08:14.325Z",
     "note": "class-based / design problem"
   },
   "maximum-ice-cream-bars": {
@@ -5899,7 +5938,7 @@
   },
   "maximum-score-from-grid-operations": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:28.604Z"
+    "generatedAt": "2026-08-30T20:08:24.636Z"
   },
   "maximum-score-of-a-good-subarray": {
     "status": "ok",
@@ -5925,11 +5964,11 @@
   },
   "maximum-score-words-formed-by-letters": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:22.389Z"
+    "generatedAt": "2026-08-30T20:07:59.952Z"
   },
   "maximum-subgraph-score-in-a-tree": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:48.360Z"
+    "generatedAt": "2026-08-30T20:08:06.110Z"
   },
   "maximum-substrings-with-distinct-start": {
     "status": "ok",
@@ -6003,8 +6042,25 @@
     "generatedAt": "2026-08-30T19:01:33.831Z"
   },
   "maximum-xor-after-operations": {
-    "status": "no-solution",
-    "generatedAt": "2026-08-30T19:01:51.246Z"
+    "status": "ok",
+    "cases": [
+      {
+        "input": "[[3,2,4,6]]",
+        "expected": "7"
+      },
+      {
+        "input": "[[1,2,3,9,2]]",
+        "expected": "11"
+      }
+    ],
+    "meta": {
+      "name": "maximumXOR",
+      "paramTypes": [
+        "integer[]"
+      ],
+      "returnType": "integer"
+    },
+    "generatedAt": "2026-08-30T20:05:58.705Z"
   },
   "maximum-xor-for-each-query": {
     "status": "ok",
@@ -6056,7 +6112,7 @@
   },
   "median-two-sorted-arrays": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:11.322Z"
+    "generatedAt": "2026-08-30T20:08:43.239Z"
   },
   "meeting-rooms": {
     "status": "ok",
@@ -6151,7 +6207,7 @@
   },
   "merge-k-sorted-lists": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T18:58:21.285Z",
+    "generatedAt": "2026-08-30T20:07:12.595Z",
     "note": "PriorityQueue is not defined"
   },
   "merge-nodes-in-between-zeros": {
@@ -6205,11 +6261,11 @@
   },
   "merge-triplets": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:19.213Z"
+    "generatedAt": "2026-08-30T20:09:16.745Z"
   },
   "merge-two-sorted": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:12.675Z"
+    "generatedAt": "2026-08-30T20:08:43.822Z"
   },
   "merge-two-sorted-lists": {
     "status": "ok",
@@ -6239,28 +6295,28 @@
   },
   "min-cost-connect-all": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:52.288Z"
+    "generatedAt": "2026-08-30T20:09:06.803Z"
   },
   "min-cost-stairs": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:57.763Z"
+    "generatedAt": "2026-08-30T20:09:09.891Z"
   },
   "min-effort-path": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:54.214Z"
+    "generatedAt": "2026-08-30T20:09:07.933Z"
   },
   "min-interval-query": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:24.456Z"
+    "generatedAt": "2026-08-30T20:09:18.577Z"
   },
   "min-stack": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:05:02.359Z",
+    "generatedAt": "2026-08-30T20:08:38.444Z",
     "note": "class-based / design problem"
   },
   "min-window-substring": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:00.459Z"
+    "generatedAt": "2026-08-30T20:08:37.278Z"
   },
   "minimize-maximum-pair-sum-in-array": {
     "status": "ok",
@@ -6423,7 +6479,7 @@
   },
   "minimum-cost-to-hire-k-workers": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:33.208Z"
+    "generatedAt": "2026-08-30T20:08:26.744Z"
   },
   "minimum-cost-to-make-at-least-one-valid-path-in-a-grid": {
     "status": "ok",
@@ -6517,7 +6573,7 @@
   },
   "minimum-difference-in-sums-after-removal-of-elements": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:03:52.334Z",
+    "generatedAt": "2026-08-30T20:08:10.541Z",
     "note": "MaxPriorityQueue is not defined"
   },
   "minimum-distance-between-three-equal-elements-ii": {
@@ -6547,7 +6603,7 @@
   },
   "minimum-distance-to-type-a-word-using-two-fingers": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:42.797Z"
+    "generatedAt": "2026-08-30T20:08:04.466Z"
   },
   "minimum-edge-toggles-on-a-tree": {
     "status": "ok",
@@ -6675,7 +6731,7 @@
   },
   "minimum-insertion-steps-to-make-a-string-palindrome": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:36.729Z"
+    "generatedAt": "2026-08-30T20:08:02.496Z"
   },
   "minimum-length-of-string-after-operations": {
     "status": "ok",
@@ -6700,7 +6756,7 @@
   },
   "minimum-number-game": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T18:59:53.104Z",
+    "generatedAt": "2026-08-30T20:07:24.861Z",
     "note": "MinPriorityQueue is not defined"
   },
   "minimum-number-of-changes-to-make-binary-string-beautiful": {
@@ -6730,7 +6786,7 @@
   },
   "minimum-number-of-flips-to-convert-binary-matrix-to-zero-matrix": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:39.353Z"
+    "generatedAt": "2026-08-30T20:08:03.515Z"
   },
   "minimum-number-of-flips-to-make-binary-grid-palindromic-i": {
     "status": "ok",
@@ -7371,7 +7427,7 @@
   },
   "my-calendar-iii": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:03:44.533Z",
+    "generatedAt": "2026-08-30T20:08:05.470Z",
     "note": "class-based / design problem"
   },
   "n-queens": {
@@ -7443,7 +7499,7 @@
   },
   "nested-array-generator": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:01:43.822Z",
+    "generatedAt": "2026-08-30T20:07:36.487Z",
     "note": "inorderTraveral is not defined"
   },
   "network-delay-time": {
@@ -7500,7 +7556,7 @@
   },
   "non-overlapping": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:23.071Z"
+    "generatedAt": "2026-08-30T20:09:17.987Z"
   },
   "number-of-arithmetic-triplets": {
     "status": "ok",
@@ -7640,7 +7696,7 @@
   },
   "number-of-pairs-of-strings-with-concatenation-equal-to-target": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:37.810Z"
+    "generatedAt": "2026-08-30T20:07:50.820Z"
   },
   "number-of-steps-to-reduce-a-number-to-zero": {
     "status": "ok",
@@ -7805,7 +7861,7 @@
   },
   "pacific-atlantic": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:45.932Z"
+    "generatedAt": "2026-08-30T20:09:05.665Z"
   },
   "painting-a-grid-with-three-different-colors": {
     "status": "ok",
@@ -7835,7 +7891,7 @@
   },
   "palindrome-ll": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:14.046Z"
+    "generatedAt": "2026-08-30T20:08:44.418Z"
   },
   "palindrome-number": {
     "status": "ok",
@@ -7864,7 +7920,7 @@
   },
   "palindrome-partition": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:40.976Z"
+    "generatedAt": "2026-08-30T20:09:02.660Z"
   },
   "palindrome-partitioning": {
     "status": "ok",
@@ -8078,11 +8134,11 @@
   },
   "pascal-s-triangle": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:49.611Z"
+    "generatedAt": "2026-08-30T20:08:30.556Z"
   },
   "path-in-zigzag-labelled-binary-tree": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:34.129Z"
+    "generatedAt": "2026-08-30T20:07:48.268Z"
   },
   "path-sum": {
     "status": "ok",
@@ -8274,11 +8330,11 @@
   },
   "product-except-self": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:52.883Z"
+    "generatedAt": "2026-08-30T20:08:32.232Z"
   },
   "promise-time-limit": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T19:01:19.564Z",
+    "generatedAt": "2026-08-30T20:07:34.862Z",
     "note": "Unexpected token 'a', \"async (n) \"... is not valid JSON"
   },
   "put-marbles-in-bags": {
@@ -8305,7 +8361,7 @@
   },
   "queries-on-a-permutation-with-key": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:01:03.831Z"
+    "generatedAt": "2026-08-30T20:07:31.046Z"
   },
   "queries-on-number-of-points-inside-a-circle": {
     "status": "ok",
@@ -8331,7 +8387,7 @@
   },
   "queue-reconstruction-by-height": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:50.974Z"
+    "generatedAt": "2026-08-30T20:07:54.149Z"
   },
   "range-sum-of-bst": {
     "status": "ok",
@@ -8471,7 +8527,7 @@
   },
   "regex-matching": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:15.679Z"
+    "generatedAt": "2026-08-30T20:09:15.589Z"
   },
   "regions-cut-by-slashes": {
     "status": "ok",
@@ -8591,7 +8647,7 @@
   },
   "remove-max-number-of-edges-to-keep-graph-fully-traversable": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:49.403Z"
+    "generatedAt": "2026-08-30T20:08:07.943Z"
   },
   "remove-nodes-from-linked-list": {
     "status": "ok",
@@ -8616,7 +8672,7 @@
   },
   "remove-nth-from-end": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:15.403Z"
+    "generatedAt": "2026-08-30T20:08:44.993Z"
   },
   "remove-nth-node-from-end-of-list": {
     "status": "ok",
@@ -8738,11 +8794,11 @@
   },
   "reorganize-string": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:05:37.851Z"
+    "generatedAt": "2026-08-30T20:09:01.065Z"
   },
   "replace-elements": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:48.197Z"
+    "generatedAt": "2026-08-30T20:08:30.002Z"
   },
   "restore-finishing-order": {
     "status": "ok",
@@ -8768,7 +8824,7 @@
   },
   "restore-the-array-from-adjacent-pairs": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:44.984Z"
+    "generatedAt": "2026-08-30T20:07:52.903Z"
   },
   "return-length-of-arguments-passed": {
     "status": "ok",
@@ -8793,7 +8849,7 @@
   },
   "reveal-cards-in-increasing-order": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:01:14.187Z"
+    "generatedAt": "2026-08-30T20:07:33.639Z"
   },
   "reverse-bits": {
     "status": "ok",
@@ -8911,7 +8967,7 @@
   },
   "reverse-nodes-k-group": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:17.768Z"
+    "generatedAt": "2026-08-30T20:08:47.309Z"
   },
   "reverse-odd-levels-of-binary-tree": {
     "status": "ok",
@@ -9059,11 +9115,11 @@
   },
   "right-side-view": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:26.815Z"
+    "generatedAt": "2026-08-30T20:08:51.338Z"
   },
   "robot-bounded": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:29.538Z"
+    "generatedAt": "2026-08-30T20:09:19.774Z"
   },
   "roman-to-integer": {
     "status": "ok",
@@ -9277,7 +9333,7 @@
   },
   "search-2d-matrix": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:07.595Z"
+    "generatedAt": "2026-08-30T20:08:40.451Z"
   },
   "search-in-rotated-sorted-array": {
     "status": "ok",
@@ -9333,11 +9389,11 @@
   },
   "search-rotated-sorted": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:09.647Z"
+    "generatedAt": "2026-08-30T20:08:41.582Z"
   },
   "second-minimum-time-to-reach-destination": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:44.750Z"
+    "generatedAt": "2026-08-30T20:08:28.945Z"
   },
   "separate-the-digits-in-an-array": {
     "status": "ok",
@@ -9362,7 +9418,7 @@
   },
   "serialize-deserialize": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:30.637Z"
+    "generatedAt": "2026-08-30T20:08:54.704Z"
   },
   "set-matrix-zeroes": {
     "status": "ok",
@@ -9387,11 +9443,11 @@
   },
   "ship-days": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:10.770Z"
+    "generatedAt": "2026-08-30T20:08:42.683Z"
   },
   "shortest-impossible-sequence-of-rolls": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:57.013Z"
+    "generatedAt": "2026-08-30T20:08:11.677Z"
   },
   "shortest-path-visiting-all-nodes": {
     "status": "ok",
@@ -9489,16 +9545,16 @@
   },
   "sleep": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T18:59:24.363Z",
+    "generatedAt": "2026-08-30T20:07:17.922Z",
     "note": "foobar is not defined"
   },
   "sliding-puzzle": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:34.866Z"
+    "generatedAt": "2026-08-30T20:08:01.218Z"
   },
   "sliding-window-max": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:01.003Z"
+    "generatedAt": "2026-08-30T20:08:37.850Z"
   },
   "smallest-even-multiple": {
     "status": "ok",
@@ -9523,7 +9579,7 @@
   },
   "smallest-range-covering-elements-from-k-lists": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:03:50.400Z"
+    "generatedAt": "2026-08-30T20:08:09.273Z"
   },
   "smallest-stable-index-ii": {
     "status": "ok",
@@ -9578,7 +9634,7 @@
   },
   "sort-by": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T19:00:32.434Z",
+    "generatedAt": "2026-08-30T20:07:27.350Z",
     "note": "Unexpected token '(', \"(x) => x\" is not valid JSON"
   },
   "sort-characters-by-frequency": {
@@ -9743,7 +9799,7 @@
   },
   "sorted-array-to-bst": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:22.700Z"
+    "generatedAt": "2026-08-30T20:08:49.551Z"
   },
   "sorting-the-sentence": {
     "status": "ok",
@@ -10025,15 +10081,15 @@
   },
   "subarrays-with-k-different-integers": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:00.643Z"
+    "generatedAt": "2026-08-30T20:08:13.169Z"
   },
   "subdomain-visit-count": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:02:19.093Z"
+    "generatedAt": "2026-08-30T20:07:45.577Z"
   },
   "subrectangle-queries": {
     "status": "design",
-    "generatedAt": "2026-08-30T19:00:56.016Z",
+    "generatedAt": "2026-08-30T20:07:30.396Z",
     "note": "class-based / design problem"
   },
   "subsets": {
@@ -10127,11 +10183,11 @@
   },
   "subtree-of-another": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:22.138Z"
+    "generatedAt": "2026-08-30T20:08:48.999Z"
   },
   "sudoku-solver": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T18:58:32.859Z"
+    "generatedAt": "2026-08-30T20:07:14.573Z"
   },
   "sum-multiples": {
     "status": "ok",
@@ -10372,7 +10428,7 @@
   },
   "sum-without": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:34.882Z"
+    "generatedAt": "2026-08-30T20:09:20.901Z"
   },
   "surrounded-regions": {
     "status": "ok",
@@ -10490,7 +10546,7 @@
   },
   "task-scheduler": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:05:36.173Z"
+    "generatedAt": "2026-08-30T20:08:59.388Z"
   },
   "the-earliest-and-latest-rounds-where-players-compete": {
     "status": "ok",
@@ -10568,11 +10624,11 @@
   },
   "time-based-kv-store": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:10.199Z"
+    "generatedAt": "2026-08-30T20:08:42.125Z"
   },
   "timeout-cancellation": {
     "status": "parse-failed",
-    "generatedAt": "2026-08-30T18:59:03.194Z",
+    "generatedAt": "2026-08-30T20:07:16.262Z",
     "note": "Unexpected token '(', \"(x) => x * 5\" is not valid JSON"
   },
   "to-lower-case": {
@@ -10602,7 +10658,7 @@
   },
   "top-k-frequent": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:51.781Z"
+    "generatedAt": "2026-08-30T20:08:31.115Z"
   },
   "total-waviness-of-numbers-in-range-i": {
     "status": "ok",
@@ -10674,7 +10730,7 @@
   },
   "trapping-rain": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:56.853Z"
+    "generatedAt": "2026-08-30T20:08:34.478Z"
   },
   "trapping-rain-water": {
     "status": "ok",
@@ -10699,7 +10755,7 @@
   },
   "trapping-rain-water-ii": {
     "status": "exec-failed",
-    "generatedAt": "2026-08-30T19:04:31.451Z",
+    "generatedAt": "2026-08-30T20:08:25.816Z",
     "note": "PriorityQueue is not defined"
   },
   "truncate-sentence": {
@@ -10756,7 +10812,7 @@
   },
   "two-sum-ii-sorted": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:04:55.739Z"
+    "generatedAt": "2026-08-30T20:08:33.375Z"
   },
   "unique-length-3-palindromic-subsequences": {
     "status": "ok",
@@ -10875,7 +10931,7 @@
   },
   "valid-arrangement-of-pairs": {
     "status": "no-solution",
-    "generatedAt": "2026-08-30T19:04:07.479Z"
+    "generatedAt": "2026-08-30T20:08:14.963Z"
   },
   "valid-palindrome": {
     "status": "ok",
@@ -10929,7 +10985,7 @@
   },
   "valid-paren-string": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:06:19.765Z"
+    "generatedAt": "2026-08-30T20:09:17.422Z"
   },
   "valid-parentheses": {
     "status": "ok",
@@ -10987,7 +11043,7 @@
   },
   "validate-bst": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:28.380Z"
+    "generatedAt": "2026-08-30T20:08:52.461Z"
   },
   "vowels-game-in-a-string": {
     "status": "ok",
@@ -11012,7 +11068,7 @@
   },
   "walls-gates": {
     "status": "no-metadata",
-    "generatedAt": "2026-08-30T19:05:44.527Z"
+    "generatedAt": "2026-08-30T20:09:05.092Z"
   },
   "water-bottles-ii": {
     "status": "ok",
