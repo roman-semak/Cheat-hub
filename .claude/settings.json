@@ -30,7 +30,10 @@
       "Bash(curl -s -o /dev/null -w \"tasks:%{http_code}\\\\n\" http://localhost:5001/leetcode/tasks)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5001/profile)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5001/git)",
-      "Bash(pkill -f \"curl -s http://localhost:5001\")"
+      "Bash(pkill -f \"curl -s http://localhost:5001\")",
+      "Bash(curl -sf -o /dev/null http://localhost:5001/problems/two-sum)",
+      "Bash(curl -sf -o /dev/null -w \"javascript:%{http_code}\\\\n\" http://localhost:5001/javascript)",
+      "Bash(curl -sf -o /dev/null -w \"react:%{http_code}\\\\n\" http://localhost:5001/react)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"
