@@ -199,57 +199,129 @@ function reducer(state: State, action: Action): State {
         },
         {
           "kind": "paragraph",
-          "html": `<h3 class="topic">interface vs type <span class="tag tag-key">KEY</span></h3><p><strong>Суть:</strong> обидва описують <em>форму (shape)</em> і в ~90% випадків взаємозамінні для об'єктів. <code>interface</code> спеціалізований для об'єктних контрактів і класів: <strong>declaration merging</strong>, <code>extends</code>, трохи читабельніші помилки. <code>type</code> (alias) — ширший: union, intersection, tuple, примітиви, mapped/conditional, тип функції.</p><p><strong>Rule of thumb:</strong> <code>interface</code> для публічних об'єктних контрактів (props, DTO, service shapes), які можуть розширюватись; <code>type</code> — коли треба union / intersection / tuple / utility або «закритий» тип, що не мержиться. Для простого об'єкта ок будь-що — головне консистентність у команді.</p>`
+          "html": `<h3 class="topic">interface vs type <span class="tag tag-key">KEY</span></h3><p>Обидва описують <strong>форму (shape)</strong> типів і в ~90% випадків взаємозамінні для об'єктів. Але:</p><ul class="list"><li><strong><code>interface</code></strong> — спеціалізований для <em>об'єктних форм</em> і класів. Підтримує <strong>declaration merging</strong> і <code>extends</code>. Трохи кращі повідомлення про помилки.</li><li><strong><code>type</code></strong> (type alias) — <em>ширший</em>: описує <strong>будь-що</strong> — union, intersection, tuple, примітиви, mapped/conditional types, функції.</li></ul><div class="alert">🎯 <strong>Rule of thumb:</strong> <code>interface</code> для публічних об'єктних контрактів і форм, які можуть розширюватись; <code>type</code> — коли треба union, intersection, tuple або утилітарні/обчислювані типи. Для простого об'єкта прийнятні обидва — головне консистентність у команді.</div>`
         },
         {
           "kind": "paragraph",
-          "html": `<div class="grid2">
-    <div class="card"><h4>Тільки <code>type</code></h4><ul class="list"><li><strong>union</strong> — <code>'idle' | 'loading' | 'error'</code>, <code>string | number</code>;</li><li><strong>tuple</strong> — <code>[number, number]</code>;</li><li><strong>примітив-аліас</strong> — <code>type Id = string</code>;</li><li><strong>mapped / conditional</strong>, тип функції як аліас;</li><li>усі utility-типи (<code>Partial</code>, <code>Pick</code>, <code>Record</code>, <code>ReturnType</code>…) — це type aliases.</li></ul><p><em>Детальніше — підрозділ «Discriminated Unions» і секції «Generics» / «Utility Types».</em></p></div>
-    <div class="card blue"><h4>Тільки <code>interface</code></h4><ul class="list"><li><strong>declaration merging</strong> — кілька оголошень з тим самим ім'ям зливаються в одне;</li><li><strong>global augmentation</strong> — доповнити <code>Window</code>, <code>process.env</code>, типи бібліотек через <code>declare global</code> / <code>declare module</code>. Через <code>type</code> так не можна — буде «Duplicate identifier».</li></ul></div>
-  </div>`
+          "html": `<h3 class="topic">Що вміє тільки <code>type</code></h3><ul class="list"><li><strong>Union types</strong> — <code>'idle' | 'loading' | 'success' | 'error'</code>, <code>string | number</code>;</li><li><strong>Tuple types</strong> — <code>[number, number]</code>, <code>[key: string, value: number]</code>;</li><li><strong>Примітиви й аліаси</strong> — <code>type Age = number</code>;</li><li><strong>Mapped types</strong> — <code>{ [K in keyof T]?: T[K] }</code>;</li><li><strong>Conditional types</strong> — <code>T extends U ? X : Y</code>;</li><li><strong>Utility-типи</strong> (<code>Partial</code>, <code>Pick</code>, <code>Omit</code>, <code>Record</code>, <code>ReturnType</code>) — усі це type aliases.</li></ul><p>Тому для будь-якої «обчислюваної» типової логіки — тільки <code>type</code>.</p>`
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": `// Declaration merging — тільки interface
-interface User { name: string }
+          "code": `// Union
+type Status = 'idle' | 'loading' | 'success' | 'error';
+type ID = string | number;
+// interface так НЕ вміє
+
+// Tuple
+type Point = [number, number];
+type Entry = [key: string, value: number];
+
+// Примітив-аліас
+type Age = number;
+
+// Mapped
+type Optional<T> = { [K in keyof T]?: T[K] };
+
+// Conditional
+type NonNull<T> = T extends null | undefined ? never : T;`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Що вміє тільки <code>interface</code> — declaration merging</h3><p>Кілька оголошень одного <code>interface</code> <strong>зливаються</strong> в одне. У <code>type</code> так → помилка «Duplicate identifier».</p><p><strong>Навіщо:</strong> розширення сторонніх/глобальних типів. Класика — доповнити глобальний <code>Window</code> чи типи бібліотеки. Це можливо <strong>лише</strong> через interface merging.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `interface User { name: string }
 interface User { age: number }
 // User === { name: string; age: number }
 
-type T = { name: string }
-// type T = { age: number }   // ❌ Duplicate identifier 'T'
+type User2 = { name: string };
+// type User2 = { age: number };  // ❌ Error: Duplicate identifier 'User2'
 
-// Global augmentation — розширити глобальний тип
+// Global augmentation
 declare global {
   interface Window {
-    analytics: (event: string) => void
+    myAnalytics: (event: string) => void;
   }
 }`
         },
         {
           "kind": "paragraph",
-          "html": `<h3 class="topic">Тонкі відмінності (senior-сигнали)</h3><ul class="list"><li><strong><code>extends</code> vs <code>&</code> при конфлікті</strong> — <code>interface B extends A</code> перевіряє сумісність і кидає помилку одразу; intersection <code>A & { … }</code> мовчки дає тип, де конфліктне поле стає <code>never</code> — баг ховається.</li><li><strong>Продуктивність компілятора</strong> — <code>interface</code> кешується як іменований тип; складні <code>&</code>-intersection можуть перераховуватись. Помітно лише на великих кодбазах, але це причина офіційної поради брати <code>interface</code> за замовчуванням.</li><li><strong>Повідомлення про помилки</strong> — TS показує назву <code>interface</code>, а не розгорнуту структуру великого intersection.</li><li><strong>Кросова сумісність</strong> — <code>interface</code> може <code>extends</code> об'єктний <code>type</code>, і навпаки <code>type</code> може перетинати <code>interface</code> через <code>&</code>.</li><li><strong>Розширюваність = ризик</strong> — merging означає, що хтось ззовні може непомітно домержити поле; для суворо закритого контракту <code>type</code> безпечніший.</li></ul>`
+          "html": `<h3 class="topic">Спільне (обидва вміють)</h3><ul class="list"><li><strong>Розширення</strong> — <code>interface</code> через <code>extends</code>, <code>type</code> через intersection <code>&</code>;</li><li><strong>Кросова сумісність</strong> — <code>interface</code> може <code>extends</code> об'єктний <code>type</code>, і навпаки <code>type</code> може перетинати <code>interface</code> через <code>&</code>;</li><li><strong><code>implements</code> класом</strong> — і <code>interface</code>, і об'єктний <code>type</code>;</li><li><strong>Generics</strong> — <code>interface Box&lt;T&gt;</code> / <code>type Box&lt;T&gt;</code>.</li></ul>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// extends vs intersection
+interface Animal { name: string }
+interface Dog extends Animal { breed: string }
+
+type Animal2 = { name: string };
+type Dog2 = Animal2 & { breed: string };
+
+// кросова сумісність
+type Base = { id: string };
+interface Extended extends Base { name: string }   // ✅ interface extends type
+
+interface Named { name: string }
+type WithName = Named & { age: number };            // ✅ type intersects interface
+
+// implements — обидва
+interface Serializable { serialize(): string }
+class Doc implements Serializable { serialize() { return '...'; } }
+
+// generics — обидва
+interface Box<T> { value: T }
+type Box2<T> = { value: T };`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Тонкі відмінності (сигнали seniority)</h3><ul class="list"><li><strong><code>extends</code> vs <code>&</code> при конфлікті</strong> — <code>interface extends</code> <em>перевіряє сумісність</em> і кидає помилку одразу; intersection <code>&</code> <em>мовчки</em> створює тип, де конфліктне примітивне поле стає <code>never</code> (баг ховається).</li><li><strong>Продуктивність компілятора</strong> — <code>interface</code> кешується як іменований тип; складні <code>&</code>-intersection можуть перераховуватись. Помітно лише на дуже великих кодбазах — але це причина, чому TS Handbook радить <code>interface</code> за замовчуванням.</li><li><strong>Повідомлення про помилки</strong> — з іменованим <code>interface</code> читабельніші: TS показує назву, а не розгорнуту структуру великого intersection.</li><li><strong>Розширюваність = і плюс, і ризик</strong> — merging потужний, але це відкритість до модифікації ззовні. Для суворо закритих контрактів <code>type</code> безпечніший.</li></ul>`
         },
         {
           "kind": "code",
           "language": "typescript",
           "code": `interface A { x: number }
-interface B extends A { x: string }   // ❌ Error: types of 'x' incompatible
+interface B extends A { x: string }   // ❌ Error: incompatible (одразу видно)
 
-type A2 = { x: number }
-type B2 = A2 & { x: string }          // 😶 без помилки, але x: never
-
-// кросова сумісність
-type Base = { id: string }
-interface Extended extends Base { name: string }   // ✅ interface extends type`
+type A2 = { x: number };
+type B2 = A2 & { x: string };         // 😶 без помилки, але x: never (баг ховається)`
         },
         {
           "kind": "paragraph",
-          "html": `<div class="alert alert-warn"><strong>⚠️ Пастки:</strong><ul class="list"><li>очікувати merging від <code>type</code> — його немає, буде «Duplicate identifier»;</li><li><code>&</code> замість <code>extends</code> для конфліктних типів → тихий <code>never</code>, схований баг;</li><li>метод <code>fn(): void</code> vs властивість <code>fn: () =&gt; void</code> — синтаксис методу вмикає bivariance-перевірку параметрів; для строгості пиши властивість зі стрілкою;</li><li>мішати <code>interface</code>/<code>type</code> без правила — увімкни ESLint <code>@typescript-eslint/consistent-type-definitions</code>.</li></ul></div>`
+          "html": `<h3 class="topic">Офіційна рекомендація vs реальність</h3><ul class="list"><li><strong>TS Handbook:</strong> «If you don't know which to use, use <code>interface</code>. Use <code>type</code> when you need features it provides.»</li><li><strong>React-екосистема:</strong> багато команд і частина типів React широко юзають <code>type</code> — особливо для props, бо часто потрібні union'и/intersection'и.</li><li><strong>Practical consensus:</strong> узгодь у команді через ESLint <code>@typescript-eslint/consistent-type-definitions</code>, щоб не було мішанини.</li></ul>`
         },
         {
           "kind": "paragraph",
-          "html": `<h3 class="topic">Рекомендація vs практика</h3><p><strong>TS Handbook:</strong> «якщо не знаєш, що обрати — бери <code>interface</code>; переходь на <code>type</code>, коли потрібні його можливості». <strong>React-екосистема:</strong> багато команд і частина типів React широко юзають <code>type</code> для props — часто треба union'и (<code>variant: 'primary' | 'ghost'</code>) чи discriminated props. <strong>Консенсус:</strong> зафіксуй вибір через ESLint <code>consistent-type-definitions</code>, щоб не було мішанини.</p>`
+          "html": `<div class="grid2">
+    <div class="card"><h4>Бери <code>interface</code>, коли</h4><ul class="list"><li>публічний API/контракт об'єкта, що може розширюватись;</li><li>форма для <code>class implements</code>;</li><li>треба augment сторонні/глобальні типи (merging);</li><li>об'єктні ієрархії з <code>extends</code>.</li></ul></div>
+    <div class="card blue"><h4>Бери <code>type</code>, коли</h4><ul class="list"><li>union / intersection / tuple / примітив;</li><li>mapped / conditional / utility типи;</li><li>тип функції як окремий аліас: <code>type Handler = (e: Event) =&gt; void</code>;</li><li>хочеш «закритий» тип без ризику merging.</li></ul></div>
+  </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// type — популярніше для props (часто потрібні union'и)
+type ButtonProps = { variant: 'primary' | 'ghost'; onClick: () => void };
+
+// interface — теж норм, зручно extends нативні атрибути
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="alert alert-warn"><strong>⚠️ Пастки:</strong><ul class="list"><li><strong>метод vs властивість</strong> — синтаксис методу (<code>fn(): void</code>) вмикає bivariance-перевірку параметрів; для строгості пиши властивість (<code>fn: () =&gt; void</code>);</li><li><strong>очікувати merging від <code>type</code></strong> — його немає, буде «Duplicate identifier»;</li><li><strong><code>&</code> замість <code>extends</code> для конфліктних типів</strong> → тихий <code>never</code>, схований баг;</li><li><strong>мішати стилі без правила</strong> — знижує читабельність; увімкни ESLint-правило.</li></ul></div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Як подавати на співбесіді</h3><ul class="list"><li><strong>Практичне правило:</strong> за замовчуванням <code>interface</code> для об'єктних контрактів (props, DTO, service shapes) — кращі помилки, <code>extends</code>, можливість augment. <code>type</code> — коли треба union (напр. discriminated union для async-станів), intersection, tuple або utility-типи.</li><li><strong>Discriminated unions:</strong> async-стани — це <code>type State = {…} | {…}</code>, union, тому тільки <code>type</code>. Прямий зв'язок з «make impossible states impossible».</li><li><strong>Global augmentation:</strong> розширення <code>Window</code> чи типів бібліотек — через <code>interface</code> merging, бо <code>type</code> так не вміє.</li></ul>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="alert"><strong>✅ Чеклист «знаю тему на Senior»</strong><ul class="list"><li>обидва описують форму; <code>type</code> ширший;</li><li>тільки <code>type</code>: union, intersection, tuple, примітиви, mapped, conditional, utility;</li><li>тільки <code>interface</code>: declaration merging (+ global augmentation);</li><li><code>extends</code> (interface) vs <code>&</code> (type intersection);</li><li>кросова сумісність: interface extends type і навпаки;</li><li><code>extends</code> дає ранню помилку при конфлікті; <code>&</code> дає тихий <code>never</code>;</li><li><code>interface</code> трохи ефективніший для компілятора (великі кодбази);</li><li>офіційна рекомендація: <code>interface</code> за замовчуванням, <code>type</code> за потребою;</li><li>React props — обидва ок (<code>type</code> популярніше для union'ів);</li><li>consistency через ESLint <code>consistent-type-definitions</code>.</li></ul></div>`
         },
         {
           "kind": "paragraph",
