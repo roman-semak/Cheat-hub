@@ -38,6 +38,14 @@ export const javascriptContent: TopicContent = {
           question: `Чому в Angular DI <code>interface</code> не може бути токеном провайдера?`,
           answer: `Interface стирається при компіляції — у рантаймі його просто не існує, тому немає значення, яке можна передати як DI-токен. Використовують або <code>abstract class</code> як абстракцію (<code>{ provide: AbstractService, useClass: ConcreteService }</code>), або <code>InjectionToken</code>. Це практична демонстрація різниці compile-time vs runtime.`,
         },
+        {
+          question: `Що станеться, якщо в <code>interface B extends A</code> перевизначити поле несумісним типом — і чим це відрізняється від <code>A &amp; { … }</code>?`,
+          answer: `<code>extends</code> запускає перевірку сумісності: несумісне перевизначення (<code>x: number</code> → <code>x: string</code>) — <strong>помилка компіляції одразу</strong>. Intersection <code>A &amp; { x: string }</code> помилки не дає — поле <code>x</code> тихо стає <code>never</code> (<code>number &amp; string</code>), і баг випливає лише там, де в це поле щось присвоюють. Тому для ієрархій <code>interface extends</code> дає раніші й зрозуміліші помилки.`,
+        },
+        {
+          question: `Чому доповнити глобальний <code>Window</code> чи типи бібліотеки можна тільки через <code>interface</code>?`,
+          answer: `Це <strong>declaration merging</strong> — кілька оголошень одного <code>interface</code> з тим самим ім'ям зливаються в одне. <code>type</code>-alias так не вміє: повторне оголошення = «Duplicate identifier». Тому augmentation (<code>declare global { interface Window { … } }</code>, <code>declare module</code>) працює лише з <code>interface</code>. Зворотний бік — відкритість: хтось ззовні може непомітно домержити поле у твій <code>interface</code>.`,
+        },
       ],
       "blocks": [
         {
@@ -188,6 +196,60 @@ function reducer(state: State, action: Action): State {
           "kind": "code",
           "language": "typescript",
           "code": "type EventName = `on${Capitalize<'click'>}`; // \"onClick\"\ntype Sizes = `${'small' | 'large'}-${'dark' | 'light'}`;\n// \"small-dark\" | \"small-light\" | \"large-dark\" | \"large-light\""
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">interface vs type <span class="tag tag-key">KEY</span></h3><p><strong>Суть:</strong> обидва описують <em>форму (shape)</em> і в ~90% випадків взаємозамінні для об'єктів. <code>interface</code> спеціалізований для об'єктних контрактів і класів: <strong>declaration merging</strong>, <code>extends</code>, трохи читабельніші помилки. <code>type</code> (alias) — ширший: union, intersection, tuple, примітиви, mapped/conditional, тип функції.</p><p><strong>Rule of thumb:</strong> <code>interface</code> для публічних об'єктних контрактів (props, DTO, service shapes), які можуть розширюватись; <code>type</code> — коли треба union / intersection / tuple / utility або «закритий» тип, що не мержиться. Для простого об'єкта ок будь-що — головне консистентність у команді.</p>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="grid2">
+    <div class="card"><h4>Тільки <code>type</code></h4><ul class="list"><li><strong>union</strong> — <code>'idle' | 'loading' | 'error'</code>, <code>string | number</code>;</li><li><strong>tuple</strong> — <code>[number, number]</code>;</li><li><strong>примітив-аліас</strong> — <code>type Id = string</code>;</li><li><strong>mapped / conditional</strong>, тип функції як аліас;</li><li>усі utility-типи (<code>Partial</code>, <code>Pick</code>, <code>Record</code>, <code>ReturnType</code>…) — це type aliases.</li></ul><p><em>Детальніше — підрозділ «Discriminated Unions» і секції «Generics» / «Utility Types».</em></p></div>
+    <div class="card blue"><h4>Тільки <code>interface</code></h4><ul class="list"><li><strong>declaration merging</strong> — кілька оголошень з тим самим ім'ям зливаються в одне;</li><li><strong>global augmentation</strong> — доповнити <code>Window</code>, <code>process.env</code>, типи бібліотек через <code>declare global</code> / <code>declare module</code>. Через <code>type</code> так не можна — буде «Duplicate identifier».</li></ul></div>
+  </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// Declaration merging — тільки interface
+interface User { name: string }
+interface User { age: number }
+// User === { name: string; age: number }
+
+type T = { name: string }
+// type T = { age: number }   // ❌ Duplicate identifier 'T'
+
+// Global augmentation — розширити глобальний тип
+declare global {
+  interface Window {
+    analytics: (event: string) => void
+  }
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Тонкі відмінності (senior-сигнали)</h3><ul class="list"><li><strong><code>extends</code> vs <code>&</code> при конфлікті</strong> — <code>interface B extends A</code> перевіряє сумісність і кидає помилку одразу; intersection <code>A & { … }</code> мовчки дає тип, де конфліктне поле стає <code>never</code> — баг ховається.</li><li><strong>Продуктивність компілятора</strong> — <code>interface</code> кешується як іменований тип; складні <code>&</code>-intersection можуть перераховуватись. Помітно лише на великих кодбазах, але це причина офіційної поради брати <code>interface</code> за замовчуванням.</li><li><strong>Повідомлення про помилки</strong> — TS показує назву <code>interface</code>, а не розгорнуту структуру великого intersection.</li><li><strong>Кросова сумісність</strong> — <code>interface</code> може <code>extends</code> об'єктний <code>type</code>, і навпаки <code>type</code> може перетинати <code>interface</code> через <code>&</code>.</li><li><strong>Розширюваність = ризик</strong> — merging означає, що хтось ззовні може непомітно домержити поле; для суворо закритого контракту <code>type</code> безпечніший.</li></ul>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `interface A { x: number }
+interface B extends A { x: string }   // ❌ Error: types of 'x' incompatible
+
+type A2 = { x: number }
+type B2 = A2 & { x: string }          // 😶 без помилки, але x: never
+
+// кросова сумісність
+type Base = { id: string }
+interface Extended extends Base { name: string }   // ✅ interface extends type`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="alert alert-warn"><strong>⚠️ Пастки:</strong><ul class="list"><li>очікувати merging від <code>type</code> — його немає, буде «Duplicate identifier»;</li><li><code>&</code> замість <code>extends</code> для конфліктних типів → тихий <code>never</code>, схований баг;</li><li>метод <code>fn(): void</code> vs властивість <code>fn: () =&gt; void</code> — синтаксис методу вмикає bivariance-перевірку параметрів; для строгості пиши властивість зі стрілкою;</li><li>мішати <code>interface</code>/<code>type</code> без правила — увімкни ESLint <code>@typescript-eslint/consistent-type-definitions</code>.</li></ul></div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Рекомендація vs практика</h3><p><strong>TS Handbook:</strong> «якщо не знаєш, що обрати — бери <code>interface</code>; переходь на <code>type</code>, коли потрібні його можливості». <strong>React-екосистема:</strong> багато команд і частина типів React широко юзають <code>type</code> для props — часто треба union'и (<code>variant: 'primary' | 'ghost'</code>) чи discriminated props. <strong>Консенсус:</strong> зафіксуй вибір через ESLint <code>consistent-type-definitions</code>, щоб не було мішанини.</p>`
         },
         {
           "kind": "paragraph",

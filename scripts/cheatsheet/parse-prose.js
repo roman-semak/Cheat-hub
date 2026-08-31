@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const { parse } = require('node-html-parser')
 
-const ROOT = '/Users/romansemak/GitHub/PET/leetCode'
+const ROOT = path.resolve(__dirname, '../..')
 const SRC = path.join(ROOT, 'CheetSheet')
 
 const TOPICS = [

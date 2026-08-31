@@ -28,9 +28,9 @@ recall* (solving problems) and *passive review* (cheatsheets) in one place. The 
 doubles as a portfolio piece showcasing a modern Next.js + React 19 stack and a bespoke
 glassmorphism design system.
 
-> ℹ️ The internal [CLAUDE.md](CLAUDE.md) still describes the project's earlier life as a
-> "LeetCode Local Platform" and is partially out of date — this README reflects the current
-> Cheat Hub architecture.
+> ℹ️ The project was previously called "LeetCode Local Platform". Some internal docs and
+> historical task notes still use the old name; this README and [CLAUDE.md](CLAUDE.md)
+> reflect the current Cheat Hub identity.
 
 ---
 

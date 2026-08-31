@@ -1,7 +1,10 @@
-# LeetCode Local Platform
+# Cheat Hub
 
 ## Overview
-Local LeetCode-like platform для вирішення задач на JavaScript/TypeScript. Платформа дозволяє користувачам переглядати задачі, писати код в Monaco Editor, запускати тести й отримувати результати.
+Cheat Hub — платформа для підготовки до співбесід: LeetCode-подібний редактор коду
+для вирішення задач на JavaScript/TypeScript (Monaco Editor, запуск тестів,
+результати) плюс багатотемний хаб шпаргалок і теорії. Раніше проект називався
+«LeetCode Local Platform».
 
 **Статус:** ✅ MVP готовий до використання
 
@@ -17,7 +20,7 @@ Local LeetCode-like platform для вирішення задач на JavaScrip
 ## Project Structure
 
 ```
-/leetCode
+/cheat-hub
 ├── prisma/
 │   ├── schema.prisma          # Prisma schema (Problem, Submission, Progress)
 │   ├── seed.ts                # Seed script з 3 приклад-задачами
@@ -275,5 +278,5 @@ rm -rf node_modules package-lock.json && npm install --legacy-peer-deps
 ---
 
 **Created:** May 22, 2026  
-**Last Updated:** June 17, 2026  
+**Last Updated:** August 31, 2026  
 **Platform:** macOS, Node 24.16.0, npm 11.13.0

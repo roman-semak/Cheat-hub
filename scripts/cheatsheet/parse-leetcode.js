@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const ROOT = '/Users/romansemak/GitHub/PET/leetCode'
+const ROOT = path.resolve(__dirname, '../..')
 const LC = path.join(ROOT, 'CheetSheet/leetcode')
 const indexHtml = fs.readFileSync(path.join(LC, 'index.html'), 'utf8')
 const cheatHtml = fs.readFileSync(path.join(LC, 'cheatsheet.html'), 'utf8')
