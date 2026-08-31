@@ -16,39 +16,6 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
     ],
   },
   {
-    label: 'Lifecycle',
-    icon: '⏱️',
-    entries: [
-      { term: 'render', desc: 'reconcile', chips: ['синхронно'] },
-      {
-        term: 'useLayoutEffect',
-        desc: 'синхр. <b>до</b> paint, вимір DOM',
-        chips: ['до paint'],
-      },
-      {
-        term: 'useEffect',
-        desc: 'асинхр. <b>після</b> paint; cleanup',
-        chips: ['після paint'],
-      },
-    ],
-  },
-  {
-    label: 'Рендер: 4 стадії',
-    icon: '🔁',
-    entries: [
-      { term: 'Trigger', desc: 'зміна state/props/parent/context' },
-      {
-        term: 'Render',
-        desc: 'React викликає ф-ю компонента, будує новий Fiber tree — чисто, переривне',
-      },
-      { term: 'Reconcile', desc: 'diffing нового Fiber tree зі старим (alternate)' },
-      {
-        term: 'Commit',
-        desc: 'синхронно застосовує зміни в DOM; layout effects → paint → passive effects',
-      },
-    ],
-  },
-  {
     label: 'Virtual DOM & дерева',
     icon: '🌳',
     entries: [
@@ -205,13 +172,35 @@ export const reactQuickRefBlocks: QuickRefBlock[] = [
   {
     label: 'useEffect: масив залежностей',
     icon: '📦',
+    chips: [
+      '<b>нема масиву</b> → після кожного рендеру',
+      '<b>[]</b> → раз на mount',
+      '<b>[dep]</b> → на зміні <code>dep</code>',
+      '<b>return fn</b> → cleanup: перед наступним запуском / unmount',
+    ],
+  },
+  {
+    label: 'Race condition (async у useEffect)',
+    icon: '🏁',
     entries: [
-      { term: '(немає масиву)', desc: 'ефект виконується <b>після кожного</b> рендеру' },
-      { term: '[]', desc: 'лише один раз, при <b>mount</b>' },
-      { term: '[dep]', desc: 'повторно при зміні <code>dep</code>' },
       {
-        term: 'return fn',
-        desc: 'cleanup — перед наступним запуском ефекту або при <b>unmount</b>',
+        term: 'проблема',
+        desc: 'швидка зміна deps → 2+ fetch-и; повільніший (старий) резолвиться <b>останнім</b> → у стані застарілі дані',
+      },
+      {
+        term: 'fix: ignore-флаг',
+        desc: 'у cleanup ставиш <code>ignore = true</code>, після <code>await</code> — <code>if (!ignore) setState(…)</code>',
+        chips: [
+          'useEffect(() =&gt; { let ignore = false; fetchX(id).then(r =&gt; { if (!ignore) setData(r); }); return () =&gt; { ignore = true; }; }, [id]);',
+        ],
+      },
+      {
+        term: 'fix: AbortController',
+        desc: 'реально скасовує запит: <code>fetch(url, { signal })</code>, у cleanup — <code>controller.abort()</code>',
+      },
+      {
+        term: 'бібліотеки',
+        desc: 'TanStack Query / SWR роблять це самі — виграє останній <code>queryKey</code>',
       },
     ],
   },

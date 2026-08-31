@@ -62,7 +62,8 @@
       "Bash(curl -s -o /tmp/run_resp.txt -w \"%{http_code}\\\\n\" -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"var reverseString=function\\(s\\){s.reverse\\(\\)}\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[\\\\\"h\\\\\",\\\\\"e\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"o\\\\\"]]\",\"expected\":\"[\\\\\"o\\\\\",\\\\\"l\\\\\",\\\\\"l\\\\\",\\\\\"e\\\\\",\\\\\"h\\\\\"]\"}]}')",
       "Bash(python3 -c \"import json;d=json.load\\(open\\('src/lib/cheatsheet/contentManifest.generated.json'\\)\\);print\\('valid json,',len\\(d['entries']\\),'entries'\\)\")",
       "Bash(python3 -c ' *)",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('entries:',len\\(d\\)\\); print\\('with hint:',sum\\(1 for v in d.values\\(\\) if v.get\\('hint'\\)\\)\\); print\\('with solution:',sum\\(1 for v in d.values\\(\\) if v.get\\('solution'\\)\\)\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('entries:',len\\(d\\)\\); print\\('with hint:',sum\\(1 for v in d.values\\(\\) if v.get\\('hint'\\)\\)\\); print\\('with solution:',sum\\(1 for v in d.values\\(\\) if v.get\\('solution'\\)\\)\\)\")",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"
