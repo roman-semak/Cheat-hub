@@ -62,6 +62,26 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
         desc:
           'функція «пам\'ятає» лексичне оточення навіть після завершення зовнішньої ф-ї — основа приватних змінних, каррінгу, мемоізації',
       },
+      {
+        term: 'function foo() {}',
+        desc:
+          'Declaration: підіймається цілим тілом (виклик вище — ок); динамічний <code>this</code>; має <code>arguments</code>, <code>prototype</code>; можна <code>new</code>',
+      },
+      {
+        term: 'const foo = function () {}',
+        desc:
+          'Expression: у TDZ до свого рядка (раніше — ReferenceError); далі як declaration. Named FE (<code>= function bar() {}</code>) — рекурсія + читабельні stack-trace',
+      },
+      {
+        term: 'const foo = () => {}',
+        desc:
+          'Arrow: лексичний <code>this</code> (<code>call/apply/bind</code> не діють), немає <code>arguments</code>/<code>new</code>/<code>prototype</code> — для колбеків',
+      },
+      {
+        term: 'counter (closure)',
+        desc: 'кожен виклик фабрики = ізольований приватний стан',
+        chips: ['const makeCounter = () =&gt; { let n = 0; return () =&gt; ++n; };'],
+      },
     ],
   },
   {
@@ -137,13 +157,28 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
     entries: [
       {
         term: 'debounce',
-        desc: 'чекай <b>кінця</b> активності — search input (не запит на кожен символ)',
-        chips: ['clearTimeout + setTimeout(fn, ms)'],
+        desc: 'скидає таймер на кожен виклик → спрацьовує через N мс <b>тиші</b> (search input)',
+        chips: [
+          'const debounce = (fn, ms) =&gt; { let t; return (...a) =&gt; { clearTimeout(t); t = setTimeout(() =&gt; fn(...a), ms); }; };',
+        ],
       },
       {
-        term: 'throttle',
-        desc: 'максимум раз за N мс — scroll/resize listeners',
-        chips: ['прапорець "waiting" + setTimeout(ms)'],
+        term: 'throttle (leading)',
+        desc: 'виконує одразу, далі ігнорує виклики N мс (scroll / resize)',
+        chips: [
+          'const throttle = (fn, ms) =&gt; { let last = 0; return (...a) =&gt; { const now = Date.now(); if (now - last &gt;= ms) { last = now; fn(...a); } }; };',
+        ],
+      },
+      {
+        term: 'throttle (trailing)',
+        desc: 'те саме, але гарантує ще й <b>останній</b> виклик у кінці вікна',
+        chips: [
+          'const throttle = (fn, ms) =&gt; { let t, last = 0; const run = (a) =&gt; { last = Date.now(); fn(...a); }; return (...a) =&gt; { const gap = Date.now() - last; clearTimeout(t); gap &gt;= ms ? run(a) : (t = setTimeout(() =&gt; run(a), ms - gap)); }; };',
+        ],
+      },
+      {
+        term: 'механіка',
+        desc: 'debounce = <b>1 виклик</b> у кінці серії · throttle = рівномірно, <b>максимум раз</b> на N мс',
       },
     ],
   },
