@@ -53,6 +53,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     testCases: "[{\"input\":\"[[\\\"h\\\",\\\"e\\\",\\\"l\\\",\\\"l\\\",\\\"o\\\"]]\",\"expected\":\"[\\\"o\\\",\\\"l\\\",\\\"l\\\",\\\"e\\\",\\\"h\\\"]\"},{\"input\":\"[[\\\"H\\\",\\\"a\\\",\\\"n\\\",\\\"n\\\",\\\"a\\\",\\\"h\\\"]]\",\"expected\":\"[\\\"h\\\",\\\"a\\\",\\\"n\\\",\\\"n\\\",\\\"a\\\",\\\"H\\\"]\"}]",
     solution: "var reverseString = function(s) {\n    let left = 0;\n    let right = s.length - 1;\n\n    while (left < right) {\n        [s[left], s[right]] = [s[right], s[left]];\n        left++;\n        right--;\n    }\n};",
     editorial: "## Approach: Two Pointers\nUse two pointers, one at the start and one at the end of the array. Swap the characters and move the pointers towards each other.\n\n**Time Complexity:** O(n)\n**Space Complexity:** O(1)",
+    approach: "Два вказівники з країв до центру, обмінюй s[l] та s[r], поки l < r. Ін-плейс, без додаткового масиву.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"reverseString\",\"paramTypes\":[\"character[]\"],\"returnType\":\"void\"}",
   },
   {
@@ -93,6 +94,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     testCases: "[{\"input\":\"[[1,2,3,0,0,0],3,[2,5,6],3]\",\"expected\":\"[1,2,2,3,5,6]\"},{\"input\":\"[[1],1,[],0]\",\"expected\":\"[1]\"},{\"input\":\"[[0],0,[1],1]\",\"expected\":\"[1]\"}]",
     solution: "var merge = function(nums1, m, nums2, n) {\n    let p1 = m - 1;\n    let p2 = n - 1;\n    let p = m + n - 1;\n\n    while (p1 >= 0 && p2 >= 0) {\n        if (nums1[p1] > nums2[p2]) {\n            nums1[p] = nums1[p1];\n            p1--;\n        } else {\n            nums1[p] = nums2[p2];\n            p2--;\n        }\n        p--;\n    }\n\n    while (p2 >= 0) {\n        nums1[p] = nums2[p2];\n        p2--;\n        p--;\n    }\n};",
     editorial: "## Approach: Two Pointers\nStart from the end of both arrays and merge backwards. This avoids overwriting elements in nums1.\n\n**Time Complexity:** O(m + n)\n**Space Complexity:** O(1)",
+    approach: "Йди з кінця: три вказівники (i = m-1, j = n-1, k = m+n-1). Клади більший з nums1[i]/nums2[j] у nums1[k]. Запис із хвоста не затирає ще не оброблені елементи.\n\n**Складність:** Time O(m+n), Space O(1)",
     signature: "{\"name\":\"merge\",\"paramTypes\":[\"integer[]\",\"integer\",\"integer[]\",\"integer\"],\"returnType\":\"void\"}",
   },
   {
@@ -106,6 +108,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     testCases: "[{\"input\":\"[\\\"abcabcbb\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"bbbbb\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"pwwkew\\\"]\",\"expected\":\"3\"}]",
     solution: "var lengthOfLongestSubstring = function(s) {\n    const charIndex = {};\n    let maxLen = 0;\n    let start = 0;\n\n    for (let i = 0; i < s.length; i++) {\n        if (charIndex[s[i]] !== undefined && charIndex[s[i]] >= start) {\n            start = charIndex[s[i]] + 1;\n        }\n        charIndex[s[i]] = i;\n        maxLen = Math.max(maxLen, i - start + 1);\n    }\n\n    return maxLen;\n};",
     editorial: "## Approach: Sliding Window\nUse a sliding window with a hash map to track character positions. Expand the window and update the maximum length when a duplicate is found.\n\n**Time Complexity:** O(n)\n**Space Complexity:** O(min(m, n)) where m is charset size",
+    approach: "Розсувне вікно + Set/Map останніх позицій. Рухай right, а при повторі стрибай left за попередню позицію символа. Максимум довжини вікна.\n\n**Складність:** Time O(n), Space O(min(n, алфавіт))",
     signature: "{\"name\":\"lengthOfLongestSubstring\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -133,6 +136,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     starterCode: "/**\n * @param {number[]} height\n * @return {number}\n */\nvar trap = function(height) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,0,2,1,0,1,3,2,1,2,1]]\",\"expected\":\"6\"},{\"input\":\"[[4,2,0,3,2,5]]\",\"expected\":\"9\"}]",
     solution: "var trap = function(height) {\n    if (height.length === 0) return 0;\n\n    let left = 0, right = height.length - 1;\n    let leftMax = 0, rightMax = 0;\n    let water = 0;\n\n    while (left < right) {\n        if (height[left] < height[right]) {\n            if (height[left] >= leftMax) {\n                leftMax = height[left];\n            } else {\n                water += leftMax - height[left];\n            }\n            left++;\n        } else {\n            if (height[right] >= rightMax) {\n                rightMax = height[right];\n            } else {\n                water += rightMax - height[right];\n            }\n            right--;\n        }\n    }\n\n    return water;\n};",
+    approach: "Два вказівники + prefixMax зліва і suffixMax справа. Вода над стовпцем = min(maxL, maxR) - height[i]. Рухай той бік, де межа нижча.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"trap\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -144,6 +148,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar lengthOfLongestSubstring = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abcabcbb\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"bbbbb\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"pwwkew\\\"]\",\"expected\":\"3\"}]",
+    solution: "function lengthOfLongestSubstring(s: string): number {\n    let ans = 0;\n    const cnt = new Map<string, number>();\n    const n = s.length;\n    for (let l = 0, r = 0; r < n; ++r) {\n        cnt.set(s[r], (cnt.get(s[r]) || 0) + 1);\n        while (cnt.get(s[r])! > 1) {\n            cnt.set(s[l], cnt.get(s[l])! - 1);\n            ++l;\n        }\n        ans = Math.max(ans, r - l + 1);\n    }\n    return ans;\n}",
+    approach: "Розсувне вікно + Map символ→індекс. Рухай right; при повторі підтягуй left = max(left, seen[c]+1). Оновлюй максимум right-left+1.\n\n**Складність:** Time O(n), Space O(min(n, алфавіт))",
     signature: "{\"name\":\"lengthOfLongestSubstring\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -155,6 +161,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number}\n */\nvar findMedianSortedArrays = function(nums1, nums2) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3],[2]]\",\"expected\":\"2\"},{\"input\":\"[[1,2],[3,4]]\",\"expected\":\"2.5\"}]",
+    solution: "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n    const m = nums1.length;\n    const n = nums2.length;\n    const f = (i: number, j: number, k: number): number => {\n        if (i >= m) {\n            return nums2[j + k - 1];\n        }\n        if (j >= n) {\n            return nums1[i + k - 1];\n        }\n        if (k == 1) {\n            return Math.min(nums1[i], nums2[j]);\n        }\n        const p = Math.floor(k / 2);\n        const x = i + p - 1 < m ? nums1[i + p - 1] : 1 << 30;\n        const y = j + p - 1 < n ? nums2[j + p - 1] : 1 << 30;\n        return x < y ? f(i + p, j, k - p) : f(i, j + p, k - p);\n    };\n    const a = f(0, 0, Math.floor((m + n + 1) / 2));\n    const b = f(0, 0, Math.floor((m + n + 2) / 2));\n    return (a + b) / 2;\n}",
+    approach: "Бінарний пошук розрізу по коротшому масиву: ділимо обидва так, щоб зліва було рівно половину елементів і maxLeft ≤ minRight. Медіана — з граничних 4 значень.\n\n**Складність:** Time O(log(min(m,n))), Space O(1)",
     signature: "{\"name\":\"findMedianSortedArrays\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"double\"}",
   },
   {
@@ -166,6 +174,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar longestPalindrome = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"babad\\\"]\",\"expected\":\"\\\"aba\\\"\"},{\"input\":\"[\\\"cbbd\\\"]\",\"expected\":\"\\\"bb\\\"\"}]",
+    solution: "function longestPalindrome(s: string): string {\n    const n = s.length;\n    const f: boolean[][] = Array(n)\n        .fill(0)\n        .map(() => Array(n).fill(true));\n    let k = 0;\n    let mx = 1;\n    for (let i = n - 2; i >= 0; --i) {\n        for (let j = i + 1; j < n; ++j) {\n            f[i][j] = false;\n            if (s[i] === s[j]) {\n                f[i][j] = f[i + 1][j - 1];\n                if (f[i][j] && mx < j - i + 1) {\n                    mx = j - i + 1;\n                    k = i;\n                }\n            }\n        }\n    }\n    return s.slice(k, k + mx);\n}",
+    approach: "Розгортання від центру: для кожного з 2n-1 центрів (одинарних і подвійних) розширюй, поки s[l]==s[r]. Тримай найдовший інтервал.\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"longestPalindrome\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -177,6 +187,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} numRows\n * @return {string}\n */\nvar convert = function(s, numRows) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"PAYPALISHIRING\\\",3]\",\"expected\":\"\\\"PAHNAPLSIIGYIR\\\"\"},{\"input\":\"[\\\"PAYPALISHIRING\\\",4]\",\"expected\":\"\\\"PINALSIGYAHRPI\\\"\"},{\"input\":\"[\\\"A\\\",1]\",\"expected\":\"\\\"A\\\"\"}]",
+    solution: "function convert(s: string, numRows: number): string {\n    if (numRows === 1) {\n        return s;\n    }\n    const g: string[][] = new Array(numRows).fill(0).map(() => []);\n    let i = 0;\n    let k = -1;\n    for (const c of s) {\n        g[i].push(c);\n        if (i === numRows - 1 || i === 0) {\n            k = -k;\n        }\n        i += k;\n    }\n    return g.flat().join('');\n}",
+    approach: "Заведи numRows рядків-буферів. Йди по символах, змінюй напрямок (вниз/вгору) на верхньому та нижньому рядку, дописуй символ у поточний рядок. З'єднай рядки.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"convert\",\"paramTypes\":[\"string\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -188,6 +200,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @return {number}\n */\nvar reverse = function(x) {\n    \n};",
     testCases: "[{\"input\":\"[123]\",\"expected\":\"321\"},{\"input\":\"[-123]\",\"expected\":\"-321\"},{\"input\":\"[120]\",\"expected\":\"21\"}]",
+    solution: "/**\n * @param {number} x\n * @return {number}\n */\nvar reverse = function (x) {\n    const mi = -(2 ** 31);\n    const mx = 2 ** 31 - 1;\n    let ans = 0;\n    for (; x != 0; x = ~~(x / 10)) {\n        if (ans < ~~(mi / 10) || ans > ~~(mx / 10)) {\n            return 0;\n        }\n        ans = ans * 10 + (x % 10);\n    }\n    return ans;\n};",
     approach: "% 10 digit extraction. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"reverse\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -200,6 +213,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar myAtoi = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"42\\\"]\",\"expected\":\"42\"},{\"input\":\"[\\\"   -042\\\"]\",\"expected\":\"-42\"},{\"input\":\"[\\\"1337c0d3\\\"]\",\"expected\":\"1337\"},{\"input\":\"[\\\"0-1\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"words and 987\\\"]\",\"expected\":\"0\"}]",
+    solution: "const myAtoi = function (str) {\n    str = str.trim();\n    if (!str) return 0;\n    let isPositive = 1;\n    let i = 0,\n        ans = 0;\n    if (str[i] === '+') {\n        isPositive = 1;\n        i++;\n    } else if (str[i] === '-') {\n        isPositive = 0;\n        i++;\n    }\n    for (; i < str.length; i++) {\n        let t = str.charCodeAt(i) - 48;\n        if (t > 9 || t < 0) break;\n        if (ans > 2147483647 / 10 || ans > (2147483647 - t) / 10) {\n            return isPositive ? 2147483647 : -2147483648;\n        } else {\n            ans = ans * 10 + t;\n        }\n    }\n    return isPositive ? ans : -ans;\n};",
+    approach: "Скінченний автомат: пропусти пробіли → необов'язковий знак → цифри до першого нецифрового. Обрізай за межами int32 (кламп до -2³¹ / 2³¹-1).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"myAtoi\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -212,6 +227,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     starterCode: "/**\n * @param {number} x\n * @return {boolean}\n */\nvar isPalindrome = function(x) {\n    \n};",
     testCases: "[{\"input\":\"[121]\",\"expected\":\"true\"},{\"input\":\"[-121]\",\"expected\":\"false\"},{\"input\":\"[10]\",\"expected\":\"false\"}]",
     solution: "function isPalindrome(x: number): boolean {\n    if (x < 0 || (x > 0 && x % 10 === 0)) {\n        return false;\n    }\n    let y = 0;\n    for (; y < x; x = ~~(x / 10)) {\n        y = y * 10 + (x % 10);\n    }\n    return x === y || x === ~~(y / 10);\n}",
+    approach: "Без переводу в рядок: розгортай другу половину числа (rev = rev*10 + x%10, x /= 10), поки x > rev. Паліндром, якщо x === rev або x === Math.floor(rev/10).\n\n**Складність:** Time O(log₁₀ n), Space O(1)",
     signature: "{\"name\":\"isPalindrome\",\"paramTypes\":[\"integer\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -223,6 +239,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function(s, p) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"aa\\\",\\\"a\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"aa\\\",\\\"a*\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"ab\\\",\\\".*\\\"]\",\"expected\":\"true\"}]",
+    solution: "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function (s, p) {\n    const m = s.length;\n    const n = p.length;\n    const f = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    const dfs = (i, j) => {\n        if (j >= n) {\n            return i === m;\n        }\n        if (f[i][j]) {\n            return f[i][j] === 1;\n        }\n        let res = -1;\n        if (j + 1 < n && p[j + 1] === '*') {\n            if (dfs(i, j + 2) || (i < m && (s[i] === p[j] || p[j] === '.') && dfs(i + 1, j))) {\n                res = 1;\n            }\n        } else if (i < m && (s[i] === p[j] || p[j] === '.') && dfs(i + 1, j + 1)) {\n            res = 1;\n        }\n        f[i][j] = res;\n        return res === 1;\n    };\n    return dfs(0, 0);\n};",
+    approach: "DP[i][j] — чи s[..i] відповідає p[..j]. '*' дає два переходи: нуль повторів (dp[i][j-2]) або ще один символ, якщо p[j-1] матчить s[i-1]. '.' матчить будь-що.\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"isMatch\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -235,6 +253,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     starterCode: "/**\n * @param {number[]} height\n * @return {number}\n */\nvar maxArea = function(height) {\n    \n};",
     testCases: "[{\"input\":\"[[1,8,6,2,5,4,8,3,7]]\",\"expected\":\"49\"},{\"input\":\"[[1,1]]\",\"expected\":\"1\"}]",
     solution: "function maxArea(height: number[]): number {\n    let [l, r] = [0, height.length - 1];\n    let ans = 0;\n    while (l < r) {\n        const t = Math.min(height[l], height[r]) * (r - l);\n        ans = Math.max(ans, t);\n        if (height[l] < height[r]) {\n            ++l;\n        } else {\n            --r;\n        }\n    }\n    return ans;\n}",
+    approach: "Два вказівники з країв. Площа = min(h[l], h[r])·(r-l). Рухай всередину той бік, де стовп нижчий — тільки так є шанс збільшити мінімум.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maxArea\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -246,6 +265,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {string}\n */\nvar intToRoman = function(num) {\n    \n};",
     testCases: "[{\"input\":\"[3749]\",\"expected\":\"\\\"MMMDCCXLIX\\\"\"},{\"input\":\"[58]\",\"expected\":\"\\\"LVIII\\\"\"},{\"input\":\"[1994]\",\"expected\":\"\\\"MCMXCIV\\\"\"}]",
+    solution: "function intToRoman(num: number): string {\n    const cs: string[] = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];\n    const vs: number[] = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];\n    const ans: string[] = [];\n    for (let i = 0; i < vs.length; ++i) {\n        while (num >= vs[i]) {\n            num -= vs[i];\n            ans.push(cs[i]);\n        }\n    }\n    return ans.join('');\n}",
+    approach: "Жадібно: масив пар (значення, символ) від 1000 до 1, включно з 900/400/90/40/9/4. Поки num ≥ value — дописуй символ і віднімай.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"intToRoman\",\"paramTypes\":[\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -258,6 +279,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar romanToInt = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"III\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"LVIII\\\"]\",\"expected\":\"58\"},{\"input\":\"[\\\"MCMXCIV\\\"]\",\"expected\":\"1994\"}]",
     solution: "function romanToInt(s: string): number {\n    const d: Map<string, number> = new Map([\n        ['I', 1],\n        ['V', 5],\n        ['X', 10],\n        ['L', 50],\n        ['C', 100],\n        ['D', 500],\n        ['M', 1000],\n    ]);\n    let ans: number = d.get(s[s.length - 1])!;\n    for (let i = 0; i < s.length - 1; ++i) {\n        const sign = d.get(s[i])! < d.get(s[i + 1])! ? -1 : 1;\n        ans += sign * d.get(s[i])!;\n    }\n    return ans;\n}",
+    approach: "Йди зліва направо; якщо поточний символ менший за наступний — віднімай його, інакше додавай (IV = 5-1, VI = 5+1).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"romanToInt\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -269,6 +291,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} strs\n * @return {string}\n */\nvar longestCommonPrefix = function(strs) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"flower\\\",\\\"flow\\\",\\\"flight\\\"]]\",\"expected\":\"\\\"fl\\\"\"},{\"input\":\"[[\\\"dog\\\",\\\"racecar\\\",\\\"car\\\"]]\",\"expected\":\"\\\"\\\"\"}]",
+    solution: "function longestCommonPrefix(strs: string[]): string {\n    const len = strs.reduce((r, s) => Math.min(r, s.length), Infinity);\n    for (let i = len; i > 0; i--) {\n        const target = strs[0].slice(0, i);\n        if (strs.every(s => s.slice(0, i) === target)) {\n            return target;\n        }\n    }\n    return '';\n}",
     approach: "Vertical scan. O(n·m)\n\n**Складність:** Time O(n·m), Space O(1)",
     signature: "{\"name\":\"longestCommonPrefix\",\"paramTypes\":[\"string[]\"],\"returnType\":\"string\"}",
   },
@@ -294,6 +317,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar threeSumClosest = function(nums, target) {\n    \n};",
     testCases: "[{\"input\":\"[[-1,2,1,-4],1]\",\"expected\":\"2\"},{\"input\":\"[[0,0,0],1]\",\"expected\":\"0\"}]",
+    solution: "function threeSumClosest(nums: number[], target: number): number {\n    nums.sort((a, b) => a - b);\n    let ans: number = Infinity;\n    const n = nums.length;\n    for (let i = 0; i < n; ++i) {\n        let j = i + 1;\n        let k = n - 1;\n        while (j < k) {\n            const t: number = nums[i] + nums[j] + nums[k];\n            if (t === target) {\n                return t;\n            }\n            if (Math.abs(t - target) < Math.abs(ans - target)) {\n                ans = t;\n            }\n            if (t > target) {\n                --k;\n            } else {\n                ++j;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Сортуй; фіксуй i, а решту звужуй двома вказівниками. Оновлюй найкращу суму за модулем різниці з target; рухай вказівник залежно від знаку (sum-target).\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"threeSumClosest\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -305,6 +330,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} digits\n * @return {string[]}\n */\nvar letterCombinations = function(digits) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"23\\\"]\",\"expected\":\"[\\\"ad\\\",\\\"ae\\\",\\\"af\\\",\\\"bd\\\",\\\"be\\\",\\\"bf\\\",\\\"cd\\\",\\\"ce\\\",\\\"cf\\\"]\"},{\"input\":\"[\\\"2\\\"]\",\"expected\":\"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\"}]",
+    solution: "function letterCombinations(digits: string): string[] {\n    if (digits.length === 0) {\n        return [];\n    }\n    const ans: string[] = [''];\n    const d = ['abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];\n    for (const i of digits) {\n        const s = d[+i - 2];\n        const t: string[] = [];\n        for (const a of ans) {\n            for (const b of s) {\n                t.push(a + b);\n            }\n        }\n        ans.splice(0, ans.length, ...t);\n    }\n    return ans;\n}",
+    approach: "Бектрекінг по цифрах: для кожної цифри перебирай її літери, додавай до префікса, рекурсія на наступну цифру. На повній довжині — записуй.\n\n**Складність:** Time O(4ⁿ·n), Space O(n)",
     signature: "{\"name\":\"letterCombinations\",\"paramTypes\":[\"string\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -316,6 +343,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[][]}\n */\nvar fourSum = function(nums, target) {\n    \n};",
     testCases: "[{\"input\":\"[[1,0,-1,0,-2,2],0]\",\"expected\":\"[[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]\"},{\"input\":\"[[2,2,2,2,2],8]\",\"expected\":\"[[2,2,2,2]]\"}]",
+    solution: "function fourSum(nums: number[], target: number): number[][] {\n    const n = nums.length;\n    const ans: number[][] = [];\n    if (n < 4) {\n        return ans;\n    }\n    nums.sort((a, b) => a - b);\n    for (let i = 0; i < n - 3; ++i) {\n        if (i > 0 && nums[i] === nums[i - 1]) {\n            continue;\n        }\n        for (let j = i + 1; j < n - 2; ++j) {\n            if (j > i + 1 && nums[j] === nums[j - 1]) {\n                continue;\n            }\n            let [k, l] = [j + 1, n - 1];\n            while (k < l) {\n                const x = nums[i] + nums[j] + nums[k] + nums[l];\n                if (x < target) {\n                    ++k;\n                } else if (x > target) {\n                    --l;\n                } else {\n                    ans.push([nums[i], nums[j], nums[k++], nums[l--]]);\n                    while (k < l && nums[k] === nums[k - 1]) {\n                        ++k;\n                    }\n                    while (k < l && nums[l] === nums[l + 1]) {\n                        --l;\n                    }\n                }\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Сортуй; два вкладені цикли фіксують i,j, далі два вказівники по хвосту. Пропускай дублікати на кожному рівні. Обережно з переповненням суми.\n\n**Складність:** Time O(n³), Space O(1)",
     signature: "{\"name\":\"fourSum\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"list<list<integer>>\"}",
   },
   {
@@ -327,6 +356,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @param {number} n\n * @return {ListNode}\n */\nvar removeNthFromEnd = function(head, n) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4,5],2]\",\"expected\":\"[1,2,3,5]\"},{\"input\":\"[[1],1]\",\"expected\":\"[]\"},{\"input\":\"[[1,2],1]\",\"expected\":\"[1]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {\n    const dummy = new ListNode(0, head);\n    let fast = dummy;\n    let slow = dummy;\n    while (n--) {\n        fast = fast.next;\n    }\n    while (fast.next) {\n        slow = slow.next;\n        fast = fast.next;\n    }\n    slow.next = slow.next.next;\n    return dummy.next;\n}",
+    approach: "Два вказівники з відступом n між ними (через dummy). Коли передній дійде кінця — задній стоїть перед потрібним; переприв'яжи next.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"removeNthFromEnd\",\"paramTypes\":[\"ListNode\",\"integer\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -338,6 +369,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} list1\n * @param {ListNode} list2\n * @return {ListNode}\n */\nvar mergeTwoLists = function(list1, list2) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,4],[1,3,4]]\",\"expected\":\"[1,1,2,3,4,4]\"},{\"input\":\"[[],[]]\",\"expected\":\"[]\"},{\"input\":\"[[],[0]]\",\"expected\":\"[0]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {\n    if (list1 == null || list2 == null) {\n        return list1 || list2;\n    }\n    if (list1.val < list2.val) {\n        list1.next = mergeTwoLists(list1.next, list2);\n        return list1;\n    } else {\n        list2.next = mergeTwoLists(list1, list2.next);\n        return list2;\n    }\n}",
+    approach: "Dummy-голова + вказівник tail. Порівнюй голови двох списків, чіпляй меншу, зсувай. Хвіст — залишок непорожнього списку.\n\n**Складність:** Time O(m+n), Space O(1)",
     signature: "{\"name\":\"mergeTwoLists\",\"paramTypes\":[\"ListNode\",\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -351,6 +384,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string[]}\n */\nvar generateParenthesis = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[3]\",\"expected\":\"[\\\"((()))\\\",\\\"(()())\\\",\\\"(())()\\\",\\\"()(())\\\",\\\"()()()\\\"]\"},{\"input\":\"[1]\",\"expected\":\"[\\\"()\\\"]\"}]",
+    solution: "function generateParenthesis(n: number): string[] {\n    const dfs = (l: number, r: number, t: string) => {\n        if (l > n || r > n || l < r) {\n            return;\n        }\n        if (l == n && r == n) {\n            ans.push(t);\n            return;\n        }\n        dfs(l + 1, r, t + '(');\n        dfs(l, r + 1, t + ')');\n    };\n    const ans: string[] = [];\n    dfs(0, 0, '');\n    return ans;\n}",
     approach: "Backtrack, open≤n, close≤open. O(4^n/√n)\n\n**Складність:** Time O(4^n / √n), Space O(n)",
     signature: "{\"name\":\"generateParenthesis\",\"paramTypes\":[\"integer\"],\"returnType\":\"list<string>\"}",
   },
@@ -363,6 +397,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode[]} lists\n * @return {ListNode}\n */\nvar mergeKLists = function(lists) {\n    \n};",
     testCases: "[]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction mergeKLists(lists: Array<ListNode | null>): ListNode | null {\n    const pq = new PriorityQueue<ListNode>((a, b) => a.val - b.val);\n    lists.filter(head => head).forEach(head => pq.enqueue(head));\n    const dummy: ListNode = new ListNode();\n    let cur: ListNode = dummy;\n    while (!pq.isEmpty()) {\n        const node = pq.dequeue();\n        cur.next = node;\n        cur = cur.next;\n        if (node.next) {\n            pq.enqueue(node.next);\n        }\n    }\n    return dummy.next;\n}",
     approach: "Min-heap or divide&conquer. O(n log k)\n\n**Складність:** Time O(n log k), Space O(k)",
   },
   {
@@ -374,6 +409,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar swapPairs = function(head) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[2,1,4,3]\"},{\"input\":\"[[]]\",\"expected\":\"[]\"},{\"input\":\"[[1]]\",\"expected\":\"[1]\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"[2,1,3]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction swapPairs(head: ListNode | null): ListNode | null {\n    if (!head || !head.next) {\n        return head;\n    }\n    const t = swapPairs(head.next.next);\n    const p = head.next;\n    p.next = head;\n    head.next = t;\n    return p;\n}",
+    approach: "Dummy + пройди парами: prev→a→b→... переприв'яжи prev.next=b, a.next=b.next, b.next=a, prev=a. Або рекурсія на пари.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"swapPairs\",\"paramTypes\":[\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -387,6 +424,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @param {number} k\n * @return {ListNode}\n */\nvar reverseKGroup = function(head, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4,5],2]\",\"expected\":\"[2,1,4,3,5]\"},{\"input\":\"[[1,2,3,4,5],3]\",\"expected\":\"[3,2,1,4,5]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction reverseKGroup(head: ListNode | null, k: number): ListNode | null {\n    const dummy = new ListNode(0, head);\n    let pre = dummy;\n    while (pre !== null) {\n        let cur: ListNode | null = pre;\n        for (let i = 0; i < k; i++) {\n            cur = cur?.next || null;\n            if (cur === null) {\n                return dummy.next;\n            }\n        }\n\n        const node = pre.next;\n        const nxt = cur?.next || null;\n        cur!.next = null;\n        pre.next = reverse(node);\n        node!.next = nxt;\n        pre = node!;\n    }\n\n    return dummy.next;\n}\n\nfunction reverse(head: ListNode | null): ListNode | null {\n    let dummy: ListNode | null = null;\n    let cur = head;\n\n    while (cur !== null) {\n        const nxt = cur.next;\n        cur.next = dummy;\n        dummy = cur;\n        cur = nxt;\n    }\n\n    return dummy;\n}",
+    approach: "Перевір, чи є ще k вузлів; якщо так — розверни рівно k (класичний in-place reverse) і рекурсивно/ітеративно приєднай хвіст. Неповний останній блок лишається як є.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"reverseKGroup\",\"paramTypes\":[\"ListNode\",\"integer\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -398,6 +437,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar removeDuplicates = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,1,2]]\",\"expected\":\"2\"},{\"input\":\"[[0,0,1,1,1,2,2,3,3,4]]\",\"expected\":\"5\"}]",
+    solution: "function removeDuplicates(nums: number[]): number {\n    let k: number = 0;\n    for (const x of nums) {\n        if (k === 0 || x !== nums[k - 1]) {\n            nums[k++] = x;\n        }\n    }\n    return k;\n}",
+    approach: "Вказівник запису k: йди j по масиву, коли nums[j] != nums[k-1] — пиши nums[k++] = nums[j]. Повертай k.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"removeDuplicates\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -409,6 +450,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} val\n * @return {number}\n */\nvar removeElement = function(nums, val) {\n    \n};",
     testCases: "[{\"input\":\"[[3,2,2,3],3]\",\"expected\":\"2\"},{\"input\":\"[[0,1,2,2,3,0,4,2],2]\",\"expected\":\"5\"}]",
+    solution: "function removeElement(nums: number[], val: number): number {\n    let k: number = 0;\n    for (const x of nums) {\n        if (x !== val) {\n            nums[k++] = x;\n        }\n    }\n    return k;\n}",
+    approach: "Вказівник запису k: для кожного nums[j] != val пиши nums[k++] = nums[j]. Порядок решти не важливий — можна також свопати з кінця.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"removeElement\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -420,6 +463,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} haystack\n * @param {string} needle\n * @return {number}\n */\nvar strStr = function(haystack, needle) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"sadbutsad\\\",\\\"sad\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"leetcode\\\",\\\"leeto\\\"]\",\"expected\":\"-1\"}]",
+    solution: "function strStr(haystack: string, needle: string): number {\n    const m = haystack.length;\n    const n = needle.length;\n    for (let i = 0; i <= m - n; i++) {\n        let isEqual = true;\n        for (let j = 0; j < n; j++) {\n            if (haystack[i + j] !== needle[j]) {\n                isEqual = false;\n                break;\n            }\n        }\n        if (isEqual) {\n            return i;\n        }\n    }\n    return -1;\n}",
+    approach: "Наївно O(n·m) вистачає для меж; для лінійного часу — KMP з масивом префікс-функції needle.\n\n**Складність:** Time O(n+m) (KMP), Space O(m)",
     signature: "{\"name\":\"strStr\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -431,6 +476,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} dividend\n * @param {number} divisor\n * @return {number}\n */\nvar divide = function(dividend, divisor) {\n    \n};",
     testCases: "[{\"input\":\"[10,3]\",\"expected\":\"3\"},{\"input\":\"[7,-3]\",\"expected\":\"-2\"}]",
+    solution: "function divide(a: number, b: number): number {\n    if (b === 1) {\n        return a;\n    }\n    if (a === -(2 ** 31) && b === -1) {\n        return 2 ** 31 - 1;\n    }\n\n    const sign: boolean = (a > 0 && b > 0) || (a < 0 && b < 0);\n    a = a > 0 ? -a : a;\n    b = b > 0 ? -b : b;\n    let ans: number = 0;\n\n    while (a <= b) {\n        let x: number = b;\n        let cnt: number = 1;\n\n        while (x >= -(2 ** 30) && a <= x << 1) {\n            x <<= 1;\n            cnt <<= 1;\n        }\n\n        ans += cnt;\n        a -= x;\n    }\n\n    return sign ? ans : -ans;\n}",
+    approach: "Без множення/ділення: віднімай подвоєний дільник (dividend -= divisor<<k), додаючи 1<<k до частки. Працюй з BigInt/від'ємними, клампуй у int32.\n\n**Складність:** Time O(log²n), Space O(1)",
     signature: "{\"name\":\"divide\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -442,6 +489,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string[]} words\n * @return {number[]}\n */\nvar findSubstring = function(s, words) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"barfoothefoobarman\\\",[\\\"foo\\\",\\\"bar\\\"]]\",\"expected\":\"[0,9]\"},{\"input\":\"[\\\"wordgoodgoodgoodbestword\\\",[\\\"word\\\",\\\"good\\\",\\\"best\\\",\\\"word\\\"]]\",\"expected\":\"[]\"},{\"input\":\"[\\\"barfoofoobarthefoobarman\\\",[\\\"bar\\\",\\\"foo\\\",\\\"the\\\"]]\",\"expected\":\"[6,9,12]\"}]",
+    solution: "function findSubstring(s: string, words: string[]): number[] {\n    const cnt: Map<string, number> = new Map();\n    for (const w of words) {\n        cnt.set(w, (cnt.get(w) || 0) + 1);\n    }\n    const ans: number[] = [];\n    const [m, n, k] = [s.length, words.length, words[0].length];\n    for (let i = 0; i < k; i++) {\n        let [l, r] = [i, i];\n        const cnt1: Map<string, number> = new Map();\n        while (r + k <= m) {\n            const t = s.substring(r, r + k);\n            r += k;\n            if (!cnt.has(t)) {\n                cnt1.clear();\n                l = r;\n                continue;\n            }\n            cnt1.set(t, (cnt1.get(t) || 0) + 1);\n            while (cnt1.get(t)! > cnt.get(t)!) {\n                const w = s.substring(l, l + k);\n                cnt1.set(w, cnt1.get(w)! - 1);\n                if (cnt1.get(w) === 0) {\n                    cnt1.delete(w);\n                }\n                l += k;\n            }\n            if (r - l === n * k) {\n                ans.push(l);\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Усі слова однакової довжини L. Для кожного зсуву 0..L-1 — розсувне вікно по словах з Map лічильників потрібних слів; при надлишку рухай ліву межу.\n\n**Складність:** Time O(n·L), Space O(k·L)",
     signature: "{\"name\":\"findSubstring\",\"paramTypes\":[\"string\",\"string[]\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -453,6 +502,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {void} Do not return anything, modify nums in-place instead.\n */\nvar nextPermutation = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[1,3,2]\"},{\"input\":\"[[3,2,1]]\",\"expected\":\"[1,2,3]\"},{\"input\":\"[[1,1,5]]\",\"expected\":\"[1,5,1]\"}]",
+    solution: "function nextPermutation(nums: number[]): void {\n    const n = nums.length;\n    let i = n - 2;\n    while (i >= 0 && nums[i] >= nums[i + 1]) {\n        --i;\n    }\n    if (i >= 0) {\n        for (let j = n - 1; j > i; --j) {\n            if (nums[j] > nums[i]) {\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n                break;\n            }\n        }\n    }\n    for (let j = n - 1; j > i; --j, ++i) {\n        [nums[i + 1], nums[j]] = [nums[j], nums[i + 1]];\n    }\n}",
+    approach: "Знайди справа перший i з nums[i] < nums[i+1]. Свопни nums[i] з найменшим більшим за нього праворуч, тоді розверни хвіст після i. Немає i — розверни весь масив.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"nextPermutation\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"void\"}",
   },
   {
@@ -464,6 +515,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar longestValidParentheses = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"(()\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\")()())\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"\\\"]\",\"expected\":\"0\"}]",
+    solution: "function longestValidParentheses(s: string): number {\n    const n = s.length;\n    const f: number[] = new Array(n + 1).fill(0);\n    for (let i = 2; i <= n; ++i) {\n        if (s[i - 1] === ')') {\n            if (s[i - 2] === '(') {\n                f[i] = f[i - 2] + 2;\n            } else {\n                const j = i - f[i - 1] - 1;\n                if (j && s[j - 1] === '(') {\n                    f[i] = f[i - 1] + 2 + f[j - 1];\n                }\n            }\n        }\n    }\n    return Math.max(...f);\n}",
+    approach: "Стек індексів з базою -1: на '(' — push i, на ')' — pop; якщо стек спорожнів, push i як нову базу, інакше оновлюй відповідь i - stack.top.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"longestValidParentheses\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -475,6 +528,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar search = function(nums, target) {\n    \n};",
     testCases: "[{\"input\":\"[[4,5,6,7,0,1,2],0]\",\"expected\":\"4\"},{\"input\":\"[[4,5,6,7,0,1,2],3]\",\"expected\":\"-1\"},{\"input\":\"[[1],0]\",\"expected\":\"-1\"}]",
+    solution: "function search(nums: number[], target: number): number {\n    const n = nums.length;\n    let left = 0,\n        right = n - 1;\n    while (left < right) {\n        const mid = (left + right) >> 1;\n        if (nums[0] <= nums[mid]) {\n            if (nums[0] <= target && target <= nums[mid]) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        } else {\n            if (nums[mid] < target && target <= nums[n - 1]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n    }\n    return nums[left] == target ? left : -1;\n}",
+    approach: "Бінарний пошук: одна з половин [l..mid] чи [mid..r] завжди відсортована. Перевір, чи target у ній, і звужуй відповідно.\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"search\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -486,6 +541,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nvar searchRange = function(nums, target) {\n    \n};",
     testCases: "[{\"input\":\"[[5,7,7,8,8,10],8]\",\"expected\":\"[3,4]\"},{\"input\":\"[[5,7,7,8,8,10],6]\",\"expected\":\"[-1,-1]\"},{\"input\":\"[[],0]\",\"expected\":\"[-1,-1]\"}]",
+    solution: "function searchRange(nums: number[], target: number): number[] {\n    const search = (x: number): number => {\n        let [left, right] = [0, nums.length];\n        while (left < right) {\n            const mid = (left + right) >> 1;\n            if (nums[mid] >= x) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        }\n        return left;\n    };\n    const l = search(target);\n    const r = search(target + 1);\n    return l === r ? [-1, -1] : [l, r - 1];\n}",
+    approach: "Два бінарні пошуки: lower_bound (перше ≥ target) і upper_bound (перше > target). Відповідь [lo, hi-1] або [-1,-1].\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"searchRange\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -497,6 +554,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar searchInsert = function(nums, target) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,5,6],5]\",\"expected\":\"2\"},{\"input\":\"[[1,3,5,6],2]\",\"expected\":\"1\"},{\"input\":\"[[1,3,5,6],7]\",\"expected\":\"4\"}]",
+    solution: "function searchInsert(nums: number[], target: number): number {\n    let [l, r] = [0, nums.length];\n    while (l < r) {\n        const mid = (l + r) >> 1;\n        if (nums[mid] >= target) {\n            r = mid;\n        } else {\n            l = mid + 1;\n        }\n    }\n    return l;\n}",
     approach: "Return lo. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"searchInsert\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -509,6 +567,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} board\n * @return {boolean}\n */\nvar isValidSudoku = function(board) {\n    \n};",
     testCases: "[{\"input\":\"[[[\\\"5\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\"6\\\",\\\".\\\",\\\".\\\",\\\"1\\\",\\\"9\\\",\\\"5\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\".\\\",\\\"9\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\"],[\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"3\\\"],[\\\"4\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"1\\\"],[\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\"],[\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\"8\\\",\\\".\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"4\\\",\\\"1\\\",\\\"9\\\",\\\".\\\",\\\".\\\",\\\"5\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\"9\\\"]]]\",\"expected\":\"true\"},{\"input\":\"[[[\\\"8\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\"6\\\",\\\".\\\",\\\".\\\",\\\"1\\\",\\\"9\\\",\\\"5\\\",\\\".\\\",\\\".\\\",\\\".\\\"],[\\\".\\\",\\\"9\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\"],[\\\"8\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"3\\\"],[\\\"4\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\"3\\\",\\\".\\\",\\\".\\\",\\\"1\\\"],[\\\"7\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"6\\\"],[\\\".\\\",\\\"6\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"2\\\",\\\"8\\\",\\\".\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"4\\\",\\\"1\\\",\\\"9\\\",\\\".\\\",\\\".\\\",\\\"5\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\".\\\",\\\"8\\\",\\\".\\\",\\\".\\\",\\\"7\\\",\\\"9\\\"]]]\",\"expected\":\"false\"}]",
+    solution: "function isValidSudoku(board: string[][]): boolean {\n    const row: boolean[][] = Array.from({ length: 9 }, () =>\n        Array.from({ length: 9 }, () => false),\n    );\n    const col: boolean[][] = Array.from({ length: 9 }, () =>\n        Array.from({ length: 9 }, () => false),\n    );\n    const sub: boolean[][] = Array.from({ length: 9 }, () =>\n        Array.from({ length: 9 }, () => false),\n    );\n    for (let i = 0; i < 9; ++i) {\n        for (let j = 0; j < 9; ++j) {\n            const num = board[i][j].charCodeAt(0) - '1'.charCodeAt(0);\n            if (num < 0 || num > 8) {\n                continue;\n            }\n            const k = Math.floor(i / 3) * 3 + Math.floor(j / 3);\n            if (row[i][num] || col[j][num] || sub[k][num]) {\n                return false;\n            }\n            row[i][num] = true;\n            col[j][num] = true;\n            sub[k][num] = true;\n        }\n    }\n    return true;\n}",
     approach: "HashSet per row/col/box. O(1)\n\n**Складність:** Time O(1) (фіксовані 81 клітинка), Space O(1)",
     signature: "{\"name\":\"isValidSudoku\",\"paramTypes\":[\"character[][]\"],\"returnType\":\"boolean\"}",
   },
@@ -523,6 +582,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} board\n * @return {void} Do not return anything, modify board in-place instead.\n */\nvar solveSudoku = function(board) {\n    \n};",
     testCases: "[]",
+    solution: "function solveSudoku(board: string[][]): void {\n  const rows = Array.from({ length: 9 }, () => new Set<string>());\n  const cols = Array.from({ length: 9 }, () => new Set<string>());\n  const boxes = Array.from({ length: 9 }, () => new Set<string>());\n  const empties: [number, number][] = [];\n  for (let r = 0; r < 9; r++)\n    for (let c = 0; c < 9; c++) {\n      const v = board[r][c];\n      if (v === '.') { empties.push([r, c]); continue; }\n      rows[r].add(v); cols[c].add(v); boxes[((r / 3) | 0) * 3 + ((c / 3) | 0)].add(v);\n    }\n  const dfs = (k: number): boolean => {\n    if (k === empties.length) return true;\n    const [r, c] = empties[k];\n    const b = ((r / 3) | 0) * 3 + ((c / 3) | 0);\n    for (let d = 1; d <= 9; d++) {\n      const v = String(d);\n      if (rows[r].has(v) || cols[c].has(v) || boxes[b].has(v)) continue;\n      board[r][c] = v; rows[r].add(v); cols[c].add(v); boxes[b].add(v);\n      if (dfs(k + 1)) return true;\n      board[r][c] = '.'; rows[r].delete(v); cols[c].delete(v); boxes[b].delete(v);\n    }\n    return false;\n  };\n  dfs(0);\n}",
+    approach: "Бектрекінг: знайди порожню клітинку, спробуй 1..9, що не конфліктують по рядку/стовпцю/боксу 3×3 (тримай 27 Set/бітмасок), рекурсія, відкат.\n\n**Складність:** Time O(9^(порожні)), Space O(1)",
   },
   {
     slug: "count-and-say",
@@ -533,6 +594,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string}\n */\nvar countAndSay = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[1]\",\"expected\":\"\\\"1\\\"\"},{\"input\":\"[4]\",\"expected\":\"\\\"1211\\\"\"}]",
+    solution: "function countAndSay(n: number): string {\n    let s = '1';\n    for (let i = 1; i < n; i++) {\n        let t = '';\n        let cur = s[0];\n        let count = 1;\n        for (let j = 1; j < s.length; j++) {\n            if (s[j] !== cur) {\n                t += `${count}${cur}`;\n                cur = s[j];\n                count = 0;\n            }\n            count++;\n        }\n        t += `${count}${cur}`;\n        s = t;\n    }\n    return s;\n}",
+    approach: "Ітеративно будуй наступний рядок від «1»: групуй однакові підряд цифри, дописуй «кількість + цифра».\n\n**Складність:** Time O(n·довжина), Space O(довжина)",
     signature: "{\"name\":\"countAndSay\",\"paramTypes\":[\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -546,6 +609,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candidates\n * @param {number} target\n * @return {number[][]}\n */\nvar combinationSum = function(candidates, target) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,6,7],7]\",\"expected\":\"[[2,2,3],[7]]\"},{\"input\":\"[[2,3,5],8]\",\"expected\":\"[[2,2,2,2],[2,3,3],[3,5]]\"},{\"input\":\"[[2],1]\",\"expected\":\"[]\"}]",
+    solution: "function combinationSum(candidates: number[], target: number): number[][] {\n    candidates.sort((a, b) => a - b);\n    const ans: number[][] = [];\n    const t: number[] = [];\n    const dfs = (i: number, s: number) => {\n        if (s === 0) {\n            ans.push(t.slice());\n            return;\n        }\n        if (s < candidates[i]) {\n            return;\n        }\n        for (let j = i; j < candidates.length; ++j) {\n            t.push(candidates[j]);\n            dfs(j, s - candidates[j]);\n            t.pop();\n        }\n    };\n    dfs(0, target);\n    return ans;\n}",
     approach: "Backtrack, repeat allowed. O(2^t)\n\n**Складність:** Time O(2^t), Space O(t)",
     signature: "{\"name\":\"combinationSum\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"list<list<integer>>\"}",
   },
@@ -558,6 +622,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candidates\n * @param {number} target\n * @return {number[][]}\n */\nvar combinationSum2 = function(candidates, target) {\n    \n};",
     testCases: "[{\"input\":\"[[10,1,2,7,6,1,5],8]\",\"expected\":\"[[1,1,6],[1,2,5],[1,7],[2,6]]\"},{\"input\":\"[[2,5,2,1,2],5]\",\"expected\":\"[[1,2,2],[5]]\"}]",
+    solution: "function combinationSum2(candidates: number[], target: number): number[][] {\n    candidates.sort((a, b) => a - b);\n    const ans: number[][] = [];\n    const t: number[] = [];\n    const dfs = (i: number, s: number) => {\n        if (s === 0) {\n            ans.push(t.slice());\n            return;\n        }\n        if (i >= candidates.length || s < candidates[i]) {\n            return;\n        }\n        for (let j = i; j < candidates.length; j++) {\n            if (j > i && candidates[j] === candidates[j - 1]) {\n                continue;\n            }\n            t.push(candidates[j]);\n            dfs(j + 1, s - candidates[j]);\n            t.pop();\n        }\n    };\n    dfs(0, target);\n    return ans;\n}",
     approach: "Sort + skip same level. O(2^n)\n\n**Складність:** Time O(2^n), Space O(n)",
     signature: "{\"name\":\"combinationSum2\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"list<list<integer>>\"}",
   },
@@ -570,6 +635,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar firstMissingPositive = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,0]]\",\"expected\":\"3\"},{\"input\":\"[[3,4,-1,1]]\",\"expected\":\"2\"},{\"input\":\"[[7,8,9,11,12]]\",\"expected\":\"1\"}]",
+    solution: "function firstMissingPositive(nums: number[]): number {\n    const n = nums.length;\n    for (let i = 0; i < n; i++) {\n        while (nums[i] >= 1 && nums[i] <= n && nums[i] !== nums[nums[i] - 1]) {\n            const j = nums[i] - 1;\n            [nums[i], nums[j]] = [nums[j], nums[i]];\n        }\n    }\n    for (let i = 0; i < n; i++) {\n        if (nums[i] !== i + 1) {\n            return i + 1;\n        }\n    }\n    return n + 1;\n}",
+    approach: "Циклічні свопи: постав кожне число k у 1..n на позицію k-1 (nums[k-1] = k). Потім перший індекс i, де nums[i] != i+1 → відповідь i+1.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"firstMissingPositive\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -581,6 +648,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} num1\n * @param {string} num2\n * @return {string}\n */\nvar multiply = function(num1, num2) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"2\\\",\\\"3\\\"]\",\"expected\":\"\\\"6\\\"\"},{\"input\":\"[\\\"123\\\",\\\"456\\\"]\",\"expected\":\"\\\"56088\\\"\"}]",
+    solution: "function multiply(num1: string, num2: string): string {\n    if (num1 === '0' || num2 === '0') {\n        return '0';\n    }\n    const m: number = num1.length;\n    const n: number = num2.length;\n    const arr: number[] = Array(m + n).fill(0);\n    for (let i: number = m - 1; i >= 0; i--) {\n        const a: number = +num1[i];\n        for (let j: number = n - 1; j >= 0; j--) {\n            const b: number = +num2[j];\n            arr[i + j + 1] += a * b;\n        }\n    }\n    for (let i: number = arr.length - 1; i > 0; i--) {\n        arr[i - 1] += Math.floor(arr[i] / 10);\n        arr[i] %= 10;\n    }\n    let i: number = 0;\n    while (i < arr.length && arr[i] === 0) {\n        i++;\n    }\n    return arr.slice(i).join('');\n}",
     approach: "Simulate digit mult. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m+n)",
     signature: "{\"name\":\"multiply\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"string\"}",
   },
@@ -593,6 +661,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function(s, p) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"aa\\\",\\\"a\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"aa\\\",\\\"*\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"cb\\\",\\\"?a\\\"]\",\"expected\":\"false\"}]",
+    solution: "function isMatch(s: string, p: string): boolean {\n    const m = s.length;\n    const n = p.length;\n    const f: number[][] = Array.from({ length: m + 1 }, () =>\n        Array.from({ length: n + 1 }, () => -1),\n    );\n    const dfs = (i: number, j: number): boolean => {\n        if (i >= m) {\n            return j >= n || (p[j] === '*' && dfs(i, j + 1));\n        }\n        if (j >= n) {\n            return false;\n        }\n        if (f[i][j] !== -1) {\n            return f[i][j] === 1;\n        }\n        if (p[j] === '*') {\n            f[i][j] = dfs(i + 1, j) || dfs(i, j + 1) ? 1 : 0;\n        } else {\n            f[i][j] = (p[j] === '?' || s[i] === p[j]) && dfs(i + 1, j + 1) ? 1 : 0;\n        }\n        return f[i][j] === 1;\n    };\n    return dfs(0, 0);\n}",
+    approach: "DP або два вказівники з бектрекінгом на '*': запам'ятовуй позицію останньої '*' та стартовий s-індекс; при неспівпадінні відкочуйся й з'їдай ще один символ зіркою.\n\n**Складність:** Time O(m·n), Space O(1) (двовказівниковий)",
     signature: "{\"name\":\"isMatch\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -604,6 +674,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar jump = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,1,1,4]]\",\"expected\":\"2\"},{\"input\":\"[[2,3,0,1,4]]\",\"expected\":\"2\"}]",
+    solution: "function jump(nums: number[]): number {\n    let [ans, mx, last] = [0, 0, 0];\n    for (let i = 0; i < nums.length - 1; ++i) {\n        mx = Math.max(mx, i + nums[i]);\n        if (last === i) {\n            ++ans;\n            last = mx;\n        }\n    }\n    return ans;\n}",
     approach: "Greedy farthest reach. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"jump\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -618,6 +689,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar permute = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\"},{\"input\":\"[[0,1]]\",\"expected\":\"[[0,1],[1,0]]\"},{\"input\":\"[[1]]\",\"expected\":\"[[1]]\"}]",
+    solution: "function permute(nums: number[]): number[][] {\n    const n = nums.length;\n    const ans: number[][] = [];\n    const vis: boolean[] = Array(n).fill(false);\n    const t: number[] = Array(n).fill(0);\n    const dfs = (i: number) => {\n        if (i >= n) {\n            ans.push(t.slice());\n            return;\n        }\n        for (let j = 0; j < n; ++j) {\n            if (!vis[j]) {\n                vis[j] = true;\n                t[i] = nums[j];\n                dfs(i + 1);\n                vis[j] = false;\n            }\n        }\n    };\n    dfs(0);\n    return ans;\n}",
     approach: "Backtrack used[]. O(n!)\n\n**Складність:** Time O(n·n!), Space O(n)",
     signature: "{\"name\":\"permute\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<list<integer>>\"}",
   },
@@ -630,6 +702,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar permuteUnique = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,1,2]]\",\"expected\":\"[[1,1,2],[1,2,1],[2,1,1]]\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\"}]",
+    solution: "function permuteUnique(nums: number[]): number[][] {\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    const ans: number[][] = [];\n    const t: number[] = Array(n);\n    const vis: boolean[] = Array(n).fill(false);\n    const dfs = (i: number) => {\n        if (i === n) {\n            ans.push(t.slice());\n            return;\n        }\n        for (let j = 0; j < n; ++j) {\n            if (vis[j] || (j > 0 && nums[j] === nums[j - 1] && !vis[j - 1])) {\n                continue;\n            }\n            t[i] = nums[j];\n            vis[j] = true;\n            dfs(i + 1);\n            vis[j] = false;\n        }\n    };\n    dfs(0);\n    return ans;\n}",
+    approach: "Сортуй; бектрекінг з масивом used. Пропускай дубль: якщо nums[i]==nums[i-1] і !used[i-1] — гілку не беремо.\n\n**Складність:** Time O(n·n!), Space O(n)",
     signature: "{\"name\":\"permuteUnique\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<list<integer>>\"}",
   },
   {
@@ -643,6 +717,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {void} Do not return anything, modify matrix in-place instead.\n */\nvar rotate = function(matrix) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"[[7,4,1],[8,5,2],[9,6,3]]\"},{\"input\":\"[[[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]]\",\"expected\":\"[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]\"}]",
+    solution: "/**\n Do not return anything, modify matrix in-place instead.\n */\nfunction rotate(matrix: number[][]): void {\n    matrix.reverse();\n    for (let i = 0; i < matrix.length; ++i) {\n        for (let j = 0; j < i; ++j) {\n            const t = matrix[i][j];\n            matrix[i][j] = matrix[j][i];\n            matrix[j][i] = t;\n        }\n    }\n}",
     approach: "Transpose + reverse rows. O(n²)\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"rotate\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"void\"}",
   },
@@ -668,6 +743,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @param {number} n\n * @return {number}\n */\nvar myPow = function(x, n) {\n    \n};",
     testCases: "[{\"input\":\"[2,10]\",\"expected\":\"1024\"},{\"input\":\"[2.1,3]\",\"expected\":\"9.261000000000001\"},{\"input\":\"[2,-2]\",\"expected\":\"0.25\"}]",
+    solution: "function myPow(x: number, n: number): number {\n    const qpow = (a: number, n: number): number => {\n        let ans = 1;\n        for (; n; n >>>= 1) {\n            if (n & 1) {\n                ans *= a;\n            }\n            a *= a;\n        }\n        return ans;\n    };\n    return n >= 0 ? qpow(x, n) : 1 / qpow(x, -n);\n}",
     approach: "Fast power (divide by 2). O(log n)\n\n**Складність:** Time O(log n), Space O(log n)",
     signature: "{\"name\":\"myPow\",\"paramTypes\":[\"double\",\"integer\"],\"returnType\":\"double\"}",
   },
@@ -682,6 +758,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {...(null|boolean|number|string|Array|Object)} args\n * @return {number}\n */\nvar argumentsLength = function(...args) {\n    \n};\n\n/**\n * argumentsLength(1, 2, 3); // 3\n */",
     testCases: "[{\"input\":\"[[5]]\",\"expected\":\"1\"},{\"input\":\"[[{},null,\\\"3\\\"]]\",\"expected\":\"1\"}]",
+    solution: "function argumentsLength(...args: any[]): number {\n    return args.length;\n}\n\n/**\n * argumentsLength(1, 2, 3); // 3\n */",
+    approach: "Функція, що повертає arguments.length (або args.length у rest-параметрі).\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"argumentsLength\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -695,6 +773,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number[]}\n */\nvar findDegrees = function(matrix) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1,1],[1,0,1],[1,1,0]]]\",\"expected\":\"[2,2,2]\"},{\"input\":\"[[[0,1,0],[1,0,0],[0,0,0]]]\",\"expected\":\"[1,1,0]\"},{\"input\":\"[[[0]]]\",\"expected\":\"[0]\"}]",
+    solution: "function findDegrees(matrix: number[][]): number[] {\n    const n = matrix.length;\n    const ans: number[] = Array(n).fill(0);\n    for (let i = 0; i < n; ++i) {\n        for (const x of matrix[i]) {\n            ans[i] += x;\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожного ребра [u,v] інкрементуй deg[u] і deg[v]. Матриця суміжності — сумуй рядок.\n\n**Складність:** Time O(V²) або O(E), Space O(V)",
     signature: "{\"name\":\"findDegrees\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -708,6 +788,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minOperations = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[3,9,7],5]\",\"expected\":\"4\"},{\"input\":\"[[4,1,3],4]\",\"expected\":\"0\"},{\"input\":\"[[3,2],6]\",\"expected\":\"5\"}]",
+    solution: "function minOperations(nums: number[], k: number): number {\n    return nums.reduce((acc, x) => acc + x, 0) % k;\n}",
+    approach: "Відповідь = sum(nums) % k (кожна операція -1 зменшує суму на 1).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minOperations\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -721,6 +803,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar concatWithReverse = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[1,2,3,3,2,1]\"},{\"input\":\"[[1]]\",\"expected\":\"[1,1]\"}]",
+    solution: "function concatWithReverse(nums: number[]): number[] {\n    const n = nums.length;\n    const ans: number[] = new Array(2 * n);\n    for (let i = 0; i < n; ++i) {\n        ans[i] = nums[i];\n        ans[i + n] = nums[n - i - 1];\n    }\n    return ans;\n}",
+    approach: "Поверни [...nums, ...nums.slice().reverse()].\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"concatWithReverse\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -734,6 +818,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Promise} promise1\n * @param {Promise} promise2\n * @return {Promise}\n */\nvar addTwoPromises = async function(promise1, promise2) {\n    \n};\n\n/**\n * addTwoPromises(Promise.resolve(2), Promise.resolve(2))\n *   .then(console.log); // 4\n */",
     testCases: "[]",
+    solution: "async function addTwoPromises(\n    promise1: Promise<number>,\n    promise2: Promise<number>,\n): Promise<number> {\n    return (await promise1) + (await promise2);\n}\n\n/**\n * addTwoPromises(Promise.resolve(2), Promise.resolve(2))\n *   .then(console.log); // 4\n */",
+    approach: "async: await обидва промиси паралельно (Promise.all) і поверни суму.\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "mirror-distance-of-an-integer",
@@ -746,6 +832,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar mirrorDistance = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[25]\",\"expected\":\"27\"},{\"input\":\"[10]\",\"expected\":\"9\"},{\"input\":\"[7]\",\"expected\":\"0\"}]",
+    solution: "function mirrorDistance(n: number): number {\n    const reverse = (x: number): number => {\n        let y = 0;\n        for (; x > 0; x = Math.floor(x / 10)) {\n            y = y * 10 + (x % 10);\n        }\n        return y;\n    };\n    return Math.abs(n - reverse(n));\n}",
+    approach: "Побудуй «дзеркало»: для кожної цифри d → (9-d) для не-провідних, обережно з нулями/діапазоном. Відповідь — abs(n - mirror).\n\n**Складність:** Time O(цифри), Space O(цифри)",
     signature: "{\"name\":\"mirrorDistance\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -759,6 +847,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar scoreOfString = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"hello\\\"]\",\"expected\":\"13\"},{\"input\":\"[\\\"zaz\\\"]\",\"expected\":\"50\"}]",
+    solution: "function scoreOfString(s: string): number {\n    let ans = 0;\n    for (let i = 1; i < s.length; ++i) {\n        ans += Math.abs(s.charCodeAt(i) - s.charCodeAt(i - 1));\n    }\n    return ans;\n}",
+    approach: "Сума abs(s[i] - s[i+1]) по кодах сусідніх символів.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"scoreOfString\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -772,6 +862,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @param {number} t\n * @return {number}\n */\nvar theMaximumAchievableX = function(num, t) {\n    \n};",
     testCases: "[{\"input\":\"[4,1]\",\"expected\":\"6\"},{\"input\":\"[3,2]\",\"expected\":\"7\"}]",
+    solution: "function theMaximumAchievableX(num: number, t: number): number {\n    return num + t * 2;\n}",
+    approach: "Математика: за t кроків максимум розходження 2t, тож відповідь num + 2·t.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"theMaximumAchievableX\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -785,6 +877,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} order\n * @param {number[]} friends\n * @return {number[]}\n */\nvar recoverOrder = function(order, friends) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1,2,5,4],[1,3,4]]\",\"expected\":\"[3,1,4]\"},{\"input\":\"[[1,4,5,3,2],[2,5]]\",\"expected\":\"[5,2]\"}]",
+    solution: "function recoverOrder(order: number[], friends: number[]): number[] {\n    const n = order.length;\n    const d: number[] = Array(n + 1).fill(0);\n    for (let i = 0; i < n; ++i) {\n        d[order[i]] = i;\n    }\n    return friends.sort((a, b) => d[a] - d[b]);\n}",
+    approach: "Map номер→значення з другого масиву; пройди перший масив за порядком фінішу і підстав значення.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"recoverOrder\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -798,6 +892,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar buildArray = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[0,2,1,5,3,4]]\",\"expected\":\"[0,1,2,4,5,3]\"},{\"input\":\"[[5,0,1,2,3,4]]\",\"expected\":\"[4,5,0,1,2,3]\"}]",
+    solution: "function buildArray(nums: number[]): number[] {\n    return nums.map(x => nums[x]);\n}",
+    approach: "ans[i] = nums[nums[i]]. Для O(1) пам'яті — кодуй два значення в одному через nums[i] += n*(nums[nums[i]]%n), потім поділи.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"buildArray\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -811,6 +907,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} m\n * @return {number}\n */\nvar differenceOfSums = function(n, m) {\n    \n};",
     testCases: "[{\"input\":\"[10,3]\",\"expected\":\"19\"},{\"input\":\"[5,6]\",\"expected\":\"15\"},{\"input\":\"[5,1]\",\"expected\":\"-15\"}]",
+    solution: "function differenceOfSums(n: number, m: number): number {\n    let ans = 0;\n    for (let i = 1; i <= n; ++i) {\n        ans += i % m ? i : -i;\n    }\n    return ans;\n}",
+    approach: "Формула арифметичної прогресії: сума всіх 1..n мінус подвоєна сума кратних m.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"differenceOfSums\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -824,6 +922,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumOperations = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"3\"},{\"input\":\"[[3,6,9]]\",\"expected\":\"0\"}]",
+    solution: "function minimumOperations(nums: number[]): number {\n    return nums.reduce((acc, x) => acc + (x % 3 !== 0 ? 1 : 0), 0);\n}",
+    approach: "Кожне число з залишком 1 або 2 потребує рівно 1 операції; рахуй такі.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minimumOperations\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -837,6 +937,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} operations\n * @return {number}\n */\nvar finalValueAfterOperations = function(operations) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"--X\\\",\\\"X++\\\",\\\"X++\\\"]]\",\"expected\":\"1\"},{\"input\":\"[[\\\"++X\\\",\\\"++X\\\",\\\"X++\\\"]]\",\"expected\":\"3\"},{\"input\":\"[[\\\"X++\\\",\\\"++X\\\",\\\"--X\\\",\\\"X--\\\"]]\",\"expected\":\"0\"}]",
+    solution: "function finalValueAfterOperations(operations: string[]): number {\n    return operations.reduce((acc, op) => acc + (op[1] === '+' ? 1 : -1), 0);\n}",
+    approach: "Для кожної операції: якщо містить '++' → +1, інакше -1. Підсумуй.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"finalValueAfterOperations\",\"paramTypes\":[\"string[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -850,6 +952,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {character} x\n * @return {number[]}\n */\nvar findWordsContaining = function(words, x) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"leet\\\",\\\"code\\\"],\\\"e\\\"]\",\"expected\":\"[0,1]\"},{\"input\":\"[[\\\"abc\\\",\\\"bcd\\\",\\\"aaaa\\\",\\\"cbc\\\"],\\\"a\\\"]\",\"expected\":\"[0,2]\"},{\"input\":\"[[\\\"abc\\\",\\\"bcd\\\",\\\"aaaa\\\",\\\"cbc\\\"],\\\"z\\\"]\",\"expected\":\"[]\"}]",
+    solution: "function findWordsContaining(words: string[], x: string): number[] {\n    return words.flatMap((w, i) => (w.includes(x) ? [i] : []));\n}",
+    approach: "Для кожного слова перевір includes(x); збирай індекси.\n\n**Складність:** Time O(сумарна довжина), Space O(1)",
     signature: "{\"name\":\"findWordsContaining\",\"paramTypes\":[\"string[]\",\"character\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -863,6 +967,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar getConcatenation = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,1]]\",\"expected\":\"[1,2,1,1,2,1]\"},{\"input\":\"[[1,3,2,1]]\",\"expected\":\"[1,3,2,1,1,3,2,1]\"}]",
+    solution: "function getConcatenation(nums: number[]): number[] {\n    return [...nums, ...nums];\n}",
     approach: "[...arr, ...arr]. O(n)\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"getConcatenation\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
@@ -877,6 +982,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} celsius\n * @return {number[]}\n */\nvar convertTemperature = function(celsius) {\n    \n};",
     testCases: "[{\"input\":\"[36.5]\",\"expected\":\"[309.65,97.7]\"},{\"input\":\"[122.11]\",\"expected\":\"[395.26,251.798]\"}]",
+    solution: "function convertTemperature(celsius: number): number[] {\n    return [celsius + 273.15, celsius * 1.8 + 32];\n}",
+    approach: "Поверни [c + 273.15, c*1.8 + 32].\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"convertTemperature\",\"paramTypes\":[\"double\"],\"returnType\":\"double[]\"}",
   },
   {
@@ -890,6 +997,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar subsetXORSum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3]]\",\"expected\":\"6\"},{\"input\":\"[[5,1,6]]\",\"expected\":\"28\"},{\"input\":\"[[3,4,5,6,7,8]]\",\"expected\":\"480\"}]",
+    solution: "function subsetXORSum(nums: number[]): number {\n    let ans = 0;\n    const n = nums.length;\n    for (let i = 0; i < 1 << n; ++i) {\n        let s = 0;\n        for (let j = 0; j < n; ++j) {\n            if ((i >> j) & 1) {\n                s ^= nums[j];\n            }\n        }\n        ans += s;\n    }\n    return ans;\n}",
+    approach: "Кожен біт, що зустрічається хоч раз, присутній рівно в половині підмножин → відповідь = OR(усіх) << (n-1).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"subsetXORSum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -903,6 +1012,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar alternatingSum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,5,7]]\",\"expected\":\"-4\"},{\"input\":\"[[100]]\",\"expected\":\"100\"}]",
+    solution: "function alternatingSum(nums: number[]): number {\n    let ans: number = 0;\n    for (let i = 0; i < nums.length; ++i) {\n        ans += i % 2 === 0 ? nums[i] : -nums[i];\n    }\n    return ans;\n}",
+    approach: "Знакозмінна сума: +nums[0]-nums[1]+nums[2]-...\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"alternatingSum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -916,6 +1027,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} address\n * @return {string}\n */\nvar defangIPaddr = function(address) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"1.1.1.1\\\"]\",\"expected\":\"\\\"1[.]1[.]1[.]1\\\"\"},{\"input\":\"[\\\"255.100.50.0\\\"]\",\"expected\":\"\\\"255[.]100[.]50[.]0\\\"\"}]",
+    solution: "function defangIPaddr(address: string): string {\n    return address.split('.').join('[.]');\n}",
+    approach: "Заміни кожну '.' на '[.]' (split('.').join('[.]')).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"defangIPaddr\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -929,6 +1042,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar numIdenticalPairs = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,1,1,3]]\",\"expected\":\"4\"},{\"input\":\"[[1,1,1,1]]\",\"expected\":\"6\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"0\"}]",
+    solution: "function numIdenticalPairs(nums: number[]): number {\n    const cnt: number[] = Array(101).fill(0);\n    let ans = 0;\n    for (const x of nums) {\n        ans += cnt[x]++;\n    }\n    return ans;\n}",
+    approach: "Map значення→скільки бачив. Для кожного x додай до відповіді count[x], потім count[x]++.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"numIdenticalPairs\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -942,6 +1057,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar transformArray = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[4,3,2,1]]\",\"expected\":\"[0,0,1,1]\"},{\"input\":\"[[1,5,1,4,2]]\",\"expected\":\"[0,0,1,1,1]\"}]",
+    solution: "function transformArray(nums: number[]): number[] {\n    const even = nums.filter(x => x % 2 === 0).length;\n    for (let i = 0; i < even; ++i) {\n        nums[i] = 0;\n    }\n    for (let i = even; i < nums.length; ++i) {\n        nums[i] = 1;\n    }\n    return nums;\n}",
+    approach: "Порахуй парні; поверни масив з count нулів, далі одиниці.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"transformArray\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -955,6 +1072,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar getSneakyNumbers = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,1,0]]\",\"expected\":\"[1,0]\"},{\"input\":\"[[0,3,2,1,3,2]]\",\"expected\":\"[3,2]\"},{\"input\":\"[[7,1,5,4,3,4,6,0,9,5,8,2]]\",\"expected\":\"[4,5]\"}]",
+    solution: "function getSneakyNumbers(nums: number[]): number[] {\n    const ans: number[] = [];\n    const cnt: number[] = Array(100).fill(0);\n    for (const x of nums) {\n        if (++cnt[x] > 1) {\n            ans.push(x);\n        }\n    }\n    return ans;\n}",
+    approach: "Лічильник частот; двічі зустрілися — у відповідь. Або сума фактична мінус очікувана.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"getSneakyNumbers\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -968,6 +1087,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {Array} args\n * @param {number} t\n * @return {Function}\n */\nvar cancellable = function(fn, args, t) {\n    \n};\n\n/**\n *  const result = [];\n *\n *  const fn = (x) => x * 5;\n *  const args = [2], t = 20, cancelTimeMs = 50;\n *\n *  const start = performance.now();\n *\n *  const log = (...argsArr) => {\n *      const diff = Math.floor(performance.now() - start);\n *      result.push({\"time\": diff, \"returned\": fn(...argsArr)});\n *  }\n *       \n *  const cancel = cancellable(log, args, t);\n *\n *  const maxT = Math.max(t, cancelTimeMs);\n *           \n *  setTimeout(cancel, cancelTimeMs);\n *\n *  setTimeout(() => {\n *      console.log(result); // [{\"time\":20,\"returned\":10}]\n *  }, maxT + 15)\n */",
     testCases: "[]",
+    solution: "function cancellable(fn: Function, args: any[], t: number): Function {\n    const timer = setTimeout(() => fn(...args), t);\n    return () => {\n        clearTimeout(timer);\n    };\n}\n\n/**\n *  const result = []\n *\n *  const fn = (x) => x * 5\n *  const args = [2], t = 20, cancelT = 50\n *\n *  const start = performance.now()\n *\n *  const log = (...argsArr) => {\n *      const diff = Math.floor(performance.now() - start);\n *      result.push({\"time\": diff, \"returned\": fn(...argsArr))\n *  }\n *\n *  const cancel = cancellable(log, args, t);\n *\n *  const maxT = Math.max(t, cancelT)\n *\n *  setTimeout(() => {\n *     cancel()\n *  }, cancelT)\n *\n *  setTimeout(() => {\n *     console.log(result) // [{\"time\":20,\"returned\":10}]\n *  }, maxT + 15)\n */",
+    approach: "setTimeout запускає fn(...args); повертай функцію, що робить clearTimeout.\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "jewels-and-stones",
@@ -980,6 +1101,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} jewels\n * @param {string} stones\n * @return {number}\n */\nvar numJewelsInStones = function(jewels, stones) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"aA\\\",\\\"aAAbbbb\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"z\\\",\\\"ZZ\\\"]\",\"expected\":\"0\"}]",
+    solution: "function numJewelsInStones(jewels: string, stones: string): number {\n    const s = new Set([...jewels]);\n    let ans = 0;\n    for (const c of stones) {\n        s.has(c) && ans++;\n    }\n    return ans;\n}",
+    approach: "Set із символів jewels; пройди stones, рахуй входження в Set.\n\n**Складність:** Time O(n+m), Space O(n)",
     signature: "{\"name\":\"numJewelsInStones\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -993,6 +1116,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar reversePrefix = function(s, k) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abcd\\\",2]\",\"expected\":\"\\\"bacd\\\"\"},{\"input\":\"[\\\"xyz\\\",3]\",\"expected\":\"\\\"zyx\\\"\"},{\"input\":\"[\\\"hey\\\",1]\",\"expected\":\"\\\"hey\\\"\"}]",
+    solution: "function reversePrefix(s: string, k: number): string {\n    return s.slice(0, k).split('').reverse().join('') + s.slice(k);\n}",
+    approach: "Розверни s[0..k] (або до першого входження символа) і склей із рештою.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"reversePrefix\",\"paramTypes\":[\"string\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -1006,6 +1131,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar maxFreqSum = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"successes\\\"]\",\"expected\":\"6\"},{\"input\":\"[\\\"aeiaeia\\\"]\",\"expected\":\"3\"}]",
+    solution: "function maxFreqSum(s: string): number {\n    const cnt: number[] = Array(26).fill(0);\n    for (const c of s) {\n        ++cnt[c.charCodeAt(0) - 97];\n    }\n    let [a, b] = [0, 0];\n    for (let i = 0; i < 26; ++i) {\n        const c = String.fromCharCode(i + 97);\n        if ('aeiou'.includes(c)) {\n            a = Math.max(a, cnt[i]);\n        } else {\n            b = Math.max(b, cnt[i]);\n        }\n    }\n    return a + b;\n}",
+    approach: "Порахуй частоти літер; сума максимальної частоти голосної та максимальної частоти приголосної.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maxFreqSum\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1019,6 +1146,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {void}\n */\nvar ArrayWrapper = function(nums) {\n    \n};\n\n/**\n * @return {number}\n */\nArrayWrapper.prototype.valueOf = function() {\n    \n}\n\n/**\n * @return {string}\n */\nArrayWrapper.prototype.toString = function() {\n    \n}\n\n/**\n * const obj1 = new ArrayWrapper([1,2]);\n * const obj2 = new ArrayWrapper([3,4]);\n * obj1 + obj2; // 10\n * String(obj1); // \"[1,2]\"\n * String(obj2); // \"[3,4]\"\n */",
     testCases: "[]",
+    solution: "class ArrayWrapper {\n    private nums: number[];\n    private s: number;\n\n    constructor(nums: number[]) {\n        this.nums = nums;\n        this.s = nums.reduce((a, b) => a + b, 0);\n    }\n\n    valueOf() {\n        return this.s;\n    }\n\n    toString() {\n        return `[${this.nums}]`;\n    }\n}\n\n/**\n * const obj1 = new ArrayWrapper([1,2]);\n * const obj2 = new ArrayWrapper([3,4]);\n * obj1 + obj2; // 10\n * String(obj1); // \"[1,2]\"\n * String(obj2); // \"[3,4]\"\n */",
+    approach: "Клас із полем nums; valueOf повертає суму, toString — JSON рядок.\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
     slug: "find-closest-person",
@@ -1031,6 +1160,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @param {number} y\n * @param {number} z\n * @return {number}\n */\nvar findClosest = function(x, y, z) {\n    \n};",
     testCases: "[{\"input\":\"[2,7,4]\",\"expected\":\"1\"},{\"input\":\"[2,5,6]\",\"expected\":\"2\"},{\"input\":\"[1,5,3]\",\"expected\":\"0\"}]",
+    solution: "function findClosest(x: number, y: number, z: number): number {\n    const a = Math.abs(x - z);\n    const b = Math.abs(y - z);\n    return a === b ? 0 : a < b ? 1 : 2;\n}",
+    approach: "Порівняй abs(x-z) та abs(y-z); поверни 1, 2 або 0 при рівності.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"findClosest\",\"paramTypes\":[\"integer\",\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1044,6 +1175,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} date\n * @return {string}\n */\nvar convertDateToBinary = function(date) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"2080-02-29\\\"]\",\"expected\":\"\\\"100000100000-10-11101\\\"\"},{\"input\":\"[\\\"1900-01-01\\\"]\",\"expected\":\"\\\"11101101100-1-1\\\"\"}]",
+    solution: "function convertDateToBinary(date: string): string {\n    return date\n        .split('-')\n        .map(s => (+s).toString(2))\n        .join('-');\n}",
+    approach: "Розбий 'yyyy-mm-dd', кожну частину переведи в двійкове (toString(2)), склей через '-'.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"convertDateToBinary\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -1057,6 +1190,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} n\n * @return {number[]}\n */\nvar shuffle = function(nums, n) {\n    \n};",
     testCases: "[{\"input\":\"[[2,5,1,3,4,7],3]\",\"expected\":\"[2,3,5,4,1,7]\"},{\"input\":\"[[1,2,3,4,4,3,2,1],4]\",\"expected\":\"[1,4,2,3,3,2,4,1]\"},{\"input\":\"[[1,1,2,2],2]\",\"expected\":\"[1,2,1,2]\"}]",
+    solution: "function shuffle(nums: number[], n: number): number[] {\n    const ans: number[] = [];\n    for (let i = 0; i < n; ++i) {\n        ans.push(nums[i], nums[i + n]);\n    }\n    return ans;\n}",
+    approach: "Результат чергує nums[i] та nums[i+n] для i в 0..n-1.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"shuffle\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1070,6 +1205,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar reverseDegree = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"148\"},{\"input\":\"[\\\"zaza\\\"]\",\"expected\":\"160\"}]",
+    solution: "function reverseDegree(s: string): number {\n    let ans = 0;\n    for (let i = 1; i <= s.length; ++i) {\n        const x = 26 - (s.charCodeAt(i - 1) - 'a'.charCodeAt(0));\n        ans += i * x;\n    }\n    return ans;\n}",
+    approach: "Сума (26 - (s[i]-'a')) · (i+1) по всіх позиціях.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"reverseDegree\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1083,6 +1220,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} accounts\n * @return {number}\n */\nvar maximumWealth = function(accounts) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,3],[3,2,1]]]\",\"expected\":\"6\"},{\"input\":\"[[[1,5],[7,3],[3,5]]]\",\"expected\":\"10\"},{\"input\":\"[[[2,8,7],[7,1,3],[1,9,5]]]\",\"expected\":\"17\"}]",
+    solution: "function maximumWealth(accounts: number[][]): number {\n    return accounts.reduce(\n        (r, v) =>\n            Math.max(\n                r,\n                v.reduce((r, v) => r + v),\n            ),\n        0,\n    );\n}",
+    approach: "Максимум суми кожного рядка матриці.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"maximumWealth\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1096,6 +1235,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} allowed\n * @param {string[]} words\n * @return {number}\n */\nvar countConsistentStrings = function(allowed, words) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"ab\\\",[\\\"ad\\\",\\\"bd\\\",\\\"aaab\\\",\\\"baa\\\",\\\"badab\\\"]]\",\"expected\":\"2\"},{\"input\":\"[\\\"abc\\\",[\\\"a\\\",\\\"b\\\",\\\"c\\\",\\\"ab\\\",\\\"ac\\\",\\\"bc\\\",\\\"abc\\\"]]\",\"expected\":\"7\"},{\"input\":\"[\\\"cad\\\",[\\\"cc\\\",\\\"acd\\\",\\\"b\\\",\\\"ba\\\",\\\"bac\\\",\\\"bad\\\",\\\"ac\\\",\\\"d\\\"]]\",\"expected\":\"4\"}]",
+    solution: "function countConsistentStrings(allowed: string, words: string[]): number {\n    const set = new Set([...allowed]);\n    const n = words.length;\n    let ans = n;\n    for (const word of words) {\n        for (const c of word) {\n            if (!set.has(c)) {\n                ans--;\n                break;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Бітмаска дозволених літер; слово consistent, якщо всі його біти в масці.\n\n**Складність:** Time O(сумарна довжина), Space O(1)",
     signature: "{\"name\":\"countConsistentStrings\",\"paramTypes\":[\"string\",\"string[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1109,6 +1250,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar smallestEvenMultiple = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[5]\",\"expected\":\"10\"},{\"input\":\"[6]\",\"expected\":\"6\"}]",
+    solution: "function smallestEvenMultiple(n: number): number {\n    return n % 2 === 0 ? n : n * 2;\n}",
+    approach: "Непарне n → 2n, парне → n. Або lcm(n,2).\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"smallestEvenMultiple\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1122,6 +1265,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} command\n * @return {string}\n */\nvar interpret = function(command) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"G()(al)\\\"]\",\"expected\":\"\\\"Goal\\\"\"},{\"input\":\"[\\\"G()()()()(al)\\\"]\",\"expected\":\"\\\"Gooooal\\\"\"},{\"input\":\"[\\\"(al)G(al)()()G\\\"]\",\"expected\":\"\\\"alGalooG\\\"\"}]",
+    solution: "function interpret(command: string): string {\n    return command.replace(/\\(\\)/g, 'o').replace(/\\(al\\)/g, 'al');\n}",
+    approach: "Заміни 'G'→'G', '()'→'o', '(al)'→'al'. Просто replace-all по порядку.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"interpret\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -1135,6 +1280,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar leftRightDifference = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[10,4,8,3]]\",\"expected\":\"[15,1,11,22]\"},{\"input\":\"[[1]]\",\"expected\":\"[0]\"}]",
+    solution: "function leftRightDifference(nums: number[]): number[] {\n    let [l, r] = [0, nums.reduce((a, b) => a + b, 0)];\n    const ans: number[] = [];\n    for (const x of nums) {\n        r -= x;\n        ans.push(Math.abs(l - r));\n        l += x;\n    }\n    return ans;\n}",
+    approach: "Один прохід префіксних сум зліва + суфіксних справа; answer[i] = abs(left - right).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"leftRightDifference\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1148,6 +1295,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candies\n * @param {number} extraCandies\n * @return {boolean[]}\n */\nvar kidsWithCandies = function(candies, extraCandies) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,5,1,3],3]\",\"expected\":\"[true,true,true,false,true]\"},{\"input\":\"[[4,2,1,1,2],1]\",\"expected\":\"[true,false,false,false,false]\"},{\"input\":\"[[12,1,12],10]\",\"expected\":\"[true,false,true]\"}]",
+    solution: "function kidsWithCandies(candies: number[], extraCandies: number): boolean[] {\n    const max = candies.reduce((r, v) => Math.max(r, v));\n    return candies.map(v => v + extraCandies >= max);\n}",
+    approach: "Знайди max; для кожного kid — (candies[i] + extra) >= max.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"kidsWithCandies\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"list<boolean>\"}",
   },
   {
@@ -1161,6 +1310,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num1\n * @param {number} num2\n * @return {number}\n */\nvar sum = function(num1, num2) {\n    \n};",
     testCases: "[{\"input\":\"[12,5]\",\"expected\":\"17\"},{\"input\":\"[-10,4]\",\"expected\":\"-6\"}]",
+    solution: "function sum(num1: number, num2: number): number {\n    return num1 + num2;\n}",
+    approach: "Поверни num1 + num2.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"sum\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1174,6 +1325,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} start\n * @param {number} goal\n * @return {number}\n */\nvar minBitFlips = function(start, goal) {\n    \n};",
     testCases: "[{\"input\":\"[10,7]\",\"expected\":\"3\"},{\"input\":\"[3,4]\",\"expected\":\"3\"}]",
+    solution: "function minBitFlips(start: number, goal: number): number {\n    return bitCount(start ^ goal);\n}\n\nfunction bitCount(i: number): number {\n    i = i - ((i >>> 1) & 0x55555555);\n    i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);\n    i = (i + (i >>> 4)) & 0x0f0f0f0f;\n    i = i + (i >>> 8);\n    i = i + (i >>> 16);\n    return i & 0x3f;\n}",
+    approach: "popcount(start XOR goal) — кількість різних бітів.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"minBitFlips\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1187,6 +1340,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} hours\n * @param {number} target\n * @return {number}\n */\nvar numberOfEmployeesWhoMetTarget = function(hours, target) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,2,3,4],2]\",\"expected\":\"3\"},{\"input\":\"[[5,1,4,2,2],6]\",\"expected\":\"0\"}]",
+    solution: "function numberOfEmployeesWhoMetTarget(hours: number[], target: number): number {\n    return hours.filter(x => x >= target).length;\n}",
+    approach: "Рахуй hours[i] >= target.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"numberOfEmployeesWhoMetTarget\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1200,6 +1355,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} t\n * @return {number}\n */\nvar findPermutationDifference = function(s, t) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abc\\\",\\\"bac\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"abcde\\\",\\\"edbac\\\"]\",\"expected\":\"12\"}]",
+    solution: "function findPermutationDifference(s: string, t: string): number {\n    const d: number[] = Array(26).fill(0);\n    const n = s.length;\n    for (let i = 0; i < n; ++i) {\n        d[s.charCodeAt(i) - 97] = i;\n    }\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        ans += Math.abs(d[t.charCodeAt(i) - 97] - i);\n    }\n    return ans;\n}",
+    approach: "Map символ→індекс у s; сума abs(idxS[c] - idxT[c]) по позиціях t.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"findPermutationDifference\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1213,6 +1370,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nvar countPairs = function(nums, target) {\n    \n};",
     testCases: "[{\"input\":\"[[-1,1,2,3,1],2]\",\"expected\":\"3\"},{\"input\":\"[[-6,2,5,-2,-7,-1,3],-2]\",\"expected\":\"10\"}]",
+    solution: "function countPairs(nums: number[], target: number): number {\n    nums.sort((a, b) => a - b);\n    let ans = 0;\n    const search = (x: number, r: number): number => {\n        let l = 0;\n        while (l < r) {\n            const mid = (l + r) >> 1;\n            if (nums[mid] >= x) {\n                r = mid;\n            } else {\n                l = mid + 1;\n            }\n        }\n        return l;\n    };\n    for (let j = 0; j < nums.length; ++j) {\n        const i = search(target - nums[j], j);\n        ans += i;\n    }\n    return ans;\n}",
+    approach: "Сортуй; два вказівники: якщо nums[l]+nums[r] < target — додай (r-l) і l++, інакше r--.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"countPairs\",\"paramTypes\":[\"list<integer>\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1226,6 +1385,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[][]}\n */\nvar largestLocal = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[9,9,8,1],[5,6,2,6],[8,2,6,4],[6,2,2,2]]]\",\"expected\":\"[[9,9],[8,6]]\"},{\"input\":\"[[[1,1,1,1,1],[1,1,1,1,1],[1,1,2,1,1],[1,1,1,1,1],[1,1,1,1,1]]]\",\"expected\":\"[[2,2,2],[2,2,2],[2,2,2]]\"}]",
+    solution: "function largestLocal(grid: number[][]): number[][] {\n    const n = grid.length;\n    const res = Array.from({ length: n - 2 }, () => new Array(n - 2).fill(0));\n    for (let i = 0; i < n - 2; i++) {\n        for (let j = 0; j < n - 2; j++) {\n            let max = 0;\n            for (let k = i; k < i + 3; k++) {\n                for (let z = j; z < j + 3; z++) {\n                    max = Math.max(max, grid[k][z]);\n                }\n            }\n            res[i][j] = max;\n        }\n    }\n    return res;\n}",
+    approach: "Для кожного вікна 3×3 бери максимум; результат (n-2)×(n-2).\n\n**Складність:** Time O(n²), Space O(n²)",
     signature: "{\"name\":\"largestLocal\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -1239,6 +1400,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} start\n * @return {number}\n */\nvar xorOperation = function(n, start) {\n    \n};",
     testCases: "[{\"input\":\"[5,0]\",\"expected\":\"8\"},{\"input\":\"[4,3]\",\"expected\":\"8\"}]",
+    solution: "function xorOperation(n: number, start: number): number {\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        ans ^= start + 2 * i;\n    }\n    return ans;\n}",
+    approach: "XOR усіх (start + 2·i) для i в 0..n-1.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"xorOperation\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1252,6 +1415,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} low\n * @param {number} high\n * @return {number}\n */\nvar rangeSumBST = function(root, low, high) {\n    \n};",
     testCases: "[{\"input\":\"[[10,5,15,3,7,null,18],7,15]\",\"expected\":\"32\"},{\"input\":\"[[10,5,15,3,7,13,18,1,null,6],6,10]\",\"expected\":\"23\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction rangeSumBST(root: TreeNode | null, low: number, high: number): number {\n    const dfs = (root: TreeNode | null): number => {\n        if (!root) {\n            return 0;\n        }\n        const { val, left, right } = root;\n        let ans = low <= val && val <= high ? val : 0;\n        if (val > low) {\n            ans += dfs(left);\n        }\n        if (val < high) {\n            ans += dfs(right);\n        }\n        return ans;\n    };\n    return dfs(root);\n}",
+    approach: "DFS: якщо val у [low,high] — додай; йди ліворуч лише при val>low, праворуч лише при val<high.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"rangeSumBST\",\"paramTypes\":[\"TreeNode\",\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1265,6 +1430,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar smallerNumbersThanCurrent = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[8,1,2,2,3]]\",\"expected\":\"[4,0,1,1,3]\"},{\"input\":\"[[6,5,4,8]]\",\"expected\":\"[2,1,0,3]\"},{\"input\":\"[[7,7,7,7]]\",\"expected\":\"[0,0,0,0]\"}]",
+    solution: "function smallerNumbersThanCurrent(nums: number[]): number[] {\n    const search = (nums: number[], x: number) => {\n        let l = 0,\n            r = nums.length;\n        while (l < r) {\n            const mid = (l + r) >> 1;\n            if (nums[mid] >= x) {\n                r = mid;\n            } else {\n                l = mid + 1;\n            }\n        }\n        return l;\n    };\n    const arr = nums.slice().sort((a, b) => a - b);\n    for (let i = 0; i < nums.length; ++i) {\n        nums[i] = search(arr, nums[i]);\n    }\n    return nums;\n}",
+    approach: "Counting sort: масив частот 0..100, префіксні суми → скільки менших.\n\n**Складність:** Time O(n + K), Space O(K)",
     signature: "{\"name\":\"smallerNumbersThanCurrent\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1278,6 +1445,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar balancedStringSplit = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"RLRRLLRLRL\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"RLRRRLLRLL\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"LLLLRRRR\\\"]\",\"expected\":\"1\"}]",
+    solution: "/**\n * @param {string} s\n * @return {number}\n */\nvar balancedStringSplit = function (s) {\n    let ans = 0;\n    let l = 0;\n    for (let c of s) {\n        if (c == 'L') {\n            ++l;\n        } else {\n            --l;\n        }\n        if (l == 0) {\n            ++ans;\n        }\n    }\n    return ans;\n};",
+    approach: "Лічильник балансу (+1/-1); кожен раз коли 0 — інкремент відповіді.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"balancedStringSplit\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1291,6 +1460,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} millis\n * @return {Promise}\n */\nasync function sleep(millis) {\n    \n}\n\n/** \n * let t = Date.now()\n * sleep(100).then(() => console.log(Date.now() - t)) // 100\n */",
     testCases: "[]",
+    solution: "async function sleep(millis: number): Promise<void> {\n    return new Promise(r => setTimeout(r, millis));\n}\n\n/**\n * let t = Date.now()\n * sleep(100).then(() => console.log(Date.now() - t)) // 100\n */",
+    approach: "Поверни new Promise, що resolve через setTimeout(millis).\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "decode-xored-array",
@@ -1303,6 +1474,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} encoded\n * @param {number} first\n * @return {number[]}\n */\nvar decode = function(encoded, first) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3],1]\",\"expected\":\"[1,0,2,1]\"},{\"input\":\"[[6,2,7,3],4]\",\"expected\":\"[4,2,0,7,4]\"}]",
+    solution: "function decode(encoded: number[], first: number): number[] {\n    const ans: number[] = [first];\n    for (const x of encoded) {\n        ans.push(ans.at(-1)! ^ x);\n    }\n    return ans;\n}",
+    approach: "arr[0]=first; arr[i]=arr[i-1] XOR encoded[i-1].\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"decode\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1316,6 +1489,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} big\n * @param {number} medium\n * @param {number} small\n */\nvar ParkingSystem = function(big, medium, small) {\n    \n};\n\n/** \n * @param {number} carType\n * @return {boolean}\n */\nParkingSystem.prototype.addCar = function(carType) {\n    \n};\n\n/** \n * Your ParkingSystem object will be instantiated and called as such:\n * var obj = new ParkingSystem(big, medium, small)\n * var param_1 = obj.addCar(carType)\n */",
     testCases: "[]",
+    solution: "class ParkingSystem {\n    private cnt: [number, number, number, number];\n\n    constructor(big: number, medium: number, small: number) {\n        this.cnt = [0, big, medium, small];\n    }\n\n    addCar(carType: number): boolean {\n        if (this.cnt[carType] === 0) {\n            return false;\n        }\n        this.cnt[carType]--;\n        return true;\n    }\n}\n\n/**\n * Your ParkingSystem object will be instantiated and called as such:\n * var obj = new ParkingSystem(big, medium, small)\n * var param_1 = obj.addCar(carType)\n */",
+    approach: "Лічильники по 3 типах у конструкторі; addCar декрементує потрібний і повертає, чи було місце.\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "minimum-number-of-moves-to-seat-everyone",
@@ -1328,6 +1503,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} seats\n * @param {number[]} students\n * @return {number}\n */\nvar minMovesToSeat = function(seats, students) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1,5],[2,7,4]]\",\"expected\":\"4\"},{\"input\":\"[[4,1,5,9],[1,3,2,6]]\",\"expected\":\"7\"},{\"input\":\"[[2,2,6,6],[1,3,2,6]]\",\"expected\":\"4\"}]",
+    solution: "function minMovesToSeat(seats: number[], students: number[]): number {\n    seats.sort((a, b) => a - b);\n    students.sort((a, b) => a - b);\n    return seats.reduce((acc, seat, i) => acc + Math.abs(seat - students[i]), 0);\n}",
+    approach: "Сортуй обидва масиви; сума abs(seats[i] - students[i]).\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"minMovesToSeat\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1341,6 +1518,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @return {number}\n */\nvar maxWidthOfVerticalArea = function(points) {\n    \n};",
     testCases: "[{\"input\":\"[[[8,7],[9,9],[7,4],[9,7]]]\",\"expected\":\"1\"},{\"input\":\"[[[3,1],[9,0],[1,0],[1,4],[5,3],[8,8]]]\",\"expected\":\"3\"}]",
+    solution: "function maxWidthOfVerticalArea(points: number[][]): number {\n    points.sort((a, b) => a[0] - b[0]);\n    let ans = 0;\n    for (let i = 1; i < points.length; ++i) {\n        ans = Math.max(ans, points[i][0] - points[i - 1][0]);\n    }\n    return ans;\n}",
+    approach: "Сортуй x-координати; максимальна різниця сусідніх.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"maxWidthOfVerticalArea\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1354,6 +1533,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar removeOuterParentheses = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"(()())(())\\\"]\",\"expected\":\"\\\"()()()\\\"\"},{\"input\":\"[\\\"(()())(())(()(()))\\\"]\",\"expected\":\"\\\"()()()()(())\\\"\"},{\"input\":\"[\\\"()()\\\"]\",\"expected\":\"\\\"\\\"\"}]",
+    solution: "function removeOuterParentheses(s: string): string {\n    let res = '';\n    let depth = 0;\n    for (const c of s) {\n        if (c === '(') {\n            depth++;\n        }\n        if (depth !== 1) {\n            res += c;\n        }\n        if (c === ')') {\n            depth--;\n        }\n    }\n    return res;\n}",
+    approach: "Лічильник глибини; додавай символ, якщо це не зовнішня дужка (open коли depth>0, close коли depth>1).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"removeOuterParentheses\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -1367,6 +1548,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} height\n * @param {number} threshold\n * @return {number[]}\n */\nvar stableMountains = function(height, threshold) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4,5],2]\",\"expected\":\"[3,4]\"},{\"input\":\"[[10,1,10,1,10],3]\",\"expected\":\"[1,3]\"},{\"input\":\"[[10,1,10,1,10],10]\",\"expected\":\"[]\"}]",
+    solution: "function stableMountains(height: number[], threshold: number): number[] {\n    const ans: number[] = [];\n    for (let i = 1; i < height.length; ++i) {\n        if (height[i - 1] > threshold) {\n            ans.push(i);\n        }\n    }\n    return ans;\n}",
+    approach: "Поверни індекси i≥1, де height[i-1] > threshold.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"stableMountains\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -1380,6 +1563,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar runningSum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[1,3,6,10]\"},{\"input\":\"[[1,1,1,1,1]]\",\"expected\":\"[1,2,3,4,5]\"},{\"input\":\"[[3,1,2,10,1]]\",\"expected\":\"[3,4,6,16,17]\"}]",
+    solution: "function runningSum(nums: number[]): number[] {\n    for (let i = 1; i < nums.length; ++i) {\n        nums[i] += nums[i - 1];\n    }\n    return nums;\n}",
+    approach: "Префіксна сума ін-плейс: nums[i] += nums[i-1].\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"runningSum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1393,6 +1578,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @param {number} multiplier\n * @return {number[]}\n */\nvar getFinalState = function(nums, k, multiplier) {\n    \n};",
     testCases: "[]",
+    solution: "function getFinalState(nums: number[], k: number, multiplier: number): number[] {\n    const pq = new PriorityQueue<number>((i, j) =>\n        nums[i] === nums[j] ? i - j : nums[i] - nums[j],\n    );\n\n    for (let i = 0; i < nums.length; ++i) {\n        pq.enqueue(i);\n    }\n    while (k--) {\n        const i = pq.dequeue()!;\n        nums[i] *= multiplier;\n        pq.enqueue(i);\n    }\n    return nums;\n}",
+    approach: "k разів: знайди мінімум (перший при рівних), помнож на multiplier.\n\n**Складність:** Time O(k·n), Space O(1)",
   },
   {
     slug: "truncate-sentence",
@@ -1405,6 +1592,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar truncateSentence = function(s, k) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"Hello how are you Contestant\\\",4]\",\"expected\":\"\\\"Hello how are you\\\"\"},{\"input\":\"[\\\"What is the solution to this problem\\\",4]\",\"expected\":\"\\\"What is the solution\\\"\"},{\"input\":\"[\\\"chopper is not a tanuki\\\",5]\",\"expected\":\"\\\"chopper is not a tanuki\\\"\"}]",
+    solution: "function truncateSentence(s: string, k: number): string {\n    for (let i = 0; i < s.length; ++i) {\n        if (s[i] === ' ' && --k === 0) {\n            return s.slice(0, i);\n        }\n    }\n    return s;\n}",
+    approach: "split(' ').slice(0,k).join(' ').\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"truncateSentence\",\"paramTypes\":[\"string\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -1418,6 +1607,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Function[]} functions\n * @return {Function}\n */\nvar compose = function(functions) {\n    \n    return function(x) {\n        \n    }\n};\n\n/**\n * const fn = compose([x => x + 1, x => 2 * x])\n * fn(4) // 9\n */",
     testCases: "[]",
+    solution: "type F = (x: number) => number;\n\nfunction compose(functions: F[]): F {\n    return function (x) {\n        return functions.reduceRight((acc, fn) => fn(acc), x);\n    };\n}\n\n/**\n * const fn = compose([x => x + 1, x => 2 * x])\n * fn(4) // 9\n */",
+    approach: "Повертай x => functions.reduceRight((acc,f)=>f(acc), x).\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
     slug: "minimum-operations-to-exceed-threshold-value-i",
@@ -1430,6 +1621,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minOperations = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[2,11,10,1,3],10]\",\"expected\":\"3\"},{\"input\":\"[[1,1,2,4,9],1]\",\"expected\":\"0\"},{\"input\":\"[[1,1,2,4,9],9]\",\"expected\":\"4\"}]",
+    solution: "function minOperations(nums: number[], k: number): number {\n    return nums.filter(x => x < k).length;\n}",
+    approach: "Рахуй елементи < k.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minOperations\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1443,6 +1636,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} sentences\n * @return {number}\n */\nvar mostWordsFound = function(sentences) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"alice and bob love leetcode\\\",\\\"i think so too\\\",\\\"this is great thanks very much\\\"]]\",\"expected\":\"6\"},{\"input\":\"[[\\\"please wait\\\",\\\"continue to fight\\\",\\\"continue to win\\\"]]\",\"expected\":\"3\"}]",
+    solution: "function mostWordsFound(sentences: string[]): number {\n    return sentences.reduce(\n        (r, s) =>\n            Math.max(\n                r,\n                [...s].reduce((r, c) => r + (c === ' ' ? 1 : 0), 1),\n            ),\n        0,\n    );\n}",
+    approach: "Максимум (кількість пробілів + 1) по реченнях.\n\n**Складність:** Time O(сумарна довжина), Space O(1)",
     signature: "{\"name\":\"mostWordsFound\",\"paramTypes\":[\"string[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1456,6 +1651,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @return {Function}\n */\nvar once = function(fn) {\n    \n    return function(...args){\n        \n    }\n};\n\n/**\n * let fn = (a,b,c) => (a + b + c)\n * let onceFn = once(fn)\n *\n * onceFn(1,2,3); // 6\n * onceFn(2,3,6); // returns undefined without calling fn\n */\n",
     testCases: "[]",
+    solution: "type JSONValue = null | boolean | number | string | JSONValue[] | { [key: string]: JSONValue };\ntype OnceFn = (...args: JSONValue[]) => JSONValue | undefined;\n\nfunction once(fn: Function): OnceFn {\n    let called = false;\n    return function (...args) {\n        if (!called) {\n            called = true;\n            return fn(...args);\n        }\n    };\n}\n\n/**\n * let fn = (a,b,c) => (a + b + c)\n * let onceFn = once(fn)\n *\n * onceFn(1,2,3); // 6\n * onceFn(2,3,6); // returns undefined without calling fn\n */",
+    approach: "Замикання з прапорцем called; повертай результат лише першого виклику.\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "find-center-of-star-graph",
@@ -1468,6 +1665,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} edges\n * @return {number}\n */\nvar findCenter = function(edges) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2],[2,3],[4,2]]]\",\"expected\":\"2\"},{\"input\":\"[[[1,2],[5,1],[1,3],[1,4]]]\",\"expected\":\"1\"}]",
+    solution: "function findCenter(edges: number[][]): number {\n    for (let num of edges[0]) {\n        if (edges[1].includes(num)) {\n            return num;\n        }\n    }\n}",
+    approach: "Центр — спільна вершина перших двох ребер.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"findCenter\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1481,6 +1680,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar subtractProductAndSum = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[234]\",\"expected\":\"15\"},{\"input\":\"[4421]\",\"expected\":\"21\"}]",
+    solution: "function subtractProductAndSum(n: number): number {\n    let [x, y] = [1, 0];\n    for (; n > 0; n = Math.floor(n / 10)) {\n        const v = n % 10;\n        x *= v;\n        y += v;\n    }\n    return x - y;\n}",
+    approach: "Один прохід по цифрах: добуток мінус сума.\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"subtractProductAndSum\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1494,6 +1695,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[]} index\n * @return {number[]}\n */\nvar createTargetArray = function(nums, index) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,2,3,4],[0,1,2,2,1]]\",\"expected\":\"[0,4,1,3,2]\"},{\"input\":\"[[1,2,3,4,0],[0,1,2,3,0]]\",\"expected\":\"[0,1,2,3,4]\"},{\"input\":\"[[1],[0]]\",\"expected\":\"[1]\"}]",
+    solution: "function createTargetArray(nums: number[], index: number[]): number[] {\n    const ans: number[] = [];\n    for (let i = 0; i < nums.length; i++) {\n        ans.splice(index[i], 0, nums[i]);\n    }\n    return ans;\n}",
+    approach: "Для кожного i: target.splice(index[i], 0, nums[i]).\n\n**Складність:** Time O(n²), Space O(n)",
     signature: "{\"name\":\"createTargetArray\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1507,6 +1710,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} word\n * @param {character} ch\n * @return {string}\n */\nvar reversePrefix = function(word, ch) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abcdefd\\\",\\\"d\\\"]\",\"expected\":\"\\\"dcbaefd\\\"\"},{\"input\":\"[\\\"xyxzxe\\\",\\\"z\\\"]\",\"expected\":\"\\\"zxyxxe\\\"\"},{\"input\":\"[\\\"abcd\\\",\\\"z\\\"]\",\"expected\":\"\\\"abcd\\\"\"}]",
+    solution: "function reversePrefix(word: string, ch: string): string {\n    const i = word.indexOf(ch) + 1;\n    if (!i) {\n        return word;\n    }\n    return [...word.slice(0, i)].reverse().join('') + word.slice(i);\n}",
+    approach: "Знайди indexOf(ch); розверни префікс до нього включно.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"reversePrefix\",\"paramTypes\":[\"string\",\"character\"],\"returnType\":\"string\"}",
   },
   {
@@ -1520,6 +1725,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar numberOfMatches = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[7]\",\"expected\":\"6\"},{\"input\":\"[14]\",\"expected\":\"13\"}]",
+    solution: "function numberOfMatches(n: number): number {\n    return n - 1;\n}",
+    approach: "Відповідь завжди n-1 (кожен матч вибиває одну команду).\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"numberOfMatches\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1533,6 +1740,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @param {number} k\n * @return {number}\n */\nvar numberOfPairs = function(nums1, nums2, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,4],[1,3,4],1]\",\"expected\":\"5\"},{\"input\":\"[[1,2,4,12],[2,4],3]\",\"expected\":\"2\"}]",
+    solution: "function numberOfPairs(nums1: number[], nums2: number[], k: number): number {\n    let ans = 0;\n    for (const x of nums1) {\n        for (const y of nums2) {\n            if (x % (y * k) === 0) {\n                ++ans;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Подвійний цикл: рахуй пари, де nums1[i] кратне nums2[j]·k.\n\n**Складність:** Time O(n·m), Space O(1)",
     signature: "{\"name\":\"numberOfPairs\",\"paramTypes\":[\"integer[]\",\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1546,6 +1755,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar minimumSum = function(num) {\n    \n};",
     testCases: "[{\"input\":\"[2932]\",\"expected\":\"52\"},{\"input\":\"[4009]\",\"expected\":\"13\"}]",
+    solution: "function minimumSum(num: number): number {\n    const nums = new Array(4).fill(0);\n    for (let i = 0; i < 4; i++) {\n        nums[i] = num % 10;\n        num = Math.floor(num / 10);\n    }\n    nums.sort((a, b) => a - b);\n    return 10 * (nums[0] + nums[1]) + nums[2] + nums[3];\n}",
+    approach: "Сортуй 4 цифри за зростанням; два менші — десятки, два більші — одиниці: 10·(d0+d1)+(d2+d3).\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"minimumSum\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1559,6 +1770,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar decompressRLElist = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[2,4,4,4]\"},{\"input\":\"[[1,1,2,3]]\",\"expected\":\"[1,3,3]\"}]",
+    solution: "function decompressRLElist(nums: number[]): number[] {\n    const ans: number[] = [];\n    for (let i = 0; i < nums.length; i += 2) {\n        for (let j = 0; j < nums[i]; j++) {\n            ans.push(nums[i + 1]);\n        }\n    }\n    return ans;\n}",
+    approach: "Парами (freq, val): додай val freq разів.\n\n**Складність:** Time O(сумарна довжина), Space O(результат)",
     signature: "{\"name\":\"decompressRLElist\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1572,6 +1785,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {Function} fn\n * @return {number[]}\n */\nvar map = function(arr, fn) {\n    \n};",
     testCases: "[]",
+    solution: "function map(arr: number[], fn: (n: number, i: number) => number): number[] {\n    for (let i = 0; i < arr.length; ++i) {\n        arr[i] = fn(arr[i], i);\n    }\n    return arr;\n}",
+    approach: "Поверни arr.map((v,i)=>fn(v,i)).\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
     slug: "sum-of-values-at-indices-with-k-set-bits",
@@ -1584,6 +1799,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar sumIndicesWithKSetBits = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[5,10,1,5,2],1]\",\"expected\":\"13\"},{\"input\":\"[[4,3,2,1],2]\",\"expected\":\"1\"}]",
+    solution: "function sumIndicesWithKSetBits(nums: number[], k: number): number {\n    let ans = 0;\n    for (let i = 0; i < nums.length; ++i) {\n        if (bitCount(i) === k) {\n            ans += nums[i];\n        }\n    }\n    return ans;\n}\n\nfunction bitCount(n: number): number {\n    let count = 0;\n    while (n) {\n        n &= n - 1;\n        count++;\n    }\n    return count;\n}",
+    approach: "Сумуй nums[i], де popcount(i) === k.\n\n**Складність:** Time O(n·log n), Space O(1)",
     signature: "{\"name\":\"sumIndicesWithKSetBits\",\"paramTypes\":[\"list<integer>\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1597,6 +1814,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} word1\n * @param {string[]} word2\n * @return {boolean}\n */\nvar arrayStringsAreEqual = function(word1, word2) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"ab\\\",\\\"c\\\"],[\\\"a\\\",\\\"bc\\\"]]\",\"expected\":\"true\"},{\"input\":\"[[\\\"a\\\",\\\"cb\\\"],[\\\"ab\\\",\\\"c\\\"]]\",\"expected\":\"false\"},{\"input\":\"[[\\\"abc\\\",\\\"d\\\",\\\"defg\\\"],[\\\"abcddefg\\\"]]\",\"expected\":\"true\"}]",
+    solution: "function arrayStringsAreEqual(word1: string[], word2: string[]): boolean {\n    return word1.join('') === word2.join('');\n}",
+    approach: "Порівняй word1.join('') === word2.join('').\n\n**Складність:** Time O(сумарна довжина), Space O(сумарна довжина)",
     signature: "{\"name\":\"arrayStringsAreEqual\",\"paramTypes\":[\"string[]\",\"string[]\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -1610,6 +1829,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar sumOfMultiples = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[7]\",\"expected\":\"21\"},{\"input\":\"[10]\",\"expected\":\"40\"},{\"input\":\"[9]\",\"expected\":\"30\"}]",
+    solution: "function sumOfMultiples(n: number): number {\n    let ans = 0;\n    for (let x = 1; x <= n; ++x) {\n        if (x % 3 === 0 || x % 5 === 0 || x % 7 === 0) {\n            ans += x;\n        }\n    }\n    return ans;\n}",
+    approach: "Сума 1..n, що діляться на 3, 5 або 7 (включення-виключення або прямий цикл).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"sumOfMultiples\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1623,6 +1844,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar countDigits = function(num) {\n    \n};",
     testCases: "[{\"input\":\"[7]\",\"expected\":\"1\"},{\"input\":\"[121]\",\"expected\":\"2\"},{\"input\":\"[1248]\",\"expected\":\"4\"}]",
+    solution: "function countDigits(num: number): number {\n    let ans = 0;\n    for (let x = num; x; x = (x / 10) | 0) {\n        if (num % (x % 10) === 0) {\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Пройди цифри num; рахуй ті, що != 0 і num % d === 0.\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"countDigits\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1636,6 +1859,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} key\n * @param {string} message\n * @return {string}\n */\nvar decodeMessage = function(key, message) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"the quick brown fox jumps over the lazy dog\\\",\\\"vkbs bs t suepuv\\\"]\",\"expected\":\"\\\"this is a secret\\\"\"},{\"input\":\"[\\\"eljuxhpwnyrdgtqkviszcfmabo\\\",\\\"zwx hnfx lqantp mnoeius ycgk vcnjrdb\\\"]\",\"expected\":\"\\\"the five boxing wizards jump quickly\\\"\"}]",
+    solution: "function decodeMessage(key: string, message: string): string {\n    const d = new Map<string, string>();\n    for (const c of key) {\n        if (c === ' ' || d.has(c)) {\n            continue;\n        }\n        d.set(c, String.fromCharCode('a'.charCodeAt(0) + d.size));\n    }\n    d.set(' ', ' ');\n    return [...message].map(v => d.get(v)).join('');\n}",
+    approach: "Побудуй ключ-таблицю з перших 26 унікальних літер key; підстав, пробіли лишай.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"decodeMessage\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -1649,6 +1874,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val) {\n *     this.val = val;\n *     this.left = this.right = null;\n * }\n */\n/**\n * @param {TreeNode} original\n * @param {TreeNode} cloned\n * @param {TreeNode} target\n * @return {TreeNode}\n */\n\nvar getTargetCopy = function(original, cloned, target) {\n    \n};",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction getTargetCopy(\n    original: TreeNode | null,\n    cloned: TreeNode | null,\n    target: TreeNode | null,\n): TreeNode | null {\n    const dfs = (root1: TreeNode | null, root2: TreeNode | null): TreeNode | null => {\n        if (!root1) {\n            return null;\n        }\n        if (root1 === target) {\n            return root2;\n        }\n        return dfs(root1.left, root2.left) || dfs(root1.right, root2.right);\n    };\n    return dfs(original, cloned);\n}",
+    approach: "Паралельний DFS/BFS по original і cloned; коли original === target — повертай вузол cloned.\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
     slug: "separate-the-digits-in-an-array",
@@ -1661,6 +1888,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar separateDigits = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[13,25,83,77]]\",\"expected\":\"[1,3,2,5,8,3,7,7]\"},{\"input\":\"[[7,1,3,9]]\",\"expected\":\"[7,1,3,9]\"}]",
+    solution: "function separateDigits(nums: number[]): number[] {\n    const ans: number[] = [];\n    for (let num of nums) {\n        const t: number[] = [];\n        while (num) {\n            t.push(num % 10);\n            num = Math.floor(num / 10);\n        }\n        ans.push(...t.reverse());\n    }\n    return ans;\n}",
+    approach: "Для кожного числа виштовхуй цифри (String або %10) у правильному порядку.\n\n**Складність:** Time O(сумарна к-сть цифр), Space O(результат)",
     signature: "{\"name\":\"separateDigits\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1674,6 +1903,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar numberOfSteps = function(num) {\n    \n};",
     testCases: "[{\"input\":\"[14]\",\"expected\":\"6\"},{\"input\":\"[8]\",\"expected\":\"4\"},{\"input\":\"[123]\",\"expected\":\"12\"}]",
+    solution: "function numberOfSteps(num: number): number {\n    let ans = 0;\n    while (num) {\n        num = num & 1 ? num - 1 : num >>> 1;\n        ans++;\n    }\n    return ans;\n}",
+    approach: "Парне → /2, непарне → -1, рахуй кроки. Або біти: (кількість бітів - 1) + popcount.\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"numberOfSteps\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1687,6 +1918,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {number[]} weights\n * @return {string}\n */\nvar mapWordWeights = function(words, weights) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"abcd\\\",\\\"def\\\",\\\"xyz\\\"],[5,3,12,14,1,2,3,2,10,6,6,9,7,8,7,10,8,9,6,9,9,8,3,7,7,2]]\",\"expected\":\"\\\"rij\\\"\"},{\"input\":\"[[\\\"a\\\",\\\"b\\\",\\\"c\\\"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]\",\"expected\":\"\\\"yyy\\\"\"},{\"input\":\"[[\\\"abcd\\\"],[7,5,3,4,3,5,4,9,4,2,2,7,10,2,5,10,6,1,2,2,4,1,3,4,4,5]]\",\"expected\":\"\\\"g\\\"\"}]",
+    solution: "function mapWordWeights(words: string[], weights: number[]): string {\n    const ans: string[] = [];\n    for (const w of words) {\n        let s = 0;\n        for (const c of w) {\n            s = (s + weights[c.charCodeAt(0) - 97]) % 26;\n        }\n        ans.push(String.fromCharCode(97 + (25 - s)));\n    }\n    return ans.join('');\n}",
+    approach: "Для кожного слова заміни літери на відповідні ваги за позицією в алфавіті.\n\n**Складність:** Time O(сумарна довжина), Space O(результат)",
     signature: "{\"name\":\"mapWordWeights\",\"paramTypes\":[\"string[]\",\"integer[]\"],\"returnType\":\"string\"}",
   },
   {
@@ -1700,6 +1933,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar subarraySum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,1]]\",\"expected\":\"11\"},{\"input\":\"[[3,1,1,2]]\",\"expected\":\"13\"}]",
+    solution: "function subarraySum(nums: number[]): number {\n    const n = nums.length;\n    const s: number[] = Array(n + 1).fill(0);\n    for (let i = 0; i < n; ++i) {\n        s[i + 1] = s[i] + nums[i];\n    }\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        ans += s[i + 1] - s[Math.max(0, i - nums[i])];\n    }\n    return ans;\n}",
+    approach: "Кожен елемент nums[i] задає довжину підмасиву перед ним; сумуй ці вікна префіксними сумами.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"subarraySum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1713,6 +1948,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {Function} fn\n * @return {number[]}\n */\nvar filter = function(arr, fn) {\n    \n};",
     testCases: "[]",
+    solution: "function filter(arr: number[], fn: (n: number, i: number) => any): number[] {\n    const ans: number[] = [];\n    for (let i = 0; i < arr.length; ++i) {\n        if (fn(arr[i], i)) {\n            ans.push(arr[i]);\n        }\n    }\n    return ans;\n}",
+    approach: "Реалізуй Array.filter вручну: цикл + push, коли fn(arr[i], i) truthy.\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
     slug: "array-reduce-transformation",
@@ -1725,6 +1962,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {Function} fn\n * @param {number} init\n * @return {number}\n */\nvar reduce = function(nums, fn, init) {\n    \n};",
     testCases: "[]",
+    solution: "type Fn = (accum: number, curr: number) => number;\n\nfunction reduce(nums: number[], fn: Fn, init: number): number {\n    let acc: number = init;\n    for (const x of nums) {\n        acc = fn(acc, x);\n    }\n    return acc;\n}",
+    approach: "Реалізуй reduce вручну: acc = init, цикл acc = fn(acc, nums[i]).\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
     slug: "count-good-triplets",
@@ -1737,6 +1976,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number} a\n * @param {number} b\n * @param {number} c\n * @return {number}\n */\nvar countGoodTriplets = function(arr, a, b, c) {\n    \n};",
     testCases: "[{\"input\":\"[[3,0,1,1,9,7],7,2,3]\",\"expected\":\"4\"},{\"input\":\"[[1,1,2,2,3],0,0,1]\",\"expected\":\"0\"}]",
+    solution: "function countGoodTriplets(arr: number[], a: number, b: number, c: number): number {\n    let n = arr.length;\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        for (let j = i + 1; j < n; ++j) {\n            for (let k = j + 1; k < n; ++k) {\n                if (\n                    Math.abs(arr[i] - arr[j]) <= a &&\n                    Math.abs(arr[j] - arr[k]) <= b &&\n                    Math.abs(arr[i] - arr[k]) <= c\n                ) {\n                    ++ans;\n                }\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "n ≤ 100 → потрійний цикл i<j<k з перевіркою трьох умов на abs різниці.\n\n**Складність:** Time O(n³), Space O(1)",
     signature: "{\"name\":\"countGoodTriplets\",\"paramTypes\":[\"integer[]\",\"integer\",\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1750,6 +1991,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar numberGame = function(nums) {\n    \n};",
     testCases: "[]",
+    solution: "function numberGame(nums: number[]): number[] {\n    const pq = new MinPriorityQueue<number>();\n    for (const x of nums) {\n        pq.enqueue(x);\n    }\n    const ans: number[] = [];\n    while (pq.size()) {\n        const a = pq.dequeue();\n        const b = pq.dequeue();\n        ans.push(b, a);\n    }\n    return ans;\n}",
+    approach: "Сортуй; попарно бери (min, next) і клади в результат як (next, min).\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
     slug: "number-of-arithmetic-triplets",
@@ -1762,6 +2005,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} diff\n * @return {number}\n */\nvar arithmeticTriplets = function(nums, diff) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,4,6,7,10],3]\",\"expected\":\"2\"},{\"input\":\"[[4,5,6,7,8,9],2]\",\"expected\":\"2\"}]",
+    solution: "function arithmeticTriplets(nums: number[], diff: number): number {\n    const n = nums.length;\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        for (let j = i + 1; j < n; ++j) {\n            for (let k = j + 1; k < n; ++k) {\n                if (nums[j] - nums[i] === diff && nums[k] - nums[j] === diff) {\n                    ++ans;\n                }\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Set значень; для кожного x перевір, чи є x+diff і x+2·diff.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"arithmeticTriplets\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1775,6 +2020,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number[]} indices\n * @return {string}\n */\nvar restoreString = function(s, indices) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"codeleet\\\",[4,5,6,7,0,2,1,3]]\",\"expected\":\"\\\"leetcode\\\"\"},{\"input\":\"[\\\"abc\\\",[0,1,2]]\",\"expected\":\"\\\"abc\\\"\"}]",
+    solution: "function restoreString(s: string, indices: number[]): string {\n    const ans: string[] = [];\n    for (let i = 0; i < s.length; i++) {\n        ans[indices[i]] = s[i];\n    }\n    return ans.join('');\n}",
+    approach: "res[indices[i]] = s[i].\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"restoreString\",\"paramTypes\":[\"string\",\"integer[]\"],\"returnType\":\"string\"}",
   },
   {
@@ -1788,6 +2035,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar countKDifference = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,2,1],1]\",\"expected\":\"4\"},{\"input\":\"[[1,3],3]\",\"expected\":\"0\"},{\"input\":\"[[3,2,1,5,4],2]\",\"expected\":\"3\"}]",
+    solution: "function countKDifference(nums: number[], k: number): number {\n    let ans = 0;\n    let cnt = new Map();\n    for (let num of nums) {\n        ans += (cnt.get(num - k) || 0) + (cnt.get(num + k) || 0);\n        cnt.set(num, (cnt.get(num) || 0) + 1);\n    }\n    return ans;\n}",
+    approach: "Map частот; для кожного x додай count[x-k].\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"countKDifference\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1801,6 +2050,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[][]} items\n * @param {string} ruleKey\n * @param {string} ruleValue\n * @return {number}\n */\nvar countMatches = function(items, ruleKey, ruleValue) {\n    \n};",
     testCases: "[{\"input\":\"[[[\\\"phone\\\",\\\"blue\\\",\\\"pixel\\\"],[\\\"computer\\\",\\\"silver\\\",\\\"lenovo\\\"],[\\\"phone\\\",\\\"gold\\\",\\\"iphone\\\"]],\\\"color\\\",\\\"silver\\\"]\",\"expected\":\"1\"},{\"input\":\"[[[\\\"phone\\\",\\\"blue\\\",\\\"pixel\\\"],[\\\"computer\\\",\\\"silver\\\",\\\"phone\\\"],[\\\"phone\\\",\\\"gold\\\",\\\"iphone\\\"]],\\\"type\\\",\\\"phone\\\"]\",\"expected\":\"2\"}]",
+    solution: "function countMatches(items: string[][], ruleKey: string, ruleValue: string): number {\n    const key = ruleKey === 'type' ? 0 : ruleKey === 'color' ? 1 : 2;\n    return items.reduce((r, v) => r + (v[key] === ruleValue ? 1 : 0), 0);\n}",
+    approach: "Індекс ключа: type=0/color=1/name=2; рахуй items[i][idx] === ruleValue.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"countMatches\",\"paramTypes\":[\"list<list<string>>\",\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1814,6 +2065,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumAverage = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[7,8,3,4,15,13,4,1]]\",\"expected\":\"5.5\"},{\"input\":\"[[1,9,8,3,10,5]]\",\"expected\":\"5.5\"},{\"input\":\"[[1,2,3,7,8,9]]\",\"expected\":\"5\"}]",
+    solution: "function minimumAverage(nums: number[]): number {\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    let ans = Infinity;\n    for (let i = 0; i * 2 < n; ++i) {\n        ans = Math.min(ans, nums[i] + nums[n - 1 - i]);\n    }\n    return ans / 2;\n}",
+    approach: "Сортуй; мінімум (nums[i] + nums[n-1-i]) / 2 по парах з країв.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"minimumAverage\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"double\"}",
   },
   {
@@ -1827,6 +2080,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar differenceOfSum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,15,6,3]]\",\"expected\":\"9\"},{\"input\":\"[[1,2,3,4]]\",\"expected\":\"0\"}]",
+    solution: "function differenceOfSum(nums: number[]): number {\n    let [x, y] = [0, 0];\n    for (let v of nums) {\n        x += v;\n        for (; v; v = Math.floor(v / 10)) {\n            y += v % 10;\n        }\n    }\n    return x - y;\n}",
+    approach: "Один прохід: сума чисел мінус сума їхніх цифр; поверни abs.\n\n**Складність:** Time O(n·log), Space O(1)",
     signature: "{\"name\":\"differenceOfSum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1840,6 +2095,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countPartitions = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[10,10,3,7,6]]\",\"expected\":\"4\"},{\"input\":\"[[1,2,2]]\",\"expected\":\"0\"},{\"input\":\"[[2,4,6,8]]\",\"expected\":\"3\"}]",
+    solution: "function countPartitions(nums: number[]): number {\n    let l = 0;\n    let r = nums.reduce((a, b) => a + b, 0);\n    let ans = 0;\n    for (const x of nums.slice(0, -1)) {\n        l += x;\n        r -= x;\n        ans += (l - r) % 2 === 0 ? 1 : 0;\n    }\n    return ans;\n}",
+    approach: "Різниця парна ⇔ загальна сума парна. Якщо так — відповідь n-1, інакше 0.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"countPartitions\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1853,6 +2110,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar minBitwiseArray = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,5,7]]\",\"expected\":\"[-1,1,4,3]\"},{\"input\":\"[[11,13,31]]\",\"expected\":\"[9,12,15]\"}]",
+    solution: "function minBitwiseArray(nums: number[]): number[] {\n    const ans: number[] = [];\n    for (const x of nums) {\n        if (x === 2) {\n            ans.push(-1);\n        } else {\n            for (let i = 1; i < 32; ++i) {\n                if (((x >> i) & 1) ^ 1) {\n                    ans.push(x ^ (1 << (i - 1)));\n                    break;\n                }\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Для непарного p шукай найменше x з x | (x+1) === p (часто p - p_молодший_біт/2); для 2 — немає (-1).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minBitwiseArray\",\"paramTypes\":[\"list<integer>\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -1866,6 +2125,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar evenNumberBitwiseORs = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4,5,6]]\",\"expected\":\"6\"},{\"input\":\"[[7,9,11]]\",\"expected\":\"0\"},{\"input\":\"[[1,8,16]]\",\"expected\":\"24\"}]",
+    solution: "function evenNumberBitwiseORs(nums: number[]): number {\n    return nums.reduce((ans, x) => (x % 2 === 0 ? ans | x : ans), 0);\n}",
+    approach: "OR усіх парних елементів; 0 якщо парних немає.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"evenNumberBitwiseORs\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1879,6 +2140,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar gcdOfOddEvenSums = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[4]\",\"expected\":\"4\"},{\"input\":\"[5]\",\"expected\":\"5\"}]",
+    solution: "function gcdOfOddEvenSums(n: number): number {\n    return n;\n}",
+    approach: "Сума перших n непарних = n²; сума перших n парних = n²+n. gcd(n², n²+n) = n.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"gcdOfOddEvenSums\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1892,6 +2155,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {boolean}\n */\nvar checkTree = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[10,4,6]]\",\"expected\":\"true\"},{\"input\":\"[[5,3,1]]\",\"expected\":\"false\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction checkTree(root: TreeNode | null): boolean {\n    return root.val === root.left.val + root.right.val;\n}",
+    approach: "root.val === root.left.val + root.right.val.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"checkTree\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -1905,6 +2170,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {Array} args\n * @param {number} t\n * @return {Function}\n */\nvar cancellable = function(fn, args, t) {\n    \n};\n\n/**\n *  const result = [];\n *\n *  const fn = (x) => x * 2;\n *  const args = [4], t = 35, cancelTimeMs = 190;\n *\n *  const start = performance.now();\n *\n *  const log = (...argsArr) => {\n *      const diff = Math.floor(performance.now() - start);\n *      result.push({\"time\": diff, \"returned\": fn(...argsArr)});\n *  }\n *       \n *  const cancel = cancellable(log, args, t);\n *\n *  setTimeout(cancel, cancelTimeMs);\n *   \n *  setTimeout(() => {\n *      console.log(result); // [\n *                           //     {\"time\":0,\"returned\":8},\n *                           //     {\"time\":35,\"returned\":8},\n *                           //     {\"time\":70,\"returned\":8},\n *                           //     {\"time\":105,\"returned\":8},\n *                           //     {\"time\":140,\"returned\":8},\n *                           //     {\"time\":175,\"returned\":8}\n *                           // ]\n *  }, cancelTimeMs + t + 15)    \n */",
     testCases: "[]",
+    solution: "function cancellable(fn: Function, args: any[], t: number): Function {\n    fn(...args);\n    const time = setInterval(() => fn(...args), t);\n    return () => clearInterval(time);\n}\n\n/**\n *  const result = []\n *\n *  const fn = (x) => x * 2\n *  const args = [4], t = 20, cancelT = 110\n *\n *  const log = (...argsArr) => {\n *      result.push(fn(...argsArr))\n *  }\n *\n *  const cancel = cancellable(fn, args, t);\n *\n *  setTimeout(() => {\n *     cancel()\n *     console.log(result) // [\n *                         //      {\"time\":0,\"returned\":8},\n *                         //      {\"time\":20,\"returned\":8},\n *                         //      {\"time\":40,\"returned\":8},\n *                         //      {\"time\":60,\"returned\":8},\n *                         //      {\"time\":80,\"returned\":8},\n *                         //      {\"time\":100,\"returned\":8}\n *                         //  ]\n *  }, cancelT)\n */",
+    approach: "Виклич fn одразу, потім setInterval кожні t мс; повертай функцію clearInterval.\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "maximum-nesting-depth-of-the-parentheses",
@@ -1917,6 +2184,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar maxDepth = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"(1+(2*3)+((8)/4))+1\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"(1)+((2))+(((3)))\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"()(())((()()))\\\"]\",\"expected\":\"3\"}]",
+    solution: "function maxDepth(s: string): number {\n    let ans = 0;\n    let d = 0;\n    for (const c of s) {\n        if (c === '(') {\n            ans = Math.max(ans, ++d);\n        } else if (c === ')') {\n            --d;\n        }\n    }\n    return ans;\n}",
+    approach: "Лічильник глибини: +1 на '(', -1 на ')'; тримай максимум.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maxDepth\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1930,6 +2199,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar toLowerCase = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"Hello\\\"]\",\"expected\":\"\\\"hello\\\"\"},{\"input\":\"[\\\"here\\\"]\",\"expected\":\"\\\"here\\\"\"},{\"input\":\"[\\\"LOVELY\\\"]\",\"expected\":\"\\\"lovely\\\"\"}]",
+    solution: "function toLowerCase(s: string): string {\n    return s.toLowerCase();\n}",
+    approach: "Для кодів 'A'..'Z' додавай 32; решту лишай.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"toLowerCase\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -1943,6 +2214,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minElement = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[10,12,13,14]]\",\"expected\":\"1\"},{\"input\":\"[[1,2,3,4]]\",\"expected\":\"1\"},{\"input\":\"[[999,19,199]]\",\"expected\":\"10\"}]",
+    solution: "function minElement(nums: number[]): number {\n    let ans: number = 100;\n    for (let x of nums) {\n        let y = 0;\n        for (; x; x = Math.floor(x / 10)) {\n            y += x % 10;\n        }\n        ans = Math.min(ans, y);\n    }\n    return ans;\n}",
+    approach: "Мінімум суми цифр кожного елемента.\n\n**Складність:** Time O(n·log), Space O(1)",
     signature: "{\"name\":\"minElement\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1956,6 +2229,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} names\n * @param {number[]} heights\n * @return {string[]}\n */\nvar sortPeople = function(names, heights) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"Mary\\\",\\\"John\\\",\\\"Emma\\\"],[180,165,170]]\",\"expected\":\"[\\\"Mary\\\",\\\"Emma\\\",\\\"John\\\"]\"},{\"input\":\"[[\\\"Alice\\\",\\\"Bob\\\",\\\"Bob\\\"],[155,185,150]]\",\"expected\":\"[\\\"Bob\\\",\\\"Alice\\\",\\\"Bob\\\"]\"}]",
+    solution: "function sortPeople(names: string[], heights: number[]): string[] {\n    const n = names.length;\n    const idx = new Array(n);\n    for (let i = 0; i < n; ++i) {\n        idx[i] = i;\n    }\n    idx.sort((i, j) => heights[j] - heights[i]);\n    const ans: string[] = [];\n    for (const i of idx) {\n        ans.push(names[i]);\n    }\n    return ans;\n}",
+    approach: "Зіпни (name, height), сортуй за height спадаюче, віддай імена.\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"sortPeople\",\"paramTypes\":[\"string[]\",\"integer[]\"],\"returnType\":\"string[]\"}",
   },
   {
@@ -1969,6 +2244,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @return {number}\n */\nvar minTimeToVisitAllPoints = function(points) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,1],[3,4],[-1,0]]]\",\"expected\":\"7\"},{\"input\":\"[[[3,2],[-2,2]]]\",\"expected\":\"5\"}]",
+    solution: "function minTimeToVisitAllPoints(points: number[][]): number {\n    let ans = 0;\n    for (let i = 1; i < points.length; i++) {\n        const dx = Math.abs(points[i][0] - points[i - 1][0]);\n        const dy = Math.abs(points[i][1] - points[i - 1][1]);\n        ans += Math.max(dx, dy);\n    }\n    return ans;\n}",
+    approach: "Сума макс(abs(dx), abs(dy)) між послідовними точками (діагональ рухається за 1).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minTimeToVisitAllPoints\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1982,6 +2259,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} tasks\n * @return {number}\n */\nvar earliestTime = function(tasks) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,6],[2,3]]]\",\"expected\":\"5\"},{\"input\":\"[[[100,100],[100,100],[100,100]]]\",\"expected\":\"200\"}]",
+    solution: "function earliestTime(tasks: number[][]): number {\n    return Math.min(...tasks.map(task => task[0] + task[1]));\n}",
+    approach: "Мінімум (start + duration) по всіх завданнях.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"earliestTime\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -1995,6 +2274,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Array} arr\n * @param {number} size\n * @return {Array}\n */\nvar chunk = function(arr, size) {\n    \n};\n",
     testCases: "[]",
+    solution: "function chunk(arr: any[], size: number): any[][] {\n    const ans: any[][] = [];\n    for (let i = 0, n = arr.length; i < n; i += size) {\n        ans.push(arr.slice(i, i + size));\n    }\n    return ans;\n}",
+    approach: "Цикл із кроком size: result.push(arr.slice(i, i+size)).\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
     slug: "maximum-69-number",
@@ -2007,6 +2288,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num\n * @return {number}\n */\nvar maximum69Number  = function(num) {\n    \n};",
     testCases: "[{\"input\":\"[9669]\",\"expected\":\"9969\"},{\"input\":\"[9996]\",\"expected\":\"9999\"},{\"input\":\"[9999]\",\"expected\":\"9999\"}]",
+    solution: "function maximum69Number(num: number): number {\n    return Number((num + '').replace('6', '9'));\n}",
+    approach: "Заміни першу '6' на '9' (вона дає найбільший приріст).\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"maximum69Number \",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2020,6 +2303,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number[]}\n */\nvar findIntersectionValues = function(nums1, nums2) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,2],[1,2]]\",\"expected\":\"[2,1]\"},{\"input\":\"[[4,3,2,3,1],[2,2,5,2,3,6]]\",\"expected\":\"[3,4]\"},{\"input\":\"[[3,4,2,3],[1,5]]\",\"expected\":\"[0,0]\"}]",
+    solution: "function findIntersectionValues(nums1: number[], nums2: number[]): number[] {\n    const s1: number[] = Array(101).fill(0);\n    const s2: number[] = Array(101).fill(0);\n    for (const x of nums1) {\n        s1[x] = 1;\n    }\n    for (const x of nums2) {\n        s2[x] = 1;\n    }\n    const ans: number[] = Array(2).fill(0);\n    for (const x of nums1) {\n        ans[0] += s2[x];\n    }\n    for (const x of nums2) {\n        ans[1] += s1[x];\n    }\n    return ans;\n}",
+    approach: "Set кожного масиву; рахуй входження елементів одного в Set іншого.\n\n**Складність:** Time O(n+m), Space O(n+m)",
     signature: "{\"name\":\"findIntersectionValues\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2033,6 +2318,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {string} pref\n * @return {number}\n */\nvar prefixCount = function(words, pref) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"pay\\\",\\\"attention\\\",\\\"practice\\\",\\\"attend\\\"],\\\"at\\\"]\",\"expected\":\"2\"},{\"input\":\"[[\\\"leetcode\\\",\\\"win\\\",\\\"loops\\\",\\\"success\\\"],\\\"code\\\"]\",\"expected\":\"0\"}]",
+    solution: "function prefixCount(words: string[], pref: string): number {\n    return words.reduce((r, s) => (r += s.startsWith(pref) ? 1 : 0), 0);\n}",
+    approach: "Рахуй words[i].startsWith(pref).\n\n**Складність:** Time O(n·len), Space O(1)",
     signature: "{\"name\":\"prefixCount\",\"paramTypes\":[\"string[]\",\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2046,6 +2333,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @return {number}\n */\nvar diagonalSum = function(mat) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"25\"},{\"input\":\"[[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]]]\",\"expected\":\"8\"},{\"input\":\"[[[5]]]\",\"expected\":\"5\"}]",
+    solution: "function diagonalSum(mat: number[][]): number {\n    let ans = 0;\n    const n = mat.length;\n    for (let i = 0; i < n; ++i) {\n        const j = n - i - 1;\n        ans += mat[i][i] + (i === j ? 0 : mat[i][j]);\n    }\n    return ans;\n}",
+    approach: "Сума головної + побічної діагоналі; для непарного n відніми центр один раз.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"diagonalSum\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2059,6 +2348,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} sentence\n * @return {boolean}\n */\nvar checkIfPangram = function(sentence) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"thequickbrownfoxjumpsoverthelazydog\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"leetcode\\\"]\",\"expected\":\"false\"}]",
+    solution: "function checkIfPangram(sentence: string): boolean {\n    const vis = new Array(26).fill(false);\n    for (const c of sentence) {\n        vis[c.charCodeAt(0) - 'a'.charCodeAt(0)] = true;\n    }\n    return vis.every(v => v);\n}",
+    approach: "Set літер; pangram ⇔ size === 26.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"checkIfPangram\",\"paramTypes\":[\"string\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -2072,6 +2363,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string[]}\n */\nvar cellsInRange = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"K1:L2\\\"]\",\"expected\":\"[\\\"K1\\\",\\\"K2\\\",\\\"L1\\\",\\\"L2\\\"]\"},{\"input\":\"[\\\"A1:F1\\\"]\",\"expected\":\"[\\\"A1\\\",\\\"B1\\\",\\\"C1\\\",\\\"D1\\\",\\\"E1\\\",\\\"F1\\\"]\"}]",
+    solution: "function cellsInRange(s: string): string[] {\n    const ans: string[] = [];\n    for (let i = s.charCodeAt(0); i <= s.charCodeAt(3); ++i) {\n        for (let j = s.charCodeAt(1); j <= s.charCodeAt(4); ++j) {\n            ans.push(String.fromCharCode(i) + String.fromCharCode(j));\n        }\n    }\n    return ans;\n}",
+    approach: "Розпарси col1row1:col2row2; подвійний цикл по літерах і числах.\n\n**Складність:** Time O(вихід), Space O(1)",
     signature: "{\"name\":\"cellsInRange\",\"paramTypes\":[\"string\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -2085,6 +2378,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} prices\n * @return {number[]}\n */\nvar finalPrices = function(prices) {\n    \n};",
     testCases: "[{\"input\":\"[[8,4,6,2,3]]\",\"expected\":\"[4,2,4,2,3]\"},{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"[1,2,3,4,5]\"},{\"input\":\"[[10,1,1,6]]\",\"expected\":\"[9,0,1,6]\"}]",
+    solution: "function finalPrices(prices: number[]): number[] {\n    const stk: number[] = [];\n    for (let i = prices.length - 1; ~i; --i) {\n        const x = prices[i];\n        while (stk.length && stk.at(-1)! > x) {\n            stk.pop();\n        }\n        prices[i] -= stk.at(-1) || 0;\n        stk.push(x);\n    }\n    return prices;\n}",
+    approach: "Монотонний стек індексів: коли prices[i] ≤ prices[stack.top] — застосуй знижку prices[i].\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"finalPrices\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2098,6 +2393,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar sortSentence = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"is2 sentence4 This1 a3\\\"]\",\"expected\":\"\\\"This is a sentence\\\"\"},{\"input\":\"[\\\"Myself2 Me1 I4 and3\\\"]\",\"expected\":\"\\\"Me Myself and I\\\"\"}]",
+    solution: "function sortSentence(s: string): string {\n    const ws = s.split(' ');\n    const ans = Array(ws.length);\n    for (const w of ws) {\n        ans[w.charCodeAt(w.length - 1) - '1'.charCodeAt(0)] = w.slice(0, -1);\n    }\n    return ans.join(' ');\n}",
+    approach: "Кожне слово має суфікс-цифру позиції; розклади за нею, склей.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"sortSentence\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -2111,6 +2408,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar reverseWords = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"Let's take LeetCode contest\\\"]\",\"expected\":\"\\\"s'teL ekat edoCteeL tsetnoc\\\"\"},{\"input\":\"[\\\"Mr Ding\\\"]\",\"expected\":\"\\\"rM gniD\\\"\"}]",
+    solution: "function reverseWords(s: string): string {\n    return s\n        .split(' ')\n        .map(t => t.split('').reverse().join(''))\n        .join(' ');\n}",
+    approach: "split(' '), кожне слово розверни, join(' ').\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"reverseWords\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -2124,6 +2423,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @return {string}\n */\nvar firstPalindrome = function(words) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"abc\\\",\\\"car\\\",\\\"ada\\\",\\\"racecar\\\",\\\"cool\\\"]]\",\"expected\":\"\\\"ada\\\"\"},{\"input\":\"[[\\\"notapalindrome\\\",\\\"racecar\\\"]]\",\"expected\":\"\\\"racecar\\\"\"},{\"input\":\"[[\\\"def\\\",\\\"ghi\\\"]]\",\"expected\":\"\\\"\\\"\"}]",
+    solution: "function firstPalindrome(words: string[]): string {\n    return words.find(w => w === w.split('').reverse().join('')) || '';\n}",
+    approach: "Поверни перше слово, що дорівнює своєму реверсу.\n\n**Складність:** Time O(n·len), Space O(len)",
     signature: "{\"name\":\"firstPalindrome\",\"paramTypes\":[\"string[]\"],\"returnType\":\"string\"}",
   },
   {
@@ -2137,6 +2438,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @return {number}\n */\nvar sumOddLengthSubarrays = function(arr) {\n    \n};",
     testCases: "[{\"input\":\"[[1,4,2,5,3]]\",\"expected\":\"58\"},{\"input\":\"[[1,2]]\",\"expected\":\"3\"},{\"input\":\"[[10,11,12]]\",\"expected\":\"66\"}]",
+    solution: "function sumOddLengthSubarrays(arr: number[]): number {\n    const n = arr.length;\n    const f: number[] = Array(n).fill(arr[0]);\n    const g: number[] = Array(n).fill(0);\n    let ans = f[0];\n    for (let i = 1; i < n; ++i) {\n        f[i] = g[i - 1] + arr[i] * ((i >> 1) + 1);\n        g[i] = f[i - 1] + arr[i] * ((i + 1) >> 1);\n        ans += f[i];\n    }\n    return ans;\n}",
+    approach: "Кожен nums[i] входить у ((i+1)·(n-i)+1)/2 непарних підмасивів; помнож і сумуй.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"sumOddLengthSubarrays\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2150,6 +2453,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} gain\n * @return {number}\n */\nvar largestAltitude = function(gain) {\n    \n};",
     testCases: "[{\"input\":\"[[-5,1,5,0,-7]]\",\"expected\":\"1\"},{\"input\":\"[[-4,-3,-2,-1,4,3,2]]\",\"expected\":\"0\"}]",
+    solution: "/**\n * @param {number[]} gain\n * @return {number}\n */\nvar largestAltitude = function (gain) {\n    let ans = 0;\n    let h = 0;\n    for (const v of gain) {\n        h += v;\n        ans = Math.max(ans, h);\n    }\n    return ans;\n};",
+    approach: "Префіксна сума gain; максимум (враховуючи стартовий 0).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"largestAltitude\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2163,6 +2468,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar countPairs = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1,2,2,2,1,3],2]\",\"expected\":\"4\"},{\"input\":\"[[1,2,3,4],1]\",\"expected\":\"0\"}]",
+    solution: "function countPairs(nums: number[], k: number): number {\n    let ans = 0;\n    for (let j = 1; j < nums.length; ++j) {\n        for (let i = 0; i < j; ++i) {\n            if (nums[i] === nums[j] && (i * j) % k === 0) {\n                ++ans;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "n ≤ 100 → подвійний цикл: nums[i]==nums[j] і (i·j)%k===0.\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"countPairs\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2176,6 +2483,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar pivotInteger = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[8]\",\"expected\":\"6\"},{\"input\":\"[1]\",\"expected\":\"1\"},{\"input\":\"[4]\",\"expected\":\"-1\"}]",
+    solution: "function pivotInteger(n: number): number {\n    for (let x = 1; x <= n; ++x) {\n        if ((1 + x) * x === (x + n) * (n - x + 1)) {\n            return x;\n        }\n    }\n    return -1;\n}",
+    approach: "Сума 1..n = n(n+1)/2; шукай x з x(x+1)/2 == total - x(x-1)/2, тобто x = sqrt(total).\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"pivotInteger\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2189,6 +2498,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} image\n * @return {number[][]}\n */\nvar flipAndInvertImage = function(image) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,1,0],[1,0,1],[0,0,0]]]\",\"expected\":\"[[1,0,0],[0,1,0],[1,1,1]]\"},{\"input\":\"[[[1,1,0,0],[1,0,0,1],[0,1,1,1],[1,0,1,0]]]\",\"expected\":\"[[1,1,0,0],[0,1,1,0],[0,0,0,1],[1,0,1,0]]\"}]",
+    solution: "/**\n * @param {number[][]} image\n * @return {number[][]}\n */\nvar flipAndInvertImage = function (image) {\n    for (const row of image) {\n        let i = 0;\n        let j = row.length - 1;\n        for (; i < j; ++i, --j) {\n            if (row[i] == row[j]) {\n                row[i] ^= 1;\n                row[j] ^= 1;\n            }\n        }\n        if (i == j) {\n            row[i] ^= 1;\n        }\n    }\n    return image;\n};",
+    approach: "Кожен рядок: розверни і одночасно інвертуй (0↔1) двома вказівниками.\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"flipAndInvertImage\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -2202,6 +2513,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @return {Generator<number>}\n */\nvar fibGenerator = function*() {\n    \n};\n\n/**\n * const gen = fibGenerator();\n * gen.next().value; // 0\n * gen.next().value; // 1\n */",
     testCases: "[{\"input\":\"[5]\",\"expected\":\"{}\"},{\"input\":\"[0]\",\"expected\":\"{}\"}]",
+    solution: "function* fibGenerator(): Generator<number, any, number> {\n    let a = 0;\n    let b = 1;\n    while (true) {\n        yield a;\n        [a, b] = [b, a + b];\n    }\n}\n\n/**\n * const gen = fibGenerator();\n * gen.next().value; // 0\n * gen.next().value; // 1\n */",
+    approach: "Генератор: a=0,b=1; yield a; [a,b]=[b,a+b].\n\n**Складність:** Time O(1) на крок, Space O(1)",
     signature: "{\"name\":\"fibGenerator\",\"paramTypes\":[\"string\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2215,6 +2528,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @return {number}\n */\nvar uniqueMorseRepresentations = function(words) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"gin\\\",\\\"zen\\\",\\\"gig\\\",\\\"msg\\\"]]\",\"expected\":\"2\"},{\"input\":\"[[\\\"a\\\"]]\",\"expected\":\"1\"}]",
+    solution: "const codes = [\n    '.-',\n    '-...',\n    '-.-.',\n    '-..',\n    '.',\n    '..-.',\n    '--.',\n    '....',\n    '..',\n    '.---',\n    '-.-',\n    '.-..',\n    '--',\n    '-.',\n    '---',\n    '.--.',\n    '--.-',\n    '.-.',\n    '...',\n    '-',\n    '..-',\n    '...-',\n    '.--',\n    '-..-',\n    '-.--',\n    '--..',\n];\n\nfunction uniqueMorseRepresentations(words: string[]): number {\n    return new Set(\n        words.map(word => {\n            return word\n                .split('')\n                .map(c => codes[c.charCodeAt(0) - 'a'.charCodeAt(0)])\n                .join('');\n        }),\n    ).size;\n}",
+    approach: "Таблиця морзе a..z; Set із конкатенацій; поверни size.\n\n**Складність:** Time O(сумарна довжина), Space O(n)",
     signature: "{\"name\":\"uniqueMorseRepresentations\",\"paramTypes\":[\"string[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2228,6 +2543,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maxProduct = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[3,4,5,2]]\",\"expected\":\"12\"},{\"input\":\"[[1,5,4,5]]\",\"expected\":\"16\"},{\"input\":\"[[3,7]]\",\"expected\":\"12\"}]",
+    solution: "function maxProduct(nums: number[]): number {\n    const n = nums.length;\n    for (let i = 0; i < 2; i++) {\n        let maxIdx = i;\n        for (let j = i + 1; j < n; j++) {\n            if (nums[j] > nums[maxIdx]) {\n                maxIdx = j;\n            }\n        }\n        [nums[i], nums[maxIdx]] = [nums[maxIdx], nums[i]];\n    }\n    return (nums[0] - 1) * (nums[1] - 1);\n}",
+    approach: "(max1-1)·(max2-1); знайди два найбільші одним проходом.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maxProduct\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2241,6 +2558,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar countAsterisks = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"l|*e*et|c**o|*de|\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"iamprogrammer\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"yo|uar|e**|b|e***au|tifu|l\\\"]\",\"expected\":\"5\"}]",
+    solution: "function countAsterisks(s: string): number {\n    let ans = 0;\n    let ok = 1;\n    for (const c of s) {\n        if (c === '*') {\n            ans += ok;\n        } else if (c === '|') {\n            ok ^= 1;\n        }\n    }\n    return ans;\n}",
+    approach: "Toggle-прапорець на кожному '|'; рахуй '*' лише поза парами вертикальних рисок.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"countAsterisks\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2254,6 +2573,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} cost\n * @return {number[]}\n */\nvar minCosts = function(cost) {\n    \n};",
     testCases: "[{\"input\":\"[[5,3,4,1,3,2]]\",\"expected\":\"[5,3,3,1,1,1]\"},{\"input\":\"[[1,2,4,6,7]]\",\"expected\":\"[1,1,1,1,1]\"}]",
+    solution: "function minCosts(cost: number[]): number[] {\n    const n = cost.length;\n    const ans: number[] = Array(n).fill(0);\n    let mi = cost[0];\n    for (let i = 0; i < n; ++i) {\n        mi = Math.min(mi, cost[i]);\n        ans[i] = mi;\n    }\n    return ans;\n}",
+    approach: "Префіксний мінімум цін: answer[i] = min(costs[0..i]).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minCosts\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2267,6 +2588,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} x\n * @return {number}\n */\nvar sumOfTheDigitsOfHarshadNumber = function(x) {\n    \n};",
     testCases: "[{\"input\":\"[18]\",\"expected\":\"9\"},{\"input\":\"[23]\",\"expected\":\"-1\"}]",
+    solution: "function sumOfTheDigitsOfHarshadNumber(x: number): number {\n    let s = 0;\n    for (let y = x; y; y = Math.floor(y / 10)) {\n        s += y % 10;\n    }\n    return x % s === 0 ? s : -1;\n}",
+    approach: "Сума цифр s; якщо x % s === 0 — поверни s, інакше -1.\n\n**Складність:** Time O(log x), Space O(1)",
     signature: "{\"name\":\"sumOfTheDigitsOfHarshadNumber\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2280,6 +2603,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} timer\n * @return {string}\n */\nvar trafficSignal = function(timer) {\n    \n};",
     testCases: "[{\"input\":\"[60]\",\"expected\":\"\\\"Red\\\"\"},{\"input\":\"[5]\",\"expected\":\"\\\"Invalid\\\"\"}]",
+    solution: "function trafficSignal(timer: number): string {\n    if (timer === 0) {\n        return 'Green';\n    }\n    if (timer === 30) {\n        return 'Orange';\n    }\n    if (timer > 30 && timer <= 90) {\n        return 'Red';\n    }\n    return 'Invalid';\n}",
+    approach: "Модуль циклу (green+yellow+red); визнач інтервал за залишком.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"trafficSignal\",\"paramTypes\":[\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -2293,6 +2618,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[]}\n */\nvar findMissingAndRepeatedValues = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,3],[2,2]]]\",\"expected\":\"[2,4]\"},{\"input\":\"[[[9,1,7],[8,9,2],[3,4,6]]]\",\"expected\":\"[9,5]\"}]",
+    solution: "function findMissingAndRepeatedValues(grid: number[][]): number[] {\n    const n = grid.length;\n    const cnt: number[] = Array(n * n + 1).fill(0);\n    const ans: number[] = Array(2).fill(0);\n    for (const row of grid) {\n        for (const x of row) {\n            if (++cnt[x] === 2) {\n                ans[0] = x;\n            }\n        }\n    }\n    for (let x = 1; ; ++x) {\n        if (cnt[x] === 0) {\n            ans[1] = x;\n            return ans;\n        }\n    }\n}",
+    approach: "Лічильник 1..n²: значення з count 2 — repeated, з count 0 — missing. Або математика сум/сум квадратів.\n\n**Складність:** Time O(n²), Space O(n²)",
     signature: "{\"name\":\"findMissingAndRepeatedValues\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2306,6 +2633,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar findMissingElements = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,4,2,5]]\",\"expected\":\"[3]\"},{\"input\":\"[[7,8,6,9]]\",\"expected\":\"[]\"},{\"input\":\"[[5,1]]\",\"expected\":\"[2,3,4]\"}]",
+    solution: "function findMissingElements(nums: number[]): number[] {\n    let [mn, mx] = [100, 0];\n    const s = new Set<number>();\n    for (const x of nums) {\n        mn = Math.min(mn, x);\n        mx = Math.max(mx, x);\n        s.add(x);\n    }\n    const ans: number[] = [];\n    for (let x = mn + 1; x < mx; ++x) {\n        if (!s.has(x)) {\n            ans.push(x);\n        }\n    }\n    return ans;\n}",
+    approach: "Пройди від nums[0] до nums[last]; всі, кого нема в масиві (він відсортований), — у відповідь.\n\n**Складність:** Time O(діапазон), Space O(1)",
     signature: "{\"name\":\"findMissingElements\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -2319,6 +2648,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Array} arr\n * @param {Function} fn\n * @return {Array}\n */\nvar sortBy = function(arr, fn) {\n    \n};",
     testCases: "[]",
+    solution: "function sortBy(arr: any[], fn: Function): any[] {\n    return arr.sort((a, b) => fn(a) - fn(b));\n}",
+    approach: "Поверни [...arr].sort((a,b)=>fn(a)-fn(b)).\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
     slug: "maximum-product-difference-between-two-pairs",
@@ -2331,6 +2662,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\r\n * @param {number[]} nums\r\n * @return {number}\r\n */\r\nvar maxProductDifference = function(nums) {\r\n    \r\n};",
     testCases: "[{\"input\":\"[[5,6,2,7,4]]\",\"expected\":\"34\"},{\"input\":\"[[4,2,5,9,7,4,8]]\",\"expected\":\"64\"}]",
+    solution: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maxProductDifference = function (nums) {\n    nums.sort((a, b) => a - b);\n    let n = nums.length;\n    let ans = nums[n - 1] * nums[n - 2] - nums[0] * nums[1];\n    return ans;\n};",
+    approach: "Максимальний добуток — два найбільші, мінімальний — два найменші; поверни різницю.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maxProductDifference\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2344,6 +2677,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} low\n * @param {number} high\n * @return {number}\n */\nvar countSymmetricIntegers = function(low, high) {\n    \n};",
     testCases: "[{\"input\":\"[1,100]\",\"expected\":\"9\"},{\"input\":\"[1200,1230]\",\"expected\":\"4\"}]",
+    solution: "function countSymmetricIntegers(low: number, high: number): number {\n    let ans = 0;\n    const f = (x: number): number => {\n        const s = x.toString();\n        const n = s.length;\n        if (n & 1) {\n            return 0;\n        }\n        let a = 0;\n        let b = 0;\n        for (let i = 0; i < n >> 1; ++i) {\n            a += Number(s[i]);\n            b += Number(s[(n >> 1) + i]);\n        }\n        return a === b ? 1 : 0;\n    };\n    for (let x = low; x <= high; ++x) {\n        ans += f(x);\n    }\n    return ans;\n}",
+    approach: "Перебір low..high; для чисел парної довжини порівнюй суму лівої і правої половин цифр.\n\n**Складність:** Time O((high-low)·log), Space O(1)",
     signature: "{\"name\":\"countSymmetricIntegers\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2357,6 +2692,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {string} s\n * @return {boolean}\n */\nvar isAcronym = function(words, s) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"alice\\\",\\\"bob\\\",\\\"charlie\\\"],\\\"abc\\\"]\",\"expected\":\"true\"},{\"input\":\"[[\\\"an\\\",\\\"apple\\\"],\\\"a\\\"]\",\"expected\":\"false\"},{\"input\":\"[[\\\"never\\\",\\\"gonna\\\",\\\"give\\\",\\\"up\\\",\\\"on\\\",\\\"you\\\"],\\\"ngguoy\\\"]\",\"expected\":\"true\"}]",
+    solution: "function isAcronym(words: string[], s: string): boolean {\n    return words.map(w => w[0]).join('') === s;\n}",
+    approach: "s.length === words.length і s[i] === words[i][0] для всіх i.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"isAcronym\",\"paramTypes\":[\"list<string>\",\"string\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -2370,6 +2707,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {number} t milliseconds\n * @return {Function}\n */\nvar debounce = function(fn, t) {\n    \n    return function(...args) {\n        \n    }\n};\n\n/**\n * const log = debounce(console.log, 100);\n * log('Hello'); // cancelled\n * log('Hello'); // cancelled\n * log('Hello'); // Logged at t=100ms\n */",
     testCases: "[]",
+    solution: "type F = (...p: any[]) => any;\n\nfunction debounce(fn: F, t: number): F {\n    let timeout: ReturnType<typeof setTimeout> | undefined;\n\n    return function (...args) {\n        if (timeout !== undefined) {\n            clearTimeout(timeout);\n        }\n        timeout = setTimeout(() => {\n            fn.apply(this, args);\n        }, t);\n    };\n}\n\n/**\n * const log = debounce(console.log, 100);\n * log('Hello'); // cancelled\n * log('Hello'); // cancelled\n * log('Hello'); // Logged at t=100ms\n */",
+    approach: "Замикання з таймером: кожен виклик робить clearTimeout і ставить новий setTimeout(t) на fn(...args).\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "maximum-substrings-with-distinct-start",
@@ -2382,6 +2721,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar maxDistinct = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abab\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"abcd\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"aaaa\\\"]\",\"expected\":\"1\"}]",
+    solution: "function maxDistinct(s: string): number {\n    let ans = 0;\n    const cnt: number[] = Array(26).fill(0);\n    for (const ch of s) {\n        const idx = ch.charCodeAt(0) - 97;\n        if (++cnt[idx] === 1) {\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Жадібно: як тільки набрали підрядок з унікальним стартовим символом — режемо. По суті рахуй унікальні символи, що можуть бути початком.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maxDistinct\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2395,6 +2736,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar insertGreatestCommonDivisors = function(head) {\n    \n};",
     testCases: "[{\"input\":\"[[18,6,10,3]]\",\"expected\":\"[18,6,6,2,10,1,3]\"},{\"input\":\"[[7]]\",\"expected\":\"[7]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction insertGreatestCommonDivisors(head: ListNode | null): ListNode | null {\n    for (let pre = head, cur = head.next; cur; cur = cur.next) {\n        const x = gcd(pre.val, cur.val);\n        pre.next = new ListNode(x, cur);\n        pre = cur;\n    }\n    return head;\n}\n\nfunction gcd(a: number, b: number): number {\n    if (b === 0) {\n        return a;\n    }\n    return gcd(b, a % b);\n}",
+    approach: "Пройди пари сусідніх вузлів; між ними встав new ListNode(gcd(a.val, b.val)).\n\n**Складність:** Time O(n·log), Space O(1)",
     signature: "{\"name\":\"insertGreatestCommonDivisors\",\"paramTypes\":[\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -2408,6 +2751,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} n\n * @return {number}\n */\nvar minPartitions = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"32\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"82734\\\"]\",\"expected\":\"8\"},{\"input\":\"[\\\"27346209830709182346\\\"]\",\"expected\":\"9\"}]",
+    solution: "function minPartitions(n: string): number {\n    return Math.max(...n.split('').map(Number));\n}",
+    approach: "Відповідь = максимальна цифра рядка.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minPartitions\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2421,6 +2766,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {boolean}\n */\nvar isStrictlyPalindromic = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[9]\",\"expected\":\"false\"},{\"input\":\"[4]\",\"expected\":\"false\"}]",
+    solution: "function isStrictlyPalindromic(n: number): boolean {\n    return false;\n}",
+    approach: "Завжди false для n ≥ 4 (у базі n-2 це '11', а в базі n-1 — '11'? насправді n у базі n-2 = 12 → не паліндром). Поверни false.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"isStrictlyPalindromic\",\"paramTypes\":[\"integer\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -2434,6 +2781,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} boxes\n * @return {number[]}\n */\nvar minOperations = function(boxes) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"110\\\"]\",\"expected\":\"[1,1,3]\"},{\"input\":\"[\\\"001011\\\"]\",\"expected\":\"[11,8,5,4,3,4]\"}]",
+    solution: "function minOperations(boxes: string): number[] {\n    const n = boxes.length;\n    const left = new Array(n).fill(0);\n    const right = new Array(n).fill(0);\n    for (let i = 1, count = 0; i < n; i++) {\n        if (boxes[i - 1] == '1') {\n            count++;\n        }\n        left[i] = left[i - 1] + count;\n    }\n    for (let i = n - 2, count = 0; i >= 0; i--) {\n        if (boxes[i + 1] == '1') {\n            count++;\n        }\n        right[i] = right[i + 1] + count;\n    }\n    return left.map((v, i) => v + right[i]);\n}",
+    approach: "Два проходи: накопичуй кількість м'ячів і вартість зліва, потім справа; підсумуй.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"minOperations\",\"paramTypes\":[\"string\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2447,6 +2796,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} pivot\n * @return {number[]}\n */\nvar pivotArray = function(nums, pivot) {\n    \n};",
     testCases: "[{\"input\":\"[[9,12,5,10,14,3,10],10]\",\"expected\":\"[9,5,3,10,10,12,14]\"},{\"input\":\"[[-3,4,3,2],2]\",\"expected\":\"[-3,2,4,3]\"}]",
+    solution: "function pivotArray(nums: number[], pivot: number): number[] {\n    const ans: number[] = [];\n    for (const x of nums) {\n        if (x < pivot) {\n            ans.push(x);\n        }\n    }\n    for (const x of nums) {\n        if (x === pivot) {\n            ans.push(x);\n        }\n    }\n    for (const x of nums) {\n        if (x > pivot) {\n            ans.push(x);\n        }\n    }\n    return ans;\n}",
+    approach: "Три проходи/три відра: менші, рівні, більші — у вихідному порядку, склей.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"pivotArray\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2460,6 +2811,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar mergeNodes = function(head) {\n    \n};",
     testCases: "[{\"input\":\"[[0,3,1,0,4,5,2,0]]\",\"expected\":\"[4,11]\"},{\"input\":\"[[0,1,0,3,0,2,2,0]]\",\"expected\":\"[1,3,4]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction mergeNodes(head: ListNode | null): ListNode | null {\n    const dummy = new ListNode();\n    let tail = dummy;\n    let s = 0;\n    for (let cur = head.next; cur; cur = cur.next) {\n        if (cur.val) {\n            s += cur.val;\n        } else {\n            tail.next = new ListNode(s);\n            tail = tail.next;\n            s = 0;\n        }\n    }\n    return dummy.next;\n}",
+    approach: "Один прохід: акумулюй суму між нулями, на нулі створюй вузол з накопиченою сумою.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"mergeNodes\",\"paramTypes\":[\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -2473,6 +2826,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countMaxOrSubsets = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1]]\",\"expected\":\"2\"},{\"input\":\"[[2,2,2]]\",\"expected\":\"7\"},{\"input\":\"[[3,2,1,5]]\",\"expected\":\"6\"}]",
+    solution: "function countMaxOrSubsets(nums: number[]): number {\n    let ans = 0;\n    const mx = nums.reduce((x, y) => x | y, 0);\n\n    const dfs = (i: number, t: number) => {\n        if (i === nums.length) {\n            if (t === mx) {\n                ans++;\n            }\n            return;\n        }\n        dfs(i + 1, t);\n        dfs(i + 1, t | nums[i]);\n    };\n\n    dfs(0, 0);\n    return ans;\n}",
+    approach: "maxOR = OR усіх; бектрекінг/бітова маска підмножин, рахуй ті, чий OR == maxOR.\n\n**Складність:** Time O(2ⁿ), Space O(n)",
     signature: "{\"name\":\"countMaxOrSubsets\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2486,6 +2841,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string[]}\n */\nvar validStrings = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[3]\",\"expected\":\"[\\\"010\\\",\\\"011\\\",\\\"101\\\",\\\"110\\\",\\\"111\\\"]\"},{\"input\":\"[1]\",\"expected\":\"[\\\"0\\\",\\\"1\\\"]\"}]",
+    solution: "function validStrings(n: number): string[] {\n    const ans: string[] = [];\n    const t: string[] = [];\n    const dfs = (i: number) => {\n        if (i >= n) {\n            ans.push(t.join(''));\n            return;\n        }\n        for (let j = 0; j < 2; ++j) {\n            if ((j == 0 && (i == 0 || t[i - 1] == '1')) || j == 1) {\n                t.push(j.toString());\n                dfs(i + 1);\n                t.pop();\n            }\n        }\n    };\n    dfs(0);\n    return ans;\n}",
+    approach: "Бектрекінг: додавай '1' завжди, '0' лише якщо попередній не '0'.\n\n**Складність:** Time O(2ⁿ), Space O(n)",
     signature: "{\"name\":\"validStrings\",\"paramTypes\":[\"integer\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -2499,6 +2856,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} pref\n * @return {number[]}\n */\nvar findArray = function(pref) {\n    \n};",
     testCases: "[{\"input\":\"[[5,2,0,3,1]]\",\"expected\":\"[5,7,2,3,2]\"},{\"input\":\"[[13]]\",\"expected\":\"[13]\"}]",
+    solution: "function findArray(pref: number[]): number[] {\n    let ans = pref.slice();\n    for (let i = 1; i < pref.length; i++) {\n        ans[i] = pref[i - 1] ^ pref[i];\n    }\n    return ans;\n}",
+    approach: "arr[0]=pref[0]; arr[i]=pref[i] XOR pref[i-1].\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"findArray\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2512,6 +2871,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar bstToGst = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]]\",\"expected\":\"[30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]\"},{\"input\":\"[[0,null,1]]\",\"expected\":\"[1,null,1]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction bstToGst(root: TreeNode | null): TreeNode | null {\n    let s = 0;\n    const dfs = (root: TreeNode | null) => {\n        if (!root) {\n            return;\n        }\n        dfs(root.right);\n        s += root.val;\n        root.val = s;\n        dfs(root.left);\n    };\n    dfs(root);\n    return root;\n}",
+    approach: "Обернений in-order (right→node→left) з накопиченою сумою; node.val += sum.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"bstToGst\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -2525,6 +2886,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} A\n * @param {number[]} B\n * @return {number[]}\n */\nvar findThePrefixCommonArray = function(A, B) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,2,4],[3,1,2,4]]\",\"expected\":\"[0,2,3,4]\"},{\"input\":\"[[2,3,1],[3,1,2]]\",\"expected\":\"[0,1,3]\"}]",
+    solution: "function findThePrefixCommonArray(A: number[], B: number[]): number[] {\n    const n = A.length;\n    const cnt1: number[] = Array(n + 1).fill(0);\n    const cnt2: number[] = Array(n + 1).fill(0);\n    const ans: number[] = Array(n).fill(0);\n    for (let i = 0; i < n; ++i) {\n        ++cnt1[A[i]];\n        ++cnt2[B[i]];\n        for (let j = 1; j <= n; ++j) {\n            ans[i] += Math.min(cnt1[j], cnt2[j]);\n        }\n    }\n    return ans;\n}",
+    approach: "Два Set; на кроці i додай A[i], B[i]; C[i] = розмір перетину (або лічильник спільних).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"findThePrefixCommonArray\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2538,6 +2901,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} groupSizes\n * @return {number[][]}\n */\nvar groupThePeople = function(groupSizes) {\n    \n};",
     testCases: "[{\"input\":\"[[3,3,3,3,3,1,3]]\",\"expected\":\"[[5],[0,1,2],[3,4,6]]\"},{\"input\":\"[[2,1,3,3,3,2]]\",\"expected\":\"[[1],[0,5],[2,3,4]]\"}]",
+    solution: "function groupThePeople(groupSizes: number[]): number[][] {\n    const n: number = groupSizes.length;\n    const g: number[][] = Array.from({ length: n + 1 }, () => []);\n\n    for (let i = 0; i < groupSizes.length; i++) {\n        const size: number = groupSizes[i];\n        g[size].push(i);\n    }\n    const ans: number[][] = [];\n    for (let i = 1; i <= n; i++) {\n        const group: number[] = [];\n        for (let j = 0; j < g[i].length; j += i) {\n            group.push(...g[i].slice(j, j + i));\n            ans.push([...group]);\n            group.length = 0;\n        }\n    }\n    return ans;\n}",
+    approach: "Map size→буфер; додавай людину, коли буфер досяг size — випхни групу й очисти.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"groupThePeople\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<list<integer>>\"}",
   },
   {
@@ -2551,6 +2916,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {string}\n */\nvar getHappyString = function(n, k) {\n    \n};",
     testCases: "[{\"input\":\"[1,3]\",\"expected\":\"\\\"c\\\"\"},{\"input\":\"[1,4]\",\"expected\":\"\\\"\\\"\"},{\"input\":\"[3,9]\",\"expected\":\"\\\"cab\\\"\"}]",
+    solution: "function getHappyString(n: number, k: number): string {\n    const ans: string[] = [];\n    const s: string[] = [];\n    const dfs = () => {\n        if (s.length === n) {\n            ans.push(s.join(''));\n            return;\n        }\n        if (ans.length >= k) {\n            return;\n        }\n        for (const c of 'abc') {\n            if (!s.length || s.at(-1)! !== c) {\n                s.push(c);\n                dfs();\n                s.pop();\n            }\n        }\n    };\n    dfs();\n    return ans[k - 1] ?? '';\n}",
+    approach: "Дерево вибору з 3 літер, жодна не поруч однакова: всього 3·2^(n-1). Йди по розрядах, обираючи гілку за k / розмір_піддерева.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"getHappyString\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -2564,6 +2931,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} bank\n * @return {number}\n */\nvar numberOfBeams = function(bank) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"011001\\\",\\\"000000\\\",\\\"010100\\\",\\\"001000\\\"]]\",\"expected\":\"8\"},{\"input\":\"[[\\\"000\\\",\\\"111\\\",\\\"000\\\"]]\",\"expected\":\"0\"}]",
+    solution: "function numberOfBeams(bank: string[]): number {\n    let [ans, pre] = [0, 0];\n    for (const row of bank) {\n        const cur = row.split('1').length - 1;\n        if (cur) {\n            ans += pre * cur;\n            pre = cur;\n        }\n    }\n    return ans;\n}",
+    approach: "Кількість '1' у кожному непорожньому рядку; сума добутків сусідніх непорожніх.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"numberOfBeams\",\"paramTypes\":[\"string[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2577,6 +2946,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @param {number[][]} queries\n * @return {number[]}\n */\nvar countPoints = function(points, queries) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,3],[3,3],[5,3],[2,2]],[[2,3,1],[4,3,1],[1,1,2]]]\",\"expected\":\"[3,2,2]\"},{\"input\":\"[[[1,1],[2,2],[3,3],[4,4],[5,5]],[[1,2,2],[2,2,2],[4,3,2],[4,3,3]]]\",\"expected\":\"[2,3,2,4]\"}]",
+    solution: "function countPoints(points: number[][], queries: number[][]): number[] {\n    return queries.map(([cx, cy, r]) => {\n        let res = 0;\n        for (const [px, py] of points) {\n            if (Math.sqrt((cx - px) ** 2 + (cy - py) ** 2) <= r) {\n                res++;\n            }\n        }\n        return res;\n    });\n}",
+    approach: "Для кожного кола рахуй точки з (dx²+dy²) ≤ r².\n\n**Складність:** Time O(Q·P), Space O(1)",
     signature: "{\"name\":\"countPoints\",\"paramTypes\":[\"integer[][]\",\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2590,6 +2961,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar averageOfSubtree = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[4,8,5,0,1,null,6]]\",\"expected\":\"5\"},{\"input\":\"[[1]]\",\"expected\":\"1\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction averageOfSubtree(root: TreeNode | null): number {\n    let ans: number = 0;\n    const dfs = (root: TreeNode | null): [number, number] => {\n        if (!root) {\n            return [0, 0];\n        }\n        const [ls, ln] = dfs(root.left);\n        const [rs, rn] = dfs(root.right);\n        const s = ls + rs + root.val;\n        const n = ln + rn + 1;\n        if (Math.floor(s / n) === root.val) {\n            ++ans;\n        }\n        return [s, n];\n    };\n    dfs(root);\n    return ans;\n}",
+    approach: "Post-order DFS повертає (сума, кількість); рахуй вузли, де val === floor(sum/count).\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"averageOfSubtree\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2603,6 +2976,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar reverseOddLevels = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,5,8,13,21,34]]\",\"expected\":\"[2,5,3,8,13,21,34]\"},{\"input\":\"[[7,13,11]]\",\"expected\":\"[7,11,13]\"},{\"input\":\"[[0,1,2,0,0,0,0,1,1,1,1,2,2,2,2]]\",\"expected\":\"[0,2,1,0,0,0,0,2,2,2,2,1,1,1,1]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction reverseOddLevels(root: TreeNode | null): TreeNode | null {\n    const q: TreeNode[] = [root];\n    for (let i = 0; q.length > 0; ++i) {\n        if (i % 2) {\n            for (let l = 0, r = q.length - 1; l < r; ++l, --r) {\n                [q[l].val, q[r].val] = [q[r].val, q[l].val];\n            }\n        }\n        const nq: TreeNode[] = [];\n        for (const { left, right } of q) {\n            if (left) {\n                nq.push(left);\n                nq.push(right);\n            }\n        }\n        q.splice(0, q.length, ...nq);\n    }\n    return root;\n}",
+    approach: "BFS по рівнях; на непарних рівнях міняй значення дзеркальних вузлів (l++, r--).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"reverseOddLevels\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -2616,6 +2991,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Encodes a URL to a shortened URL.\n *\n * @param {string} longUrl\n * @return {string}\n */\nvar encode = function(longUrl) {\n    \n};\n\n/**\n * Decodes a shortened URL to its original URL.\n *\n * @param {string} shortUrl\n * @return {string}\n */\nvar decode = function(shortUrl) {\n    \n};\n\n/**\n * Your functions will be called as such:\n * decode(encode(url));\n */",
     testCases: "[]",
+    solution: "const urlMap = new Map<string, string>();\nlet counter = 0;\n\nfunction encode(longUrl: string): string {\n  const key = 'http://tinyurl.com/' + counter++;\n  urlMap.set(key, longUrl);\n  return key;\n}\n\nfunction decode(shortUrl: string): string {\n  return urlMap.get(shortUrl) ?? '';\n}",
+    approach: "Map: короткий ключ (лічильник або випадковий) ↔ довгий URL. encode зберігає й повертає префікс+ключ, decode шукає.\n\n**Складність:** Time O(1), Space O(n)",
   },
   {
     slug: "count-digit-appearances",
@@ -2628,6 +3005,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} digit\n * @return {number}\n */\nvar countDigitOccurrences = function(nums, digit) {\n    \n};",
     testCases: "[{\"input\":\"[[12,54,32,22],2]\",\"expected\":\"4\"},{\"input\":\"[[1,34,7],9]\",\"expected\":\"0\"}]",
+    solution: "function countDigitOccurrences(nums: number[], digit: number): number {\n    let ans = 0;\n    for (let x of nums) {\n        for (; x; x = Math.floor(x / 10)) {\n            if (x % 10 === digit) {\n                ++ans;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожного числа рахуй, скільки разів цифра d зустрічається в його десятковому записі; підсумуй.\n\n**Складність:** Time O(n·log), Space O(1)",
     signature: "{\"name\":\"countDigitOccurrences\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2641,6 +3020,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar deepestLeavesSum = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4,5,null,6,7,null,null,null,null,8]]\",\"expected\":\"15\"},{\"input\":\"[[6,7,8,2,7,1,3,9,null,1,4,null,null,null,5]]\",\"expected\":\"19\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction deepestLeavesSum(root: TreeNode | null): number {\n    let q: TreeNode[] = [root];\n    let ans = 0;\n    while (q.length) {\n        const nq: TreeNode[] = [];\n        ans = 0;\n        for (const { val, left, right } of q) {\n            ans += val;\n            left && nq.push(left);\n            right && nq.push(right);\n        }\n        q = nq;\n    }\n    return ans;\n}",
+    approach: "BFS по рівнях — сума останнього рівня. Або DFS з відстеженням максимальної глибини.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"deepestLeavesSum\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2654,6 +3035,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maxIncreaseKeepingSkyline = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]]\",\"expected\":\"35\"},{\"input\":\"[[[0,0,0],[0,0,0],[0,0,0]]]\",\"expected\":\"0\"}]",
+    solution: "function maxIncreaseKeepingSkyline(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    const rowMax = Array(m).fill(0);\n    const colMax = Array(n).fill(0);\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            rowMax[i] = Math.max(rowMax[i], grid[i][j]);\n            colMax[j] = Math.max(colMax[j], grid[i][j]);\n        }\n    }\n    let ans = 0;\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            ans += Math.min(rowMax[i], colMax[j]) - grid[i][j];\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожної клітинки нова висота = min(max рядка, max стовпця); сумуй приріст.\n\n**Складність:** Time O(n²), Space O(n)",
     signature: "{\"name\":\"maxIncreaseKeepingSkyline\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2667,6 +3050,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} rectangle\n */\nvar SubrectangleQueries = function(rectangle) {\n    \n};\n\n/** \n * @param {number} row1 \n * @param {number} col1 \n * @param {number} row2 \n * @param {number} col2 \n * @param {number} newValue\n * @return {void}\n */\nSubrectangleQueries.prototype.updateSubrectangle = function(row1, col1, row2, col2, newValue) {\n    \n};\n\n/** \n * @param {number} row \n * @param {number} col\n * @return {number}\n */\nSubrectangleQueries.prototype.getValue = function(row, col) {\n    \n};\n\n/** \n * Your SubrectangleQueries object will be instantiated and called as such:\n * var obj = new SubrectangleQueries(rectangle)\n * obj.updateSubrectangle(row1,col1,row2,col2,newValue)\n * var param_2 = obj.getValue(row,col)\n */",
     testCases: "[]",
+    solution: "class SubrectangleQueries {\n    g: number[][];\n    ops: number[][];\n    constructor(rectangle: number[][]) {\n        this.g = rectangle;\n        this.ops = [];\n    }\n\n    updateSubrectangle(\n        row1: number,\n        col1: number,\n        row2: number,\n        col2: number,\n        newValue: number,\n    ): void {\n        this.ops.push([row1, col1, row2, col2, newValue]);\n    }\n\n    getValue(row: number, col: number): number {\n        for (let i = this.ops.length - 1; ~i; --i) {\n            const [r1, c1, r2, c2, v] = this.ops[i];\n            if (r1 <= row && row <= r2 && c1 <= col && col <= c2) {\n                return v;\n            }\n        }\n        return this.g[row][col];\n    }\n}\n\n/**\n * Your SubrectangleQueries object will be instantiated and called as such:\n * var obj = new SubrectangleQueries(rectangle)\n * obj.updateSubrectangle(row1,col1,row2,col2,newValue)\n * var param_2 = obj.getValue(row,col)\n */",
+    approach: "Зберігай список updateSubrectangle операцій; getValue дивиться з кінця — перше оновлення, що покриває (r,c), інакше вихідна матриця.\n\n**Складність:** Time O(1) update / O(u) query, Space O(u)",
   },
   {
     slug: "maximum-binary-tree",
@@ -2679,6 +3064,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[]} nums\n * @return {TreeNode}\n */\nvar constructMaximumBinaryTree = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[3,2,1,6,0,5]]\",\"expected\":\"[6,3,5,null,2,0,null,null,1]\"},{\"input\":\"[[3,2,1]]\",\"expected\":\"[3,null,2,null,1]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction constructMaximumBinaryTree(nums: number[]): TreeNode | null {\n    const n = nums.length;\n    if (n === 0) {\n        return null;\n    }\n    const [val, i] = nums.reduce((r, v, i) => (r[0] < v ? [v, i] : r), [-1, 0]);\n    return new TreeNode(\n        val,\n        constructMaximumBinaryTree(nums.slice(0, i)),\n        constructMaximumBinaryTree(nums.slice(i + 1)),\n    );\n}",
+    approach: "Монотонний спадний стек: для кожного числа підвішуй попів як ліве піддерево, себе — праворуч від вершини стека.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"constructMaximumBinaryTree\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -2692,6 +3079,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar balanceBST = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[1,null,2,null,3,null,4]]\",\"expected\":\"[2,1,3,null,null,null,4]\"},{\"input\":\"[[2,1,3]]\",\"expected\":\"[2,1,3]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction balanceBST(root: TreeNode | null): TreeNode | null {\n    const nums: number[] = [];\n    const dfs = (root: TreeNode | null): void => {\n        if (root == null) {\n            return;\n        }\n        dfs(root.left);\n        nums.push(root.val);\n        dfs(root.right);\n    };\n    const build = (i: number, j: number): TreeNode | null => {\n        if (i > j) {\n            return null;\n        }\n        const mid: number = (i + j) >> 1;\n        const left: TreeNode | null = build(i, mid - 1);\n        const right: TreeNode | null = build(mid + 1, j);\n        return new TreeNode(nums[mid], left, right);\n    };\n    dfs(root);\n    return build(0, nums.length - 1);\n}",
+    approach: "In-order обхід → відсортований масив; рекурсивно бери середину як корінь.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"balanceBST\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -2705,6 +3094,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar findMatrix = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,4,1,2,3,1]]\",\"expected\":\"[[1,2,3,4],[1,3],[1]]\"},{\"input\":\"[[2,1,1]]\",\"expected\":\"[[1,2],[1]]\"}]",
+    solution: "function findMatrix(nums: number[]): number[][] {\n    const ans: number[][] = [];\n    const n = nums.length;\n    const cnt: number[] = Array(n + 1).fill(0);\n    for (const x of nums) {\n        ++cnt[x];\n    }\n    for (let x = 1; x <= n; ++x) {\n        for (let j = 0; j < cnt[x]; ++j) {\n            if (ans.length <= j) {\n                ans.push([]);\n            }\n            ans[j].push(x);\n        }\n    }\n    return ans;\n}",
+    approach: "Map значення→залишкова кількість; кожне число кладемо в перший рядок, де його ще нема (рядок = поточний лічильник входжень).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"findMatrix\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<list<integer>>\"}",
   },
   {
@@ -2718,6 +3109,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} score\n * @param {number} k\n * @return {number[][]}\n */\nvar sortTheStudents = function(score, k) {\n    \n};",
     testCases: "[{\"input\":\"[[[10,6,9,1],[7,5,11,2],[4,8,3,15]],2]\",\"expected\":\"[[7,5,11,2],[10,6,9,1],[4,8,3,15]]\"},{\"input\":\"[[[3,4],[5,6]],0]\",\"expected\":\"[[5,6],[3,4]]\"}]",
+    solution: "function sortTheStudents(score: number[][], k: number): number[][] {\n    return score.sort((a, b) => b[k] - a[k]);\n}",
+    approach: "Сортуй рядки матриці за спаданням score[k].\n\n**Складність:** Time O(m log m · n), Space O(1)",
     signature: "{\"name\":\"sortTheStudents\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -2731,6 +3124,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar sumEvenGrandparent = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[6,7,8,2,7,1,3,9,null,1,4,null,null,null,5]]\",\"expected\":\"18\"},{\"input\":\"[[1]]\",\"expected\":\"0\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction sumEvenGrandparent(root: TreeNode | null): number {\n    const dfs = (root: TreeNode | null, x: number): number => {\n        if (!root) {\n            return 0;\n        }\n        const { val, left, right } = root;\n        let ans = dfs(left, val) + dfs(right, val);\n        if (x % 2 === 0) {\n            ans += left?.val ?? 0;\n            ans += right?.val ?? 0;\n        }\n        return ans;\n    };\n    return dfs(root, 1);\n}",
+    approach: "DFS, передавай parent і grandparent; коли grandparent парний — додай node.val.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"sumEvenGrandparent\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2744,6 +3139,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} pattern\n * @return {string}\n */\nvar smallestNumber = function(pattern) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"IIIDIDDD\\\"]\",\"expected\":\"\\\"123549876\\\"\"},{\"input\":\"[\\\"DDD\\\"]\",\"expected\":\"\\\"4321\\\"\"}]",
+    solution: "function smallestNumber(pattern: string): string {\n    const n = pattern.length;\n    const res = new Array(n + 1).fill('');\n    const vis = new Array(n + 1).fill(false);\n    const dfs = (i: number, num: number) => {\n        if (i === n) {\n            return;\n        }\n\n        if (vis[num]) {\n            vis[num] = false;\n            if (pattern[i] === 'I') {\n                dfs(i - 1, num - 1);\n            } else {\n                dfs(i - 1, num + 1);\n            }\n            return;\n        }\n\n        vis[num] = true;\n        res[i] = num;\n\n        if (pattern[i] === 'I') {\n            for (let j = res[i] + 1; j <= n + 1; j++) {\n                if (!vis[j]) {\n                    dfs(i + 1, j);\n                    return;\n                }\n            }\n            vis[num] = false;\n            dfs(i, num - 1);\n        } else {\n            for (let j = res[i] - 1; j > 0; j--) {\n                if (!vis[j]) {\n                    dfs(i + 1, j);\n                    return;\n                }\n            }\n            vis[num] = false;\n            dfs(i, num + 1);\n        }\n    };\n    dfs(0, 1);\n    for (let i = 1; i <= n + 1; i++) {\n        if (!vis[i]) {\n            res[n] = i;\n            break;\n        }\n    }\n\n    return res.join('');\n}",
+    approach: "Стек 1..n+1: пиши цифру, а на кожну 'D' спорожняй стек. Жадібно дає лексикографічно найменше.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"smallestNumber\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -2757,6 +3154,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minOperations = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[2,1,3,4],1]\",\"expected\":\"2\"},{\"input\":\"[[2,0,2,0],0]\",\"expected\":\"0\"}]",
+    solution: "function minOperations(nums: number[], k: number): number {\n    for (const x of nums) {\n        k ^= x;\n    }\n    return bitCount(k);\n}\n\nfunction bitCount(i: number): number {\n    i = i - ((i >>> 1) & 0x55555555);\n    i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);\n    i = (i + (i >>> 4)) & 0x0f0f0f0f;\n    i = i + (i >>> 8);\n    i = i + (i >>> 16);\n    return i & 0x3f;\n}",
+    approach: "x = XOR усіх nums; відповідь = popcount(x XOR k).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minOperations\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2770,6 +3169,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} garbage\n * @param {number[]} travel\n * @return {number}\n */\nvar garbageCollection = function(garbage, travel) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"G\\\",\\\"P\\\",\\\"GP\\\",\\\"GG\\\"],[2,4,3]]\",\"expected\":\"21\"},{\"input\":\"[[\\\"MMM\\\",\\\"PGM\\\",\\\"GP\\\"],[3,10]]\",\"expected\":\"37\"}]",
+    solution: "function garbageCollection(garbage: string[], travel: number[]): number {\n    const last: Map<string, number> = new Map();\n    let ans = 0;\n    for (let i = 0; i < garbage.length; ++i) {\n        const s = garbage[i];\n        ans += s.length;\n        for (const c of s) {\n            last.set(c, i);\n        }\n    }\n    let ts = 0;\n    for (let i = 1; i <= travel.length; ++i) {\n        ts += travel[i - 1];\n        for (const [_, j] of last) {\n            if (i === j) {\n                ans += ts;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Префіксні суми часу переїзду. Для кожного типу (M,P,G): сума символів + час доїзду до останнього дому з цим типом.\n\n**Складність:** Time O(n·L), Space O(n)",
     signature: "{\"name\":\"garbageCollection\",\"paramTypes\":[\"string[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2783,6 +3184,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} queries\n * @param {number} m\n * @return {number[]}\n */\nvar processQueries = function(queries, m) {\n    \n};",
     testCases: "[]",
+    solution: "function processQueries(queries: number[], m: number): number[] {\n  const list = Array.from({ length: m }, (_, i) => i + 1);\n  const res: number[] = [];\n  for (const q of queries) {\n    const idx = list.indexOf(q);\n    res.push(idx);\n    list.splice(idx, 1);\n    list.unshift(q);\n  }\n  return res;\n}",
+    approach: "Список 1..m; для кожного query знайди індекс, додай його у відповідь, вийми елемент і встав на початок.\n\n**Складність:** Time O(q·m), Space O(m)",
   },
   {
     slug: "maximum-number-of-coins-you-can-get",
@@ -2795,6 +3198,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} piles\n * @return {number}\n */\nvar maxCoins = function(piles) {\n    \n};",
     testCases: "[{\"input\":\"[[2,4,1,2,7,8]]\",\"expected\":\"9\"},{\"input\":\"[[2,4,5]]\",\"expected\":\"4\"},{\"input\":\"[[9,8,7,6,5,1,2,3,4]]\",\"expected\":\"18\"}]",
+    solution: "function maxCoins(piles: number[]): number {\n    piles.sort((a, b) => a - b);\n    let ans = 0;\n    for (let i = piles.length / 3; i < piles.length; i += 2) {\n        ans += piles[i];\n    }\n    return ans;\n}",
+    approach: "Сортуй; бери передостанній з кожної трійки з кінця (найбільший — Алісі, найменші — Бобу).\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"maxCoins\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2808,6 +3213,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @return {number}\n */\nvar countTriplets = function(arr) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,1,6,7]]\",\"expected\":\"4\"},{\"input\":\"[[1,1,1,1,1]]\",\"expected\":\"10\"}]",
+    solution: "function countTriplets(arr: number[]): number {\n    const n = arr.length;\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        let s = arr[i];\n        for (let k = i + 1; k < n; ++k) {\n            s ^= arr[k];\n            if (s === 0) {\n                ans += k - i;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Префіксний XOR: умова ⇔ prefix[i] === prefix[k+1]. Для кожної такої пари додай (k - i) трійок; використовуй Map (сума індексів, кількість).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"countTriplets\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2821,6 +3228,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[][]}\n */\nvar sortMatrix = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,7,3],[9,8,2],[4,5,6]]]\",\"expected\":\"[[8,2,3],[9,6,7],[4,5,1]]\"},{\"input\":\"[[[0,1],[1,2]]]\",\"expected\":\"[[2,1],[1,0]]\"},{\"input\":\"[[[1]]]\",\"expected\":\"[[1]]\"}]",
+    solution: "function sortMatrix(grid: number[][]): number[][] {\n    const n = grid.length;\n    for (let k = n - 2; k >= 0; --k) {\n        let [i, j] = [k, 0];\n        const t: number[] = [];\n        while (i < n && j < n) {\n            t.push(grid[i++][j++]);\n        }\n        t.sort((a, b) => a - b);\n        for (const x of t) {\n            grid[--i][--j] = x;\n        }\n    }\n    for (let k = n - 2; k > 0; --k) {\n        let [i, j] = [k, n - 1];\n        const t: number[] = [];\n        while (i >= 0 && j >= 0) {\n            t.push(grid[i--][j--]);\n        }\n        t.sort((a, b) => a - b);\n        for (const x of t) {\n            grid[++i][++j] = x;\n        }\n    }\n    return grid;\n}",
+    approach: "Групуй за (i-j); головні діагоналі сортуй спадаюче, ті що вище — зростаюче (за умовою), розклади назад.\n\n**Складність:** Time O(m·n·log), Space O(m·n)",
     signature: "{\"name\":\"sortMatrix\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -2834,6 +3243,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} maximumBit\n * @return {number[]}\n */\nvar getMaximumXor = function(nums, maximumBit) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,1,3],2]\",\"expected\":\"[0,3,2,3]\"},{\"input\":\"[[2,3,4,7],3]\",\"expected\":\"[5,2,6,5]\"},{\"input\":\"[[0,1,2,2,5,7],3]\",\"expected\":\"[4,3,6,4,6,7]\"}]",
+    solution: "function getMaximumXor(nums: number[], maximumBit: number): number[] {\n    let xs = 0;\n    for (const x of nums) {\n        xs ^= x;\n    }\n    const n = nums.length;\n    const ans = new Array(n);\n    for (let i = 0; i < n; ++i) {\n        const x = nums[n - i - 1];\n        let k = 0;\n        for (let j = maximumBit - 1; j >= 0; --j) {\n            if (((xs >> j) & 1) == 0) {\n                k |= 1 << j;\n            }\n        }\n        ans[i] = k;\n        xs ^= x;\n    }\n    return ans;\n}",
+    approach: "prefix = XOR усіх; маска = 2^maxBit - 1. Йди з кінця: answer = prefix XOR mask, потім знімай останній елемент з prefix.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"getMaximumXor\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2847,6 +3258,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar rearrangeArray = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1,-2,-5,2,-4]]\",\"expected\":\"[3,-2,1,-5,2,-4]\"},{\"input\":\"[[-1,1]]\",\"expected\":\"[1,-1]\"}]",
+    solution: "function rearrangeArray(nums: number[]): number[] {\n    const ans: number[] = Array(nums.length);\n    let [i, j] = [0, 1];\n    for (const x of nums) {\n        if (x > 0) {\n            ans[i] = x;\n            i += 2;\n        } else {\n            ans[j] = x;\n            j += 2;\n        }\n    }\n    return ans;\n}",
+    approach: "Два вказівники запису: pos на парних індексах, neg на непарних; розкладай за знаком.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"rearrangeArray\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -2860,6 +3273,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} rows\n * @param {number} cols\n * @param {number} rStart\n * @param {number} cStart\n * @return {number[][]}\n */\nvar spiralMatrixIII = function(rows, cols, rStart, cStart) {\n    \n};",
     testCases: "[{\"input\":\"[1,4,0,0]\",\"expected\":\"[[0,0],[0,1],[0,2],[0,3]]\"},{\"input\":\"[5,6,1,4]\",\"expected\":\"[[1,4],[1,5],[2,5],[2,4],[2,3],[1,3],[0,3],[0,4],[0,5],[3,5],[3,4],[3,3],[3,2],[2,2],[1,2],[0,2],[4,5],[4,4],[4,3],[4,2],[4,1],[3,1],[2,1],[1,1],[0,1],[4,0],[3,0],[2,0],[1,0],[0,0]]\"}]",
+    solution: "function spiralMatrixIII(rows: number, cols: number, rStart: number, cStart: number): number[][] {\n    // prettier-ignore\n    const dir = [[1,0],[0,1],[-1,0],[0,-1]]\n    let [x, y, i, size] = [cStart, rStart, 0, 0];\n    const ans: number[][] = [[y, x]];\n    const total = rows * cols;\n\n    while (ans.length < total) {\n        if (i % 2 === 0) size++;\n\n        for (let j = 0; ans.length < total && j < size; j++) {\n            x += dir[i][0];\n            y += dir[i][1];\n\n            if (0 <= x && x < cols && 0 <= y && y < rows) {\n                ans.push([y, x]);\n            }\n        }\n\n        i = (i + 1) % 4;\n    }\n\n    return ans;\n}",
+    approach: "Іди спіраллю з кроками 1,1,2,2,3,3,...; записуй координати, що в межах сітки, поки не набереш rows·cols.\n\n**Складність:** Time O(max(m,n)²), Space O(1)",
     signature: "{\"name\":\"spiralMatrixIII\",\"paramTypes\":[\"integer\",\"integer\",\"integer\",\"integer\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -2873,6 +3288,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number[][]}\n */\nvar onesMinusZeros = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1,1],[1,0,1],[0,0,1]]]\",\"expected\":\"[[0,0,4],[0,0,4],[-2,-2,2]]\"},{\"input\":\"[[[1,1,1],[1,1,1]]]\",\"expected\":\"[[5,5,5],[5,5,5]]\"}]",
+    solution: "function onesMinusZeros(grid: number[][]): number[][] {\n    const m = grid.length;\n    const n = grid[0].length;\n    const rows = new Array(m).fill(0);\n    const cols = new Array(n).fill(0);\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            if (grid[i][j]) {\n                rows[i]++;\n                cols[j]++;\n            }\n        }\n    }\n    const ans = Array.from({ length: m }, () => new Array(n).fill(0));\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            ans[i][j] = rows[i] + cols[j] - (m - rows[i]) - (n - cols[j]);\n        }\n    }\n    return ans;\n}",
+    approach: "Порахуй onesRow[i], onesCol[j]; diff[i][j] = 2·onesRow[i] + 2·onesCol[j] - n - m.\n\n**Складність:** Time O(m·n), Space O(m+n)",
     signature: "{\"name\":\"onesMinusZeros\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -2886,6 +3303,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[]} preorder\n * @return {TreeNode}\n */\nvar bstFromPreorder = function(preorder) {\n    \n};",
     testCases: "[{\"input\":\"[[8,5,1,7,10,12]]\",\"expected\":\"[8,5,10,1,7,null,12]\"},{\"input\":\"[[1,3]]\",\"expected\":\"[1,null,3]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction bstFromPreorder(preorder: number[]): TreeNode | null {\n    const dfs = (i: number, j: number): TreeNode | null => {\n        if (i > j) {\n            return null;\n        }\n        const root = new TreeNode(preorder[i]);\n        let [l, r] = [i + 1, j + 1];\n        while (l < r) {\n            const mid = (l + r) >> 1;\n            if (preorder[mid] > preorder[i]) {\n                r = mid;\n            } else {\n                l = mid + 1;\n            }\n        }\n        root.left = dfs(i + 1, l - 1);\n        root.right = dfs(l, j);\n        return root;\n    };\n    return dfs(0, preorder.length - 1);\n}",
+    approach: "Рекурсія з верхньою межею: бери елементи, поки < bound; перший — корінь, далі ліве (bound=root.val), праве (bound=успадкований).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"bstFromPreorder\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -2899,6 +3318,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n */\nvar FindElements = function(root) {\n    \n};\n\n/** \n * @param {number} target\n * @return {boolean}\n */\nFindElements.prototype.find = function(target) {\n    \n};\n\n/** \n * Your FindElements object will be instantiated and called as such:\n * var obj = new FindElements(root)\n * var param_1 = obj.find(target)\n */",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nclass FindElements {\n    readonly #s = new Set<number>();\n\n    constructor(root: TreeNode | null) {\n        root.val = 0;\n\n        const dfs = (node: TreeNode | null, x = 0) => {\n            if (!node) return;\n\n            this.#s.add(x);\n            dfs(node.left, x * 2 + 1);\n            dfs(node.right, x * 2 + 2);\n        };\n\n        dfs(root);\n    }\n\n    find(target: number): boolean {\n        return this.#s.has(target);\n    }\n}\n\n/**\n * Your FindElements object will be instantiated and called as such:\n * var obj = new FindElements(root)\n * var param_1 = obj.find(target)\n */",
+    approach: "Відновлюй значення DFS (root=0, left=2x+1, right=2x+2), клади у Set; find — O(1) перевірка Set.\n\n**Складність:** Time O(n) build / O(1) find, Space O(n)",
   },
   {
     slug: "delete-node-in-a-linked-list",
@@ -2911,6 +3332,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val) {\n *     this.val = val;\n *     this.next = null;\n * }\n */\n/**\n * @param {ListNode} node\n * @return {void} Do not return anything, modify node in-place instead.\n */\nvar deleteNode = function(node) {\n    \n};",
     testCases: "[{\"input\":\"[[4,5,1,9],5]\",\"expected\":\"[5,1,9]\"},{\"input\":\"[[4,5,1,9],1]\",\"expected\":\"[5,1,9]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\n/**\n Do not return anything, modify it in-place instead.\n */\nfunction deleteNode(node: ListNode | null): void {\n    node.val = node.next.val;\n    node.next = node.next.next;\n}",
+    approach: "Немає доступу до попереднього: скопіюй значення наступного вузла в поточний і переприв'яжи next через нього.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"deleteNode\",\"paramTypes\":[\"ListNode\",\"integer\"],\"returnType\":\"void\"}",
   },
   {
@@ -2924,6 +3347,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[]} l\n * @param {number[]} r\n * @return {boolean[]}\n */\nvar checkArithmeticSubarrays = function(nums, l, r) {\n    \n};",
     testCases: "[{\"input\":\"[[4,6,5,9,3,7],[0,0,2],[2,3,5]]\",\"expected\":\"[true,false,true]\"},{\"input\":\"[[-12,-9,-3,-12,-6,15,20,-25,-20,-15,-10],[0,1,6,4,8,7],[4,4,9,7,9,10]]\",\"expected\":\"[false,true,false,false,true,true]\"}]",
+    solution: "function checkArithmeticSubarrays(nums: number[], l: number[], r: number[]): boolean[] {\n    const check = (nums: number[], l: number, r: number): boolean => {\n        const s = new Set<number>();\n        const n = r - l + 1;\n        let a1 = 1 << 30;\n        let an = -a1;\n        for (let i = l; i <= r; ++i) {\n            s.add(nums[i]);\n            a1 = Math.min(a1, nums[i]);\n            an = Math.max(an, nums[i]);\n        }\n        if ((an - a1) % (n - 1) !== 0) {\n            return false;\n        }\n        const d = Math.floor((an - a1) / (n - 1));\n        for (let i = 1; i < n; ++i) {\n            if (!s.has(a1 + (i - 1) * d)) {\n                return false;\n            }\n        }\n        return true;\n    };\n    const ans: boolean[] = [];\n    for (let i = 0; i < l.length; ++i) {\n        ans.push(check(nums, l[i], r[i]));\n    }\n    return ans;\n}",
+    approach: "Для кожного запиту витягни підмасив, сортуй, перевір сталу різницю сусідів.\n\n**Складність:** Time O(q·k log k), Space O(k)",
     signature: "{\"name\":\"checkArithmeticSubarrays\",\"paramTypes\":[\"integer[]\",\"integer[]\",\"integer[]\"],\"returnType\":\"list<boolean>\"}",
   },
   {
@@ -2937,6 +3362,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} deck\n * @return {number[]}\n */\nvar deckRevealedIncreasing = function(deck) {\n    \n};",
     testCases: "[]",
+    solution: "function deckRevealedIncreasing(deck: number[]): number[] {\n  deck.sort((a, b) => a - b);\n  const idx: number[] = deck.map((_, i) => i);\n  const res = new Array(deck.length);\n  for (const card of deck) {\n    res[idx.shift()!] = card;\n    if (idx.length) idx.push(idx.shift()!);\n  }\n  return res;\n}",
+    approach: "Симуляція чергою індексів 0..n-1: сортуй карти зростаюче; для кожної клади в позицію з фронту черги, потім переставляй фронт у хвіст.\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
     slug: "all-paths-from-source-to-target",
@@ -2949,6 +3376,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} graph\n * @return {number[][]}\n */\nvar allPathsSourceTarget = function(graph) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2],[3],[3],[]]]\",\"expected\":\"[[0,1,3],[0,2,3]]\"},{\"input\":\"[[[4,3,1],[3,2,4],[3],[4],[]]]\",\"expected\":\"[[0,4],[0,3,4],[0,1,3,4],[0,1,2,3,4],[0,1,4]]\"}]",
+    solution: "function allPathsSourceTarget(graph: number[][]): number[][] {\n    const ans: number[][] = [];\n\n    const dfs = (path: number[]) => {\n        const curr = path.at(-1)!;\n        if (curr === graph.length - 1) {\n            ans.push([...path]);\n            return;\n        }\n\n        for (const v of graph[curr]) {\n            path.push(v);\n            dfs(path);\n            path.pop();\n        }\n    };\n\n    dfs([0]);\n\n    return ans;\n}",
+    approach: "DFS/бектрекінг від 0; коли дійшли n-1 — записуй копію шляху. Граф — DAG, cycle-check не потрібен.\n\n**Складність:** Time O(2ⁿ·n), Space O(n)",
     signature: "{\"name\":\"allPathsSourceTarget\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"list<list<integer>>\"}",
   },
   {
@@ -2962,6 +3391,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} tiles\n * @return {number}\n */\nvar numTilePossibilities = function(tiles) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"AAB\\\"]\",\"expected\":\"8\"},{\"input\":\"[\\\"AAABBC\\\"]\",\"expected\":\"188\"},{\"input\":\"[\\\"V\\\"]\",\"expected\":\"1\"}]",
+    solution: "function numTilePossibilities(tiles: string): number {\n    const cnt: number[] = new Array(26).fill(0);\n    for (const c of tiles) {\n        ++cnt[c.charCodeAt(0) - 'A'.charCodeAt(0)];\n    }\n    const dfs = (cnt: number[]): number => {\n        let res = 0;\n        for (let i = 0; i < 26; ++i) {\n            if (cnt[i] > 0) {\n                ++res;\n                --cnt[i];\n                res += dfs(cnt);\n                ++cnt[i];\n            }\n        }\n        return res;\n    };\n    return dfs(cnt);\n}",
+    approach: "Лічильник літер; бектрекінг: на кожному кроці бери будь-яку літеру з count>0, +1 до відповіді, рекурсія, відкат.\n\n**Складність:** Time O(n·n!), Space O(алфавіт)",
     signature: "{\"name\":\"numTilePossibilities\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -2975,6 +3406,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar sortVowels = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"lEetcOde\\\"]\",\"expected\":\"\\\"lEOtcede\\\"\"},{\"input\":\"[\\\"lYmpH\\\"]\",\"expected\":\"\\\"lYmpH\\\"\"}]",
+    solution: "function sortVowels(s: string): string {\n    const vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];\n    const vs = s\n        .split('')\n        .filter(c => vowels.includes(c))\n        .sort();\n    const ans: string[] = [];\n    let j = 0;\n    for (const c of s) {\n        ans.push(vowels.includes(c) ? vs[j++] : c);\n    }\n    return ans.join('');\n}",
+    approach: "Витягни голосні, сортуй; вставляй назад на позиції голосних, приголосні лишай.\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"sortVowels\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -2988,6 +3421,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minPairSum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[3,5,2,3]]\",\"expected\":\"7\"},{\"input\":\"[[3,5,4,2,4,6]]\",\"expected\":\"8\"}]",
+    solution: "function minPairSum(nums: number[]): number {\n    nums.sort((a, b) => a - b);\n    let ans = 0;\n    const n = nums.length;\n    for (let i = 0; i < n >> 1; ++i) {\n        ans = Math.max(ans, nums[i] + nums[n - 1 - i]);\n    }\n    return ans;\n}",
+    approach: "Сортуй; паруй найменший з найбільшим; відповідь — максимум таких сум.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"minPairSum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3001,6 +3436,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar stringHash = function(s, k) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abcd\\\",2]\",\"expected\":\"\\\"bf\\\"\"},{\"input\":\"[\\\"mxz\\\",3]\",\"expected\":\"\\\"i\\\"\"}]",
+    solution: "function stringHash(s: string, k: number): string {\n    const ans: string[] = [];\n    const n: number = s.length;\n\n    for (let i = 0; i < n; i += k) {\n        let t: number = 0;\n        for (let j = i; j < i + k; j++) {\n            t += s.charCodeAt(j) - 97;\n        }\n        const hashedChar: number = t % 26;\n        ans.push(String.fromCharCode(97 + hashedChar));\n    }\n\n    return ans.join('');\n}",
+    approach: "Ділянки по k символів: сума (c-'a') % 26 → літера. Склей.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"stringHash\",\"paramTypes\":[\"string\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -3014,6 +3451,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @param {number} t\n * @return {Function}\n */\nvar timeLimit = function(fn, t) {\n    \n    return async function(...args) {\n        \n    }\n};\n\n/**\n * const limited = timeLimit((t) => new Promise(res => setTimeout(res, t)), 100);\n * limited(150).catch(console.log) // \"Time Limit Exceeded\" at t=100ms\n */",
     testCases: "[]",
+    solution: "type Fn = (...params: any[]) => Promise<any>;\n\nfunction timeLimit(fn: Fn, t: number): Fn {\n    return async function (...args) {\n        return Promise.race([\n            fn(...args),\n            new Promise((_, reject) => setTimeout(() => reject('Time Limit Exceeded'), t)),\n        ]);\n    };\n}\n\n/**\n * const limited = timeLimit((t) => new Promise(res => setTimeout(res, t)), 100);\n * limited(150).catch(console.log) // \"Time Limit Exceeded\" at t=100ms\n */",
+    approach: "Повертай функцію → new Promise: race між fn(...args) і setTimeout, що reject('Time Limit Exceeded').\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "sort-the-matrix-diagonally",
@@ -3026,6 +3465,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @return {number[][]}\n */\nvar diagonalSort = function(mat) {\n    \n};",
     testCases: "[{\"input\":\"[[[3,3,1,1],[2,2,1,2],[1,1,1,2]]]\",\"expected\":\"[[1,1,1,1],[1,2,2,2],[1,2,3,3]]\"},{\"input\":\"[[[11,25,66,1,69,7],[23,55,17,45,15,52],[75,31,36,44,58,8],[22,27,33,25,68,4],[84,28,14,11,5,50]]]\",\"expected\":\"[[5,17,4,1,52,7],[11,11,25,45,8,69],[14,23,25,44,58,15],[22,27,31,36,50,66],[84,28,75,33,55,68]]\"}]",
+    solution: "function diagonalSort(mat: number[][]): number[][] {\n    const [m, n] = [mat.length, mat[0].length];\n    const g: number[][] = Array.from({ length: m + n }, () => []);\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            g[m - i + j].push(mat[i][j]);\n        }\n    }\n    for (const e of g) {\n        e.sort((a, b) => b - a);\n    }\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            mat[i][j] = g[m - i + j].pop()!;\n        }\n    }\n    return mat;\n}",
+    approach: "Групуй за (i-j) у Map→масив, сортуй кожен, розклади назад.\n\n**Складність:** Time O(m·n·log), Space O(m·n)",
     signature: "{\"name\":\"diagonalSort\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -3039,6 +3480,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar minCost = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[3]\",\"expected\":\"3\"},{\"input\":\"[4]\",\"expected\":\"6\"}]",
+    solution: "function minCost(n: number): number {\n    return (n * (n - 1)) >> 1;\n}",
+    approach: "DP/жадібно за двійковим записом n; будуй число подвоєнням (+1 кожен крок) і додаванням 1 (+x за біт).\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"minCost\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3052,6 +3495,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} list1\n * @param {number} a\n * @param {number} b\n * @param {ListNode} list2\n * @return {ListNode}\n */\nvar mergeInBetween = function(list1, a, b, list2) {\n    \n};",
     testCases: "[{\"input\":\"[[10,1,13,6,9,5],3,4,[1000000,1000001,1000002]]\",\"expected\":\"[10,1,13,1000000,1000001,1000002,5]\"},{\"input\":\"[[0,1,2,3,4,5,6],2,5,[1000000,1000001,1000002,1000003,1000004]]\",\"expected\":\"[0,1,1000000,1000001,1000002,1000003,1000004,6]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction mergeInBetween(\n    list1: ListNode | null,\n    a: number,\n    b: number,\n    list2: ListNode | null,\n): ListNode | null {\n    let p = list1;\n    let q = list1;\n    while (--a > 0) {\n        p = p.next;\n    }\n    while (b-- > 0) {\n        q = q.next;\n    }\n    p.next = list2;\n    while (p.next) {\n        p = p.next;\n    }\n    p.next = q.next;\n    q.next = null;\n    return list1;\n}",
+    approach: "Знайди вузол перед a і вузол після b; приший list2 між ними.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"mergeInBetween\",\"paramTypes\":[\"ListNode\",\"integer\",\"integer\",\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -3065,6 +3510,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number} n\n * @return {TreeNode[]}\n */\nvar allPossibleFBT = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[7]\",\"expected\":\"[{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}]\"},{\"input\":\"[3]\",\"expected\":\"[{\\\"val\\\":0,\\\"left\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null},\\\"right\\\":{\\\"val\\\":0,\\\"left\\\":null,\\\"right\\\":null}}]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction allPossibleFBT(n: number): Array<TreeNode | null> {\n    const f: Array<Array<TreeNode | null>> = new Array(n + 1).fill(0).map(() => []);\n    const dfs = (n: number): Array<TreeNode | null> => {\n        if (f[n].length) {\n            return f[n];\n        }\n        if (n === 1) {\n            f[n].push(new TreeNode(0));\n            return f[n];\n        }\n        const ans: Array<TreeNode | null> = [];\n        for (let i = 0; i < n - 1; ++i) {\n            const j = n - 1 - i;\n            for (const left of dfs(i)) {\n                for (const right of dfs(j)) {\n                    ans.push(new TreeNode(0, left, right));\n                }\n            }\n        }\n        return (f[n] = ans);\n    };\n    return dfs(n);\n}",
+    approach: "Мемоізація по n (лише непарні). n = 1+left+right; перебирай непарні left, right=n-1-left, комбінуй усі пари піддерев.\n\n**Складність:** Time O(2ⁿ), Space O(2ⁿ)",
     signature: "{\"name\":\"allPossibleFBT\",\"paramTypes\":[\"integer\"],\"returnType\":\"list<TreeNode>\"}",
   },
   {
@@ -3078,6 +3525,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar minOperations = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[3]\",\"expected\":\"2\"},{\"input\":\"[6]\",\"expected\":\"9\"}]",
+    solution: "function minOperations(n: number): number {\n    let ans = 0;\n    for (let i = 0; i < n >> 1; ++i) {\n        ans += n - ((i << 1) | 1);\n    }\n    return ans;\n}",
+    approach: "Масив [1,3,5,...,2n-1]; сума відхилень від середнього (n) = n²/4 (ціле діл.) — сума перших n/2 парних/непарних кроків.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"minOperations\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3091,6 +3540,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} rowSum\n * @param {number[]} colSum\n * @return {number[][]}\n */\nvar restoreMatrix = function(rowSum, colSum) {\n    \n};",
     testCases: "[{\"input\":\"[[3,8],[4,7]]\",\"expected\":\"[[3,0],[1,7]]\"},{\"input\":\"[[5,7,10],[8,6,8]]\",\"expected\":\"[[5,0,0],[3,4,0],[0,2,8]]\"}]",
+    solution: "function restoreMatrix(rowSum: number[], colSum: number[]): number[][] {\n    const m = rowSum.length;\n    const n = colSum.length;\n    const ans = Array.from(new Array(m), () => new Array(n).fill(0));\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            const x = Math.min(rowSum[i], colSum[j]);\n            ans[i][j] = x;\n            rowSum[i] -= x;\n            colSum[j] -= x;\n        }\n    }\n    return ans;\n}",
+    approach: "Жадібно: matrix[i][j] = min(rowSum[i], colSum[j]); відніми від обох.\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"restoreMatrix\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -3104,6 +3555,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} t\n * @return {number}\n */\nvar minSteps = function(s, t) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"bab\\\",\\\"aba\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"leetcode\\\",\\\"practice\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"anagram\\\",\\\"mangaar\\\"]\",\"expected\":\"0\"}]",
+    solution: "function minSteps(s: string, t: string): number {\n    const cnt: number[] = Array(26).fill(0);\n    for (const c of s) {\n        ++cnt[c.charCodeAt(0) - 97];\n    }\n    let ans = 0;\n    for (const c of t) {\n        if (--cnt[c.charCodeAt(0) - 97] < 0) {\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Лічильник частот s мінус частоти t; сума додатних надлишків.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minSteps\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3117,6 +3570,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} boxGrid\n * @return {character[][]}\n */\nvar rotateTheBox = function(boxGrid) {\n    \n};",
     testCases: "[{\"input\":\"[[[\\\"#\\\",\\\".\\\",\\\"#\\\"]]]\",\"expected\":\"[[\\\".\\\"],[\\\"#\\\"],[\\\"#\\\"]]\"},{\"input\":\"[[[\\\"#\\\",\\\".\\\",\\\"*\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\",\\\"*\\\",\\\".\\\"]]]\",\"expected\":\"[[\\\"#\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\"],[\\\"*\\\",\\\"*\\\"],[\\\".\\\",\\\".\\\"]]\"},{\"input\":\"[[[\\\"#\\\",\\\"#\\\",\\\"*\\\",\\\".\\\",\\\"*\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\",\\\"#\\\",\\\"*\\\",\\\".\\\",\\\".\\\"],[\\\"#\\\",\\\"#\\\",\\\"#\\\",\\\".\\\",\\\"#\\\",\\\".\\\"]]]\",\"expected\":\"[[\\\".\\\",\\\"#\\\",\\\"#\\\"],[\\\".\\\",\\\"#\\\",\\\"#\\\"],[\\\"#\\\",\\\"#\\\",\\\"*\\\"],[\\\"#\\\",\\\"*\\\",\\\".\\\"],[\\\"#\\\",\\\".\\\",\\\"*\\\"],[\\\"#\\\",\\\".\\\",\\\".\\\"]]\"}]",
+    solution: "function rotateTheBox(boxGrid: string[][]): string[][] {\n    const m = boxGrid.length;\n    const n = boxGrid[0].length;\n    const ans: string[][] = Array.from({ length: n }, () => Array(m));\n\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            ans[j][m - i - 1] = boxGrid[i][j];\n        }\n    }\n\n    for (let j = 0; j < m; j++) {\n        const q: number[] = [];\n        for (let i = n - 1; i >= 0; i--) {\n            if (ans[i][j] === '*') {\n                q.length = 0;\n            } else if (ans[i][j] === '.') {\n                q.push(i);\n            } else if (q.length > 0) {\n                const t = q.shift()!;\n                ans[t][j] = '#';\n                ans[i][j] = '.';\n                q.push(i);\n            }\n        }\n    }\n\n    return ans;\n}",
+    approach: "Спершу в кожному рядку «опусти» камені праворуч (два вказівники серед '#' та '.'), потім транспонуй з поворотом на 90°.\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"rotateTheBox\",\"paramTypes\":[\"character[][]\"],\"returnType\":\"character[][]\"}",
   },
   {
@@ -3130,6 +3585,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar subsets = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[[],[3],[2],[2,3],[1],[1,3],[1,2],[1,2,3]]\"},{\"input\":\"[[0]]\",\"expected\":\"[[],[0]]\"}]",
+    solution: "function subsets(nums: number[]): number[][] {\n    const ans: number[][] = [];\n    const t: number[] = [];\n    const dfs = (i: number) => {\n        if (i === nums.length) {\n            ans.push(t.slice());\n            return;\n        }\n        dfs(i + 1);\n        t.push(nums[i]);\n        dfs(i + 1);\n        t.pop();\n    };\n    dfs(0);\n    return ans;\n}",
     approach: "Include/exclude. O(2^n)\n\n**Складність:** Time O(n·2^n), Space O(n)",
     signature: "{\"name\":\"subsets\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<list<integer>>\"}",
   },
@@ -3144,6 +3600,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {number} m\n * @param {number} n\n * @param {ListNode} head\n * @return {number[][]}\n */\nvar spiralMatrix = function(m, n, head) {\n    \n};",
     testCases: "[{\"input\":\"[3,5,[3,0,2,6,8,1,7,9,4,2,5,5,0]]\",\"expected\":\"[[3,0,2,6,8],[5,0,-1,-1,1],[5,2,4,9,7]]\"},{\"input\":\"[1,4,[0,1,2]]\",\"expected\":\"[[0,1,2,-1]]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction spiralMatrix(m: number, n: number, head: ListNode | null): number[][] {\n    const ans: number[][] = Array.from({ length: m }, () => Array(n).fill(-1));\n    const dirs: number[] = [0, 1, 0, -1, 0];\n    let [i, j, k] = [0, 0, 0];\n    while (1) {\n        ans[i][j] = head.val;\n        head = head.next;\n        if (!head) {\n            break;\n        }\n        while (1) {\n            const [x, y] = [i + dirs[k], j + dirs[k + 1]];\n            if (x >= 0 && x < m && y >= 0 && y < n && ans[x][y] === -1) {\n                i = x;\n                j = y;\n                break;\n            }\n            k = (k + 1) % 4;\n        }\n    }\n    return ans;\n}",
+    approach: "Створи матрицю з -1; заповнюй за спіраллю (4 межі), проходячи вузли списку, поки він не скінчиться.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"spiralMatrix\",\"paramTypes\":[\"integer\",\"integer\",\"ListNode\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -3157,6 +3615,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {number}\n */\nvar findTheWinner = function(n, k) {\n    \n};",
     testCases: "[{\"input\":\"[5,2]\",\"expected\":\"3\"},{\"input\":\"[6,5]\",\"expected\":\"1\"}]",
+    solution: "function findTheWinner(n: number, k: number): number {\n    if (n === 1) {\n        return 1;\n    }\n    const ans = (k + findTheWinner(n - 1, k)) % n;\n    return ans ? ans : n;\n}",
+    approach: "Рекурсія Джозефуса: f(1)=0; f(n) = (f(n-1) + k) % n; відповідь f(n)+1.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"findTheWinner\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3170,6 +3630,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[]} startPos\n * @param {string} s\n * @return {number[]}\n */\nvar executeInstructions = function(n, startPos, s) {\n    \n};",
     testCases: "[{\"input\":\"[3,[0,1],\\\"RRDDLU\\\"]\",\"expected\":\"[1,5,4,3,1,0]\"},{\"input\":\"[2,[1,1],\\\"LURD\\\"]\",\"expected\":\"[4,1,0,0]\"},{\"input\":\"[1,[0,0],\\\"LRUD\\\"]\",\"expected\":\"[0,0,0,0]\"}]",
+    solution: "function executeInstructions(n: number, startPos: number[], s: string): number[] {\n    const m = s.length;\n    const ans = new Array(m);\n    for (let i = 0; i < m; i++) {\n        let [y, x] = startPos;\n        let j: number;\n        for (j = i; j < m; j++) {\n            const c = s[j];\n            if (c === 'U') {\n                y--;\n            } else if (c === 'D') {\n                y++;\n            } else if (c === 'L') {\n                x--;\n            } else {\n                x++;\n            }\n            if (y === -1 || y === n || x === -1 || x === n) {\n                break;\n            }\n        }\n        ans[i] = j - i;\n    }\n    return ans;\n}",
+    approach: "Для кожного стартового індексу симулюй решту інструкцій, рахуй кроки до виходу за межі.\n\n**Складність:** Time O(m²), Space O(1)",
     signature: "{\"name\":\"executeInstructions\",\"paramTypes\":[\"integer\",\"integer[]\",\"string\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -3183,6 +3645,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar triangularSum = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"8\"},{\"input\":\"[[5]]\",\"expected\":\"5\"}]",
+    solution: "function triangularSum(nums: number[]): number {\n    for (let k = nums.length - 1; k; --k) {\n        for (let i = 0; i < k; ++i) {\n            nums[i] = (nums[i] + nums[i + 1]) % 10;\n        }\n    }\n    return nums[0];\n}",
+    approach: "Симуляція: поки довжина > 1, замінюй масив попарними сумами % 10.\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"triangularSum\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3196,6 +3660,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number[]}\n */\nvar partitionLabels = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"ababcbacadefegdehijhklij\\\"]\",\"expected\":\"[9,7,8]\"},{\"input\":\"[\\\"eccbbbbdec\\\"]\",\"expected\":\"[10]\"}]",
+    solution: "function partitionLabels(s: string): number[] {\n    const last: number[] = Array(26).fill(0);\n    const idx = (c: string) => c.charCodeAt(0) - 'a'.charCodeAt(0);\n    const n = s.length;\n    for (let i = 0; i < n; ++i) {\n        last[idx(s[i])] = i;\n    }\n    const ans: number[] = [];\n    for (let i = 0, j = 0, mx = 0; i < n; ++i) {\n        mx = Math.max(mx, last[idx(s[i])]);\n        if (mx === i) {\n            ans.push(i - j + 1);\n            j = i + 1;\n        }\n    }\n    return ans;\n}",
     approach: "Last occurrence + greedy. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"partitionLabels\",\"paramTypes\":[\"string\"],\"returnType\":\"list<integer>\"}",
   },
@@ -3210,6 +3675,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar partitionArray = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[3,6,1,2,5],2]\",\"expected\":\"2\"},{\"input\":\"[[1,2,3],1]\",\"expected\":\"2\"},{\"input\":\"[[2,2,4,5],0]\",\"expected\":\"3\"}]",
+    solution: "function partitionArray(nums: number[], k: number): number {\n    nums.sort((a, b) => a - b);\n    let ans = 1;\n    let a = nums[0];\n    for (const b of nums) {\n        if (b - a > k) {\n            a = b;\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Сортуй; жадібно відкривай нову групу, коли поточне число - початок групи > k.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"partitionArray\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3223,6 +3690,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[][]} descriptions\n * @return {TreeNode}\n */\nvar createBinaryTree = function(descriptions) {\n    \n};",
     testCases: "[{\"input\":\"[[[20,15,1],[20,17,0],[50,20,1],[50,80,0],[80,19,1]]]\",\"expected\":\"[50,20,80,15,17,19]\"},{\"input\":\"[[[1,2,1],[2,3,0],[3,4,1]]]\",\"expected\":\"[1,2,null,null,3,4]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction createBinaryTree(descriptions: number[][]): TreeNode | null {\n    const nodes: Record<number, TreeNode> = {};\n    const children = new Set<number>();\n    for (const [parent, child, isLeft] of descriptions) {\n        if (!nodes[parent]) {\n            nodes[parent] = new TreeNode(parent);\n        }\n        if (!nodes[child]) {\n            nodes[child] = new TreeNode(child);\n        }\n        if (isLeft) {\n            nodes[parent].left = nodes[child];\n        } else {\n            nodes[parent].right = nodes[child];\n        }\n        children.add(child);\n    }\n    for (const [k, v] of Object.entries(nodes)) {\n        if (!children.has(+k)) {\n            return v;\n        }\n    }\n}",
+    approach: "Map id→вузол (створюй за потреби), Set дітей. Прив'яжи left/right за описами; корінь — id, якого нема серед дітей.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"createBinaryTree\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -3236,6 +3705,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {number}\n */\nvar pairSum = function(head) {\n    \n};",
     testCases: "[{\"input\":\"[[5,4,2,1]]\",\"expected\":\"6\"},{\"input\":\"[[4,2,2,3]]\",\"expected\":\"7\"},{\"input\":\"[[1,100000]]\",\"expected\":\"100001\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction pairSum(head: ListNode | null): number {\n    const arr = [];\n    let node = head;\n    while (node) {\n        arr.push(node.val);\n        node = node.next;\n    }\n    const n = arr.length;\n    let ans = 0;\n    for (let i = 0; i < n >> 1; i++) {\n        ans = Math.max(ans, arr[i] + arr[n - 1 - i]);\n    }\n    return ans;\n}",
+    approach: "Знайди середину (швидкий/повільний), розверни другу половину, йди назустріч, максимум сум пар.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"pairSum\",\"paramTypes\":[\"ListNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3249,6 +3720,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar punishmentNumber = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[10]\",\"expected\":\"182\"},{\"input\":\"[37]\",\"expected\":\"1478\"}]",
+    solution: "function punishmentNumber(n: number): number {\n    const check = (s: string, i: number, x: number): boolean => {\n        const m = s.length;\n        if (i >= m) {\n            return x === 0;\n        }\n        let y = 0;\n        for (let j = i; j < m; ++j) {\n            y = y * 10 + Number(s[j]);\n            if (y > x) {\n                break;\n            }\n            if (check(s, j + 1, x - y)) {\n                return true;\n            }\n        }\n        return false;\n    };\n    let ans = 0;\n    for (let i = 1; i <= n; ++i) {\n        const x = i * i;\n        const s = x.toString();\n        if (check(s, 0, i)) {\n            ans += x;\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожного i≤n перевір бектрекінгом, чи можна розбити рядок i·i на частини із сумою i; якщо так — додай i·i.\n\n**Складність:** Time O(n·2^d), Space O(d)",
     signature: "{\"name\":\"punishmentNumber\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3262,6 +3735,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[]}\n */\nvar findSmallestSetOfVertices = function(n, edges) {\n    \n};",
     testCases: "[{\"input\":\"[6,[[0,1],[0,2],[2,5],[3,4],[4,2]]]\",\"expected\":\"[0,3]\"},{\"input\":\"[5,[[0,1],[2,1],[3,1],[1,4],[2,4]]]\",\"expected\":\"[0,2,3]\"}]",
+    solution: "function findSmallestSetOfVertices(n: number, edges: number[][]): number[] {\n    const cnt: number[] = new Array(n).fill(0);\n    for (const [_, t] of edges) {\n        cnt[t]++;\n    }\n    const ans: number[] = [];\n    for (let i = 0; i < n; ++i) {\n        if (cnt[i] === 0) {\n            ans.push(i);\n        }\n    }\n    return ans;\n}",
+    approach: "У DAG відповідь — усі вершини з нульовим вхідним степенем.\n\n**Складність:** Time O(V+E), Space O(V)",
     signature: "{\"name\":\"findSmallestSetOfVertices\",\"paramTypes\":[\"integer\",\"list<list<integer>>\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -3275,6 +3750,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countDistinctIntegers = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,13,10,12,31]]\",\"expected\":\"6\"},{\"input\":\"[[2,2,2]]\",\"expected\":\"1\"}]",
+    solution: "function countDistinctIntegers(nums: number[]): number {\n    const n = nums.length;\n    for (let i = 0; i < n; i++) {\n        nums.push(Number([...(nums[i] + '')].reverse().join('')));\n    }\n    return new Set(nums).size;\n}",
+    approach: "Set: додай кожне число і його реверс; поверни size.\n\n**Складність:** Time O(n·log), Space O(n)",
     signature: "{\"name\":\"countDistinctIntegers\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3288,6 +3765,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Function} fn\n * @return {Object}\n */\nArray.prototype.groupBy = function(fn) {\n    \n};\n\n/**\n * [1,2,3].groupBy(String) // {\"1\":[1],\"2\":[2],\"3\":[3]}\n */",
     testCases: "[]",
+    solution: "declare global {\n    interface Array<T> {\n        groupBy(fn: (item: T) => string): Record<string, T[]>;\n    }\n}\n\nArray.prototype.groupBy = function (fn) {\n    return this.reduce((acc, item) => {\n        const key = fn(item);\n        if (acc[key]) {\n            acc[key].push(item);\n        } else {\n            acc[key] = [item];\n        }\n        return acc;\n    }, {});\n};\n\n/**\n * [1,2,3].groupBy(String) // {\"1\":[1],\"2\":[2],\"3\":[3]}\n */",
+    approach: "Додай Array.prototype.groupBy: цикл, ключ = fn(item), push у об'єкт[ключ].\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
     slug: "find-unique-binary-string",
@@ -3300,6 +3779,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} nums\n * @return {string}\n */\nvar findDifferentBinaryString = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"01\\\",\\\"10\\\"]]\",\"expected\":\"\\\"00\\\"\"},{\"input\":\"[[\\\"00\\\",\\\"01\\\"]]\",\"expected\":\"\\\"11\\\"\"},{\"input\":\"[[\\\"111\\\",\\\"011\\\",\\\"001\\\"]]\",\"expected\":\"\\\"000\\\"\"}]",
+    solution: "function findDifferentBinaryString(nums: string[]): string {\n    let mask = 0;\n    for (let x of nums) {\n        const cnt = x.split('').filter(c => c === '1').length;\n        mask |= 1 << cnt;\n    }\n    for (let i = 0; ; ++i) {\n        if (((mask >> i) & 1) === 0) {\n            return '1'.repeat(i) + '0'.repeat(nums.length - i);\n        }\n    }\n}",
+    approach: "Діагональ Кантора: answer[i] = '1' - nums[i][i]. Гарантовано відрізняється від кожного рядка.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"findDifferentBinaryString\",\"paramTypes\":[\"string[]\"],\"returnType\":\"string\"}",
   },
   {
@@ -3313,6 +3794,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s1\n * @param {string} s2\n * @param {string} baseStr\n * @return {string}\n */\nvar smallestEquivalentString = function(s1, s2, baseStr) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"parker\\\",\\\"morris\\\",\\\"parser\\\"]\",\"expected\":\"\\\"makkek\\\"\"},{\"input\":\"[\\\"hello\\\",\\\"world\\\",\\\"hold\\\"]\",\"expected\":\"\\\"hdld\\\"\"},{\"input\":\"[\\\"leetcode\\\",\\\"programs\\\",\\\"sourcecode\\\"]\",\"expected\":\"\\\"aauaaaaada\\\"\"}]",
+    solution: "function smallestEquivalentString(s1: string, s2: string, baseStr: string): string {\n    const p: number[] = Array.from({ length: 26 }, (_, i) => i);\n\n    const find = (x: number): number => {\n        if (p[x] !== x) {\n            p[x] = find(p[x]);\n        }\n        return p[x];\n    };\n\n    for (let i = 0; i < s1.length; i++) {\n        const x = s1.charCodeAt(i) - 'a'.charCodeAt(0);\n        const y = s2.charCodeAt(i) - 'a'.charCodeAt(0);\n        const px = find(x);\n        const py = find(y);\n        if (px < py) {\n            p[py] = px;\n        } else {\n            p[px] = py;\n        }\n    }\n\n    const s: string[] = [];\n    for (let i = 0; i < baseStr.length; i++) {\n        const c = baseStr.charCodeAt(i) - 'a'.charCodeAt(0);\n        s.push(String.fromCharCode('a'.charCodeAt(0) + find(c)));\n    }\n    return s.join('');\n}",
+    approach: "Union-Find по 26 літерах, корінь — найменша літера в класі; мапи s3 у корені.\n\n**Складність:** Time O(n·α), Space O(1)",
     signature: "{\"name\":\"smallestEquivalentString\",\"paramTypes\":[\"string\",\"string\",\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -3326,6 +3809,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} target\n * @param {number} n\n * @return {string[]}\n */\nvar buildArray = function(target, n) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3],3]\",\"expected\":\"[\\\"Push\\\",\\\"Push\\\",\\\"Pop\\\",\\\"Push\\\"]\"},{\"input\":\"[[1,2,3],3]\",\"expected\":\"[\\\"Push\\\",\\\"Push\\\",\\\"Push\\\"]\"},{\"input\":\"[[1,2],4]\",\"expected\":\"[\\\"Push\\\",\\\"Push\\\"]\"}]",
+    solution: "function buildArray(target: number[], n: number): string[] {\n    const ans: string[] = [];\n    let cur: number = 1;\n    for (const x of target) {\n        for (; cur < x; ++cur) {\n            ans.push('Push', 'Pop');\n        }\n        ans.push('Push');\n        ++cur;\n    }\n    return ans;\n}",
+    approach: "Ітеруй 1..n; для чисел не з target додавай 'Push','Pop', для потрібних — 'Push'. Стоп на останньому target.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"buildArray\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -3339,6 +3824,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} num1\n * @param {number} num2\n * @return {number}\n */\nvar totalWaviness = function(num1, num2) {\n    \n};",
     testCases: "[{\"input\":\"[120,130]\",\"expected\":\"3\"},{\"input\":\"[198,202]\",\"expected\":\"3\"},{\"input\":\"[4848,4848]\",\"expected\":\"2\"}]",
+    solution: "function totalWaviness(num1: number, num2: number): number {\n    let ans = 0;\n    for (let x = num1; x <= num2; x++) {\n        ans += f(x);\n    }\n    return ans;\n}\n\nfunction f(x: number): number {\n    const nums: number[] = [];\n    while (x > 0) {\n        nums.push(x % 10);\n        x = Math.floor(x / 10);\n    }\n    const m = nums.length;\n    if (m < 3) return 0;\n\n    let s = 0;\n    for (let i = 1; i < m - 1; i++) {\n        if (\n            (nums[i] > nums[i - 1] && nums[i] > nums[i + 1]) ||\n            (nums[i] < nums[i - 1] && nums[i] < nums[i + 1])\n        ) {\n            s++;\n        }\n    }\n    return s;\n}",
+    approach: "Digit DP: рахуй по позиціях, тримаючи стан (попередня цифра, напрямок хвилі, tight); або пряма перевірка діапазону для малих меж.\n\n**Складність:** Time O(діапазон·log), Space O(1)",
     signature: "{\"name\":\"totalWaviness\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3352,6 +3839,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} logs\n * @param {number} k\n * @return {number[]}\n */\nvar findingUsersActiveMinutes = function(logs, k) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,5],[1,2],[0,2],[0,5],[1,3]],5]\",\"expected\":\"[0,2,0,0,0]\"},{\"input\":\"[[[1,1],[2,2],[2,3]],4]\",\"expected\":\"[1,1,0,0]\"}]",
+    solution: "function findingUsersActiveMinutes(logs: number[][], k: number): number[] {\n    const d: Map<number, Set<number>> = new Map();\n    for (const [i, t] of logs) {\n        if (!d.has(i)) {\n            d.set(i, new Set<number>());\n        }\n        d.get(i)!.add(t);\n    }\n    const ans: number[] = Array(k).fill(0);\n    for (const [_, ts] of d) {\n        ++ans[ts.size - 1];\n    }\n    return ans;\n}",
+    approach: "Map user→Set хвилин; UAM[j] += 1 для j = size(Set).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"findingUsersActiveMinutes\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -3365,6 +3854,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} candidates\n * @return {number}\n */\nvar largestCombination = function(candidates) {\n    \n};",
     testCases: "[{\"input\":\"[[16,17,71,62,12,24,14]]\",\"expected\":\"4\"},{\"input\":\"[[8,8]]\",\"expected\":\"2\"}]",
+    solution: "function largestCombination(candidates: number[]): number {\n    const mx = Math.max(...candidates);\n    const m = mx.toString(2).length;\n    let ans = 0;\n    for (let i = 0; i < m; ++i) {\n        let cnt = 0;\n        for (const x of candidates) {\n            cnt += (x >> i) & 1;\n        }\n        ans = Math.max(ans, cnt);\n    }\n    return ans;\n}",
+    approach: "Для кожного з 24 бітів рахуй, скільки чисел мають його встановленим; максимум цих лічильників.\n\n**Складність:** Time O(n·24), Space O(1)",
     signature: "{\"name\":\"largestCombination\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3378,6 +3869,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number}\n */\nvar countSquares = function(matrix) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1,1,1],[1,1,1,1],[0,1,1,1]]]\",\"expected\":\"15\"},{\"input\":\"[[[1,0,1],[1,1,0],[1,1,0]]]\",\"expected\":\"7\"}]",
+    solution: "function countSquares(matrix: number[][]): number {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    const f: number[][] = Array.from({ length: m }, () => Array(n).fill(0));\n    let ans = 0;\n\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            if (matrix[i][j] === 0) {\n                continue;\n            }\n            if (i === 0 || j === 0) {\n                f[i][j] = 1;\n            } else {\n                f[i][j] = Math.min(f[i - 1][j - 1], Math.min(f[i - 1][j], f[i][j - 1])) + 1;\n            }\n            ans += f[i][j];\n        }\n    }\n\n    return ans;\n}",
+    approach: "DP: dp[i][j] = якщо 1, то 1 + min(верх, ліво, діагональ); сума всіх dp — кількість квадратів.\n\n**Складність:** Time O(m·n), Space O(1) (in-place)",
     signature: "{\"name\":\"countSquares\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3391,6 +3884,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Array} arr\n * @return {Generator}\n */\nvar inorderTraversal = function*(arr) {\n    \n};\n\n/**\n * const gen = inorderTraversal([1, [2, 3]]);\n * gen.next().value; // 1\n * gen.next().value; // 2\n * gen.next().value; // 3\n */",
     testCases: "[]",
+    solution: "type MultidimensionalArray = (MultidimensionalArray | number)[];\n\nfunction* inorderTraversal(arr: MultidimensionalArray): Generator<number, void, unknown> {\n    for (const e of arr) {\n        if (Array.isArray(e)) {\n            yield* inorderTraversal(e);\n        } else {\n            yield e;\n        }\n    }\n}\n\n/**\n * const gen = inorderTraversal([1, [2, 3]]);\n * gen.next().value; // 1\n * gen.next().value; // 2\n * gen.next().value; // 3\n */",
+    approach: "Рекурсивний генератор: для кожного елемента — якщо масив, yield* обхід, інакше yield значення.\n\n**Складність:** Time O(n), Space O(глибина)",
   },
   {
     slug: "minimum-operations-to-make-binary-array-elements-equal-to-one-i",
@@ -3403,6 +3898,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minOperations = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,1,1,0,0]]\",\"expected\":\"3\"},{\"input\":\"[[0,1,1,1]]\",\"expected\":\"-1\"}]",
+    solution: "function minOperations(nums: number[]): number {\n    const n = nums.length;\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        if (nums[i] === 0) {\n            if (i + 2 >= n) {\n                return -1;\n            }\n            nums[i + 1] ^= 1;\n            nums[i + 2] ^= 1;\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Жадібно зліва направо: побачив 0 — переверни вікно 3 (toggle через різницевий масив/лічильник); наприкінці перевір хвіст.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minOperations\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3416,6 +3913,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} target\n * @return {string[]}\n */\nvar stringSequence = function(target) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"[\\\"a\\\",\\\"aa\\\",\\\"ab\\\",\\\"aba\\\",\\\"abb\\\",\\\"abc\\\"]\"},{\"input\":\"[\\\"he\\\"]\",\"expected\":\"[\\\"a\\\",\\\"b\\\",\\\"c\\\",\\\"d\\\",\\\"e\\\",\\\"f\\\",\\\"g\\\",\\\"h\\\",\\\"ha\\\",\\\"hb\\\",\\\"hc\\\",\\\"hd\\\",\\\"he\\\"]\"}]",
+    solution: "function stringSequence(target: string): string[] {\n    const ans: string[] = [];\n    for (const c of target) {\n        let s = ans.length > 0 ? ans[ans.length - 1] : '';\n        for (let a = 'a'.charCodeAt(0); a <= c.charCodeAt(0); a++) {\n            const t = s + String.fromCharCode(a);\n            ans.push(t);\n        }\n    }\n    return ans;\n}",
+    approach: "Симуляція: рядок будується літера за літерою; для кожної цільової літери додавай проміжні 'a'→...→ціль.\n\n**Складність:** Time O(n·26), Space O(вихід)",
     signature: "{\"name\":\"stringSequence\",\"paramTypes\":[\"string\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -3429,6 +3928,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root1\n * @param {TreeNode} root2\n * @return {number[]}\n */\nvar getAllElements = function(root1, root2) {\n    \n};",
     testCases: "[{\"input\":\"[[2,1,4],[1,0,3]]\",\"expected\":\"[0,1,1,2,3,4]\"},{\"input\":\"[[1,null,8],[8,1]]\",\"expected\":\"[1,1,8,8]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction getAllElements(root1: TreeNode | null, root2: TreeNode | null): number[] {\n    const dfs = (root: TreeNode | null, nums: number[]) => {\n        if (!root) {\n            return;\n        }\n        dfs(root.left, nums);\n        nums.push(root.val);\n        dfs(root.right, nums);\n    };\n    const a: number[] = [];\n    const b: number[] = [];\n    dfs(root1, a);\n    dfs(root2, b);\n    const [m, n] = [a.length, b.length];\n    const ans: number[] = [];\n    let [i, j] = [0, 0];\n    while (i < m && j < n) {\n        if (a[i] < b[j]) {\n            ans.push(a[i++]);\n        } else {\n            ans.push(b[j++]);\n        }\n    }\n    while (i < m) {\n        ans.push(a[i++]);\n    }\n    while (j < n) {\n        ans.push(b[j++]);\n    }\n    return ans;\n}",
+    approach: "In-order обхід кожного дерева → два відсортовані масиви → merge.\n\n**Складність:** Time O(m+n), Space O(m+n)",
     signature: "{\"name\":\"getAllElements\",\"paramTypes\":[\"TreeNode\",\"TreeNode\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -3442,6 +3943,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar matrixScore = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,0,1,1],[1,0,1,0],[1,1,0,0]]]\",\"expected\":\"39\"},{\"input\":\"[[[0]]]\",\"expected\":\"1\"}]",
+    solution: "function matrixScore(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    for (let i = 0; i < m; ++i) {\n        if (grid[i][0] == 0) {\n            for (let j = 0; j < n; ++j) {\n                grid[i][j] ^= 1;\n            }\n        }\n    }\n    let ans = 0;\n    for (let j = 0; j < n; ++j) {\n        let cnt = 0;\n        for (let i = 0; i < m; ++i) {\n            cnt += grid[i][j];\n        }\n        ans += Math.max(cnt, m - cnt) * (1 << (n - j - 1));\n    }\n    return ans;\n}",
+    approach: "Жадібно: зроби перший стовпець усе 1 (фліп рядків); потім для кожного стовпця фліпай, якщо одиниць менше половини. Порахуй суму рядків як бінарні.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"matrixScore\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3455,6 +3958,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number}\n */\nvar largestSubmatrix = function(matrix) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,0,1],[1,1,1],[1,0,1]]]\",\"expected\":\"4\"},{\"input\":\"[[[1,0,1,0,1]]]\",\"expected\":\"3\"},{\"input\":\"[[[1,1,0],[1,0,1]]]\",\"expected\":\"2\"}]",
+    solution: "function largestSubmatrix(matrix: number[][]): number {\n    const m: number = matrix.length;\n    const n: number = matrix[0].length;\n\n    for (let i: number = 1; i < m; ++i) {\n        for (let j: number = 0; j < n; ++j) {\n            if (matrix[i][j] !== 0) {\n                matrix[i][j] = matrix[i - 1][j] + 1;\n            }\n        }\n    }\n\n    let ans: number = 0;\n\n    for (const row of matrix) {\n        row.sort((a, b) => b - a);\n        for (let j: number = 0; j < n; ++j) {\n            ans = Math.max(ans, (j + 1) * row[j]);\n        }\n    }\n\n    return ans;\n}",
+    approach: "Порахуй висоти послідовних 1 по стовпцях; кожен рядок сортуй спадаюче, максимум height[j]·(j+1).\n\n**Складність:** Time O(m·n·log), Space O(1)",
     signature: "{\"name\":\"largestSubmatrix\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3468,6 +3973,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} word\n * @return {number}\n */\nvar minimumPushes = function(word) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abcde\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"xyzxyzxyzxyz\\\"]\",\"expected\":\"12\"},{\"input\":\"[\\\"aabbccddeeffgghhiiiiii\\\"]\",\"expected\":\"24\"}]",
+    solution: "function minimumPushes(word: string): number {\n    const cnt: number[] = Array(26).fill(0);\n    for (const c of word) {\n        ++cnt[c.charCodeAt(0) - 'a'.charCodeAt(0)];\n    }\n    cnt.sort((a, b) => b - a);\n    let ans = 0;\n    for (let i = 0; i < 26; ++i) {\n        ans += (((i / 8) | 0) + 1) * cnt[i];\n    }\n    return ans;\n}",
+    approach: "Частоти літер спадаюче; перші 8 коштують 1 натиск, наступні 8 — 2, і т.д. Сума freq·(позиція/8 + 1).\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"minimumPushes\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3481,6 +3988,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} plants\n * @param {number} capacity\n * @return {number}\n */\nvar wateringPlants = function(plants, capacity) {\n    \n};",
     testCases: "[{\"input\":\"[[2,2,3,3],5]\",\"expected\":\"14\"},{\"input\":\"[[1,1,1,4,2,3],4]\",\"expected\":\"30\"},{\"input\":\"[[7,7,7,7,7,7,7],8]\",\"expected\":\"49\"}]",
+    solution: "function wateringPlants(plants: number[], capacity: number): number {\n    let [ans, water] = [0, capacity];\n    for (let i = 0; i < plants.length; ++i) {\n        if (water >= plants[i]) {\n            water -= plants[i];\n            ++ans;\n        } else {\n            water = capacity - plants[i];\n            ans += i * 2 + 1;\n        }\n    }\n    return ans;\n}",
+    approach: "Симуляція: йди вправо, лий; коли не вистачає — повертайся до -1 (2·i кроків) і назад.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"wateringPlants\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3494,6 +4003,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} maxSize\n */\nvar CustomStack = function(maxSize) {\n    \n};\n\n/** \n * @param {number} x\n * @return {void}\n */\nCustomStack.prototype.push = function(x) {\n    \n};\n\n/**\n * @return {number}\n */\nCustomStack.prototype.pop = function() {\n    \n};\n\n/** \n * @param {number} k \n * @param {number} val\n * @return {void}\n */\nCustomStack.prototype.increment = function(k, val) {\n    \n};\n\n/** \n * Your CustomStack object will be instantiated and called as such:\n * var obj = new CustomStack(maxSize)\n * obj.push(x)\n * var param_2 = obj.pop()\n * obj.increment(k,val)\n */",
     testCases: "[]",
+    solution: "class CustomStack {\n    private stk: number[];\n    private add: number[];\n    private i: number;\n\n    constructor(maxSize: number) {\n        this.stk = Array(maxSize).fill(0);\n        this.add = Array(maxSize).fill(0);\n        this.i = 0;\n    }\n\n    push(x: number): void {\n        if (this.i < this.stk.length) {\n            this.stk[this.i++] = x;\n        }\n    }\n\n    pop(): number {\n        if (this.i <= 0) {\n            return -1;\n        }\n        const ans = this.stk[--this.i] + this.add[this.i];\n        if (this.i > 0) {\n            this.add[this.i - 1] += this.add[this.i];\n        }\n        this.add[this.i] = 0;\n        return ans;\n    }\n\n    increment(k: number, val: number): void {\n        if (this.i > 0) {\n            this.add[Math.min(this.i, k) - 1] += val;\n        }\n    }\n}\n\n/**\n * Your CustomStack object will be instantiated and called as such:\n * var obj = new CustomStack(maxSize)\n * obj.push(x)\n * var param_2 = obj.pop()\n * obj.increment(k,val)\n */",
+    approach: "Масив + lazy-інкремент: inc записує приріст на дні; pop додає inc[top] і пропихає його на top-1.\n\n**Складність:** Time O(1) усі операції, Space O(n)",
   },
   {
     slug: "maximum-xor-after-operations",
@@ -3506,6 +4017,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maximumXOR = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[3,2,4,6]]\",\"expected\":\"7\"},{\"input\":\"[[1,2,3,9,2]]\",\"expected\":\"11\"}]",
+    solution: "function maximumXOR(nums: number[]): number {\n    let ans = 0;\n    for (const x of nums) {\n        ans |= x;\n    }\n    return ans;\n}",
+    approach: "Операція AND може лише знімати біти, а через x = x XOR (x AND num) можна досягти будь-якого підмножинного знаку — відповідь = OR усіх чисел.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maximumXOR\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3519,6 +4032,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} derived\n * @return {boolean}\n */\nvar doesValidArrayExist = function(derived) {\n    \n};",
     testCases: "[{\"input\":\"[[1,1,0]]\",\"expected\":\"true\"},{\"input\":\"[[1,1]]\",\"expected\":\"true\"},{\"input\":\"[[1,0]]\",\"expected\":\"false\"}]",
+    solution: "function doesValidArrayExist(derived: number[]): boolean {\n    return derived.reduce((acc, x) => acc ^ x) === 0;\n}",
+    approach: "derived — це XOR-різниці циклічного масиву; сума (XOR) усіх derived має бути 0.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"doesValidArrayExist\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -3532,6 +4047,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar lcaDeepestLeaves = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[3,5,1,6,2,0,8,null,null,7,4]]\",\"expected\":\"[2,7,4]\"},{\"input\":\"[[1]]\",\"expected\":\"[1]\"},{\"input\":\"[[0,1,3,null,2]]\",\"expected\":\"[2]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction lcaDeepestLeaves(root: TreeNode | null): TreeNode | null {\n    const dfs = (root: TreeNode | null): [TreeNode | null, number] => {\n        if (root === null) {\n            return [null, 0];\n        }\n        const [l, d1] = dfs(root.left);\n        const [r, d2] = dfs(root.right);\n        if (d1 > d2) {\n            return [l, d1 + 1];\n        }\n        if (d1 < d2) {\n            return [r, d2 + 1];\n        }\n        return [root, d1 + 1];\n    };\n    return dfs(root)[0];\n}",
+    approach: "DFS повертає (глибина, lca); якщо глибини піддерев рівні — поточний вузол, інакше глибше піддерево.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"lcaDeepestLeaves\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -3545,6 +4062,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {boolean}\n */\nvar checkPowersOfThree = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[12]\",\"expected\":\"true\"},{\"input\":\"[91]\",\"expected\":\"true\"},{\"input\":\"[21]\",\"expected\":\"false\"}]",
+    solution: "function checkPowersOfThree(n: number): boolean {\n    while (n) {\n        if (n % 3 > 1) return false;\n        n = Math.floor(n / 3);\n    }\n    return true;\n}",
+    approach: "Переводь у трійкову систему: якщо трапилась цифра 2 — false.\n\n**Складність:** Time O(log₃ n), Space O(1)",
     signature: "{\"name\":\"checkPowersOfThree\",\"paramTypes\":[\"integer\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -3558,6 +4077,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} a\n * @param {number} b\n * @return {string}\n */\nvar findLexSmallestString = function(s, a, b) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"5525\\\",9,2]\",\"expected\":\"\\\"2050\\\"\"},{\"input\":\"[\\\"74\\\",5,1]\",\"expected\":\"\\\"24\\\"\"},{\"input\":\"[\\\"0011\\\",4,2]\",\"expected\":\"\\\"0011\\\"\"}]",
+    solution: "function findLexSmallestString(s: string, a: number, b: number): string {\n    const q: string[] = [s];\n    const vis = new Set<string>([s]);\n    let ans = s;\n    let i = 0;\n    while (i < q.length) {\n        s = q[i++];\n        if (ans > s) {\n            ans = s;\n        }\n        const t1 = s\n            .split('')\n            .map((c, j) => (j & 1 ? String((Number(c) + a) % 10) : c))\n            .join('');\n        const t2 = s.slice(-b) + s.slice(0, -b);\n        for (const t of [t1, t2]) {\n            if (!vis.has(t)) {\n                vis.add(t);\n                q.push(t);\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "BFS/DFS по всіх досяжних станах (додавання до непарних позицій mod 10, циклічний зсув); тримай лексикографічний мінімум. Простір станів малий.\n\n**Складність:** Time O(100·n²), Space O(станів)",
     signature: "{\"name\":\"findLexSmallestString\",\"paramTypes\":[\"string\",\"integer\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -3571,6 +4092,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar removeStars = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"leet**cod*e\\\"]\",\"expected\":\"\\\"lecoe\\\"\"},{\"input\":\"[\\\"erase*****\\\"]\",\"expected\":\"\\\"\\\"\"}]",
+    solution: "function removeStars(s: string): string {\n    const ans: string[] = [];\n    for (const c of s) {\n        if (c === '*') {\n            ans.pop();\n        } else {\n            ans.push(c);\n        }\n    }\n    return ans.join('');\n}",
+    approach: "Стек: символ — push, '*' — pop. Склей стек.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"removeStars\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -3584,6 +4107,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar countVowelStrings = function(n) {\n    \n};",
     testCases: "[]",
+    solution: "function countVowelStrings(n: number): number {\n  const dp = [1, 1, 1, 1, 1];\n  for (let i = 2; i <= n; i++)\n    for (let j = 3; j >= 0; j--) dp[j] += dp[j + 1];\n  return dp.reduce((a, b) => a + b, 0);\n}",
+    approach: "DP/комбінаторика: C(n+4, 4) — кількість неспадних рядків з 5 голосних.\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "divide-array-into-arrays-with-max-difference",
@@ -3596,6 +4121,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number[][]}\n */\nvar divideArray = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,4,8,7,9,3,5,1],2]\",\"expected\":\"[[1,1,3],[3,4,5],[7,8,9]]\"},{\"input\":\"[[2,4,2,2,5,2],2]\",\"expected\":\"[]\"},{\"input\":\"[[4,2,9,8,2,12,7,12,10,5,8,5,5,7,9,2,5,11],14]\",\"expected\":\"[[2,2,2],[4,5,5],[5,5,7],[7,8,8],[9,9,10],[11,12,12]]\"}]",
+    solution: "function divideArray(nums: number[], k: number): number[][] {\n    nums.sort((a, b) => a - b);\n    const ans: number[][] = [];\n    for (let i = 0; i < nums.length; i += 3) {\n        const t = nums.slice(i, i + 3);\n        if (t[2] - t[0] > k) {\n            return [];\n        }\n        ans.push(t);\n    }\n    return ans;\n}",
+    approach: "Сортуй; бери трійками підряд; якщо в трійці max-min > k — неможливо ([]).\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"divideArray\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -3609,6 +4136,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @param {number} k\n * @return {number[][]}\n */\nvar minAbsDiff = function(grid, k) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,8],[3,-2]],2]\",\"expected\":\"[[2]]\"},{\"input\":\"[[[3,-1]],1]\",\"expected\":\"[[0,0]]\"},{\"input\":\"[[[1,-2,3],[2,3,5]],2]\",\"expected\":\"[[1,2]]\"}]",
+    solution: "function minAbsDiff(grid: number[][], k: number): number[][] {\n    const m = grid.length;\n    const n = grid[0].length;\n    const ans: number[][] = Array.from({ length: m - k + 1 }, () => Array(n - k + 1).fill(0));\n    for (let i = 0; i <= m - k; i++) {\n        for (let j = 0; j <= n - k; j++) {\n            const nums: number[] = [];\n            for (let x = i; x < i + k; x++) {\n                for (let y = j; y < j + k; y++) {\n                    nums.push(grid[x][y]);\n                }\n            }\n            nums.sort((a, b) => a - b);\n            let d = Number.MAX_SAFE_INTEGER;\n            for (let t = 1; t < nums.length; t++) {\n                if (nums[t] !== nums[t - 1]) {\n                    d = Math.min(d, Math.abs(nums[t] - nums[t - 1]));\n                }\n            }\n            ans[i][j] = d === Number.MAX_SAFE_INTEGER ? 0 : d;\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожного вікна k×k збери значення, сортуй, шукай мінімальну різницю сусідніх (0, якщо є дублі).\n\n**Складність:** Time O(m·n·k²·log), Space O(k²)",
     signature: "{\"name\":\"minAbsDiff\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -3622,6 +4151,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} folder\n * @return {string[]}\n */\nvar removeSubfolders = function(folder) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"/a\\\",\\\"/a/b\\\",\\\"/c/d\\\",\\\"/c/d/e\\\",\\\"/c/f\\\"]]\",\"expected\":\"[\\\"/a\\\",\\\"/c/d\\\",\\\"/c/f\\\"]\"},{\"input\":\"[[\\\"/a\\\",\\\"/a/b/c\\\",\\\"/a/b/d\\\"]]\",\"expected\":\"[\\\"/a\\\"]\"},{\"input\":\"[[\\\"/a/b/c\\\",\\\"/a/b/ca\\\",\\\"/a/b/d\\\"]]\",\"expected\":\"[\\\"/a/b/c\\\",\\\"/a/b/ca\\\",\\\"/a/b/d\\\"]\"}]",
+    solution: "function removeSubfolders(folder: string[]): string[] {\n    let s = folder[1];\n    return folder.sort().filter(x => !x.startsWith(s + '/') && (s = x));\n}",
+    approach: "Сортуй лексикографічно; папка — підпапка, якщо починається з попередньої залишеної + '/'.\n\n**Складність:** Time O(n·L log n), Space O(n)",
     signature: "{\"name\":\"removeSubfolders\",\"paramTypes\":[\"string[]\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -3635,6 +4166,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Array<Function>} functions\n * @return {Promise<any>}\n */\nvar promiseAll = function(functions) {\n    \n};\n\n/**\n * const promise = promiseAll([() => new Promise(res => res(42))])\n * promise.then(console.log); // [42]\n */",
     testCases: "[]",
+    solution: "async function promiseAll<T>(functions: (() => Promise<T>)[]): Promise<T[]> {\n    return new Promise<T[]>((resolve, reject) => {\n        let cnt = 0;\n        const ans = new Array(functions.length);\n        for (let i = 0; i < functions.length; ++i) {\n            const f = functions[i];\n            f()\n                .then(res => {\n                    ans[i] = res;\n                    cnt++;\n                    if (cnt === functions.length) {\n                        resolve(ans);\n                    }\n                })\n                .catch(err => {\n                    reject(err);\n                });\n        }\n    });\n}\n\n/**\n * const promise = promiseAll([() => new Promise(res => res(42))])\n * promise.then(console.log); // [42]\n */",
+    approach: "new Promise: запусти всі, збирай результати за індексом, resolve коли лічильник завершених === n, reject на першій помилці.\n\n**Складність:** Time O(1), Space O(n)",
   },
   {
     slug: "flip-columns-for-maximum-number-of-equal-rows",
@@ -3647,6 +4180,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @return {number}\n */\nvar maxEqualRowsAfterFlips = function(matrix) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1],[1,1]]]\",\"expected\":\"1\"},{\"input\":\"[[[0,1],[1,0]]]\",\"expected\":\"2\"},{\"input\":\"[[[0,0,0],[0,0,1],[1,1,0]]]\",\"expected\":\"2\"}]",
+    solution: "function maxEqualRowsAfterFlips(matrix: number[][]): number {\n    const cnt = new Map<string, number>();\n    let ans = 0;\n    for (const row of matrix) {\n        if (row[0] === 1) {\n            for (let i = 0; i < row.length; i++) {\n                row[i] ^= 1;\n            }\n        }\n        const s = row.join('');\n        cnt.set(s, (cnt.get(s) || 0) + 1);\n        ans = Math.max(ans, cnt.get(s)!);\n    }\n    return ans;\n}",
+    approach: "Нормалізуй кожен рядок (XOR з першим елементом); однакові патерни стануть рівними після фліпів. Максимум частоти в Map.\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"maxEqualRowsAfterFlips\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3660,6 +4195,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} part\n * @return {string}\n */\nvar removeOccurrences = function(s, part) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"daabcbaabcbc\\\",\\\"abc\\\"]\",\"expected\":\"\\\"dab\\\"\"},{\"input\":\"[\\\"axxxxyyyyb\\\",\\\"xy\\\"]\",\"expected\":\"\\\"ab\\\"\"}]",
+    solution: "function removeOccurrences(s: string, part: string): string {\n    while (s.includes(part)) {\n        s = s.replace(part, '');\n    }\n    return s;\n}",
+    approach: "Стек символів: після кожного push перевіряй, чи хвіст стека === part, і зрізай.\n\n**Складність:** Time O(n·L), Space O(n)",
     signature: "{\"name\":\"removeOccurrences\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -3673,6 +4210,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar partitionString = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abacaba\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"ssssss\\\"]\",\"expected\":\"6\"}]",
+    solution: "function partitionString(s: string): number {\n    let [ans, mask] = [1, 0];\n    for (const c of s) {\n        const x = c.charCodeAt(0) - 97;\n        if ((mask >> x) & 1) {\n            ++ans;\n            mask = 0;\n        }\n        mask |= 1 << x;\n    }\n    return ans;\n}",
+    approach: "Жадібно: Set поточного шматка; повторний символ → новий шматок, Set очистити.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"partitionString\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3686,6 +4225,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minLengthAfterRemovals = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"aabbab\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"aaaa\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"aaabb\\\"]\",\"expected\":\"1\"}]",
+    solution: "function minLengthAfterRemovals(s: string): number {\n    let a = 0;\n    for (const c of s) {\n        if (c === 'a') {\n            ++a;\n        }\n    }\n    const b = s.length - a;\n    return Math.abs(a - b);\n}",
+    approach: "Стек: 'a'/'b'/'c' — якщо хвіст утворює трійку 'ab?' видаляй... насправді видаляй сусідні різні? За умовою — видаляй 'AB' або 'CD'; стек з відкатом. Відповідь — розмір стека.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"minLengthAfterRemovals\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3699,6 +4240,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * // Definition for a QuadTree node.\n * function _Node(val,isLeaf,topLeft,topRight,bottomLeft,bottomRight) {\n *    this.val = val;\n *    this.isLeaf = isLeaf;\n *    this.topLeft = topLeft;\n *    this.topRight = topRight;\n *    this.bottomLeft = bottomLeft;\n *    this.bottomRight = bottomRight;\n * };\n */\n\n/**\n * @param {number[][]} grid\n * @return {_Node}\n */\nvar construct = function(grid) {\n    \n};",
     testCases: "[]",
+    approach: "Рекурсія по квадрантах: якщо весь блок однорідний — лист; інакше 4 рекурсивні виклики на чверті.\n\n**Складність:** Time O(n²·log n), Space O(log n)",
   },
   {
     slug: "design-browser-history",
@@ -3711,6 +4253,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} homepage\n */\nvar BrowserHistory = function(homepage) {\n    \n};\n\n/** \n * @param {string} url\n * @return {void}\n */\nBrowserHistory.prototype.visit = function(url) {\n    \n};\n\n/** \n * @param {number} steps\n * @return {string}\n */\nBrowserHistory.prototype.back = function(steps) {\n    \n};\n\n/** \n * @param {number} steps\n * @return {string}\n */\nBrowserHistory.prototype.forward = function(steps) {\n    \n};\n\n/** \n * Your BrowserHistory object will be instantiated and called as such:\n * var obj = new BrowserHistory(homepage)\n * obj.visit(url)\n * var param_2 = obj.back(steps)\n * var param_3 = obj.forward(steps)\n */",
     testCases: "[]",
+    solution: "class BrowserHistory {\n  private stack: string[];\n  private cur = 0;\n\n  constructor(homepage: string) { this.stack = [homepage]; }\n\n  visit(url: string): void {\n    this.stack.length = this.cur + 1;\n    this.stack.push(url);\n    this.cur++;\n  }\n\n  back(steps: number): string {\n    this.cur = Math.max(0, this.cur - steps);\n    return this.stack[this.cur];\n  }\n\n  forward(steps: number): string {\n    this.cur = Math.min(this.stack.length - 1, this.cur + steps);\n    return this.stack[this.cur];\n  }\n}",
+    approach: "Масив + вказівник поточної сторінки + межа розміру; visit обрізає хвіст, back/forward рухають вказівник із клампом.\n\n**Складність:** Time O(1) amortized, Space O(n)",
   },
   {
     slug: "maximum-difference-between-node-and-ancestor",
@@ -3723,6 +4267,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar maxAncestorDiff = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[8,3,10,1,6,null,14,null,null,4,7,13]]\",\"expected\":\"7\"},{\"input\":\"[[1,null,2,null,0,3]]\",\"expected\":\"3\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction maxAncestorDiff(root: TreeNode | null): number {\n    const dfs = (root: TreeNode | null, mi: number, mx: number): void => {\n        if (!root) {\n            return;\n        }\n        ans = Math.max(ans, Math.abs(root.val - mi), Math.abs(root.val - mx));\n        mi = Math.min(mi, root.val);\n        mx = Math.max(mx, root.val);\n        dfs(root.left, mi, mx);\n        dfs(root.right, mi, mx);\n    };\n    let ans: number = 0;\n    dfs(root, root.val, root.val);\n    return ans;\n}",
+    approach: "DFS, передавай min і max по шляху від кореня; у листі оновлюй відповідь max - min.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"maxAncestorDiff\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3736,6 +4282,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minimumArea = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1,0],[1,0,1]]]\",\"expected\":\"6\"},{\"input\":\"[[[0,0],[1,0]]]\",\"expected\":\"1\"}]",
+    solution: "function minimumArea(grid: number[][]): number {\n    const [m, n] = [grid.length, grid[0].length];\n    let [x1, y1] = [m, n];\n    let [x2, y2] = [0, 0];\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (grid[i][j] === 1) {\n                x1 = Math.min(x1, i);\n                y1 = Math.min(y1, j);\n                x2 = Math.max(x2, i);\n                y2 = Math.max(y2, j);\n            }\n        }\n    }\n    return (x2 - x1 + 1) * (y2 - y1 + 1);\n}",
+    approach: "Знайди мін/макс рядок і стовпець із одиницею; площа = (maxR-minR+1)·(maxC-minC+1).\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"minimumArea\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3749,6 +4297,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} numBottles\n * @param {number} numExchange\n * @return {number}\n */\nvar maxBottlesDrunk = function(numBottles, numExchange) {\n    \n};",
     testCases: "[{\"input\":\"[13,6]\",\"expected\":\"15\"},{\"input\":\"[10,3]\",\"expected\":\"13\"}]",
+    solution: "function maxBottlesDrunk(numBottles: number, numExchange: number): number {\n    let ans = numBottles;\n    while (numBottles >= numExchange) {\n        numBottles -= numExchange;\n        ++numExchange;\n        ++ans;\n        ++numBottles;\n    }\n    return ans;\n}",
+    approach: "Симуляція: пий full; обмінюй numExchange порожніх на 1 повну, numExchange зростає на 1 щоразу.\n\n**Складність:** Time O(sqrt(n)), Space O(1)",
     signature: "{\"name\":\"maxBottlesDrunk\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3762,6 +4312,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number[][]} queries\n * @return {number[]}\n */\nvar xorQueries = function(arr, queries) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,4,8],[[0,1],[1,2],[0,3],[3,3]]]\",\"expected\":\"[2,7,14,8]\"},{\"input\":\"[[4,8,2,10],[[2,3],[1,3],[0,0],[0,3]]]\",\"expected\":\"[8,0,4,4]\"}]",
+    solution: "function xorQueries(arr: number[], queries: number[][]): number[] {\n    const n = arr.length;\n    const s: number[] = Array(n + 1).fill(0);\n    for (let i = 0; i < n; ++i) {\n        s[i + 1] = s[i] ^ arr[i];\n    }\n    return queries.map(([l, r]) => s[r + 1] ^ s[l]);\n}",
+    approach: "Префіксний XOR; відповідь на [l,r] = prefix[r+1] XOR prefix[l].\n\n**Складність:** Time O(n+q), Space O(n)",
     signature: "{\"name\":\"xorQueries\",\"paramTypes\":[\"integer[]\",\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -3775,6 +4327,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minSwaps = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"][][\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"]]][[[\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"[]\\\"]\",\"expected\":\"0\"}]",
+    solution: "function minSwaps(s: string): number {\n    let x = 0;\n    for (const c of s) {\n        if (c === '[') {\n            ++x;\n        } else if (x) {\n            --x;\n        }\n    }\n    return (x + 1) >> 1;\n}",
+    approach: "Лічильник відкритих; при від'ємному балансі — це «зайва» закриваюча. Відповідь = ceil(maxDeficit / 2).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minSwaps\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3788,6 +4342,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[]} preorder\n * @param {number[]} postorder\n * @return {TreeNode}\n */\nvar constructFromPrePost = function(preorder, postorder) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,4,5,3,6,7],[4,5,2,6,7,3,1]]\",\"expected\":\"[1,2,3,4,5,6,7]\"},{\"input\":\"[[1],[1]]\",\"expected\":\"[1]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction constructFromPrePost(preorder: number[], postorder: number[]): TreeNode | null {\n    const pos: Map<number, number> = new Map();\n    const n = postorder.length;\n    for (let i = 0; i < n; ++i) {\n        pos.set(postorder[i], i);\n    }\n    const dfs = (i: number, j: number, n: number): TreeNode | null => {\n        if (n <= 0) {\n            return null;\n        }\n        const root = new TreeNode(preorder[i]);\n        if (n === 1) {\n            return root;\n        }\n        const k = pos.get(preorder[i + 1])!;\n        const m = k - j + 1;\n        root.left = dfs(i + 1, j, m);\n        root.right = dfs(i + 1 + m, k + 1, n - 1 - m);\n        return root;\n    };\n    return dfs(0, 0, n);\n}",
+    approach: "pre[0] — корінь, pre[1] — корінь лівого піддерева; знайди його в post, щоб визначити розмір лівого. Рекурсія по діапазонах (Map значення→індекс у post).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"constructFromPrePost\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -3801,6 +4357,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar countCompleteComponents = function(n, edges) {\n    \n};",
     testCases: "[]",
+    solution: "function countCompleteComponents(n: number, edges: number[][]): number {\n  const parent = Array.from({ length: n }, (_, i) => i);\n  const find = (x: number): number => (parent[x] === x ? x : (parent[x] = find(parent[x])));\n  for (const [a, b] of edges) parent[find(a)] = find(b);\n  const nodes = new Map<number, number>();\n  const edgeCount = new Map<number, number>();\n  for (let i = 0; i < n; i++) nodes.set(find(i), (nodes.get(find(i)) ?? 0) + 1);\n  for (const [a] of edges) edgeCount.set(find(a), (edgeCount.get(find(a)) ?? 0) + 1);\n  let res = 0;\n  for (const [root, v] of nodes) if ((edgeCount.get(root) ?? 0) === (v * (v - 1)) / 2) res++;\n  return res;\n}",
+    approach: "Знайди компоненти (DFS/Union-Find), для кожної рахуй вершини V і ребра E; complete ⇔ E === V·(V-1)/2.\n\n**Складність:** Time O(V+E), Space O(V)",
   },
   {
     slug: "call-function-with-custom-context",
@@ -3813,6 +4371,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {Object} context\n * @param {Array} args\n * @return {null|boolean|number|string|Array|Object}\n */\nFunction.prototype.callPolyfill = function(context, ...args) {\n    \n}\n\n/**\n * function increment() { this.count++; return this.count; }\n * increment.callPolyfill({count: 1}); // 2\n */",
     testCases: "[]",
+    solution: "declare global {\n    interface Function {\n        callPolyfill(context: Record<any, any>, ...args: any[]): any;\n    }\n}\n\nFunction.prototype.callPolyfill = function (context, ...args): any {\n    const fn = this.bind(context);\n    return fn(...args);\n};\n\n/**\n * function increment() { this.count++; return this.count; }\n * increment.callPolyfill({count: 1}); // 2\n */",
+    approach: "fn.call(context, ...args) — або присвой fn тимчасовим ключем context, виклич, видали ключ.\n\n**Складність:** Time O(1), Space O(1)",
   },
   {
     slug: "smallest-subtree-with-all-the-deepest-nodes",
@@ -3825,6 +4385,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar subtreeWithAllDeepest = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[3,5,1,6,2,0,8,null,null,7,4]]\",\"expected\":\"[2,7,4]\"},{\"input\":\"[[1]]\",\"expected\":\"[1]\"},{\"input\":\"[[0,1,3,null,2]]\",\"expected\":\"[2]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction subtreeWithAllDeepest(root: TreeNode | null): TreeNode | null {\n    const dfs = (root: TreeNode | null): [TreeNode, number] => {\n        if (!root) {\n            return [null, 0];\n        }\n        const [l, ld] = dfs(root.left);\n        const [r, rd] = dfs(root.right);\n        if (ld > rd) {\n            return [l, ld + 1];\n        }\n        if (ld < rd) {\n            return [r, rd + 1];\n        }\n        return [root, ld + 1];\n    };\n    return dfs(root)[0];\n}",
+    approach: "DFS повертає (глибина, вузол); рівні глибини лівого/правого → поточний вузол, інакше глибше піддерево.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"subtreeWithAllDeepest\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -3838,6 +4400,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {character[][]} board\n * @return {number}\n */\nvar countBattleships = function(board) {\n    \n};",
     testCases: "[{\"input\":\"[[[\\\"X\\\",\\\".\\\",\\\".\\\",\\\"X\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"X\\\"],[\\\".\\\",\\\".\\\",\\\".\\\",\\\"X\\\"]]]\",\"expected\":\"2\"},{\"input\":\"[[[\\\".\\\"]]]\",\"expected\":\"0\"}]",
+    solution: "function countBattleships(board: string[][]): number {\n    const m = board.length;\n    const n = board[0].length;\n    let ans = 0;\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (board[i][j] === '.') {\n                continue;\n            }\n            if (i && board[i - 1][j] === 'X') {\n                continue;\n            }\n            if (j && board[i][j - 1] === 'X') {\n                continue;\n            }\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Рахуй лише «верхньо-лівий» край кожного корабля: 'X', у якого зверху й зліва не 'X'.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"countBattleships\",\"paramTypes\":[\"character[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3851,6 +4415,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} grid\n * @return {number}\n */\nvar regionsBySlashes = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\" /\\\",\\\"/ \\\"]]\",\"expected\":\"2\"},{\"input\":\"[[\\\" /\\\",\\\"  \\\"]]\",\"expected\":\"1\"},{\"input\":\"[[\\\"/\\\\\\\\\\\",\\\"\\\\\\\\/\\\"]]\",\"expected\":\"5\"}]",
+    solution: "function regionsBySlashes(grid: string[]): number {\n    const find = (x: number) => {\n        if (p[x] !== x) {\n            p[x] = find(p[x]);\n        }\n        return p[x];\n    };\n\n    const union = (a: number, b: number) => {\n        const pa = find(a);\n        const pb = find(b);\n        if (pa !== pb) {\n            p[pa] = pb;\n            size--;\n        }\n    };\n\n    const n = grid.length;\n    let size = n * n * 4;\n    const p = Array.from({ length: size }, (_, i) => i);\n\n    for (let i = 0; i < n; i++) {\n        for (let j = 0; j < n; j++) {\n            const k = i * n + j;\n            if (i < n - 1) {\n                union(4 * k + 2, (k + n) * 4);\n            }\n            if (j < n - 1) {\n                union(4 * k + 1, (k + 1) * 4 + 3);\n            }\n            if (grid[i][j] === '/') {\n                union(4 * k, 4 * k + 3);\n                union(4 * k + 1, 4 * k + 2);\n            } else if (grid[i][j] === '\\\\') {\n                union(4 * k, 4 * k + 1);\n                union(4 * k + 2, 4 * k + 3);\n            } else {\n                union(4 * k, 4 * k + 1);\n                union(4 * k + 1, 4 * k + 2);\n                union(4 * k + 2, 4 * k + 3);\n            }\n        }\n    }\n\n    return size;\n}",
+    approach: "Розбий кожну клітинку на 4 трикутники (верх/право/низ/ліво), Union-Find: '/' з'єднує 0-3 та 1-2, '\\\\' — 0-1 та 2-3; сусідні клітинки з'єднуй між собою. Кількість множин.\n\n**Складність:** Time O(n²·α), Space O(n²)",
     signature: "{\"name\":\"regionsBySlashes\",\"paramTypes\":[\"string[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3864,6 +4430,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number} k\n * @return {number}\n */\nvar maxSumAfterPartitioning = function(arr, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,15,7,9,2,5,10],3]\",\"expected\":\"84\"},{\"input\":\"[[1,4,1,5,7,3,6,1,9,9,3],4]\",\"expected\":\"83\"},{\"input\":\"[[1],1]\",\"expected\":\"1\"}]",
+    solution: "function maxSumAfterPartitioning(arr: number[], k: number): number {\n    const n: number = arr.length;\n    const f: number[] = new Array(n + 1).fill(0);\n    for (let i = 1; i <= n; ++i) {\n        let mx: number = 0;\n        for (let j = i; j > Math.max(0, i - k); --j) {\n            mx = Math.max(mx, arr[j - 1]);\n            f[i] = Math.max(f[i], f[j - 1] + mx * (i - j + 1));\n        }\n    }\n    return f[n];\n}",
+    approach: "DP: dp[i] = max по j в 1..k від dp[i-j] + j·(max останніх j елементів).\n\n**Складність:** Time O(n·k), Space O(n)",
     signature: "{\"name\":\"maxSumAfterPartitioning\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3877,6 +4445,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar distributeCoins = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[3,0,0]]\",\"expected\":\"2\"},{\"input\":\"[[0,3,0]]\",\"expected\":\"3\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction distributeCoins(root: TreeNode | null): number {\n    let ans = 0;\n    const dfs = (root: TreeNode | null) => {\n        if (!root) {\n            return 0;\n        }\n        const left = dfs(root.left);\n        const right = dfs(root.right);\n        ans += Math.abs(left) + Math.abs(right);\n        return left + right + root.val - 1;\n    };\n    dfs(root);\n    return ans;\n}",
+    approach: "Post-order: кожне піддерево повертає «надлишок» монет (val-1+left+right); додавай abs надлишку дітей до відповіді.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"distributeCoins\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3890,6 +4460,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} target\n * @return {TreeNode}\n */\nvar removeLeafNodes = function(root, target) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,2,null,2,4],2]\",\"expected\":\"[1,null,3,null,4]\"},{\"input\":\"[[1,3,3,3,2],3]\",\"expected\":\"[1,3,null,null,2]\"},{\"input\":\"[[1,2,null,2,null,2],2]\",\"expected\":\"[1]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction removeLeafNodes(root: TreeNode | null, target: number): TreeNode | null {\n    if (!root) {\n        return null;\n    }\n    root.left = removeLeafNodes(root.left, target);\n    root.right = removeLeafNodes(root.right, target);\n    if (!root.left && !root.right && root.val == target) {\n        return null;\n    }\n    return root;\n}",
+    approach: "Post-order: обробляй дітей, потім якщо вузол став листом і val === target — повертай null.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"removeLeafNodes\",\"paramTypes\":[\"TreeNode\",\"integer\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -3903,6 +4475,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} cpdomains\n * @return {string[]}\n */\nvar subdomainVisits = function(cpdomains) {\n    \n};",
     testCases: "[]",
+    solution: "function subdomainVisits(cpdomains: string[]): string[] {\n  const count = new Map<string, number>();\n  for (const entry of cpdomains) {\n    const [n, domain] = entry.split(' ');\n    const num = parseInt(n, 10);\n    const parts = domain.split('.');\n    for (let i = 0; i < parts.length; i++) {\n      const sub = parts.slice(i).join('.');\n      count.set(sub, (count.get(sub) ?? 0) + num);\n    }\n  }\n  return [...count.entries()].map(([d, c]) => c + ' ' + d);\n}",
+    approach: "Для кожного 'count domain' інкрементуй лічильник для домену і всіх його суфіксів після '.'.\n\n**Складність:** Time O(n·L), Space O(унікальні)",
   },
   {
     slug: "vowels-game-in-a-string",
@@ -3915,6 +4489,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {boolean}\n */\nvar doesAliceWin = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"leetcoder\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"bbcd\\\"]\",\"expected\":\"false\"}]",
+    solution: "function doesAliceWin(s: string): boolean {\n    const vowels = 'aeiou';\n    for (const c of s) {\n        if (vowels.includes(c)) {\n            return true;\n        }\n    }\n    return false;\n}",
+    approach: "Аліса виграє тоді й лише тоді, коли в рядку є хоч одна голосна.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"doesAliceWin\",\"paramTypes\":[\"string\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -3928,6 +4504,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {string} pattern\n * @return {string[]}\n */\nvar findAndReplacePattern = function(words, pattern) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"abc\\\",\\\"deq\\\",\\\"mee\\\",\\\"aqq\\\",\\\"dkd\\\",\\\"ccc\\\"],\\\"abb\\\"]\",\"expected\":\"[\\\"mee\\\",\\\"aqq\\\"]\"},{\"input\":\"[[\\\"a\\\",\\\"b\\\",\\\"c\\\"],\\\"a\\\"]\",\"expected\":\"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\"}]",
+    solution: "function findAndReplacePattern(words: string[], pattern: string): string[] {\n    return words.filter(word => {\n        const map1 = new Map<string, number>();\n        const map2 = new Map<string, number>();\n        for (let i = 0; i < word.length; i++) {\n            if (map1.get(word[i]) !== map2.get(pattern[i])) {\n                return false;\n            }\n            map1.set(word[i], i);\n            map2.set(pattern[i], i);\n        }\n        return true;\n    });\n}",
+    approach: "Для кожного слова — двостороння відповідність позицій (два Map word↔pattern); фільтруй ті, що зберігають бієкцію.\n\n**Складність:** Time O(n·L), Space O(L)",
     signature: "{\"name\":\"findAndReplacePattern\",\"paramTypes\":[\"string[]\",\"string\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -3941,6 +4519,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar findDuplicates = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[4,3,2,7,8,2,3,1]]\",\"expected\":\"[3,2]\"},{\"input\":\"[[1,1,2]]\",\"expected\":\"[1]\"},{\"input\":\"[[1]]\",\"expected\":\"[]\"}]",
+    solution: "function findDuplicates(nums: number[]): number[] {\n    for (let i = 0; i < nums.length; i++) {\n        while (nums[i] !== nums[nums[i] - 1]) {\n            const temp = nums[i];\n            nums[i] = nums[temp - 1];\n            nums[temp - 1] = temp;\n        }\n    }\n    const ans: number[] = [];\n    for (let i = 0; i < nums.length; i++) {\n        if (nums[i] !== i + 1) {\n            ans.push(nums[i]);\n        }\n    }\n    return ans;\n}",
+    approach: "Значення в 1..n: маркуй nums[abs(x)-1] від'ємним; якщо вже від'ємне — x дубль.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"findDuplicates\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -3954,6 +4534,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} k\n * @return {number}\n */\nvar kthSmallest = function(root, k) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1,4,null,2],1]\",\"expected\":\"1\"},{\"input\":\"[[5,3,6,2,4,null,null,1],3]\",\"expected\":\"3\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction kthSmallest(root: TreeNode | null, k: number): number {\n    const dfs = (root: TreeNode | null) => {\n        if (root == null) {\n            return -1;\n        }\n        const { val, left, right } = root;\n        const l = dfs(left);\n        if (l !== -1) {\n            return l;\n        }\n        k--;\n        if (k === 0) {\n            return val;\n        }\n        return dfs(right);\n    };\n    return dfs(root);\n}",
+    approach: "In-order обхід (ітеративний зі стеком); k-й виданий елемент — відповідь.\n\n**Складність:** Time O(h + k), Space O(h)",
     signature: "{\"name\":\"kthSmallest\",\"paramTypes\":[\"TreeNode\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -3967,6 +4549,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @param {number} k\n * @return {number[][]}\n */\nvar matrixBlockSum = function(mat, k) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]],1]\",\"expected\":\"[[12,21,16],[27,45,33],[24,39,28]]\"},{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]],2]\",\"expected\":\"[[45,45,45],[45,45,45],[45,45,45]]\"}]",
+    solution: "function matrixBlockSum(mat: number[][], k: number): number[][] {\n    const m: number = mat.length;\n    const n: number = mat[0].length;\n\n    const s: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            s[i + 1][j + 1] = s[i][j + 1] + s[i + 1][j] - s[i][j] + mat[i][j];\n        }\n    }\n\n    const ans: number[][] = Array.from({ length: m }, () => Array(n).fill(0));\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            const x1: number = Math.max(i - k, 0);\n            const y1: number = Math.max(j - k, 0);\n            const x2: number = Math.min(m - 1, i + k);\n            const y2: number = Math.min(n - 1, j + k);\n            ans[i][j] = s[x2 + 1][y2 + 1] - s[x1][y2 + 1] - s[x2 + 1][y1] + s[x1][y1];\n        }\n    }\n\n    return ans;\n}",
+    approach: "2D префіксна сума; для кожної клітинки відповідь = сума по обрізаному прямокутнику [i-k..i+k]×[j-k..j+k].\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"matrixBlockSum\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -3980,6 +4564,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n */\nvar BSTIterator = function(root) {\n    \n};\n\n/**\n * @return {number}\n */\nBSTIterator.prototype.next = function() {\n    \n};\n\n/**\n * @return {boolean}\n */\nBSTIterator.prototype.hasNext = function() {\n    \n};\n\n/** \n * Your BSTIterator object will be instantiated and called as such:\n * var obj = new BSTIterator(root)\n * var param_1 = obj.next()\n * var param_2 = obj.hasNext()\n */",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nclass BSTIterator {\n    private data: number[];\n    private index: number;\n\n    constructor(root: TreeNode | null) {\n        this.index = 0;\n        this.data = [];\n        const dfs = (root: TreeNode | null) => {\n            if (root == null) {\n                return;\n            }\n            const { val, left, right } = root;\n            dfs(left);\n            this.data.push(val);\n            dfs(right);\n        };\n        dfs(root);\n    }\n\n    next(): number {\n        return this.data[this.index++];\n    }\n\n    hasNext(): boolean {\n        return this.index < this.data.length;\n    }\n}\n\n/**\n * Your BSTIterator object will be instantiated and called as such:\n * var obj = new BSTIterator(root)\n * var param_1 = obj.next()\n * var param_2 = obj.hasNext()\n */",
+    approach: "Стек лівого хребта: next() поповлює вершину і спускає лівий хребет її правого сина; hasNext ⇔ стек непорожній.\n\n**Складність:** Time O(1) amortized, Space O(h)",
   },
   {
     slug: "minimum-number-of-changes-to-make-binary-string-beautiful",
@@ -3992,6 +4578,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minChanges = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"1001\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"10\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"0000\\\"]\",\"expected\":\"0\"}]",
+    solution: "function minChanges(s: string): number {\n    let ans = 0;\n    for (let i = 1; i < s.length; i += 2) {\n        if (s[i] !== s[i - 1]) {\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Розбий на пари (0,1),(2,3),...; кожна неоднорідна пара коштує 1 зміну.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minChanges\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4005,6 +4593,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\r\n * @param {string[][]} orders\r\n * @return {string[][]}\r\n */\r\nvar displayTable = function(orders) {\r\n    \r\n};",
     testCases: "[{\"input\":\"[[[\\\"David\\\",\\\"3\\\",\\\"Ceviche\\\"],[\\\"Corina\\\",\\\"10\\\",\\\"Beef Burrito\\\"],[\\\"David\\\",\\\"3\\\",\\\"Fried Chicken\\\"],[\\\"Carla\\\",\\\"5\\\",\\\"Water\\\"],[\\\"Carla\\\",\\\"5\\\",\\\"Ceviche\\\"],[\\\"Rous\\\",\\\"3\\\",\\\"Ceviche\\\"]]]\",\"expected\":\"[[\\\"Table\\\",\\\"Beef Burrito\\\",\\\"Ceviche\\\",\\\"Fried Chicken\\\",\\\"Water\\\"],[\\\"3\\\",\\\"0\\\",\\\"2\\\",\\\"1\\\",\\\"0\\\"],[\\\"5\\\",\\\"0\\\",\\\"1\\\",\\\"0\\\",\\\"1\\\"],[\\\"10\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"]]\"},{\"input\":\"[[[\\\"James\\\",\\\"12\\\",\\\"Fried Chicken\\\"],[\\\"Ratesh\\\",\\\"12\\\",\\\"Fried Chicken\\\"],[\\\"Amadeus\\\",\\\"12\\\",\\\"Fried Chicken\\\"],[\\\"Adam\\\",\\\"1\\\",\\\"Canadian Waffles\\\"],[\\\"Brianna\\\",\\\"1\\\",\\\"Canadian Waffles\\\"]]]\",\"expected\":\"[[\\\"Table\\\",\\\"Canadian Waffles\\\",\\\"Fried Chicken\\\"],[\\\"1\\\",\\\"2\\\",\\\"0\\\"],[\\\"12\\\",\\\"0\\\",\\\"3\\\"]]\"},{\"input\":\"[[[\\\"Laura\\\",\\\"2\\\",\\\"Bean Burrito\\\"],[\\\"Jhon\\\",\\\"2\\\",\\\"Beef Burrito\\\"],[\\\"Melissa\\\",\\\"2\\\",\\\"Soda\\\"]]]\",\"expected\":\"[[\\\"Table\\\",\\\"Bean Burrito\\\",\\\"Beef Burrito\\\",\\\"Soda\\\"],[\\\"2\\\",\\\"1\\\",\\\"1\\\",\\\"1\\\"]]\"}]",
+    solution: "function displayTable(orders: string[][]): string[][] {\n    const tables: Record<number, Record<string, number>> = {};\n    const items: Set<string> = new Set();\n    for (const [_, table, foodItem] of orders) {\n        const t = +table;\n        if (!tables[t]) {\n            tables[t] = {};\n        }\n        if (!tables[t][foodItem]) {\n            tables[t][foodItem] = 0;\n        }\n        tables[t][foodItem]++;\n        items.add(foodItem);\n    }\n    const sortedItems = Array.from(items).sort();\n    const ans: string[][] = [];\n    const header: string[] = ['Table', ...sortedItems];\n    ans.push(header);\n    const sortedTableNumbers = Object.keys(tables)\n        .map(Number)\n        .sort((a, b) => a - b);\n    for (const table of sortedTableNumbers) {\n        const row: string[] = [table.toString()];\n        for (const item of sortedItems) {\n            row.push((tables[table][item] || 0).toString());\n        }\n        ans.push(row);\n    }\n    return ans;\n}",
+    approach: "Set страв (сортований), Map стіл→Map страва→кількість; сформуй заголовок і рядки, сортовані за номером столу.\n\n**Складність:** Time O(n + T·D log), Space O(T·D)",
     signature: "{\"name\":\"displayTable\",\"paramTypes\":[\"list<list<string>>\"],\"returnType\":\"list<list<string>>\"}",
   },
   {
@@ -4018,6 +4608,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maxSum = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[6,2,1,3],[4,2,1,5],[9,2,8,7],[4,1,2,9]]]\",\"expected\":\"30\"},{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"35\"}]",
+    solution: "function maxSum(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    let ans = 0;\n    for (let i = 1; i < m - 1; ++i) {\n        for (let j = 1; j < n - 1; ++j) {\n            let s = -grid[i][j - 1] - grid[i][j + 1];\n            for (let x = i - 1; x <= i + 1; ++x) {\n                for (let y = j - 1; y <= j + 1; ++y) {\n                    s += grid[x][y];\n                }\n            }\n            ans = Math.max(ans, s);\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожного центру (i,j) в 1..m-2 × 1..n-2 сумуй 7 клітинок пісочного годинника; максимум.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"maxSum\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4031,6 +4623,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number[]}\n */\nvar lexicalOrder = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[13]\",\"expected\":\"[1,10,11,12,13,2,3,4,5,6,7,8,9]\"},{\"input\":\"[2]\",\"expected\":\"[1,2]\"}]",
+    solution: "function lexicalOrder(n: number): number[] {\n    const ans: number[] = [];\n    let v = 1;\n    for (let i = 0; i < n; ++i) {\n        ans.push(v);\n        if (v * 10 <= n) {\n            v *= 10;\n        } else {\n            while (v % 10 === 9 || v === n) {\n                v = Math.floor(v / 10);\n            }\n            ++v;\n        }\n    }\n    return ans;\n}",
+    approach: "Ітеративний DFS: почни з 1; множ на 10 (углиб), інакше +1 і «підіймайся», поки не переповнення.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"lexicalOrder\",\"paramTypes\":[\"integer\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -4044,6 +4638,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "var TimeLimitedCache = function() {\n    \n};\n\n/** \n * @param {number} key\n * @param {number} value\n * @param {number} duration time until expiration in ms\n * @return {boolean} if un-expired key already existed\n */\nTimeLimitedCache.prototype.set = function(key, value, duration) {\n    \n};\n\n/** \n * @param {number} key\n * @return {number} value associated with key\n */\nTimeLimitedCache.prototype.get = function(key) {\n    \n};\n\n/** \n * @return {number} count of non-expired keys\n */\nTimeLimitedCache.prototype.count = function() {\n    \n};\n\n/**\n * const timeLimitedCache = new TimeLimitedCache()\n * timeLimitedCache.set(1, 42, 1000); // false\n * timeLimitedCache.get(1) // 42\n * timeLimitedCache.count() // 1\n */",
     testCases: "[]",
+    solution: "class TimeLimitedCache {\n    #cache: Map<number, [value: number, expire: number]> = new Map();\n\n    set(key: number, value: number, duration: number): boolean {\n        const isExist = this.#cache.has(key);\n\n        if (!this.#isExpired(key)) {\n            this.#cache.set(key, [value, Date.now() + duration]);\n        }\n\n        return isExist;\n    }\n\n    get(key: number): number {\n        if (this.#isExpired(key)) return -1;\n        const res = this.#cache.get(key)?.[0] ?? -1;\n        return res;\n    }\n\n    count(): number {\n        const xs = Array.from(this.#cache).filter(([key]) => !this.#isExpired(key));\n        return xs.length;\n    }\n\n    #isExpired = (key: number) =>\n        this.#cache.has(key) &&\n        (this.#cache.get(key)?.[1] ?? Number.NEGATIVE_INFINITY) < Date.now();\n}\n\n/**\n * Your TimeLimitedCache object will be instantiated and called as such:\n * var obj = new TimeLimitedCache()\n * obj.set(1, 42, 1000); // false\n * obj.get(1) // 42\n * obj.count() // 1\n */",
+    approach: "Map ключ→{value, timerId}; set перезапускає таймер видалення через duration; get/count перевіряють наявність.\n\n**Складність:** Time O(1), Space O(n)",
   },
   {
     slug: "count-complete-subarrays-in-an-array",
@@ -4056,6 +4652,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar countCompleteSubarrays = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,1,2,2]]\",\"expected\":\"4\"},{\"input\":\"[[5,5,5,5]]\",\"expected\":\"10\"}]",
+    solution: "function countCompleteSubarrays(nums: number[]): number {\n    const s: Set<number> = new Set(nums);\n    const cnt = s.size;\n    const n = nums.length;\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        s.clear();\n        for (let j = i; j < n; ++j) {\n            s.add(nums[j]);\n            if (s.size === cnt) {\n                ++ans;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "distinct = розмір Set усього масиву; розсувне вікно: коли вікно містить усі distinct — усі його розширення вправо теж підходять (додай n - right).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"countCompleteSubarrays\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4069,6 +4667,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar replaceValueInTree = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[5,4,9,1,10,null,7]]\",\"expected\":\"[0,0,0,7,7,null,11]\"},{\"input\":\"[[3,1,2]]\",\"expected\":\"[0,0,0]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction replaceValueInTree(root: TreeNode | null): TreeNode | null {\n    const s: number[] = [];\n    const dfs1 = (root: TreeNode | null, depth: number) => {\n        if (!root) {\n            return;\n        }\n        if (s.length <= depth) {\n            s.push(0);\n        }\n        s[depth] += root.val;\n        dfs1(root.left, depth + 1);\n        dfs1(root.right, depth + 1);\n    };\n    const dfs2 = (root: TreeNode | null, depth: number) => {\n        const sub = (root.left?.val || 0) + (root.right?.val || 0);\n        ++depth;\n        if (root.left) {\n            root.left.val = s[depth] - sub;\n            dfs2(root.left, depth);\n        }\n        if (root.right) {\n            root.right.val = s[depth] - sub;\n            dfs2(root.right, depth);\n        }\n    };\n    dfs1(root, 0);\n    root.val = 0;\n    dfs2(root, 0);\n    return root;\n}",
+    approach: "Два BFS-проходи: перший рахує суму значень кожного рівня; другий замінює кожен вузол на (сума наступного рівня - сума його братів).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"replaceValueInTree\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -4082,6 +4682,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string[]}\n */\nvar letterCasePermutation = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"a1b2\\\"]\",\"expected\":\"[\\\"a1b2\\\",\\\"a1B2\\\",\\\"A1B2\\\",\\\"A1b2\\\"]\"},{\"input\":\"[\\\"3z4\\\"]\",\"expected\":\"[\\\"3z4\\\",\\\"3Z4\\\"]\"}]",
+    solution: "function letterCasePermutation(s: string): string[] {\n    const t = s.split('');\n    const ans: string[] = [];\n    const dfs = (i: number) => {\n        if (i >= t.length) {\n            ans.push(t.join(''));\n            return;\n        }\n        dfs(i + 1);\n        if (t[i].charCodeAt(0) >= 65) {\n            t[i] = String.fromCharCode(t[i].charCodeAt(0) ^ 32);\n            dfs(i + 1);\n        }\n    };\n    dfs(0);\n    return ans;\n}",
+    approach: "Бектрекінг: на літері — дві гілки (нижній/верхній регістр), на цифрі — одна.\n\n**Складність:** Time O(2ⁿ·n), Space O(n)",
     signature: "{\"name\":\"letterCasePermutation\",\"paramTypes\":[\"string\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -4095,6 +4697,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} isWater\n * @return {number[][]}\n */\nvar highestPeak = function(isWater) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1],[0,0]]]\",\"expected\":\"[[1,0],[2,1]]\"},{\"input\":\"[[[0,0,1],[1,0,0],[0,0,0]]]\",\"expected\":\"[[1,1,0],[0,1,1],[1,2,2]]\"}]",
+    solution: "function highestPeak(isWater: number[][]): number[][] {\n    const m = isWater.length;\n    const n = isWater[0].length;\n    let ans: number[][] = [];\n    let q: number[][] = [];\n    for (let i = 0; i < m; ++i) {\n        ans.push(new Array(n).fill(-1));\n        for (let j = 0; j < n; ++j) {\n            if (isWater[i][j]) {\n                q.push([i, j]);\n                ans[i][j] = 0;\n            }\n        }\n    }\n    const dirs = [-1, 0, 1, 0, -1];\n    while (q.length) {\n        let tq: number[][] = [];\n        for (const [i, j] of q) {\n            for (let k = 0; k < 4; k++) {\n                const [x, y] = [i + dirs[k], j + dirs[k + 1]];\n                if (x >= 0 && x < m && y >= 0 && y < n && ans[x][y] == -1) {\n                    tq.push([x, y]);\n                    ans[x][y] = ans[i][j] + 1;\n                }\n            }\n        }\n        q = tq;\n    }\n    return ans;\n}",
+    approach: "Multi-source BFS від усіх клітинок води (0); висота сусіда = поточна + 1.\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"highestPeak\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -4108,6 +4712,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar sumOfPrimesInRange = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[13]\",\"expected\":\"132\"},{\"input\":\"[10]\",\"expected\":\"17\"},{\"input\":\"[8]\",\"expected\":\"0\"}]",
+    solution: "const LIMIT = 1000;\nconst isPrime: boolean[] = new Array(LIMIT + 1).fill(true);\nisPrime[0] = isPrime[1] = false;\nfor (let i = 2; i * i <= LIMIT; i++) {\n    if (isPrime[i]) {\n        for (let j = i * i; j <= LIMIT; j += i) {\n            isPrime[j] = false;\n        }\n    }\n}\n\nfunction sumOfPrimesInRange(n: number): number {\n    const r = parseInt(n.toString().split('').reverse().join(''));\n    const low = Math.min(n, r);\n    const high = Math.max(n, r);\n    let sum = 0;\n    for (let x = low; x <= high; x++) {\n        if (isPrime[x]) sum += x;\n    }\n    return sum;\n}",
+    approach: "Решето Ератосфена до n; для кожного простого p ≤ n перевір, чи його реверс теж простий і в діапазоні; сумуй.\n\n**Складність:** Time O(n log log n), Space O(n)",
     signature: "{\"name\":\"sumOfPrimesInRange\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4121,6 +4727,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} rooms\n * @return {boolean}\n */\nvar canVisitAllRooms = function(rooms) {\n    \n};",
     testCases: "[{\"input\":\"[[[1],[2],[3],[]]]\",\"expected\":\"true\"},{\"input\":\"[[[1,3],[3,0,1],[2],[0]]]\",\"expected\":\"false\"}]",
+    solution: "function canVisitAllRooms(rooms: number[][]): boolean {\n    const n = rooms.length;\n    const vis: boolean[] = Array(n).fill(false);\n    const dfs = (i: number) => {\n        if (vis[i]) {\n            return;\n        }\n        vis[i] = true;\n        for (const j of rooms[i]) {\n            dfs(j);\n        }\n    };\n    dfs(0);\n    return vis.every(v => v);\n}",
+    approach: "DFS/BFS від кімнати 0 по ключах; canVisitAll ⇔ відвідано всі n.\n\n**Складність:** Time O(V+E), Space O(V)",
     signature: "{\"name\":\"canVisitAllRooms\",\"paramTypes\":[\"list<list<integer>>\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -4134,6 +4742,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} label\n * @return {number[]}\n */\nvar pathInZigZagTree = function(label) {\n    \n};",
     testCases: "[]",
+    solution: "function pathInZigZagTree(label: number): number[] {\n  let level = 0;\n  while ((1 << (level + 1)) <= label) level++;\n  const res: number[] = [];\n  while (label >= 1) {\n    res.push(label);\n    const levelMax = (1 << (level + 1)) - 1;\n    const levelMin = 1 << level;\n    label = Math.floor((levelMin + levelMax - label) / 2);\n    level--;\n  }\n  return res.reverse();\n}",
+    approach: "Підіймайся від label до кореня: батько у звичайному дереві = label/2, потім «дзеркаль» через межі рівня (2^d .. 2^(d+1)-1).\n\n**Складність:** Time O(log label), Space O(log label)",
   },
   {
     slug: "find-the-longest-substring-containing-vowels-in-even-counts",
@@ -4146,6 +4756,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar findTheLongestSubstring = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"eleetminicoworoep\\\"]\",\"expected\":\"13\"},{\"input\":\"[\\\"leetcodeisgreat\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"bcbcbc\\\"]\",\"expected\":\"6\"}]",
+    solution: "function findTheLongestSubstring(s: string): number {\n    const vowels = 'aeiou';\n    const d: number[] = Array(32).fill(1 << 29);\n    d[0] = 0;\n    let [ans, mask] = [0, 0];\n    for (let i = 1; i <= s.length; i++) {\n        const c = s[i - 1];\n        for (let j = 0; j < 5; j++) {\n            if (c === vowels[j]) {\n                mask ^= 1 << j;\n                break;\n            }\n        }\n        ans = Math.max(ans, i - d[mask]);\n        d[mask] = Math.min(d[mask], i);\n    }\n    return ans;\n}",
+    approach: "Бітова маска парності 5 голосних; перша позиція кожної маски в Map; довжина = i - first[mask].\n\n**Складність:** Time O(n), Space O(32)",
     signature: "{\"name\":\"findTheLongestSubstring\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4159,6 +4771,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} land\n * @return {number[][]}\n */\nvar findFarmland = function(land) {\n    \n};",
     testCases: "[]",
+    solution: "function findFarmland(land: number[][]): number[][] {\n  const m = land.length, n = land[0].length;\n  const res: number[][] = [];\n  for (let i = 0; i < m; i++)\n    for (let j = 0; j < n; j++) {\n      if (land[i][j] !== 1 || (i > 0 && land[i - 1][j] === 1) || (j > 0 && land[i][j - 1] === 1)) continue;\n      let r = i, c = j;\n      while (r + 1 < m && land[r + 1][j] === 1) r++;\n      while (c + 1 < n && land[i][c + 1] === 1) c++;\n      res.push([i, j, r, c]);\n    }\n  return res;\n}",
+    approach: "Скануй; на верхньо-лівому куті групи (1, без 1 зверху/зліва) розширюй вправо-вниз до кінця блока, запиши кути.\n\n**Складність:** Time O(m·n), Space O(1)",
   },
   {
     slug: "minimum-index-of-a-valid-split",
@@ -4171,6 +4785,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumIndex = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,2,2]]\",\"expected\":\"2\"},{\"input\":\"[[2,1,3,1,1,1,7,1,2,1]]\",\"expected\":\"4\"},{\"input\":\"[[3,3,3,3,7,2,2]]\",\"expected\":\"-1\"}]",
+    solution: "function minimumIndex(nums: number[]): number {\n    let [x, cnt] = [0, 0];\n    const freq: Map<number, number> = new Map();\n    for (const v of nums) {\n        freq.set(v, (freq.get(v) ?? 0) + 1);\n        if (freq.get(v)! > cnt) {\n            [x, cnt] = [v, freq.get(v)!];\n        }\n    }\n    let cur = 0;\n    for (let i = 1; i <= nums.length; ++i) {\n        if (nums[i - 1] === x) {\n            ++cur;\n            if (cur * 2 > i && (cnt - cur) * 2 > nums.length - i) {\n                return i - 1;\n            }\n        }\n    }\n    return -1;\n}",
+    approach: "Знайди мажоритарний елемент (Бойєр-Мур) і його загальну кількість; іди зліва, шукай перший i, де в обох частинах він мажоритарний.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minimumIndex\",\"paramTypes\":[\"list<integer>\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4184,6 +4800,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} nums\n * @param {string} target\n * @return {number}\n */\nvar numOfPairs = function(nums, target) {\n    \n};",
     testCases: "[]",
+    solution: "function numOfPairs(nums: string[], target: string): number {\n  let res = 0;\n  for (let i = 0; i < nums.length; i++)\n    for (let j = 0; j < nums.length; j++)\n      if (i !== j && nums[i] + nums[j] === target) res++;\n  return res;\n}",
+    approach: "Подвійний цикл i≠j: рахуй nums[i] + nums[j] === target (можна прискорити Map префіксів/суфіксів).\n\n**Складність:** Time O(n²·L), Space O(1)",
   },
   {
     slug: "sort-characters-by-frequency",
@@ -4196,6 +4814,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar frequencySort = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"tree\\\"]\",\"expected\":\"\\\"eetr\\\"\"},{\"input\":\"[\\\"cccaaa\\\"]\",\"expected\":\"\\\"cccaaa\\\"\"},{\"input\":\"[\\\"Aabb\\\"]\",\"expected\":\"\\\"bbAa\\\"\"}]",
+    solution: "function frequencySort(s: string): string {\n    const cnt: Map<string, number> = new Map();\n    for (const c of s) {\n        cnt.set(c, (cnt.get(c) || 0) + 1);\n    }\n    const cs = Array.from(cnt.keys()).sort((a, b) => cnt.get(b)! - cnt.get(a)!);\n    const ans: string[] = [];\n    for (const c of cs) {\n        ans.push(c.repeat(cnt.get(c)!));\n    }\n    return ans.join('');\n}",
+    approach: "Лічильник частот; сортуй символи за спаданням частоти; повтори кожен freq разів (або bucket sort).\n\n**Складність:** Time O(n log k), Space O(n)",
     signature: "{\"name\":\"frequencySort\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -4209,6 +4829,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} players\n * @param {number[]} trainers\n * @return {number}\n */\nvar matchPlayersAndTrainers = function(players, trainers) {\n    \n};",
     testCases: "[{\"input\":\"[[4,7,9],[8,2,5,8]]\",\"expected\":\"2\"},{\"input\":\"[[1,1,1],[10]]\",\"expected\":\"1\"}]",
+    solution: "function matchPlayersAndTrainers(players: number[], trainers: number[]): number {\n    players.sort((a, b) => a - b);\n    trainers.sort((a, b) => a - b);\n    const [m, n] = [players.length, trainers.length];\n    for (let i = 0, j = 0; i < m; ++i, ++j) {\n        while (j < n && trainers[j] < players[i]) {\n            ++j;\n        }\n        if (j === n) {\n            return i;\n        }\n    }\n    return m;\n}",
+    approach: "Сортуй обидва; два вказівники: якщо player ≤ trainer — матч, обидва++, інакше trainer++.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"matchPlayersAndTrainers\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4222,6 +4844,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar largestMagicSquare = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[7,1,4,5,6],[2,5,1,6,4],[1,5,4,3,2],[1,2,7,3,4]]]\",\"expected\":\"3\"},{\"input\":\"[[[5,1,3,1],[9,3,3,1],[1,3,3,8]]]\",\"expected\":\"2\"}]",
+    solution: "function largestMagicSquare(grid: number[][]): number {\n    const [m, n] = [grid.length, grid[0].length];\n    const rowsum: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    const colsum: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n\n    for (let i = 1; i <= m; ++i) {\n        for (let j = 1; j <= n; ++j) {\n            rowsum[i][j] = rowsum[i][j - 1] + grid[i - 1][j - 1];\n            colsum[i][j] = colsum[i - 1][j] + grid[i - 1][j - 1];\n        }\n    }\n\n    const check = (x1: number, y1: number, x2: number, y2: number): boolean => {\n        const val = rowsum[x1 + 1][y2 + 1] - rowsum[x1 + 1][y1];\n        for (let i = x1 + 1; i <= x2; ++i) {\n            if (rowsum[i + 1][y2 + 1] - rowsum[i + 1][y1] !== val) {\n                return false;\n            }\n        }\n        for (let j = y1; j <= y2; ++j) {\n            if (colsum[x2 + 1][j + 1] - colsum[x1][j + 1] !== val) {\n                return false;\n            }\n        }\n        let s = 0;\n        for (let i = x1, j = y1; i <= x2; ++i, ++j) {\n            s += grid[i][j];\n        }\n        if (s !== val) {\n            return false;\n        }\n        s = 0;\n        for (let i = x1, j = y2; i <= x2; ++i, --j) {\n            s += grid[i][j];\n        }\n        if (s !== val) {\n            return false;\n        }\n        return true;\n    };\n\n    for (let k = Math.min(m, n); k > 1; --k) {\n        for (let i = 0; i + k - 1 < m; ++i) {\n            for (let j = 0; j + k - 1 < n; ++j) {\n                const i2 = i + k - 1,\n                    j2 = j + k - 1;\n                if (check(i, j, i2, j2)) {\n                    return k;\n                }\n            }\n        }\n    }\n    return 1;\n}",
+    approach: "2D префіксні суми по рядках, стовпцях, діагоналях; перебирай розмір k від n вниз і всі позиції, перевіряй рівність усіх сум.\n\n**Складність:** Time O(n³), Space O(n²)",
     signature: "{\"name\":\"largestMagicSquare\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4235,6 +4859,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar numberOfSubarrays = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,1,2,1,1],3]\",\"expected\":\"2\"},{\"input\":\"[[2,4,6],1]\",\"expected\":\"0\"},{\"input\":\"[[2,2,2,1,2,2,1,2,2,2],2]\",\"expected\":\"16\"}]",
+    solution: "function numberOfSubarrays(nums: number[], k: number): number {\n    const n = nums.length;\n    const cnt = Array(n + 1).fill(0);\n    cnt[0] = 1;\n    let [t, ans] = [0, 0];\n    for (const v of nums) {\n        t += v & 1;\n        ans += cnt[t - k] ?? 0;\n        cnt[t] += 1;\n    }\n    return ans;\n}",
+    approach: "Замінюй непарні на 1, парні на 0 → задача «підмасивів із сумою k»: Map префіксних сум.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"numberOfSubarrays\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4248,6 +4874,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "class EventEmitter {\n    \n    /**\n     * @param {string} eventName\n     * @param {Function} callback\n     * @return {Object}\n     */\n    subscribe(eventName, callback) {\n        \n        return {\n            unsubscribe: () => {\n                \n            }\n        };\n    }\n    \n    /**\n     * @param {string} eventName\n     * @param {Array} args\n     * @return {Array}\n     */\n    emit(eventName, args = []) {\n        \n    }\n}\n\n/**\n * const emitter = new EventEmitter();\n *\n * // Subscribe to the onClick event with onClickCallback\n * function onClickCallback() { return 99 }\n * const sub = emitter.subscribe('onClick', onClickCallback);\n *\n * emitter.emit('onClick'); // [99]\n * sub.unsubscribe(); // undefined\n * emitter.emit('onClick'); // []\n */",
     testCases: "[]",
+    solution: "type Callback = (...args: any[]) => any;\ntype Subscription = {\n    unsubscribe: () => void;\n};\n\nclass EventEmitter {\n    private d: Map<string, Set<Callback>> = new Map();\n\n    subscribe(eventName: string, callback: Callback): Subscription {\n        this.d.set(eventName, (this.d.get(eventName) || new Set()).add(callback));\n        return {\n            unsubscribe: () => {\n                this.d.get(eventName)?.delete(callback);\n            },\n        };\n    }\n\n    emit(eventName: string, args: any[] = []): any {\n        const callbacks = this.d.get(eventName);\n        if (!callbacks) {\n            return [];\n        }\n        return [...callbacks].map(callback => callback(...args));\n    }\n}\n\n/**\n * const emitter = new EventEmitter();\n *\n * // Subscribe to the onClick event with onClickCallback\n * function onClickCallback() { return 99 }\n * const sub = emitter.subscribe('onClick', onClickCallback);\n *\n * emitter.emit('onClick'); // [99]\n * sub.unsubscribe(); // undefined\n * emitter.emit('onClick'); // []\n */",
+    approach: "Map подія→список колбеків; subscribe повертає {unsubscribe}, emit викликає всі колбеки з args і збирає результати.\n\n**Складність:** Time O(k) на emit, Space O(підписки)",
   },
   {
     slug: "spiral-matrix-ii",
@@ -4260,6 +4888,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number[][]}\n */\nvar generateMatrix = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[3]\",\"expected\":\"[[1,2,3],[8,9,4],[7,6,5]]\"},{\"input\":\"[1]\",\"expected\":\"[[1]]\"}]",
+    solution: "function generateMatrix(n: number): number[][] {\n    const ans: number[][] = Array.from({ length: n }, () => Array(n).fill(0));\n    const dirs = [0, 1, 0, -1, 0];\n    let [i, j, k] = [0, 0, 0];\n    for (let v = 1; v <= n * n; v++) {\n        ans[i][j] = v;\n        const [x, y] = [i + dirs[k], j + dirs[k + 1]];\n        if (x < 0 || x >= n || y < 0 || y >= n || ans[x][y] !== 0) {\n            k = (k + 1) % 4;\n        }\n        i += dirs[k];\n        j += dirs[k + 1];\n    }\n    return ans;\n}",
+    approach: "Чотири межі (top, bottom, left, right); заповнюй 1..n² по колу, звужуючи межі.\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"generateMatrix\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -4273,6 +4903,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minimumLength = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abaacbcbb\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"aa\\\"]\",\"expected\":\"2\"}]",
+    solution: "function minimumLength(s: string): number {\n    const cnt = new Map<string, number>();\n    for (const c of s) {\n        cnt.set(c, (cnt.get(c) || 0) + 1);\n    }\n    let ans = 0;\n    for (const x of cnt.values()) {\n        ans += x & 1 ? 1 : 2;\n    }\n    return ans;\n}",
+    approach: "Для кожного символа: якщо його частота f непарна — лишається 1, якщо парна — 2. Сума.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minimumLength\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4286,6 +4918,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} adjacentPairs\n * @return {number[]}\n */\nvar restoreArray = function(adjacentPairs) {\n    \n};",
     testCases: "[]",
+    solution: "function restoreArray(adjacentPairs: number[][]): number[] {\n  const adj = new Map<number, number[]>();\n  for (const [a, b] of adjacentPairs) {\n    (adj.get(a) ?? adj.set(a, []).get(a)!).push(b);\n    (adj.get(b) ?? adj.set(b, []).get(b)!).push(a);\n  }\n  let start = 0;\n  for (const [k, v] of adj) if (v.length === 1) { start = k; break; }\n  const res = [start];\n  let prev = NaN;\n  while (res.length < adjacentPairs.length + 1) {\n    const nexts = adj.get(res[res.length - 1])!;\n    const next = nexts[0] === prev ? nexts[1] : nexts[0];\n    prev = res[res.length - 1];\n    res.push(next);\n  }\n  return res;\n}",
+    approach: "Побудуй граф суміжності; старт — вузол зі степенем 1; обхід, не повертаючись назад.\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
     slug: "remove-nodes-from-linked-list",
@@ -4298,6 +4932,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar removeNodes = function(head) {\n    \n};",
     testCases: "[{\"input\":\"[[5,2,13,3,8]]\",\"expected\":\"[13,8]\"},{\"input\":\"[[1,1,1,1]]\",\"expected\":\"[1,1,1,1]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction removeNodes(head: ListNode | null): ListNode | null {\n    const nums = [];\n    for (; head; head = head.next) {\n        nums.push(head.val);\n    }\n    const stk: number[] = [];\n    for (const v of nums) {\n        while (stk.length && stk.at(-1)! < v) {\n            stk.pop();\n        }\n        stk.push(v);\n    }\n    const dummy = new ListNode();\n    head = dummy;\n    for (const v of stk) {\n        head.next = new ListNode(v);\n        head = head.next;\n    }\n    return dummy.next;\n}",
+    approach: "Розверни список, іди з максимумом-суфіксом: лишай вузли ≥ поточного максимуму; розверни назад. Або монотонний стек.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"removeNodes\",\"paramTypes\":[\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
   {
@@ -4311,6 +4947,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minFlips = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,0,0],[0,0,0],[0,0,1]]]\",\"expected\":\"2\"},{\"input\":\"[[[0,1],[0,1],[0,0]]]\",\"expected\":\"1\"},{\"input\":\"[[[1],[0]]]\",\"expected\":\"0\"}]",
+    solution: "function minFlips(grid: number[][]): number {\n    const [m, n] = [grid.length, grid[0].length];\n    let [cnt1, cnt2] = [0, 0];\n    for (const row of grid) {\n        for (let j = 0; j < n / 2; ++j) {\n            if (row[j] !== row[n - 1 - j]) {\n                ++cnt1;\n            }\n        }\n    }\n    for (let j = 0; j < n; ++j) {\n        for (let i = 0; i < m / 2; ++i) {\n            if (grid[i][j] !== grid[m - 1 - i][j]) {\n                ++cnt2;\n            }\n        }\n    }\n    return Math.min(cnt1, cnt2);\n}",
+    approach: "Порахуй незбіги при дзеркаленні рядків і при дзеркаленні стовпців; відповідь — менша з двох сум.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"minFlips\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4324,6 +4962,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[][]} responses\n * @return {string}\n */\nvar findCommonResponse = function(responses) {\n    \n};",
     testCases: "[{\"input\":\"[[[\\\"good\\\",\\\"ok\\\",\\\"good\\\",\\\"ok\\\"],[\\\"ok\\\",\\\"bad\\\",\\\"good\\\",\\\"ok\\\",\\\"ok\\\"],[\\\"good\\\"],[\\\"bad\\\"]]]\",\"expected\":\"\\\"good\\\"\"},{\"input\":\"[[[\\\"good\\\",\\\"ok\\\",\\\"good\\\"],[\\\"ok\\\",\\\"bad\\\"],[\\\"bad\\\",\\\"notsure\\\"],[\\\"great\\\",\\\"good\\\"]]]\",\"expected\":\"\\\"bad\\\"\"}]",
+    solution: "function findCommonResponse(responses: string[][]): string {\n    const cnt = new Map<string, number>();\n    for (const ws of responses) {\n        const s = new Set<string>();\n        for (const w of ws) {\n            if (!s.has(w)) {\n                s.add(w);\n                cnt.set(w, (cnt.get(w) ?? 0) + 1);\n            }\n        }\n    }\n    let ans = responses[0][0];\n    for (const [w, v] of cnt) {\n        const best = cnt.get(ans)!;\n        if (best < v || (best === v && w < ans)) {\n            ans = w;\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожного користувача Set його відповідей (унікальні); лічильник по всіх; максимум, при рівності — лексикографічно менша.\n\n**Складність:** Time O(сумарна довжина), Space O(унікальні)",
     signature: "{\"name\":\"findCommonResponse\",\"paramTypes\":[\"list<list<string>>\"],\"returnType\":\"string\"}",
   },
   {
@@ -4337,6 +4977,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @param {number} k\n * @return {number}\n */\nvar countSubmatrices = function(grid, k) {\n    \n};",
     testCases: "[{\"input\":\"[[[7,6,3],[6,6,1]],18]\",\"expected\":\"4\"},{\"input\":\"[[[7,2,9],[1,5,0],[2,6,6]],20]\",\"expected\":\"6\"}]",
+    solution: "function countSubmatrices(grid: number[][], k: number): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    const s: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    let ans: number = 0;\n    for (let i = 1; i <= m; ++i) {\n        for (let j = 1; j <= n; ++j) {\n            s[i][j] = s[i - 1][j] + s[i][j - 1] - s[i - 1][j - 1] + grid[i - 1][j - 1];\n            if (s[i][j] <= k) {\n                ++ans;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "2D префіксна сума; рахуй клітинки (i,j), де сума прямокутника [0..i]×[0..j] ≤ k.\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"countSubmatrices\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4350,6 +4992,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumDistance = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,1,1,3]]\",\"expected\":\"6\"},{\"input\":\"[[1,1,2,3,2,1,2]]\",\"expected\":\"8\"},{\"input\":\"[[1]]\",\"expected\":\"-1\"}]",
+    solution: "function minimumDistance(nums: number[]): number {\n    const n = nums.length;\n    const g = new Map<number, number[]>();\n\n    for (let i = 0; i < n; i++) {\n        if (!g.has(nums[i])) {\n            g.set(nums[i], []);\n        }\n        g.get(nums[i])!.push(i);\n    }\n\n    const inf = 1 << 30;\n    let ans = inf;\n\n    for (const ls of g.values()) {\n        const m = ls.length;\n        for (let h = 0; h < m - 2; h++) {\n            const i = ls[h];\n            const k = ls[h + 2];\n            const t = (k - i) * 2;\n            ans = Math.min(ans, t);\n        }\n    }\n\n    return ans === inf ? -1 : ans;\n}",
+    approach: "Map значення→останні дві позиції; при третьому входженні оновлюй мінімум (last - first).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"minimumDistance\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4363,6 +5007,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar twoEggDrop = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[2]\",\"expected\":\"2\"},{\"input\":\"[100]\",\"expected\":\"14\"}]",
+    solution: "function twoEggDrop(n: number): number {\n    const f: number[] = Array(n + 1).fill(Infinity);\n    f[0] = 0;\n    for (let i = 1; i <= n; ++i) {\n        for (let j = 1; j <= i; ++j) {\n            f[i] = Math.min(f[i], 1 + Math.max(j - 1, f[i - j]));\n        }\n    }\n    return f[n];\n}",
+    approach: "Знайди найменше x з x·(x+1)/2 ≥ n (сума 1+2+...+x покриває n поверхів).\n\n**Складність:** Time O(sqrt(n)), Space O(1)",
     signature: "{\"name\":\"twoEggDrop\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4376,6 +5022,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} people\n * @return {number[][]}\n */\nvar reconstructQueue = function(people) {\n    \n};",
     testCases: "[]",
+    solution: "function reconstructQueue(people: number[][]): number[][] {\n  people.sort((a, b) => (b[0] - a[0]) || (a[1] - b[1]));\n  const res: number[][] = [];\n  for (const p of people) res.splice(p[1], 0, p);\n  return res;\n}",
+    approach: "Сортуй за h спадаюче, при рівних — за k зростаюче; вставляй кожного на позицію k.\n\n**Складність:** Time O(n²), Space O(n)",
   },
   {
     slug: "combinations",
@@ -4388,6 +5036,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {number[][]}\n */\nvar combine = function(n, k) {\n    \n};",
     testCases: "[{\"input\":\"[4,2]\",\"expected\":\"[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]\"},{\"input\":\"[1,1]\",\"expected\":\"[[1]]\"}]",
+    solution: "function combine(n: number, k: number): number[][] {\n    const ans: number[][] = [];\n    const t: number[] = [];\n    const dfs = (i: number) => {\n        if (t.length === k) {\n            ans.push(t.slice());\n            return;\n        }\n        if (i > n) {\n            return;\n        }\n        t.push(i);\n        dfs(i + 1);\n        t.pop();\n        dfs(i + 1);\n    };\n    dfs(1);\n    return ans;\n}",
     approach: "Backtrack C(n,k). O(C(n,k))\n\n**Складність:** Time O(C(n,k)), Space O(k)",
     signature: "{\"name\":\"combine\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"list<list<integer>>\"}",
   },
@@ -4402,6 +5051,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "\nvar UndergroundSystem = function() {\n    \n};\n\n/** \n * @param {number} id \n * @param {string} stationName \n * @param {number} t\n * @return {void}\n */\nUndergroundSystem.prototype.checkIn = function(id, stationName, t) {\n    \n};\n\n/** \n * @param {number} id \n * @param {string} stationName \n * @param {number} t\n * @return {void}\n */\nUndergroundSystem.prototype.checkOut = function(id, stationName, t) {\n    \n};\n\n/** \n * @param {string} startStation \n * @param {string} endStation\n * @return {number}\n */\nUndergroundSystem.prototype.getAverageTime = function(startStation, endStation) {\n    \n};\n\n/** \n * Your UndergroundSystem object will be instantiated and called as such:\n * var obj = new UndergroundSystem()\n * obj.checkIn(id,stationName,t)\n * obj.checkOut(id,stationName,t)\n * var param_3 = obj.getAverageTime(startStation,endStation)\n */",
     testCases: "[]",
+    solution: "class UndergroundSystem {\n  private checkins = new Map<number, [string, number]>();\n  private totals = new Map<string, [number, number]>();\n\n  checkIn(id: number, stationName: string, t: number): void {\n    this.checkins.set(id, [stationName, t]);\n  }\n\n  checkOut(id: number, stationName: string, t: number): void {\n    const [from, start] = this.checkins.get(id)!;\n    const key = from + '->' + stationName;\n    const [sum, cnt] = this.totals.get(key) ?? [0, 0];\n    this.totals.set(key, [sum + (t - start), cnt + 1]);\n  }\n\n  getAverageTime(startStation: string, endStation: string): number {\n    const [sum, cnt] = this.totals.get(startStation + '->' + endStation)!;\n    return sum / cnt;\n  }\n}",
+    approach: "Map картка→(станція, час) для checkIn; Map (from,to)→(сумарний час, кількість) для середнього.\n\n**Складність:** Time O(1), Space O(картки + маршрути)",
   },
   {
     slug: "minimum-add-to-make-parentheses-valid",
@@ -4414,6 +5065,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minAddToMakeValid = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"())\\\"]\",\"expected\":\"1\"},{\"input\":\"[\\\"(((\\\"]\",\"expected\":\"3\"}]",
+    solution: "function minAddToMakeValid(s: string): number {\n    const stk: string[] = [];\n    for (const c of s) {\n        if (c === ')' && stk.length > 0 && stk.at(-1)! === '(') {\n            stk.pop();\n        } else {\n            stk.push(c);\n        }\n    }\n    return stk.length;\n}",
+    approach: "Лічильник open; ')' при open=0 → +1 до відповіді, інакше open--. Наприкінці + open.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minAddToMakeValid\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4427,6 +5080,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} costs\n * @param {number} coins\n * @return {number}\n */\nvar maxIceCream = function(costs, coins) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,2,4,1],7]\",\"expected\":\"4\"},{\"input\":\"[[10,6,8,7,7,8],5]\",\"expected\":\"0\"},{\"input\":\"[[1,6,3,1,2,5],20]\",\"expected\":\"6\"}]",
+    solution: "function maxIceCream(costs: number[], coins: number): number {\n    costs.sort((a, b) => a - b);\n    const n = costs.length;\n    for (let i = 0; i < n; ++i) {\n        if (coins < costs[i]) {\n            return i;\n        }\n        coins -= costs[i];\n    }\n    return n;\n}",
+    approach: "Сортуй ціни; бери найдешевші, поки вистачає монет.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"maxIceCream\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4440,6 +5095,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar minimumOperations = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[1,4,3,7,6,8,5,null,null,null,null,9,null,10]]\",\"expected\":\"3\"},{\"input\":\"[[1,3,2,7,6,5,4]]\",\"expected\":\"3\"},{\"input\":\"[[1,2,3,4,5,6]]\",\"expected\":\"0\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction minimumOperations(root: TreeNode | null): number {\n    const queue = [root];\n    let ans = 0;\n    while (queue.length !== 0) {\n        const n = queue.length;\n        const row: number[] = [];\n        for (let i = 0; i < n; i++) {\n            const { val, left, right } = queue.shift();\n            row.push(val);\n            left && queue.push(left);\n            right && queue.push(right);\n        }\n        for (let i = 0; i < n - 1; i++) {\n            let minIdx = i;\n            for (let j = i + 1; j < n; j++) {\n                if (row[j] < row[minIdx]) {\n                    minIdx = j;\n                }\n            }\n            if (i !== minIdx) {\n                [row[i], row[minIdx]] = [row[minIdx], row[i]];\n                ans++;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожного рівня (BFS) порахуй мін. кількість свопів для сортування = розмір циклів у перестановці.\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"minimumOperations\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4453,6 +5110,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\r\n * @param {number[][]} grid\r\n * @param {number} k\r\n * @return {number[][]}\r\n */\r\nvar rotateGrid = function(grid, k) {\r\n    \r\n};",
     testCases: "[{\"input\":\"[[[40,10],[30,20]],1]\",\"expected\":\"[[10,20],[40,30]]\"},{\"input\":\"[[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],2]\",\"expected\":\"[[3,4,8,12],[2,11,10,16],[1,7,6,15],[5,9,13,14]]\"}]",
+    solution: "function rotateGrid(grid: number[][], k: number): number[][] {\n    const m = grid.length;\n    const n = grid[0].length;\n    const rotate = (p: number, k: number) => {\n        const nums: number[] = [];\n        for (let j = p; j < n - p - 1; ++j) {\n            nums.push(grid[p][j]);\n        }\n        for (let i = p; i < m - p - 1; ++i) {\n            nums.push(grid[i][n - p - 1]);\n        }\n        for (let j = n - p - 1; j > p; --j) {\n            nums.push(grid[m - p - 1][j]);\n        }\n        for (let i = m - p - 1; i > p; --i) {\n            nums.push(grid[i][p]);\n        }\n        const l = nums.length;\n        k %= l;\n        if (k === 0) {\n            return;\n        }\n        for (let j = p; j < n - p - 1; ++j) {\n            grid[p][j] = nums[k++ % l];\n        }\n        for (let i = p; i < m - p - 1; ++i) {\n            grid[i][n - p - 1] = nums[k++ % l];\n        }\n        for (let j = n - p - 1; j > p; --j) {\n            grid[m - p - 1][j] = nums[k++ % l];\n        }\n        for (let i = m - p - 1; i > p; --i) {\n            grid[i][p] = nums[k++ % l];\n        }\n    };\n    for (let p = 0; p < Math.min(m, n) >> 1; ++p) {\n        rotate(p, k);\n    }\n    return grid;\n}",
+    approach: "Для кожного «кільця» матриці витягни його в список, зроби зсув на k % len, розклади назад.\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"rotateGrid\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -4466,6 +5125,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} rows\n */\nvar Spreadsheet = function(rows) {\n    \n};\n\n/** \n * @param {string} cell \n * @param {number} value\n * @return {void}\n */\nSpreadsheet.prototype.setCell = function(cell, value) {\n    \n};\n\n/** \n * @param {string} cell\n * @return {void}\n */\nSpreadsheet.prototype.resetCell = function(cell) {\n    \n};\n\n/** \n * @param {string} formula\n * @return {number}\n */\nSpreadsheet.prototype.getValue = function(formula) {\n    \n};\n\n/** \n * Your Spreadsheet object will be instantiated and called as such:\n * var obj = new Spreadsheet(rows)\n * obj.setCell(cell,value)\n * obj.resetCell(cell)\n * var param_3 = obj.getValue(formula)\n */",
     testCases: "[]",
+    solution: "class Spreadsheet {\n    private d: Map<string, number>;\n\n    constructor(rows: number) {\n        this.d = new Map<string, number>();\n    }\n\n    setCell(cell: string, value: number): void {\n        this.d.set(cell, value);\n    }\n\n    resetCell(cell: string): void {\n        this.d.delete(cell);\n    }\n\n    getValue(formula: string): number {\n        let ans = 0;\n        const cells = formula.slice(1).split('+');\n        for (const cell of cells) {\n            ans += isNaN(Number(cell)) ? this.d.get(cell) || 0 : Number(cell);\n        }\n        return ans;\n    }\n}\n\n/**\n * Your Spreadsheet object will be instantiated and called as such:\n * var obj = new Spreadsheet(rows)\n * obj.setCell(cell,value)\n * obj.resetCell(cell)\n * var param_3 = obj.getValue(formula)\n */",
+    approach: "Map клітинка→значення; setCell пише, getValue парсить 'X+Y' (кожен операнд — число або посилання на клітинку, default 0).\n\n**Складність:** Time O(1), Space O(заповнені)",
   },
   {
     slug: "maximum-average-pass-ratio",
@@ -4478,6 +5139,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} classes\n * @param {number} extraStudents\n * @return {number}\n */\nvar maxAverageRatio = function(classes, extraStudents) {\n    \n};",
     testCases: "[]",
+    solution: "function maxAverageRatio(classes: number[][], extraStudents: number): number {\n    function calcGain(a: number, b: number): number {\n        return (a + 1) / (b + 1) - a / b;\n    }\n    const pq = new PriorityQueue<[number, number]>(\n        (p, q) => calcGain(q[0], q[1]) - calcGain(p[0], p[1]),\n    );\n    for (const [a, b] of classes) {\n        pq.enqueue([a, b]);\n    }\n    while (extraStudents-- > 0) {\n        const item = pq.dequeue();\n        const [a, b] = item;\n        pq.enqueue([a + 1, b + 1]);\n    }\n    let ans = 0;\n    while (!pq.isEmpty()) {\n        const item = pq.dequeue()!;\n        const [a, b] = item;\n        ans += a / b;\n    }\n    return ans / classes.length;\n}",
+    approach: "Max-heap за «приростом» (pass+1)/(total+1) - pass/total; extra разів бери максимум, оновлюй, повертай назад.\n\n**Складність:** Time O((n+k) log n), Space O(n)",
   },
   {
     slug: "palindrome-partitioning",
@@ -4490,6 +5153,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string[][]}\n */\nvar partition = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"aab\\\"]\",\"expected\":\"[[\\\"a\\\",\\\"a\\\",\\\"b\\\"],[\\\"aa\\\",\\\"b\\\"]]\"},{\"input\":\"[\\\"a\\\"]\",\"expected\":\"[[\\\"a\\\"]]\"}]",
+    solution: "function partition(s: string): string[][] {\n    const n = s.length;\n    const f: boolean[][] = Array.from({ length: n }, () => Array(n).fill(true));\n    for (let i = n - 1; i >= 0; --i) {\n        for (let j = i + 1; j < n; ++j) {\n            f[i][j] = s[i] === s[j] && f[i + 1][j - 1];\n        }\n    }\n    const ans: string[][] = [];\n    const t: string[] = [];\n    const dfs = (i: number) => {\n        if (i === n) {\n            ans.push(t.slice());\n            return;\n        }\n        for (let j = i; j < n; ++j) {\n            if (f[i][j]) {\n                t.push(s.slice(i, j + 1));\n                dfs(j + 1);\n                t.pop();\n            }\n        }\n    };\n    dfs(0);\n    return ans;\n}",
+    approach: "Бектрекінг: пробуй кожен префікс s[start..i]; якщо паліндром — додай і рекурсія від i+1. Прекеш isPal[i][j] DP.\n\n**Складність:** Time O(n·2ⁿ), Space O(n²)",
     signature: "{\"name\":\"partition\",\"paramTypes\":[\"string\"],\"returnType\":\"list<list<string>>\"}",
   },
   {
@@ -4503,6 +5168,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s1\n * @param {string} s2\n * @return {boolean}\n */\nvar checkStrings = function(s1, s2) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abcdba\\\",\\\"cabdab\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"abe\\\",\\\"bea\\\"]\",\"expected\":\"false\"}]",
+    solution: "function checkStrings(s1: string, s2: string): boolean {\n    const cnt: number[][] = Array.from({ length: 2 }, () => Array.from({ length: 26 }, () => 0));\n    for (let i = 0; i < s1.length; ++i) {\n        ++cnt[i & 1][s1.charCodeAt(i) - 97];\n        --cnt[i & 1][s2.charCodeAt(i) - 97];\n    }\n    return cnt.every(arr => arr.every(x => x === 0));\n}",
+    approach: "Своп у межах однакової парності індексів → порівнюй мультимножини символів на парних і на непарних позиціях окремо.\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"checkStrings\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -4516,6 +5183,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar beautySum = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"aabcb\\\"]\",\"expected\":\"5\"},{\"input\":\"[\\\"aabcbaa\\\"]\",\"expected\":\"17\"}]",
+    solution: "function beautySum(s: string): number {\n    let ans = 0;\n    for (let i = 0; i < s.length; ++i) {\n        const cnt = new Map();\n        for (let j = i; j < s.length; ++j) {\n            cnt.set(s[j], (cnt.get(s[j]) || 0) + 1);\n            const t = Array.from(cnt.values());\n            ans += Math.max(...t) - Math.min(...t);\n        }\n    }\n    return ans;\n}",
+    approach: "n ≤ 500 → для кожного старту веди 26 лічильників, розширюй кінець, додавай (max - min ненульовий).\n\n**Складність:** Time O(n²·26), Space O(26)",
     signature: "{\"name\":\"beautySum\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4529,6 +5198,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maxAreaOfIsland = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,0,1,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,1,1,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,1,1,0,0,1,0,1,0,0],[0,1,0,0,1,1,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,0,1,1,0,0,0,0]]]\",\"expected\":\"6\"},{\"input\":\"[[[0,0,0,0,0,0,0,0]]]\",\"expected\":\"0\"}]",
+    solution: "function maxAreaOfIsland(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    const dirs = [-1, 0, 1, 0, -1];\n    const dfs = (i: number, j: number): number => {\n        if (grid[i][j] === 0) {\n            return 0;\n        }\n        let ans = 1;\n        grid[i][j] = 0;\n        for (let k = 0; k < 4; ++k) {\n            const [x, y] = [i + dirs[k], j + dirs[k + 1]];\n            if (x >= 0 && x < m && y >= 0 && y < n) {\n                ans += dfs(x, y);\n            }\n        }\n        return ans;\n    };\n    let ans = 0;\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            ans = Math.max(ans, dfs(i, j));\n        }\n    }\n    return ans;\n}",
     approach: "DFS count cells. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"maxAreaOfIsland\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
@@ -4543,6 +5213,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} weights\n * @param {number} days\n * @return {number}\n */\nvar shipWithinDays = function(weights, days) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,4,5,6,7,8,9,10],5]\",\"expected\":\"15\"},{\"input\":\"[[3,2,2,4,1,4],3]\",\"expected\":\"6\"},{\"input\":\"[[1,2,3,1,1],4]\",\"expected\":\"3\"}]",
+    solution: "function shipWithinDays(weights: number[], days: number): number {\n    let left = 0;\n    let right = 0;\n    for (const w of weights) {\n        left = Math.max(left, w);\n        right += w;\n    }\n    const check = (mx: number) => {\n        let ws = 0;\n        let cnt = 1;\n        for (const w of weights) {\n            ws += w;\n            if (ws > mx) {\n                ws = w;\n                ++cnt;\n            }\n        }\n        return cnt <= days;\n    };\n    while (left < right) {\n        const mid = (left + right) >> 1;\n        if (check(mid)) {\n            right = mid;\n        } else {\n            left = mid + 1;\n        }\n    }\n    return left;\n}",
+    approach: "Бінарний пошук по місткості в [max(weights), sum(weights)]; перевіряй, чи вистачає days для жадібного пакування.\n\n**Складність:** Time O(n log sum), Space O(1)",
     signature: "{\"name\":\"shipWithinDays\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4556,6 +5228,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} target\n * @return {number}\n */\nvar minFlips = function(target) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"10111\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"101\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"00000\\\"]\",\"expected\":\"0\"}]",
+    solution: "function minFlips(target: string): number {\n    let ans = 0;\n    for (const c of target) {\n        if (ans % 2 !== +c) {\n            ++ans;\n        }\n    }\n    return ans;\n}",
+    approach: "Йди зліва; кожен раз, коли поточний біт (з урахуванням уже зроблених фліпів) != потрібного — фліп, лічильник++.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minFlips\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4569,6 +5243,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumPrefixLength = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[1,-1,2,3,3,4,5]]\",\"expected\":\"4\"},{\"input\":\"[[4,3,-2,-5]]\",\"expected\":\"3\"},{\"input\":\"[[1,2,3,4]]\",\"expected\":\"0\"}]",
+    solution: "function minimumPrefixLength(nums: number[]): number {\n    for (let i = nums.length - 1; i; --i) {\n        if (nums[i - 1] >= nums[i]) {\n            return i;\n        }\n    }\n    return 0;\n}",
+    approach: "Знайди найдовший строго зростаючий суфікс; відповідь = n - його довжина.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minimumPrefixLength\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4582,6 +5258,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar goodNodes = function(root) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1,4,3,null,1,5]]\",\"expected\":\"4\"},{\"input\":\"[[3,3,null,4,2]]\",\"expected\":\"3\"},{\"input\":\"[[1]]\",\"expected\":\"1\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction goodNodes(root: TreeNode | null): number {\n    let ans = 0;\n    const dfs = (root: TreeNode | null, mx: number) => {\n        if (!root) {\n            return;\n        }\n        if (mx <= root.val) {\n            ++ans;\n            mx = root.val;\n        }\n        dfs(root.left, mx);\n        dfs(root.right, mx);\n    };\n    dfs(root, -1e6);\n    return ans;\n}",
+    approach: "DFS з максимумом по шляху; вузол «хороший», якщо val ≥ цього максимуму.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"goodNodes\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4595,6 +5273,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} queries\n * @return {number[][]}\n */\nvar rangeAddQueries = function(n, queries) {\n    \n};",
     testCases: "[{\"input\":\"[3,[[1,1,2,2],[0,0,1,1]]]\",\"expected\":\"[[1,1,0],[1,2,1],[0,1,1]]\"},{\"input\":\"[2,[[0,0,1,1]]]\",\"expected\":\"[[1,1],[1,1]]\"}]",
+    solution: "function rangeAddQueries(n: number, queries: number[][]): number[][] {\n    const mat: number[][] = Array.from({ length: n }, () => Array(n).fill(0));\n\n    for (const [x1, y1, x2, y2] of queries) {\n        mat[x1][y1] += 1;\n        if (x2 + 1 < n) mat[x2 + 1][y1] -= 1;\n        if (y2 + 1 < n) mat[x1][y2 + 1] -= 1;\n        if (x2 + 1 < n && y2 + 1 < n) mat[x2 + 1][y2 + 1] += 1;\n    }\n\n    for (let i = 0; i < n; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (i > 0) mat[i][j] += mat[i - 1][j];\n            if (j > 0) mat[i][j] += mat[i][j - 1];\n            if (i > 0 && j > 0) mat[i][j] -= mat[i - 1][j - 1];\n        }\n    }\n\n    return mat;\n}",
+    approach: "2D різницевий масив: для кожного запиту +1 у (r1,c1), -1 у (r1,c2+1)/(r2+1,c1), +1 у (r2+1,c2+1); потім 2D префіксна сума.\n\n**Складність:** Time O(n² + q), Space O(n²)",
     signature: "{\"name\":\"rangeAddQueries\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -4608,6 +5288,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar countPalindromicSubsequence = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"aabca\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"adc\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"bbcbaba\\\"]\",\"expected\":\"4\"}]",
+    solution: "function countPalindromicSubsequence(s: string): number {\n    let ans = 0;\n    const a = 'a'.charCodeAt(0);\n    for (let ch = 0; ch < 26; ++ch) {\n        const c = String.fromCharCode(ch + a);\n        const l = s.indexOf(c);\n        const r = s.lastIndexOf(c);\n        let mask = 0;\n        for (let i = l + 1; i < r; ++i) {\n            const j = s.charCodeAt(i) - a;\n            if (((mask >> j) & 1) ^ 1) {\n                mask |= 1 << j;\n                ++ans;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Для кожної літери c: між її першим і останнім входженням порахуй кількість різних символів (Set) — стільки паліндромів 'c?c'.\n\n**Складність:** Time O(26·n), Space O(1)",
     signature: "{\"name\":\"countPalindromicSubsequence\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4621,6 +5303,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar numberOfSubstrings = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abcabc\\\"]\",\"expected\":\"10\"},{\"input\":\"[\\\"aaacb\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"1\"}]",
+    solution: "function numberOfSubstrings(s: string): number {\n    const d: number[] = [-1, -1, -1];\n    let ans = 0;\n\n    for (let i = 0; i < s.length; i++) {\n        const c = s.charCodeAt(i) - 97;\n        d[c] = i;\n\n        ans += Math.min(d[0], Math.min(d[1], d[2])) + 1;\n    }\n\n    return ans;\n}",
+    approach: "Розсувне вікно: тримай останні позиції a,b,c; кількість валідних підрядків, що закінчуються на i, = 1 + min(lastA,lastB,lastC).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"numberOfSubstrings\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4634,6 +5318,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar firstStableIndex = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[5,0,1,4],3]\",\"expected\":\"3\"},{\"input\":\"[[3,2,1],1]\",\"expected\":\"-1\"},{\"input\":\"[[0],0]\",\"expected\":\"0\"}]",
+    solution: "function firstStableIndex(nums: number[], k: number): number {\n    const n = nums.length;\n    const right = new Array<number>(n);\n    right[n - 1] = nums[n - 1];\n\n    for (let i = n - 2; i >= 0; i--) {\n        right[i] = Math.min(right[i + 1], nums[i]);\n    }\n\n    let left = 0;\n    for (let i = 0; i < n; i++) {\n        left = Math.max(left, nums[i]);\n        if (left - right[i] <= k) {\n            return i;\n        }\n    }\n    return -1;\n}",
+    approach: "Префіксні/суфіксні характеристики (напр. сума); знайди найменший i, де ліва частина «стабільна» за умовою задачі.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"firstStableIndex\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4647,6 +5333,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {character}\n */\nvar findKthBit = function(n, k) {\n    \n};",
     testCases: "[{\"input\":\"[3,1]\",\"expected\":\"\\\"0\\\"\"},{\"input\":\"[4,11]\",\"expected\":\"\\\"1\\\"\"}]",
+    solution: "function findKthBit(n: number, k: number): string {\n    const dfs = (n: number, k: number): number => {\n        if (k === 1) {\n            return 0;\n        }\n        if ((k & (k - 1)) === 0) {\n            return 1;\n        }\n        const m = 1 << n;\n        if (k * 2 < m - 1) {\n            return dfs(n - 1, k);\n        }\n        return dfs(n - 1, m - k) ^ 1;\n    };\n    return dfs(n, k).toString();\n}",
+    approach: "Рекурсія: середина рядка Sₙ — завжди '1'; ліва половина = Sₙ₋₁, права — інвертований реверс. Зводь (n,k) вниз.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"findKthBit\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"character\"}",
   },
   {
@@ -4660,6 +5348,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @return {number}\n */\nvar numSpecialEquivGroups = function(words) {\n    \n};",
     testCases: "[]",
+    solution: "function numSpecialEquivGroups(words: string[]): number {\n  const keys = new Set<string>();\n  for (const w of words) {\n    const even: string[] = [], odd: string[] = [];\n    for (let i = 0; i < w.length; i++) (i % 2 === 0 ? even : odd).push(w[i]);\n    keys.add(even.sort().join('') + '|' + odd.sort().join(''));\n  }\n  return keys.size;\n}",
+    approach: "Канонічний ключ слова: відсортовані символи на парних позиціях + відсортовані на непарних. Кількість унікальних ключів.\n\n**Складність:** Time O(n·L log L), Space O(n·L)",
   },
   {
     slug: "count-servers-that-communicate",
@@ -4672,6 +5362,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar countServers = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,0],[0,1]]]\",\"expected\":\"0\"},{\"input\":\"[[[1,0],[1,1]]]\",\"expected\":\"3\"},{\"input\":\"[[[1,1,0,0],[0,0,1,0],[0,0,1,0],[0,0,0,1]]]\",\"expected\":\"4\"}]",
+    solution: "function countServers(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    const row = new Array(m).fill(0);\n    const col = new Array(n).fill(0);\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            row[i] += grid[i][j];\n            col[j] += grid[i][j];\n        }\n    }\n    let ans = 0;\n    for (let i = 0; i < m; i++) {\n        for (let j = 0; j < n; j++) {\n            if (grid[i][j] === 1 && (row[i] > 1 || col[j] > 1)) {\n                ans++;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Порахуй сервери в кожному рядку і кожному стовпці; сервер «спілкується», якщо його рядок або стовпець має >1.\n\n**Складність:** Time O(m·n), Space O(m+n)",
     signature: "{\"name\":\"countServers\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4685,6 +5377,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} num1\n * @param {string} num2\n * @return {string}\n */\nvar complexNumberMultiply = function(num1, num2) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"1+1i\\\",\\\"1+1i\\\"]\",\"expected\":\"\\\"0+2i\\\"\"},{\"input\":\"[\\\"1+-1i\\\",\\\"1+-1i\\\"]\",\"expected\":\"\\\"0+-2i\\\"\"}]",
+    solution: "function complexNumberMultiply(num1: string, num2: string): string {\n    const [a1, b1] = num1.slice(0, -1).split('+').map(Number);\n    const [a2, b2] = num2.slice(0, -1).split('+').map(Number);\n    return `${a1 * a2 - b1 * b2}+${a1 * b2 + a2 * b1}i`;\n}",
+    approach: "Розпарси 'a+bi'; (a+bi)(c+di) = (ac-bd) + (ad+bc)i.\n\n**Складність:** Time O(1), Space O(1)",
     signature: "{\"name\":\"complexNumberMultiply\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -4698,6 +5392,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} val\n * @return {TreeNode}\n */\nvar insertIntoBST = function(root, val) {\n    \n};",
     testCases: "[{\"input\":\"[[4,2,7,1,3],5]\",\"expected\":\"[4,2,7,1,3,5]\"},{\"input\":\"[[40,20,60,10,30,50,70],25]\",\"expected\":\"[40,20,60,10,30,50,70,null,null,25]\"},{\"input\":\"[[4,2,7,1,3,null,null,null,null,null,null],5]\",\"expected\":\"[4,2,7,1,3,5]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {\n    if (!root) {\n        return new TreeNode(val);\n    }\n    if (root.val > val) {\n        root.left = insertIntoBST(root.left, val);\n    } else {\n        root.right = insertIntoBST(root.right, val);\n    }\n    return root;\n}",
+    approach: "Спускайся за правилом BST, поки не впадеш у null; підвісь там новий вузол.\n\n**Складність:** Time O(h), Space O(1)",
     signature: "{\"name\":\"insertIntoBST\",\"paramTypes\":[\"TreeNode\",\"integer\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -4711,6 +5407,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} queries\n * @param {string[]} dictionary\n * @return {string[]}\n */\nvar twoEditWords = function(queries, dictionary) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"word\\\",\\\"note\\\",\\\"ants\\\",\\\"wood\\\"],[\\\"wood\\\",\\\"joke\\\",\\\"moat\\\"]]\",\"expected\":\"[\\\"word\\\",\\\"note\\\",\\\"wood\\\"]\"},{\"input\":\"[[\\\"yes\\\"],[\\\"not\\\"]]\",\"expected\":\"[]\"}]",
+    solution: "function twoEditWords(queries: string[], dictionary: string[]): string[] {\n    const n = queries[0].length;\n    return queries.filter(s => {\n        for (const t of dictionary) {\n            let diff = 0;\n            for (let i = 0; i < n; ++i) {\n                if (s[i] !== t[i]) {\n                    ++diff;\n                }\n            }\n            if (diff < 3) {\n                return true;\n            }\n        }\n        return false;\n    });\n}",
+    approach: "Слова однакової довжини; для кожного query порахуй позиційні незбіги з кожним dictionary-словом; ≤2 → бери.\n\n**Складність:** Time O(q·d·L), Space O(1)",
     signature: "{\"name\":\"twoEditWords\",\"paramTypes\":[\"string[]\",\"string[]\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -4724,6 +5422,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[]} queries\n * @param {number} x\n * @return {number[]}\n */\nvar occurrencesOfElement = function(nums, queries, x) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,1,7],[1,3,2,4],1]\",\"expected\":\"[0,-1,2,-1]\"},{\"input\":\"[[1,2,3],[10],5]\",\"expected\":\"[-1]\"}]",
+    solution: "function occurrencesOfElement(nums: number[], queries: number[], x: number): number[] {\n    const ids: number[] = nums.map((v, i) => (v === x ? i : -1)).filter(v => v !== -1);\n    return queries.map(i => ids[i - 1] ?? -1);\n}",
+    approach: "Список позицій, де nums === x; queries[i] → позиція з індексом queries[i]-1 або -1.\n\n**Складність:** Time O(n+q), Space O(n)",
     signature: "{\"name\":\"occurrencesOfElement\",\"paramTypes\":[\"integer[]\",\"integer[]\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -4737,6 +5437,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[][]} queries\n * @return {number}\n */\nvar xorAfterQueries = function(nums, queries) {\n    \n};",
     testCases: "[{\"input\":\"[[1,1,1],[[0,2,1,4]]]\",\"expected\":\"4\"},{\"input\":\"[[2,3,1,5,4],[[1,4,2,3],[0,2,1,2]]]\",\"expected\":\"31\"}]",
+    solution: "function xorAfterQueries(nums: number[], queries: number[][]): number {\n    const mod = 1e9 + 7;\n    for (const [l, r, k, v] of queries) {\n        for (let idx = l; idx <= r; idx += k) {\n            nums[idx] = (nums[idx] * v) % mod;\n        }\n    }\n    return nums.reduce((acc, x) => acc ^ x, 0);\n}",
+    approach: "Кожен query застосовуй прямо (крок k від start до end, множ на val % 1e9+7); наприкінці XOR усього масиву. Меж вистачає для наївного.\n\n**Складність:** Time O(n + q·довжина), Space O(1)",
     signature: "{\"name\":\"xorAfterQueries\",\"paramTypes\":[\"integer[]\",\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4750,6 +5452,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} piles\n * @return {boolean}\n */\nvar stoneGame = function(piles) {\n    \n};",
     testCases: "[{\"input\":\"[[5,3,4,5]]\",\"expected\":\"true\"},{\"input\":\"[[3,7,2,3]]\",\"expected\":\"true\"}]",
+    solution: "function stoneGame(piles: number[]): boolean {\n    const n = piles.length;\n    const f: number[][] = new Array(n).fill(0).map(() => new Array(n).fill(0));\n    const dfs = (i: number, j: number): number => {\n        if (i > j) {\n            return 0;\n        }\n        if (f[i][j] === 0) {\n            f[i][j] = Math.max(piles[i] - dfs(i + 1, j), piles[j] - dfs(i, j - 1));\n        }\n        return f[i][j];\n    };\n    return dfs(0, n - 1) > 0;\n}",
+    approach: "Аліса завжди виграє (парне n, може забрати всі парні або всі непарні позиції) → true. Або DP різниці.\n\n**Складність:** Time O(1) (або O(n²) DP), Space O(1)",
     signature: "{\"name\":\"stoneGame\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -4763,6 +5467,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} expression\n * @return {number[]}\n */\nvar diffWaysToCompute = function(expression) {\n    \n};",
     testCases: "[]",
+    solution: "function diffWaysToCompute(expression: string): number[] {\n  const memo = new Map<string, number[]>();\n  const solve = (expr: string): number[] => {\n    if (memo.has(expr)) return memo.get(expr)!;\n    const res: number[] = [];\n    for (let i = 0; i < expr.length; i++) {\n      const c = expr[i];\n      if (c === '+' || c === '-' || c === '*') {\n        const left = solve(expr.slice(0, i));\n        const right = solve(expr.slice(i + 1));\n        for (const l of left) for (const r of right)\n          res.push(c === '+' ? l + r : c === '-' ? l - r : l * r);\n      }\n    }\n    if (res.length === 0) res.push(parseInt(expr, 10));\n    memo.set(expr, res);\n    return res;\n  };\n  return solve(expression);\n}",
+    approach: "Рекурсія з мемоізацією: на кожному операторі ділимо вираз, комбінуємо всі результати лівої і правої частин.\n\n**Складність:** Time O(каталанове), Space O(результати)",
   },
   {
     slug: "combination-sum-iii",
@@ -4775,6 +5481,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} k\n * @param {number} n\n * @return {number[][]}\n */\nvar combinationSum3 = function(k, n) {\n    \n};",
     testCases: "[{\"input\":\"[3,7]\",\"expected\":\"[[1,2,4]]\"},{\"input\":\"[3,9]\",\"expected\":\"[[1,2,6],[1,3,5],[2,3,4]]\"},{\"input\":\"[4,1]\",\"expected\":\"[]\"}]",
+    solution: "function combinationSum3(k: number, n: number): number[][] {\n    const ans: number[][] = [];\n    const t: number[] = [];\n    const dfs = (i: number, s: number) => {\n        if (s === 0) {\n            if (t.length === k) {\n                ans.push(t.slice());\n            }\n            return;\n        }\n        if (i > 9 || i > s || t.length >= k) {\n            return;\n        }\n        t.push(i);\n        dfs(i + 1, s - i);\n        t.pop();\n        dfs(i + 1, s);\n    };\n    dfs(1, n);\n    return ans;\n}",
+    approach: "Бектрекінг: обирай зростаючі цифри 1..9, рівно k штук із сумою n; відсікай, коли сума завелика.\n\n**Складність:** Time O(C(9,k)), Space O(k)",
     signature: "{\"name\":\"combinationSum3\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"list<list<integer>>\"}",
   },
   {
@@ -4788,6 +5496,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} customers\n * @return {number}\n */\nvar averageWaitingTime = function(customers) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2],[2,5],[4,3]]]\",\"expected\":\"5\"},{\"input\":\"[[[5,2],[5,4],[10,3],[20,1]]]\",\"expected\":\"3.25\"}]",
+    solution: "function averageWaitingTime(customers: number[][]): number {\n    let [tot, t] = [0, 0];\n    for (const [a, b] of customers) {\n        t = Math.max(t, a) + b;\n        tot += t - a;\n    }\n    return tot / customers.length;\n}",
+    approach: "Симуляція: curTime = max(curTime, arrival) + cook; накопичуй (curTime - arrival); поділи на n.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"averageWaitingTime\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"double\"}",
   },
   {
@@ -4801,6 +5511,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {string} t\n * @return {number}\n */\nvar appendCharacters = function(s, t) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"coaching\\\",\\\"coding\\\"]\",\"expected\":\"4\"},{\"input\":\"[\\\"abcde\\\",\\\"a\\\"]\",\"expected\":\"0\"},{\"input\":\"[\\\"z\\\",\\\"abcde\\\"]\",\"expected\":\"5\"}]",
+    solution: "function appendCharacters(s: string, t: string): number {\n    let j = 0;\n    for (const c of s) {\n        if (c === t[j]) {\n            ++j;\n        }\n    }\n    return t.length - j;\n}",
+    approach: "Два вказівники: скільки символів t вдалося зіставити як підпослідовність s; відповідь = t.length - зіставлено.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"appendCharacters\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4814,6 +5526,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {string} traversal\n * @return {TreeNode}\n */\nvar recoverFromPreorder = function(traversal) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"1-2--3--4-5--6--7\\\"]\",\"expected\":\"[1,2,5,3,4,6,7]\"},{\"input\":\"[\\\"1-2--3---4-5--6---7\\\"]\",\"expected\":\"[1,2,5,3,null,6,null,4,null,7]\"},{\"input\":\"[\\\"1-401--349---90--88\\\"]\",\"expected\":\"[1,401,null,349,88,90]\"}]",
+    solution: "function recoverFromPreorder(traversal: string): TreeNode | null {\n    const stack: TreeNode[] = [];\n    let i = 0;\n\n    while (i < traversal.length) {\n        let depth = 0;\n        while (i < traversal.length && traversal[i] === '-') {\n            depth++;\n            i++;\n        }\n\n        let num = 0;\n        while (i < traversal.length && !Number.isNaN(+traversal[i])) {\n            num = num * 10 + +traversal[i];\n            i++;\n        }\n\n        // Create the new node\n        const newNode = new TreeNode(num);\n\n        while (stack.length > depth) {\n            stack.pop();\n        }\n\n        if (stack.length > 0) {\n            const i = stack.length - 1;\n            if (stack[i].left === null) {\n                stack[i].left = newNode;\n            } else {\n                stack[i].right = newNode;\n            }\n        }\n\n        stack.push(newNode);\n    }\n\n    return stack.length ? stack[0] : null;\n}",
+    approach: "Парси пари (кількість тире = глибина, число). Стек за глибиною: підрізай стек до depth, підвішуй вузол лівим або правим сином вершини.\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"recoverFromPreorder\",\"paramTypes\":[\"string\"],\"returnType\":\"TreeNode\"}",
   },
   {
@@ -4827,6 +5541,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar uniquePathsIII = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,0,0,0],[0,0,0,0],[0,0,2,-1]]]\",\"expected\":\"2\"},{\"input\":\"[[[1,0,0,0],[0,0,0,0],[0,0,0,2]]]\",\"expected\":\"4\"},{\"input\":\"[[[0,1],[2,0]]]\",\"expected\":\"0\"}]",
+    solution: "function uniquePathsIII(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    let [x, y] = [0, 0];\n    let cnt = 0;\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (grid[i][j] === 0) {\n                ++cnt;\n            } else if (grid[i][j] == 1) {\n                [x, y] = [i, j];\n            }\n        }\n    }\n    const vis: boolean[][] = Array.from({ length: m }, () => Array(n).fill(false));\n    vis[x][y] = true;\n    const dirs = [-1, 0, 1, 0, -1];\n    const dfs = (i: number, j: number, k: number): number => {\n        if (grid[i][j] === 2) {\n            return k === cnt + 1 ? 1 : 0;\n        }\n        let ans = 0;\n        for (let d = 0; d < 4; ++d) {\n            const [x, y] = [i + dirs[d], j + dirs[d + 1]];\n            if (x >= 0 && x < m && y >= 0 && y < n && !vis[x][y] && grid[x][y] !== -1) {\n                vis[x][y] = true;\n                ans += dfs(x, y, k + 1);\n                vis[x][y] = false;\n            }\n        }\n        return ans;\n    };\n    return dfs(x, y, 0);\n}",
+    approach: "Бектрекінг з усіх порожніх клітинок; рахуй шляхи, що проходять рівно через всі порожні до цілі (лічильник відвіданих).\n\n**Складність:** Time O(4^(m·n)), Space O(m·n)",
     signature: "{\"name\":\"uniquePathsIII\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4840,6 +5556,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} words\n * @param {character[]} letters\n * @param {number[]} score\n * @return {number}\n */\nvar maxScoreWords = function(words, letters, score) {\n    \n};",
     testCases: "[]",
+    approach: "Бектрекінг по словах (беремо/не беремо) з лічильником доступних літер; максимізуй суму очок.\n\n**Складність:** Time O(2^W·L), Space O(26)",
   },
   {
     slug: "number-of-ways-to-paint-n-3-grid",
@@ -4852,6 +5569,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar numOfWays = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[1]\",\"expected\":\"12\"},{\"input\":\"[5000]\",\"expected\":\"30228214\"}]",
+    solution: "function numOfWays(n: number): number {\n    const mod: number = 10 ** 9 + 7;\n    let f0: number = 6;\n    let f1: number = 6;\n\n    for (let i = 1; i < n; i++) {\n        const g0: number = (3 * f0 + 2 * f1) % mod;\n        const g1: number = (2 * f0 + 2 * f1) % mod;\n        f0 = g0;\n        f1 = g1;\n    }\n\n    return (f0 + f1) % mod;\n}",
+    approach: "DP по рядках: 6 «двоколірних» патернів (ABA) і 6 «триколірних» (ABC); переходи 3↔3, 3↔2, 2↔2 з фіксованими коефіцієнтами.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"numOfWays\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4865,6 +5584,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {string}\n */\nvar makeLargestSpecial = function(s) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"11011000\\\"]\",\"expected\":\"\\\"11100100\\\"\"},{\"input\":\"[\\\"10\\\"]\",\"expected\":\"\\\"10\\\"\"}]",
+    solution: "function makeLargestSpecial(s: string): string {\n    if (s.length === 0) {\n        return '';\n    }\n\n    const ans: string[] = [];\n    let cnt = 0;\n\n    for (let i = 0, j = 0; i < s.length; ++i) {\n        cnt += s[i] === '1' ? 1 : -1;\n        if (cnt === 0) {\n            const t = '1' + makeLargestSpecial(s.substring(j + 1, i)) + '0';\n            ans.push(t);\n            j = i + 1;\n        }\n    }\n\n    ans.sort((a, b) => b.localeCompare(a));\n    return ans.join('');\n}",
+    approach: "Рекурсія: розбий на «спеціальні» атоми верхнього рівня (баланс 0), рекурсивно оптимізуй внутрішність кожного, сортуй атоми спадаюче, склей.\n\n**Складність:** Time O(n² log n), Space O(n²)",
     signature: "{\"name\":\"makeLargestSpecial\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -4878,6 +5599,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} k\n * @param {number[][]} rowConditions\n * @param {number[][]} colConditions\n * @return {number[][]}\n */\nvar buildMatrix = function(k, rowConditions, colConditions) {\n    \n};",
     testCases: "[{\"input\":\"[3,[[1,2],[3,2]],[[2,1],[3,2]]]\",\"expected\":\"[[0,0,1],[3,0,0],[0,2,0]]\"},{\"input\":\"[3,[[1,2],[2,3],[3,1],[2,3]],[[2,1]]]\",\"expected\":\"[]\"}]",
+    solution: "function buildMatrix(k: number, rowConditions: number[][], colConditions: number[][]): number[][] {\n    function f(cond) {\n        const g = Array.from({ length: k + 1 }, () => []);\n        const indeg = new Array(k + 1).fill(0);\n        for (const [a, b] of cond) {\n            g[a].push(b);\n            ++indeg[b];\n        }\n        const q = [];\n        for (let i = 1; i < indeg.length; ++i) {\n            if (indeg[i] == 0) {\n                q.push(i);\n            }\n        }\n        const res = [];\n        while (q.length) {\n            for (let n = q.length; n; --n) {\n                const i = q.shift();\n                res.push(i);\n                for (const j of g[i]) {\n                    if (--indeg[j] == 0) {\n                        q.push(j);\n                    }\n                }\n            }\n        }\n        return res.length == k ? res : [];\n    }\n\n    const row = f(rowConditions);\n    const col = f(colConditions);\n    if (!row.length || !col.length) return [];\n    const ans = Array.from({ length: k }, () => new Array(k).fill(0));\n    const m = new Array(k + 1).fill(0);\n    for (let i = 0; i < k; ++i) {\n        m[col[i]] = i;\n    }\n    for (let i = 0; i < k; ++i) {\n        ans[i][m[row[i]]] = row[i];\n    }\n    return ans;\n}",
+    approach: "Дві топологічні сортування (для рядків і стовпців) незалежно; позиція числа v = (рядок-ранг, стовпець-ранг). Цикл → [].\n\n**Складність:** Time O(k + E), Space O(k²)",
     signature: "{\"name\":\"buildMatrix\",\"paramTypes\":[\"integer\",\"integer[][]\",\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
   {
@@ -4891,6 +5614,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar totalNQueens = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[4]\",\"expected\":\"2\"},{\"input\":\"[1]\",\"expected\":\"1\"}]",
+    solution: "function totalNQueens(n: number): number {\n    const cols: boolean[] = Array(10).fill(false);\n    const dg: boolean[] = Array(20).fill(false);\n    const udg: boolean[] = Array(20).fill(false);\n    let ans = 0;\n    const dfs = (i: number) => {\n        if (i === n) {\n            ++ans;\n            return;\n        }\n        for (let j = 0; j < n; ++j) {\n            let [a, b] = [i + j, i - j + n];\n            if (cols[j] || dg[a] || udg[b]) {\n                continue;\n            }\n            cols[j] = dg[a] = udg[b] = true;\n            dfs(i + 1);\n            cols[j] = dg[a] = udg[b] = false;\n        }\n    };\n    dfs(0);\n    return ans;\n}",
+    approach: "Бектрекінг по рядках з бітмасками зайнятих стовпців і двох діагоналей; рахуй повні розстановки.\n\n**Складність:** Time O(n!), Space O(n)",
     signature: "{\"name\":\"totalNQueens\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4904,6 +5629,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar minimumOneBitOperations = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[3]\",\"expected\":\"2\"},{\"input\":\"[6]\",\"expected\":\"4\"}]",
+    solution: "function minimumOneBitOperations(n: number): number {\n    let ans = 0;\n    for (; n > 0; n >>= 1) {\n        ans ^= n;\n    }\n    return ans;\n}",
+    approach: "Код Ґрея навпаки: f(n) = n XOR f(n>>1), розкручується в наближену формулу з чергуванням знаків по бітах.\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"minimumOneBitOperations\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4917,6 +5644,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} target\n * @return {number}\n */\nvar minNumberOperations = function(target) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,2,1]]\",\"expected\":\"3\"},{\"input\":\"[[3,1,1,2]]\",\"expected\":\"4\"},{\"input\":\"[[3,1,5,4,2]]\",\"expected\":\"7\"}]",
+    solution: "function minNumberOperations(target: number[]): number {\n    let f = target[0];\n    for (let i = 1; i < target.length; ++i) {\n        if (target[i] > target[i - 1]) {\n            f += target[i] - target[i - 1];\n        }\n    }\n    return f;\n}",
+    approach: "Сума додатних приростів: target[0] + Σ max(0, target[i] - target[i-1]).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minNumberOperations\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4930,6 +5659,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[][]} paths\n * @return {string[][]}\n */\nvar deleteDuplicateFolder = function(paths) {\n    \n};",
     testCases: "[{\"input\":\"[[[\\\"a\\\"],[\\\"c\\\"],[\\\"d\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"b\\\"],[\\\"d\\\",\\\"a\\\"]]]\",\"expected\":\"[[\\\"d\\\"],[\\\"d\\\",\\\"a\\\"]]\"},{\"input\":\"[[[\\\"a\\\"],[\\\"c\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"b\\\"],[\\\"a\\\",\\\"b\\\",\\\"x\\\"],[\\\"a\\\",\\\"b\\\",\\\"x\\\",\\\"y\\\"],[\\\"w\\\"],[\\\"w\\\",\\\"y\\\"]]]\",\"expected\":\"[[\\\"a\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\"],[\\\"c\\\",\\\"b\\\"]]\"},{\"input\":\"[[[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"d\\\"],[\\\"c\\\"],[\\\"a\\\"]]]\",\"expected\":\"[[\\\"a\\\"],[\\\"a\\\",\\\"b\\\"],[\\\"c\\\"],[\\\"c\\\",\\\"d\\\"]]\"}]",
+    solution: "function deleteDuplicateFolder(paths: string[][]): string[][] {\n    class Trie {\n        children: { [key: string]: Trie } = {};\n        deleted: boolean = false;\n    }\n\n    const root = new Trie();\n\n    for (const path of paths) {\n        let cur = root;\n        for (const name of path) {\n            if (!cur.children[name]) {\n                cur.children[name] = new Trie();\n            }\n            cur = cur.children[name];\n        }\n    }\n\n    const g: { [key: string]: Trie } = {};\n\n    const dfs = (node: Trie): string => {\n        if (Object.keys(node.children).length === 0) return '';\n\n        const subs: string[] = [];\n        for (const [name, child] of Object.entries(node.children)) {\n            subs.push(`${name}(${dfs(child)})`);\n        }\n        subs.sort();\n        const s = subs.join('');\n\n        if (g[s]) {\n            node.deleted = true;\n            g[s].deleted = true;\n        } else {\n            g[s] = node;\n        }\n        return s;\n    };\n\n    dfs(root);\n\n    const ans: string[][] = [];\n    const path: string[] = [];\n\n    const dfs2 = (node: Trie): void => {\n        if (node.deleted) return;\n        if (path.length > 0) {\n            ans.push([...path]);\n        }\n        for (const [name, child] of Object.entries(node.children)) {\n            path.push(name);\n            dfs2(child);\n            path.pop();\n        }\n    };\n\n    dfs2(root);\n\n    return ans;\n}",
+    approach: "Побудуй trie; серіалізуй кожне піддерево в рядок, лічильник ідентичних; познач вузли з count≥2, при виводі їх пропускай.\n\n**Складність:** Time O(N·L log), Space O(N·L)",
     signature: "{\"name\":\"deleteDuplicateFolder\",\"paramTypes\":[\"list<list<string>>\"],\"returnType\":\"list<list<string>>\"}",
   },
   {
@@ -4943,6 +5674,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} m\n * @param {number} n\n * @return {number}\n */\nvar colorTheGrid = function(m, n) {\n    \n};",
     testCases: "[{\"input\":\"[1,1]\",\"expected\":\"3\"},{\"input\":\"[1,2]\",\"expected\":\"6\"},{\"input\":\"[5,5]\",\"expected\":\"580986\"}]",
+    solution: "function colorTheGrid(m: number, n: number): number {\n    const f1 = (x: number): boolean => {\n        let last = -1;\n        for (let i = 0; i < m; ++i) {\n            if (x % 3 === last) {\n                return false;\n            }\n            last = x % 3;\n            x = Math.floor(x / 3);\n        }\n        return true;\n    };\n    const f2 = (x: number, y: number): boolean => {\n        for (let i = 0; i < m; ++i) {\n            if (x % 3 === y % 3) {\n                return false;\n            }\n            x = Math.floor(x / 3);\n            y = Math.floor(y / 3);\n        }\n        return true;\n    };\n    const mx = 3 ** m;\n    const valid = new Set<number>();\n    const f: number[] = Array(mx).fill(0);\n    for (let i = 0; i < mx; ++i) {\n        if (f1(i)) {\n            valid.add(i);\n            f[i] = 1;\n        }\n    }\n    const d: Map<number, number[]> = new Map();\n    for (const i of valid) {\n        for (const j of valid) {\n            if (f2(i, j)) {\n                d.set(i, (d.get(i) || []).concat(j));\n            }\n        }\n    }\n    const mod = 10 ** 9 + 7;\n    for (let k = 1; k < n; ++k) {\n        const g: number[] = Array(mx).fill(0);\n        for (const i of valid) {\n            for (const j of d.get(i) || []) {\n                g[i] = (g[i] + f[j]) % mod;\n            }\n        }\n        f.splice(0, f.length, ...g);\n    }\n    let ans = 0;\n    for (const x of f) {\n        ans = (ans + x) % mod;\n    }\n    return ans;\n}",
+    approach: "Згенеруй усі валідні розфарбування стовпця (без сусідів одного кольору), побудуй сумісність між стовпцями, DP по n стовпцях.\n\n**Складність:** Time O(states²·n), Space O(states)",
     signature: "{\"name\":\"colorTheGrid\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4956,6 +5689,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} satisfaction\n * @return {number}\n */\nvar maxSatisfaction = function(satisfaction) {\n    \n};",
     testCases: "[{\"input\":\"[[-1,-8,0,5,-7]]\",\"expected\":\"14\"},{\"input\":\"[[4,3,2]]\",\"expected\":\"20\"},{\"input\":\"[[-1,-4,-5]]\",\"expected\":\"0\"}]",
+    solution: "function maxSatisfaction(satisfaction: number[]): number {\n    satisfaction.sort((a, b) => b - a);\n    let [ans, s] = [0, 0];\n    for (const x of satisfaction) {\n        s += x;\n        if (s <= 0) {\n            break;\n        }\n        ans += s;\n    }\n    return ans;\n}",
+    approach: "Сортуй спадаюче; додавай страву, поки префіксна сума додатна (кожна нова страва додає всю поточну суму ще раз).\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"maxSatisfaction\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4969,6 +5704,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} tasks\n * @return {number}\n */\nvar minimumEffort = function(tasks) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2],[2,4],[4,8]]]\",\"expected\":\"8\"},{\"input\":\"[[[1,3],[2,4],[10,11],[10,12],[8,9]]]\",\"expected\":\"32\"},{\"input\":\"[[[1,7],[2,8],[3,9],[4,10],[5,11],[6,12]]]\",\"expected\":\"27\"}]",
+    solution: "function minimumEffort(tasks: number[][]): number {\n    tasks.sort((a, b) => a[0] - a[1] - (b[0] - b[1]));\n    let ans = 0;\n    let cur = 0;\n    for (const [a, m] of tasks) {\n        if (cur < m) {\n            ans += m - cur;\n            cur = m;\n        }\n        cur -= a;\n    }\n    return ans;\n}",
+    approach: "Сортуй за (minimum - actual) спадаюче; йди, тримаючи потрібну стартову енергію: cur = max(cur + actual, minimum).\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"minimumEffort\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4982,6 +5719,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[][]} edges\n * @return {number}\n */\nvar minimumScore = function(nums, edges) {\n    \n};",
     testCases: "[{\"input\":\"[[1,5,5,4,11],[[0,1],[1,2],[1,3],[3,4]]]\",\"expected\":\"9\"},{\"input\":\"[[5,5,2,4,4,2],[[0,1],[1,2],[5,2],[4,3],[1,3]]]\",\"expected\":\"0\"}]",
+    solution: "function minimumScore(nums: number[], edges: number[][]): number {\n    const n = nums.length;\n    const g: number[][] = Array.from({ length: n }, () => []);\n    for (const [a, b] of edges) {\n        g[a].push(b);\n        g[b].push(a);\n    }\n    const s = nums.reduce((a, b) => a ^ b, 0);\n    let s1 = 0;\n    let ans = Number.MAX_SAFE_INTEGER;\n    function dfs(i: number, fa: number): number {\n        let res = nums[i];\n        for (const j of g[i]) {\n            if (j !== fa) {\n                res ^= dfs(j, i);\n            }\n        }\n        return res;\n    }\n    function dfs2(i: number, fa: number): number {\n        let res = nums[i];\n        for (const j of g[i]) {\n            if (j !== fa) {\n                const s2 = dfs2(j, i);\n                res ^= s2;\n                const mx = Math.max(s ^ s1, s2, s1 ^ s2);\n                const mn = Math.min(s ^ s1, s2, s1 ^ s2);\n                ans = Math.min(ans, mx - mn);\n            }\n        }\n        return res;\n    }\n    for (let i = 0; i < n; ++i) {\n        for (const j of g[i]) {\n            s1 = dfs(i, j);\n            dfs2(i, j);\n        }\n    }\n    return ans;\n}",
+    approach: "DFS-таймери/XOR піддерев; перебирай пари ребер (n мале), рахуй XOR трьох частин, мінімізуй max - min.\n\n**Складність:** Time O(n²), Space O(n)",
     signature: "{\"name\":\"minimumScore\",\"paramTypes\":[\"integer[]\",\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -4995,6 +5734,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {string[][]}\n */\nvar solveNQueens = function(n) {\n    \n};",
     testCases: "[{\"input\":\"[4]\",\"expected\":\"[[\\\".Q..\\\",\\\"...Q\\\",\\\"Q...\\\",\\\"..Q.\\\"],[\\\"..Q.\\\",\\\"Q...\\\",\\\"...Q\\\",\\\".Q..\\\"]]\"},{\"input\":\"[1]\",\"expected\":\"[[\\\"Q\\\"]]\"}]",
+    solution: "function solveNQueens(n: number): string[][] {\n    const col: number[] = Array(n).fill(0);\n    const dg: number[] = Array(n << 1).fill(0);\n    const udg: number[] = Array(n << 1).fill(0);\n    const ans: string[][] = [];\n    const t: string[][] = Array.from({ length: n }, () => Array(n).fill('.'));\n    const dfs = (i: number) => {\n        if (i === n) {\n            ans.push(t.map(x => x.join('')));\n            return;\n        }\n        for (let j = 0; j < n; ++j) {\n            if (col[j] + dg[i + j] + udg[n - i + j] === 0) {\n                t[i][j] = 'Q';\n                col[j] = dg[i + j] = udg[n - i + j] = 1;\n                dfs(i + 1);\n                col[j] = dg[i + j] = udg[n - i + j] = 0;\n                t[i][j] = '.';\n            }\n        }\n    };\n    dfs(0);\n    return ans;\n}",
     approach: "Backtrack rows, check col/diag. O(n!)\n\n**Складність:** Time O(n!), Space O(n²)",
     signature: "{\"name\":\"solveNQueens\",\"paramTypes\":[\"integer\"],\"returnType\":\"list<list<string>>\"}",
   },
@@ -5009,6 +5749,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} matrix\n * @param {number} target\n * @return {number}\n */\nvar numSubmatrixSumTarget = function(matrix, target) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1,0],[1,1,1],[0,1,0]],0]\",\"expected\":\"4\"},{\"input\":\"[[[1,-1],[-1,1]],0]\",\"expected\":\"5\"},{\"input\":\"[[[904]],0]\",\"expected\":\"0\"}]",
+    solution: "function numSubmatrixSumTarget(matrix: number[][], target: number): number {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    let ans = 0;\n    for (let i = 0; i < m; ++i) {\n        const col: number[] = new Array(n).fill(0);\n        for (let j = i; j < m; ++j) {\n            for (let k = 0; k < n; ++k) {\n                col[k] += matrix[j][k];\n            }\n            ans += f(col, target);\n        }\n    }\n    return ans;\n}\n\nfunction f(nums: number[], target: number): number {\n    const d: Map<number, number> = new Map();\n    d.set(0, 1);\n    let cnt = 0;\n    let s = 0;\n    for (const x of nums) {\n        s += x;\n        if (d.has(s - target)) {\n            cnt += d.get(s - target)!;\n        }\n        d.set(s, (d.get(s) || 0) + 1);\n    }\n    return cnt;\n}",
+    approach: "Фіксуй пару рядків, стисни в 1D суму стовпців, задача «підмасивів із сумою target» через Map префіксів.\n\n**Складність:** Time O(m²·n), Space O(n)",
     signature: "{\"name\":\"numSubmatrixSumTarget\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5022,6 +5764,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} board\n * @return {number}\n */\nvar slidingPuzzle = function(board) {\n    \n};",
     testCases: "[]",
+    approach: "BFS по станах дошки (рядок з 6 символів); сусіди — свопи '0' із сусідніми позиціями за фіксованим списком. Ціль '123450'.\n\n**Складність:** Time O(6!·6), Space O(6!)",
   },
   {
     slug: "maximum-number-of-k-divisible-components",
@@ -5034,6 +5777,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number[]} values\n * @param {number} k\n * @return {number}\n */\nvar maxKDivisibleComponents = function(n, edges, values, k) {\n    \n};",
     testCases: "[{\"input\":\"[5,[[0,2],[1,2],[1,3],[2,4]],[1,8,1,4,4],6]\",\"expected\":\"2\"},{\"input\":\"[7,[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]],[3,0,6,1,5,2,1],3]\",\"expected\":\"3\"}]",
+    solution: "function maxKDivisibleComponents(\n    n: number,\n    edges: number[][],\n    values: number[],\n    k: number,\n): number {\n    const g: number[][] = Array.from({ length: n }, () => []);\n    for (const [a, b] of edges) {\n        g[a].push(b);\n        g[b].push(a);\n    }\n    let ans = 0;\n    const dfs = (i: number, fa: number): number => {\n        let s = values[i];\n        for (const j of g[i]) {\n            if (j !== fa) {\n                s += dfs(j, i);\n            }\n        }\n        if (s % k === 0) {\n            ++ans;\n        }\n        return s;\n    };\n    dfs(0, -1);\n    return ans;\n}",
+    approach: "Post-order DFS: сума піддерева % k; коли === 0 — «відрізаємо» компоненту, лічильник++.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"maxKDivisibleComponents\",\"paramTypes\":[\"integer\",\"integer[][]\",\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5047,6 +5792,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @return {number}\n */\nvar minInsertions = function(s) {\n    \n};",
     testCases: "[]",
+    solution: "function minInsertions(s: string): number {\n  const n = s.length;\n  const dp = Array.from({ length: n + 1 }, () => new Array(n + 1).fill(0));\n  const r = [...s].reverse().join('');\n  for (let i = 1; i <= n; i++)\n    for (let j = 1; j <= n; j++)\n      dp[i][j] = s[i - 1] === r[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);\n  return n - dp[n][n];\n}",
+    approach: "n - LCS(s, reverse(s)) — це і є мінімум вставок (доповнення до паліндрома).\n\n**Складність:** Time O(n²), Space O(n²)",
   },
   {
     slug: "maximize-the-number-of-target-nodes-after-connecting-trees-ii",
@@ -5059,6 +5806,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} edges1\n * @param {number[][]} edges2\n * @return {number[]}\n */\nvar maxTargetNodes = function(edges1, edges2) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1],[0,2],[2,3],[2,4]],[[0,1],[0,2],[0,3],[2,7],[1,4],[4,5],[4,6]]]\",\"expected\":\"[8,7,7,8,8]\"},{\"input\":\"[[[0,1],[0,2],[0,3],[0,4]],[[0,1],[1,2],[2,3]]]\",\"expected\":\"[3,6,6,6,6]\"}]",
+    solution: "function maxTargetNodes(edges1: number[][], edges2: number[][]): number[] {\n    const g1 = build(edges1);\n    const g2 = build(edges2);\n    const [n, m] = [g1.length, g2.length];\n    const c1 = Array(n).fill(0);\n    const c2 = Array(m).fill(0);\n    const cnt1 = [0, 0];\n    const cnt2 = [0, 0];\n\n    dfs(g2, 0, -1, c2, 0, cnt2);\n    dfs(g1, 0, -1, c1, 0, cnt1);\n\n    const t = Math.max(...cnt2);\n    const ans = Array(n);\n    for (let i = 0; i < n; i++) {\n        ans[i] = t + cnt1[c1[i]];\n    }\n    return ans;\n}\n\nfunction build(edges: number[][]): number[][] {\n    const n = edges.length + 1;\n    const g: number[][] = Array.from({ length: n }, () => []);\n    for (const [a, b] of edges) {\n        g[a].push(b);\n        g[b].push(a);\n    }\n    return g;\n}\n\nfunction dfs(g: number[][], a: number, fa: number, c: number[], d: number, cnt: number[]): void {\n    c[a] = d;\n    cnt[d]++;\n    for (const b of g[a]) {\n        if (b !== fa) {\n            dfs(g, b, a, c, d ^ 1, cnt);\n        }\n    }\n}",
+    approach: "Двоколірність кожного дерева (парність відстані); у дереві 2 вершина бачить максимум одного кольору; додай до кожної вершини дерева 1 своє «своєколірне» + цей максимум.\n\n**Складність:** Time O(n+m), Space O(n+m)",
     signature: "{\"name\":\"maxTargetNodes\",\"paramTypes\":[\"integer[][]\",\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5072,6 +5821,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} heights\n * @return {number[]}\n */\nvar canSeePersonsCount = function(heights) {\n    \n};",
     testCases: "[{\"input\":\"[[10,6,8,5,11,9]]\",\"expected\":\"[3,1,2,1,1,0]\"},{\"input\":\"[[5,1,2,3,10]]\",\"expected\":\"[4,1,1,1,0]\"}]",
+    solution: "function canSeePersonsCount(heights: number[]): number[] {\n    const n = heights.length;\n    const ans: number[] = new Array(n).fill(0);\n    const stk: number[] = [];\n    for (let i = n - 1; ~i; --i) {\n        while (stk.length && stk.at(-1) < heights[i]) {\n            ++ans[i];\n            stk.pop();\n        }\n        if (stk.length) {\n            ++ans[i];\n        }\n        stk.push(heights[i]);\n    }\n    return ans;\n}",
+    approach: "Монотонний спадний стек справа наліво: попни всіх нижчих (їх видно), +1 якщо стек ще непорожній (першого вищого теж видно).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"canSeePersonsCount\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5085,6 +5836,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @return {number}\n */\nvar minFlips = function(mat) {\n    \n};",
     testCases: "[]",
+    approach: "Матриця ≤ 3×3 → BFS/бітмаска по 2^(m·n) станах; сусід — toggle клітинки з її хрестом.\n\n**Складність:** Time O(2^(mn)·mn), Space O(2^(mn))",
   },
   {
     slug: "delete-columns-to-make-sorted-iii",
@@ -5097,6 +5849,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string[]} strs\n * @return {number}\n */\nvar minDeletionSize = function(strs) {\n    \n};",
     testCases: "[{\"input\":\"[[\\\"babca\\\",\\\"bbazb\\\"]]\",\"expected\":\"3\"},{\"input\":\"[[\\\"edcba\\\"]]\",\"expected\":\"4\"},{\"input\":\"[[\\\"ghi\\\",\\\"def\\\",\\\"abc\\\"]]\",\"expected\":\"0\"}]",
+    solution: "function minDeletionSize(strs: string[]): number {\n    const n = strs[0].length;\n    const f: number[] = Array(n).fill(1);\n    for (let i = 1; i < n; i++) {\n        for (let j = 0; j < i; j++) {\n            let ok = true;\n            for (const s of strs) {\n                if (s[j] > s[i]) {\n                    ok = false;\n                    break;\n                }\n            }\n            if (ok) {\n                f[i] = Math.max(f[i], f[j] + 1);\n            }\n        }\n    }\n    return n - Math.max(...f);\n}",
+    approach: "LIS-подібне DP по стовпцях: dp[j] = макс. кількість залишених стовпців, що закінчуються на j і всі рядки не спадають; відповідь = n - max(dp).\n\n**Складність:** Time O(n²·m), Space O(n)",
     signature: "{\"name\":\"minDeletionSize\",\"paramTypes\":[\"string[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5110,6 +5864,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar cherryPickup = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[3,1,1],[2,5,1],[1,5,5],[2,1,1]]]\",\"expected\":\"24\"},{\"input\":\"[[[1,0,0,0,0,0,1],[2,0,0,0,0,3,0],[2,0,9,0,0,0,0],[0,3,0,5,4,0,0],[1,0,2,3,0,0,6]]]\",\"expected\":\"28\"}]",
+    solution: "function cherryPickup(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    const f = Array.from({ length: m }, () =>\n        Array.from({ length: n }, () => Array.from({ length: n }, () => -1)),\n    );\n    f[0][0][n - 1] = grid[0][0] + grid[0][n - 1];\n    for (let i = 1; i < m; ++i) {\n        for (let j1 = 0; j1 < n; ++j1) {\n            for (let j2 = 0; j2 < n; ++j2) {\n                const x = grid[i][j1] + (j1 === j2 ? 0 : grid[i][j2]);\n                for (let y1 = j1 - 1; y1 <= j1 + 1; ++y1) {\n                    for (let y2 = j2 - 1; y2 <= j2 + 1; ++y2) {\n                        if (y1 >= 0 && y1 < n && y2 >= 0 && y2 < n && f[i - 1][y1][y2] !== -1) {\n                            f[i][j1][j2] = Math.max(f[i][j1][j2], f[i - 1][y1][y2] + x);\n                        }\n                    }\n                }\n            }\n        }\n    }\n    return Math.max(...f[m - 1].flat());\n}",
+    approach: "DP по рядках з двома роботами: стан (row, col1, col2); переходи — 3×3 комбінації кроків; додавай grid, не подвоюючи при col1===col2.\n\n**Складність:** Time O(m·n²), Space O(n²)",
     signature: "{\"name\":\"cherryPickup\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5123,6 +5879,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} firstPlayer\n * @param {number} secondPlayer\n * @return {number[]}\n */\nvar earliestAndLatest = function(n, firstPlayer, secondPlayer) {\n    \n};",
     testCases: "[{\"input\":\"[11,2,4]\",\"expected\":\"[3,4]\"},{\"input\":\"[5,1,5]\",\"expected\":\"[1,1]\"}]",
+    solution: "function earliestAndLatest(n: number, firstPlayer: number, secondPlayer: number): number[] {\n    return dfs(firstPlayer - 1, secondPlayer - 1, n);\n}\n\nconst f: number[][][] = Array.from({ length: 30 }, () =>\n    Array.from({ length: 30 }, () => Array(31).fill(0)),\n);\n\nfunction dfs(l: number, r: number, n: number): number[] {\n    if (f[l][r][n] !== 0) {\n        return decode(f[l][r][n]);\n    }\n    if (l + r === n - 1) {\n        f[l][r][n] = encode(1, 1);\n        return [1, 1];\n    }\n\n    let min = Number.MAX_SAFE_INTEGER;\n    let max = Number.MIN_SAFE_INTEGER;\n    const m = n >> 1;\n\n    for (let i = 0; i < 1 << m; i++) {\n        const win: boolean[] = Array(n).fill(false);\n        for (let j = 0; j < m; j++) {\n            if ((i >> j) & 1) {\n                win[j] = true;\n            } else {\n                win[n - 1 - j] = true;\n            }\n        }\n\n        if (n & 1) {\n            win[m] = true;\n        }\n\n        win[n - 1 - l] = false;\n        win[n - 1 - r] = false;\n        win[l] = true;\n        win[r] = true;\n\n        let a = 0,\n            b = 0,\n            c = 0;\n        for (let j = 0; j < n; j++) {\n            if (j === l) a = c;\n            if (j === r) b = c;\n            if (win[j]) c++;\n        }\n\n        const t = dfs(a, b, c);\n        min = Math.min(min, t[0] + 1);\n        max = Math.max(max, t[1] + 1);\n    }\n\n    f[l][r][n] = encode(min, max);\n    return [min, max];\n}\n\nfunction encode(x: number, y: number): number {\n    return (x << 8) | y;\n}\n\nfunction decode(val: number): number[] {\n    return [val >> 8, val & 255];\n}",
+    approach: "Рекурсія з мемо по (n, позиція1, позиція2): перебирай, скільки перемог зліва від пари; звужуй/дзеркаль стан; тримай min і max раунду.\n\n**Складність:** Time O(n⁴·log), Space O(n³)",
     signature: "{\"name\":\"earliestAndLatest\",\"paramTypes\":[\"integer\",\"integer\",\"integer\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5136,6 +5894,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} word\n * @return {number}\n */\nvar minimumDistance = function(word) {\n    \n};",
     testCases: "[]",
+    approach: "DP: стан (індекс літери, де стоїть «інший» палець); один палець йде на поточну літеру, вартість — манхеттен на клавіатурі 6×5.\n\n**Складність:** Time O(n·27), Space O(27)",
   },
   {
     slug: "put-marbles-in-bags",
@@ -5148,6 +5907,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} weights\n * @param {number} k\n * @return {number}\n */\nvar putMarbles = function(weights, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,5,1],2]\",\"expected\":\"4\"},{\"input\":\"[[1,3],2]\",\"expected\":\"0\"}]",
+    solution: "function putMarbles(weights: number[], k: number): number {\n    const n = weights.length;\n    const arr: number[] = [];\n    for (let i = 0; i < n - 1; ++i) {\n        arr.push(weights[i] + weights[i + 1]);\n    }\n    arr.sort((a, b) => a - b);\n    let ans = 0;\n    for (let i = 0; i < k - 1; ++i) {\n        ans += arr[n - i - 2] - arr[i];\n    }\n    return ans;\n}",
+    approach: "Вартість розрізу між i та i+1 = weights[i]+weights[i+1]; візьми k-1 найбільших і k-1 найменших розрізів; відповідь — їх різниця.\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"putMarbles\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"long\"}",
   },
   {
@@ -5161,6 +5922,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "\nvar MyCalendarThree = function() {\n    \n};\n\n/** \n * @param {number} startTime \n * @param {number} endTime\n * @return {number}\n */\nMyCalendarThree.prototype.book = function(startTime, endTime) {\n    \n};\n\n/** \n * Your MyCalendarThree object will be instantiated and called as such:\n * var obj = new MyCalendarThree()\n * var param_1 = obj.book(startTime,endTime)\n */",
     testCases: "[]",
+    solution: "class Node {\n    left: Node | null = null;\n    right: Node | null = null;\n    l: number;\n    r: number;\n    mid: number;\n    v: number = 0;\n    add: number = 0;\n\n    constructor(l: number, r: number) {\n        this.l = l;\n        this.r = r;\n        this.mid = (l + r) >> 1;\n    }\n}\n\nclass SegmentTree {\n    private root: Node = new Node(1, 1e9 + 1);\n\n    constructor() {}\n\n    modify(l: number, r: number, v: number, node: Node = this.root): void {\n        if (l > r) {\n            return;\n        }\n        if (node.l >= l && node.r <= r) {\n            node.v += v;\n            node.add += v;\n            return;\n        }\n        this.pushdown(node);\n        if (l <= node.mid) {\n            this.modify(l, r, v, node.left!);\n        }\n        if (r > node.mid) {\n            this.modify(l, r, v, node.right!);\n        }\n        this.pushup(node);\n    }\n\n    query(l: number, r: number, node: Node = this.root): number {\n        if (l > r) {\n            return 0;\n        }\n        if (node.l >= l && node.r <= r) {\n            return node.v;\n        }\n        this.pushdown(node);\n        let v = 0;\n        if (l <= node.mid) {\n            v = Math.max(v, this.query(l, r, node.left!));\n        }\n        if (r > node.mid) {\n            v = Math.max(v, this.query(l, r, node.right!));\n        }\n        return v;\n    }\n\n    private pushup(node: Node): void {\n        node.v = Math.max(node.left!.v, node.right!.v);\n    }\n\n    private pushdown(node: Node): void {\n        if (node.left === null) {\n            node.left = new Node(node.l, node.mid);\n        }\n        if (node.right === null) {\n            node.right = new Node(node.mid + 1, node.r);\n        }\n        if (node.add !== 0) {\n            const left = node.left!;\n            const right = node.right!;\n            left.add += node.add;\n            right.add += node.add;\n            left.v += node.add;\n            right.v += node.add;\n            node.add = 0;\n        }\n    }\n}\n\nclass MyCalendarThree {\n    private tree: SegmentTree;\n\n    constructor() {\n        this.tree = new SegmentTree();\n    }\n\n    book(start: number, end: number): number {\n        this.tree.modify(start + 1, end, 1);\n        return this.tree.query(1, 1e9 + 1);\n    }\n}\n\n/**\n * Your MyCalendarThree object will be instantiated and called as such:\n * var obj = new MyCalendarThree()\n * var param_1 = obj.book(startTime, endTime)\n */",
+    approach: "Різницевий лічильник (Map/BIT): +1 на start, -1 на end; після кожного book повертай максимум префіксної суми.\n\n**Складність:** Time O(n²) або O(n log n), Space O(n)",
   },
   {
     slug: "longest-subsequence-repeated-k-times",
@@ -5173,6 +5936,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar longestSubsequenceRepeatedK = function(s, k) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"letsleetcode\\\",2]\",\"expected\":\"\\\"let\\\"\"},{\"input\":\"[\\\"bb\\\",2]\",\"expected\":\"\\\"b\\\"\"},{\"input\":\"[\\\"ab\\\",2]\",\"expected\":\"\\\"\\\"\"}]",
+    solution: "function longestSubsequenceRepeatedK(s: string, k: number): string {\n    const check = (t: string, k: number): boolean => {\n        let i = 0;\n        for (const c of s) {\n            if (c === t[i]) {\n                i++;\n                if (i === t.length) {\n                    k--;\n                    if (k === 0) {\n                        return true;\n                    }\n                    i = 0;\n                }\n            }\n        }\n        return false;\n    };\n\n    const cnt = new Array(26).fill(0);\n    for (const c of s) {\n        cnt[c.charCodeAt(0) - 97]++;\n    }\n\n    const cs: string[] = [];\n    for (let i = 0; i < 26; ++i) {\n        if (cnt[i] >= k) {\n            cs.push(String.fromCharCode(97 + i));\n        }\n    }\n\n    const q: string[] = [''];\n    let ans = '';\n    while (q.length > 0) {\n        const cur = q.shift()!;\n        for (const c of cs) {\n            const nxt = cur + c;\n            if (check(nxt, k)) {\n                ans = nxt;\n                q.push(nxt);\n            }\n        }\n    }\n\n    return ans;\n}",
+    approach: "k·|результат| ≤ n → кандидати короткі (≤7 символів з літер, що трапляються ≥k разів). Бектрекінг-генерація + перевірка «підпослідовність ≥ k разів».\n\n**Складність:** Time O(велике, але обмежене), Space O(n)",
     signature: "{\"name\":\"longestSubsequenceRepeatedK\",\"paramTypes\":[\"string\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -5186,6 +5951,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} plantTime\n * @param {number[]} growTime\n * @return {number}\n */\nvar earliestFullBloom = function(plantTime, growTime) {\n    \n};",
     testCases: "[{\"input\":\"[[1,4,3],[2,3,1]]\",\"expected\":\"9\"},{\"input\":\"[[1,2,3,2],[2,1,2,1]]\",\"expected\":\"9\"},{\"input\":\"[[1],[1]]\",\"expected\":\"2\"}]",
+    solution: "function earliestFullBloom(plantTime: number[], growTime: number[]): number {\n    const n = plantTime.length;\n    const idx: number[] = Array.from({ length: n }, (_, i) => i);\n    idx.sort((i, j) => growTime[j] - growTime[i]);\n    let [ans, t] = [0, 0];\n    for (const i of idx) {\n        t += plantTime[i];\n        ans = Math.max(ans, t + growTime[i]);\n    }\n    return ans;\n}",
+    approach: "Сій послідовно; сортуй за grow спадаюче (довгий ріст — раніше). Відповідь = Σplant + max(поточний час сівби + grow).\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"earliestFullBloom\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5199,6 +5966,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minCost = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,1,1,1],[2,2,2,2],[1,1,1,1],[2,2,2,2]]]\",\"expected\":\"3\"},{\"input\":\"[[[1,1,3],[3,2,2],[1,1,4]]]\",\"expected\":\"0\"},{\"input\":\"[[[1,2],[4,3]]]\",\"expected\":\"1\"}]",
+    solution: "function minCost(grid: number[][]): number {\n    const m = grid.length,\n        n = grid[0].length;\n    let ans = Array.from({ length: m }, v => new Array(n).fill(Infinity));\n    ans[0][0] = 0;\n    let queue = [[0, 0]];\n    const dirs = [\n        [0, 1],\n        [0, -1],\n        [1, 0],\n        [-1, 0],\n    ];\n    while (queue.length) {\n        let [x, y] = queue.shift();\n        for (let step = 1; step < 5; step++) {\n            let [dx, dy] = dirs[step - 1];\n            let [i, j] = [x + dx, y + dy];\n            if (i < 0 || i >= m || j < 0 || j >= n) continue;\n            let cost = ~~(grid[x][y] != step) + ans[x][y];\n            if (cost >= ans[i][j]) continue;\n            ans[i][j] = cost;\n            if (grid[x][y] == step) {\n                queue.unshift([i, j]);\n            } else {\n                queue.push([i, j]);\n            }\n        }\n    }\n    return ans[m - 1][n - 1];\n}",
+    approach: "0-1 BFS (deque): рух за поточною стрілкою — вага 0 (в голову), зміна напрямку — вага 1 (в хвіст).\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"minCost\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5212,6 +5981,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minimumObstacles = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,1,1],[1,1,0],[1,1,0]]]\",\"expected\":\"2\"},{\"input\":\"[[[0,1,0,0,0],[0,1,0,1,0],[0,0,0,1,0]]]\",\"expected\":\"0\"}]",
+    solution: "function minimumObstacles(grid: number[][]): number {\n    const m = grid.length,\n        n = grid[0].length;\n    const dirs = [\n        [0, 1],\n        [0, -1],\n        [1, 0],\n        [-1, 0],\n    ];\n    let ans = Array.from({ length: m }, v => new Array(n).fill(Infinity));\n    ans[0][0] = 0;\n    let deque = [[0, 0]];\n    while (deque.length) {\n        let [x, y] = deque.shift();\n        for (let [dx, dy] of dirs) {\n            let [i, j] = [x + dx, y + dy];\n            if (i < 0 || i > m - 1 || j < 0 || j > n - 1) continue;\n            const cost = grid[i][j];\n            if (ans[x][y] + cost >= ans[i][j]) continue;\n            ans[i][j] = ans[x][y] + cost;\n            deque.push([i, j]);\n        }\n    }\n    return ans[m - 1][n - 1];\n}",
+    approach: "0-1 BFS: перехід у порожню клітинку — вага 0, у перешкоду — вага 1. Відстань до (m-1,n-1).\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"minimumObstacles\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5225,6 +5996,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number[]} good\n * @return {number[]}\n */\nvar maxSubgraphScore = function(n, edges, good) {\n    \n};",
     testCases: "[]",
+    approach: "DFS-DP: для кожного вузла — макс. score піддерева, якщо вузол включений/ні; ребро додає добуток... комбінуй дітей жадібно за додатним внеском.\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
     slug: "remove-max-number-of-edges-to-keep-graph-fully-traversable",
@@ -5237,6 +6009,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar maxNumEdgesToRemove = function(n, edges) {\n    \n};",
     testCases: "[]",
+    approach: "Два Union-Find (Аліса, Боб). Спершу додай спільні ребра (тип 3) в обидва, рахуючи «корисні»; потім типи 1 і 2. Зайві = E - корисні; неможливо, якщо не зв'язно.\n\n**Складність:** Time O(E·α), Space O(n)",
   },
   {
     slug: "smallest-range-covering-elements-from-k-lists",
@@ -5249,6 +6022,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} nums\n * @return {number[]}\n */\nvar smallestRange = function(nums) {\n    \n};",
     testCases: "[]",
+    approach: "Min-heap із поточних елементів кожного списку + відстеження максимуму; звужуй, витягуючи мінімум і додаючи наступний із того ж списку.\n\n**Складність:** Time O(N log k), Space O(k)",
   },
   {
     slug: "parsing-a-boolean-expression",
@@ -5261,6 +6035,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} expression\n * @return {boolean}\n */\nvar parseBoolExpr = function(expression) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"&(|(f))\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"|(f,f,f,t)\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"!(&(f,t))\\\"]\",\"expected\":\"true\"}]",
+    solution: "function parseBoolExpr(expression: string): boolean {\n    const expr = expression;\n    const n = expr.length;\n    let i = 0;\n    const dfs = () => {\n        let res: boolean[] = [];\n        while (i < n) {\n            const c = expr[i++];\n            if (c === ')') {\n                break;\n            }\n\n            if (c === '!') {\n                res.push(!dfs()[0]);\n            } else if (c === '|') {\n                res.push(dfs().some(v => v));\n            } else if (c === '&') {\n                res.push(dfs().every(v => v));\n            } else if (c === 't') {\n                res.push(true);\n            } else if (c === 'f') {\n                res.push(false);\n            }\n        }\n        return res;\n    };\n    return dfs()[0];\n}",
+    approach: "Стек: на ')' збирай операнди до '(', застосуй оператор перед '('; '!' — заперечення, '&' — все true, '|' — хоч одне true.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"parseBoolExpr\",\"paramTypes\":[\"string\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -5274,6 +6050,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar minimumDifference = function(nums) {\n    \n};",
     testCases: "[]",
+    solution: "function minimumDifference(nums: number[]): number {\n    const m = nums.length;\n    const n = Math.floor(m / 3);\n    let s = 0;\n    const pre: number[] = Array(m + 1);\n    const q1 = new MaxPriorityQueue<number>();\n    for (let i = 1; i <= n * 2; ++i) {\n        const x = nums[i - 1];\n        s += x;\n        q1.enqueue(x);\n        if (q1.size() > n) {\n            s -= q1.dequeue();\n        }\n        pre[i] = s;\n    }\n    s = 0;\n    const suf: number[] = Array(m + 1);\n    const q2 = new MinPriorityQueue<number>();\n    for (let i = m; i > n; --i) {\n        const x = nums[i - 1];\n        s += x;\n        q2.enqueue(x);\n        if (q2.size() > n) {\n            s -= q2.dequeue();\n        }\n        suf[i] = s;\n    }\n    let ans = Number.MAX_SAFE_INTEGER;\n    for (let i = n; i <= n * 2; ++i) {\n        ans = Math.min(ans, pre[i] - suf[i + 1]);\n    }\n    return ans;\n}",
+    approach: "Префікс: min-heap для суми найменших n зліва; суфікс: max-heap для суми найбільших n справа; мінімізуй left[i] - right[i].\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
     slug: "find-the-maximum-sum-of-node-values",
@@ -5286,6 +6064,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @param {number[][]} edges\n * @return {number}\n */\nvar maximumValueSum = function(nums, k, edges) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,1],3,[[0,1],[0,2]]]\",\"expected\":\"6\"},{\"input\":\"[[2,3],7,[[0,1]]]\",\"expected\":\"9\"},{\"input\":\"[[7,7,7,7,7,7],3,[[0,1],[0,2],[0,3],[0,4],[0,5]]]\",\"expected\":\"42\"}]",
+    solution: "function maximumValueSum(nums: number[], k: number, edges: number[][]): number {\n    let [f0, f1] = [0, -Infinity];\n    for (const x of nums) {\n        [f0, f1] = [Math.max(f0 + x, f1 + (x ^ k)), Math.max(f1 + x, f0 + (x ^ k))];\n    }\n    return f0;\n}",
+    approach: "XOR ребра інвертує біт k у двох вузлах; ефективно можна перевернути будь-яку парну кількість вузлів. Бери всі позитивні прирости, при непарній кількості пожертвуй найменшою втратою.\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"maximumValueSum\",\"paramTypes\":[\"integer[]\",\"integer\",\"integer[][]\"],\"returnType\":\"long\"}",
   },
   {
@@ -5299,6 +6079,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number}\n */\nvar maxDotProduct = function(nums1, nums2) {\n    \n};",
     testCases: "[{\"input\":\"[[2,1,-2,5],[3,0,-6]]\",\"expected\":\"18\"},{\"input\":\"[[3,-2],[2,-6,7]]\",\"expected\":\"21\"},{\"input\":\"[[-1,-1],[1,1]]\",\"expected\":\"-1\"}]",
+    solution: "function maxDotProduct(nums1: number[], nums2: number[]): number {\n    const m = nums1.length;\n    const n = nums2.length;\n    const f = Array.from({ length: m + 1 }, () => Array.from({ length: n + 1 }, () => -Infinity));\n    for (let i = 1; i <= m; ++i) {\n        for (let j = 1; j <= n; ++j) {\n            const v = nums1[i - 1] * nums2[j - 1];\n            f[i][j] = Math.max(f[i - 1][j], f[i][j - 1]);\n            f[i][j] = Math.max(f[i][j], Math.max(0, f[i - 1][j - 1]) + v);\n        }\n    }\n    return f[m][n];\n}",
+    approach: "DP[i][j] = max(nums1[i]·nums2[j] + max(0, dp[i-1][j-1]), dp[i-1][j], dp[i][j-1]).\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"maxDotProduct\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5312,6 +6094,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} k\n * @return {number}\n */\nvar countGoodIntegers = function(n, k) {\n    \n};",
     testCases: "[{\"input\":\"[3,5]\",\"expected\":\"27\"},{\"input\":\"[1,4]\",\"expected\":\"2\"},{\"input\":\"[5,6]\",\"expected\":\"2468\"}]",
+    solution: "function countGoodIntegers(n: number, k: number): number {\n    const fac = factorial(n);\n    let ans = 0;\n    const vis = new Set<string>();\n    const base = Math.pow(10, Math.floor((n - 1) / 2));\n\n    for (let i = base; i < base * 10; i++) {\n        let s = `${i}`;\n        const rev = reverseString(s);\n        if (n % 2 === 1) {\n            s += rev.substring(1);\n        } else {\n            s += rev;\n        }\n\n        if (+s % k !== 0) {\n            continue;\n        }\n\n        const bs = Array.from(s).sort();\n        const t = bs.join('');\n\n        if (vis.has(t)) {\n            continue;\n        }\n\n        vis.add(t);\n\n        const cnt = Array(10).fill(0);\n        for (const c of t) {\n            cnt[+c]++;\n        }\n\n        let res = (n - cnt[0]) * fac[n - 1];\n        for (const x of cnt) {\n            res /= fac[x];\n        }\n        ans += res;\n    }\n\n    return ans;\n}\n\nfunction factorial(n: number): number[] {\n    const fac = Array(n + 1).fill(1);\n    for (let i = 1; i <= n; i++) {\n        fac[i] = fac[i - 1] * i;\n    }\n    return fac;\n}\n\nfunction reverseString(s: string): string {\n    return s.split('').reverse().join('');\n}",
+    approach: "Генеруй «половинки» паліндромів довжини n; для кожного перевір подільність на k; рахуй унікальні мультимножини цифр і множ на кількість валідних перестановок (без провідного нуля).\n\n**Складність:** Time O(10^(n/2)·n), Space O(унікальні)",
     signature: "{\"name\":\"countGoodIntegers\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"long\"}",
   },
   {
@@ -5325,6 +6109,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} minK\n * @param {number} maxK\n * @return {number}\n */\nvar countSubarrays = function(nums, minK, maxK) {\n    \n};",
     testCases: "[{\"input\":\"[[1,3,5,2,7,5],1,5]\",\"expected\":\"2\"},{\"input\":\"[[1,1,1,1],1,1]\",\"expected\":\"10\"}]",
+    solution: "function countSubarrays(nums: number[], minK: number, maxK: number): number {\n    let ans = 0;\n    let [j1, j2, k] = [-1, -1, -1];\n    for (let i = 0; i < nums.length; ++i) {\n        if (nums[i] < minK || nums[i] > maxK) k = i;\n        if (nums[i] === minK) j1 = i;\n        if (nums[i] === maxK) j2 = i;\n        ans += Math.max(0, Math.min(j1, j2) - k);\n    }\n    return ans;\n}",
+    approach: "Три вказівники: остання позиція minK, остання maxK, остання позиція «поза [minK,maxK]». Валідних підмасивів, що кінчаються на i, = max(0, min(lastMin,lastMax) - lastBad).\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"countSubarrays\",\"paramTypes\":[\"integer[]\",\"integer\",\"integer\"],\"returnType\":\"long\"}",
   },
   {
@@ -5338,6 +6124,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} rolls\n * @param {number} k\n * @return {number}\n */\nvar shortestSequence = function(rolls, k) {\n    \n};",
     testCases: "[]",
+    approach: "Жадібно: рахуй унікальні значення; коли зібрав усі k — довжина+1, скинь Set. Відповідь — кількість повних «раундів» + 1.\n\n**Складність:** Time O(n), Space O(k)",
   },
   {
     slug: "minimum-edge-toggles-on-a-tree",
@@ -5350,6 +6137,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {string} start\n * @param {string} target\n * @return {number[]}\n */\nvar minimumFlips = function(n, edges, start, target) {\n    \n};",
     testCases: "[{\"input\":\"[3,[[0,1],[1,2]],\\\"010\\\",\\\"100\\\"]\",\"expected\":\"[0]\"},{\"input\":\"[7,[[0,1],[1,2],[2,3],[3,4],[3,5],[1,6]],\\\"0011000\\\",\\\"0010001\\\"]\",\"expected\":\"[1,2,5]\"},{\"input\":\"[2,[[0,1]],\\\"00\\\",\\\"01\\\"]\",\"expected\":\"[-1]\"}]",
+    solution: "function minimumFlips(n: number, edges: number[][], start: string, target: string): number[] {\n    const g: number[][][] = Array.from({ length: n }, () => []);\n    for (let i = 0; i < n - 1; i++) {\n        const [a, b] = edges[i];\n        g[a].push([b, i]);\n        g[b].push([a, i]);\n    }\n    const ans: number[] = [];\n    const dfs = (a: number, fa: number): boolean => {\n        let rev = start[a] !== target[a];\n        for (const [b, i] of g[a]) {\n            if (b !== fa && dfs(b, a)) {\n                ans.push(i);\n                rev = !rev;\n            }\n        }\n        return rev;\n    };\n    if (dfs(0, -1)) {\n        return [-1];\n    }\n    ans.sort((x, y) => x - y);\n    return ans;\n}",
+    approach: "Корені-DFS DP: для кожного вузла — мін. фліпів, щоб піддерево відповідало цільовому патерну для обох можливих станів ребра до батька.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"minimumFlips\",\"paramTypes\":[\"integer\",\"integer[][]\",\"string\",\"string\"],\"returnType\":\"list<integer>\"}",
   },
   {
@@ -5363,6 +6152,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} row\n * @param {number} col\n * @param {number[][]} cells\n * @return {number}\n */\nvar latestDayToCross = function(row, col, cells) {\n    \n};",
     testCases: "[{\"input\":\"[2,2,[[1,1],[2,1],[1,2],[2,2]]]\",\"expected\":\"2\"},{\"input\":\"[2,2,[[1,1],[1,2],[2,1],[2,2]]]\",\"expected\":\"1\"},{\"input\":\"[3,3,[[1,2],[2,1],[3,3],[2,2],[1,1],[1,3],[2,3],[3,2],[3,1]]]\",\"expected\":\"3\"}]",
+    solution: "function latestDayToCross(row: number, col: number, cells: number[][]): number {\n    let [l, r] = [1, cells.length];\n    const check = (k: number): boolean => {\n        const g: number[][] = Array.from({ length: row }, () => Array(col).fill(0));\n        for (let i = 0; i < k; ++i) {\n            const [x, y] = cells[i];\n            g[x - 1][y - 1] = 1;\n        }\n        const q: number[][] = [];\n        for (let j = 0; j < col; ++j) {\n            if (g[0][j] === 0) {\n                q.push([0, j]);\n                g[0][j] = 1;\n            }\n        }\n        const dirs: number[] = [-1, 0, 1, 0, -1];\n        for (const [x, y] of q) {\n            if (x === row - 1) {\n                return true;\n            }\n            for (let i = 0; i < 4; ++i) {\n                const nx = x + dirs[i];\n                const ny = y + dirs[i + 1];\n                if (nx >= 0 && nx < row && ny >= 0 && ny < col && g[nx][ny] === 0) {\n                    q.push([nx, ny]);\n                    g[nx][ny] = 1;\n                }\n            }\n        }\n        return false;\n    };\n    while (l < r) {\n        const mid = (l + r + 1) >> 1;\n        if (check(mid)) {\n            l = mid;\n        } else {\n            r = mid - 1;\n        }\n    }\n    return l;\n}",
+    approach: "Бінарний пошук по дню + BFS/Union-Find: чи з'єднані верхній і нижній краї, коли залиті клітинки перших mid днів.\n\n**Складність:** Time O(m·n·log), Space O(m·n)",
     signature: "{\"name\":\"latestDayToCross\",\"paramTypes\":[\"integer\",\"integer\",\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5376,6 +6167,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number[][]} query\n * @return {number[]}\n */\nvar minimumCost = function(n, edges, query) {\n    \n};",
     testCases: "[{\"input\":\"[5,[[0,1,7],[1,3,7],[1,2,1]],[[0,3],[3,4]]]\",\"expected\":\"[1,-1]\"},{\"input\":\"[3,[[0,2,7],[0,1,15],[1,2,6],[1,2,1]],[[1,2]]]\",\"expected\":\"[0]\"}]",
+    solution: "class UnionFind {\n    p: number[];\n    size: number[];\n    constructor(n: number) {\n        this.p = Array(n)\n            .fill(0)\n            .map((_, i) => i);\n        this.size = Array(n).fill(1);\n    }\n\n    find(x: number): number {\n        if (this.p[x] !== x) {\n            this.p[x] = this.find(this.p[x]);\n        }\n        return this.p[x];\n    }\n\n    union(a: number, b: number): boolean {\n        const [pa, pb] = [this.find(a), this.find(b)];\n        if (pa === pb) {\n            return false;\n        }\n        if (this.size[pa] > this.size[pb]) {\n            this.p[pb] = pa;\n            this.size[pa] += this.size[pb];\n        } else {\n            this.p[pa] = pb;\n            this.size[pb] += this.size[pa];\n        }\n        return true;\n    }\n\n    getSize(x: number): number {\n        return this.size[this.find(x)];\n    }\n}\n\nfunction minimumCost(n: number, edges: number[][], query: number[][]): number[] {\n    const uf = new UnionFind(n);\n    const g: number[] = Array(n).fill(-1);\n    for (const [u, v, _] of edges) {\n        uf.union(u, v);\n    }\n    for (const [u, _, w] of edges) {\n        const root = uf.find(u);\n        g[root] &= w;\n    }\n    const f = (u: number, v: number): number => {\n        if (u === v) {\n            return 0;\n        }\n        const [a, b] = [uf.find(u), uf.find(v)];\n        return a === b ? g[a] : -1;\n    };\n    return query.map(([u, v]) => f(u, v));\n}",
+    approach: "Мінімум AND уздовж шляху досягається взяттям AND усіх ребер компоненти (можна ходити скільки завгодно). Union-Find + AND ваг на компоненту; різні компоненти → -1.\n\n**Складність:** Time O((V+E)·α), Space O(V)",
     signature: "{\"name\":\"minimumCost\",\"paramTypes\":[\"integer\",\"integer[][]\",\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5389,6 +6182,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar subarraysWithKDistinct = function(nums, k) {\n    \n};",
     testCases: "[]",
+    approach: "atMost(k) - atMost(k-1), де atMost — розсувне вікно з лічильником різних елементів.\n\n**Складність:** Time O(n), Space O(k)",
   },
   {
     slug: "swim-in-rising-water",
@@ -5401,6 +6195,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar swimInWater = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[0,2],[1,3]]]\",\"expected\":\"3\"},{\"input\":\"[[[0,1,2,3,4],[24,23,22,21,5],[12,13,14,15,16],[11,17,18,19,20],[10,9,8,7,6]]]\",\"expected\":\"16\"}]",
+    solution: "function swimInWater(grid: number[][]): number {\n    const n = grid.length;\n    const m = n * n;\n    const p = Array.from({ length: m }, (_, i) => i);\n    const hi = new Array<number>(m);\n    const find = (x: number): number => (p[x] === x ? x : (p[x] = find(p[x])));\n\n    for (let i = 0; i < n; ++i) {\n        for (let j = 0; j < n; ++j) {\n            hi[grid[i][j]] = i * n + j;\n        }\n    }\n\n    const dirs = [-1, 0, 1, 0, -1];\n\n    for (let t = 0; t < m; ++t) {\n        const id = hi[t];\n        const x = Math.floor(id / n);\n        const y = id % n;\n\n        for (let k = 0; k < 4; ++k) {\n            const nx = x + dirs[k];\n            const ny = y + dirs[k + 1];\n            if (nx >= 0 && nx < n && ny >= 0 && ny < n && grid[nx][ny] <= t) {\n                p[find(x * n + y)] = find(nx * n + ny);\n            }\n        }\n        if (find(0) === find(m - 1)) {\n            return t;\n        }\n    }\n\n    return 0;\n}",
     approach: "BS + DFS or Dijkstra. O(n² log n)\n\n**Складність:** Time O(n² log n), Space O(n²)",
     signature: "{\"name\":\"swimInWater\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
@@ -5415,6 +6210,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} status\n * @param {number[]} candies\n * @param {number[][]} keys\n * @param {number[][]} containedBoxes\n * @param {number[]} initialBoxes\n * @return {number}\n */\nvar maxCandies = function(status, candies, keys, containedBoxes, initialBoxes) {\n    \n};",
     testCases: "[{\"input\":\"[[1,0,1,0],[7,5,4,100],[[],[],[1],[]],[[1,2],[3],[],[]],[0]]\",\"expected\":\"16\"},{\"input\":\"[[1,0,0,0,0,0],[1,1,1,1,1,1],[[1,2,3,4,5],[],[],[],[],[]],[[1,2,3,4,5],[],[],[],[],[]],[0]]\",\"expected\":\"6\"}]",
+    solution: "function maxCandies(\n    status: number[],\n    candies: number[],\n    keys: number[][],\n    containedBoxes: number[][],\n    initialBoxes: number[],\n): number {\n    const q: number[] = [];\n    const has: Set<number> = new Set();\n    const took: Set<number> = new Set();\n    let ans = 0;\n\n    for (const box of initialBoxes) {\n        has.add(box);\n        if (status[box] === 1) {\n            q.push(box);\n            took.add(box);\n            ans += candies[box];\n        }\n    }\n\n    while (q.length > 0) {\n        const box = q.pop()!;\n\n        for (const k of keys[box]) {\n            if (status[k] === 0) {\n                status[k] = 1;\n                if (has.has(k) && !took.has(k)) {\n                    q.push(k);\n                    took.add(k);\n                    ans += candies[k];\n                }\n            }\n        }\n\n        for (const b of containedBoxes[box]) {\n            has.add(b);\n            if (status[b] === 1 && !took.has(b)) {\n                q.push(b);\n                took.add(b);\n                ans += candies[b];\n            }\n        }\n    }\n\n    return ans;\n}",
+    approach: "BFS: черга відкритих боксів; збирай ключі/бокси, повторюй, поки з'являються нові доступні (маєш ключ або бокс уже відкритий).\n\n**Складність:** Time O(n²) у гіршому, Space O(n)",
     signature: "{\"name\":\"maxCandies\",\"paramTypes\":[\"integer[]\",\"integer[]\",\"integer[][]\",\"integer[][]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5428,6 +6225,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[]}\n */\nvar countSubgraphsForEachDiameter = function(n, edges) {\n    \n};",
     testCases: "[{\"input\":\"[4,[[1,2],[2,3],[2,4]]]\",\"expected\":\"[3,4,0]\"},{\"input\":\"[2,[[1,2]]]\",\"expected\":\"[1]\"},{\"input\":\"[3,[[1,2],[2,3]]]\",\"expected\":\"[2,1]\"}]",
+    solution: "function countSubgraphsForEachDiameter(n: number, edges: number[][]): number[] {\n    const g = Array.from({ length: n }, () => []);\n    for (const [u, v] of edges) {\n        g[u - 1].push(v - 1);\n        g[v - 1].push(u - 1);\n    }\n    const ans: number[] = new Array(n - 1).fill(0);\n    let [mx, msk, nxt] = [0, 0, 0];\n    const dfs = (u: number, d: number) => {\n        if (mx < d) {\n            mx = d;\n            nxt = u;\n        }\n        msk ^= 1 << u;\n        for (const v of g[u]) {\n            if ((msk >> v) & 1) {\n                dfs(v, d + 1);\n            }\n        }\n    };\n    for (let mask = 1; mask < 1 << n; ++mask) {\n        if ((mask & (mask - 1)) === 0) {\n            continue;\n        }\n        msk = mask;\n        mx = 0;\n        const cur = 31 - numberOfLeadingZeros(msk);\n        dfs(cur, 0);\n        if (msk === 0) {\n            msk = mask;\n            mx = 0;\n            dfs(nxt, 0);\n            ++ans[mx - 1];\n        }\n    }\n    return ans;\n}\n\nfunction numberOfLeadingZeros(i: number): number {\n    if (i == 0) return 32;\n    let n = 1;\n    if (i >>> 16 == 0) {\n        n += 16;\n        i <<= 16;\n    }\n    if (i >>> 24 == 0) {\n        n += 8;\n        i <<= 8;\n    }\n    if (i >>> 28 == 0) {\n        n += 4;\n        i <<= 4;\n    }\n    if (i >>> 30 == 0) {\n        n += 2;\n        i <<= 2;\n    }\n    n -= i >>> 31;\n    return n;\n}",
+    approach: "n ≤ 15 → перебирай усі 2ⁿ підмножин; перевіряй зв'язність, рахуй діаметр піддерева (BFS/Floyd), інкрементуй ans[діаметр].\n\n**Складність:** Time O(2ⁿ·n²), Space O(n²)",
     signature: "{\"name\":\"countSubgraphsForEachDiameter\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5441,6 +6240,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} s\n * @param {number} k\n * @return {string}\n */\nvar orderlyQueue = function(s, k) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"cba\\\",1]\",\"expected\":\"\\\"acb\\\"\"},{\"input\":\"[\\\"baaca\\\",3]\",\"expected\":\"\\\"aaabc\\\"\"}]",
+    solution: "function orderlyQueue(s: string, k: number): string {\n    if (k > 1) {\n        return [...s].sort().join('');\n    }\n    const n = s.length;\n    let min = s;\n    for (let i = 1; i < n; i++) {\n        const t = s.slice(i) + s.slice(0, i);\n        if (t < min) {\n            min = t;\n        }\n    }\n    return min;\n}",
+    approach: "Якщо k ≥ 2 — можна відсортувати рядок (повертай sorted). Якщо k === 1 — мінімальна з n циклічних ротацій.\n\n**Складність:** Time O(n²) (k=1) або O(n log n), Space O(n)",
     signature: "{\"name\":\"orderlyQueue\",\"paramTypes\":[\"string\",\"integer\"],\"returnType\":\"string\"}",
   },
   {
@@ -5454,6 +6255,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar magnificentSets = function(n, edges) {\n    \n};",
     testCases: "[{\"input\":\"[6,[[1,2],[1,4],[1,5],[2,6],[2,3],[4,6]]]\",\"expected\":\"4\"},{\"input\":\"[3,[[1,2],[2,3],[3,1]]]\",\"expected\":\"-1\"}]",
+    solution: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar magnificentSets = function (n, edges) {\n    const g = Array.from({ length: n }, () => []);\n    for (const [a, b] of edges) {\n        g[a - 1].push(b - 1);\n        g[b - 1].push(a - 1);\n    }\n    const d = Array(n).fill(0);\n    for (let i = 0; i < n; ++i) {\n        const q = [i];\n        const dist = Array(n).fill(0);\n        dist[i] = 1;\n        let mx = 1;\n        let root = i;\n        while (q.length) {\n            const a = q.shift();\n            root = Math.min(root, a);\n            for (const b of g[a]) {\n                if (dist[b] === 0) {\n                    dist[b] = dist[a] + 1;\n                    mx = Math.max(mx, dist[b]);\n                    q.push(b);\n                } else if (Math.abs(dist[b] - dist[a]) !== 1) {\n                    return -1;\n                }\n            }\n        }\n        d[root] = Math.max(d[root], mx);\n    }\n    return d.reduce((a, b) => a + b);\n};",
+    approach: "Граф має бути двочастковим (інакше -1). Для кожної компоненти: BFS з кожної вершини як старту, максимальна «глибина рівнів»; сумуй по компонентах.\n\n**Складність:** Time O(V·(V+E)), Space O(V)",
     signature: "{\"name\":\"magnificentSets\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5467,6 +6270,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} relations\n * @param {number[]} time\n * @return {number}\n */\nvar minimumTime = function(n, relations, time) {\n    \n};",
     testCases: "[{\"input\":\"[3,[[1,3],[2,3]],[3,2,5]]\",\"expected\":\"8\"},{\"input\":\"[5,[[1,5],[2,5],[3,5],[3,4],[4,5]],[1,2,3,4,5]]\",\"expected\":\"12\"}]",
+    solution: "function minimumTime(n: number, relations: number[][], time: number[]): number {\n    const g: number[][] = Array(n)\n        .fill(0)\n        .map(() => []);\n    const indeg: number[] = Array(n).fill(0);\n    for (const [a, b] of relations) {\n        g[a - 1].push(b - 1);\n        ++indeg[b - 1];\n    }\n    const q: number[] = [];\n    const f: number[] = Array(n).fill(0);\n    let ans: number = 0;\n    for (let i = 0; i < n; ++i) {\n        if (indeg[i] === 0) {\n            q.push(i);\n            f[i] = time[i];\n            ans = Math.max(ans, f[i]);\n        }\n    }\n    while (q.length > 0) {\n        const i = q.shift()!;\n        for (const j of g[i]) {\n            f[j] = Math.max(f[j], f[i] + time[j]);\n            ans = Math.max(ans, f[j]);\n            if (--indeg[j] === 0) {\n                q.push(j);\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Топологічна сортування + DP: finish[v] = time[v] + max(finish[u] для попередників u). Відповідь — максимум.\n\n**Складність:** Time O(V+E), Space O(V)",
     signature: "{\"name\":\"minimumTime\",\"paramTypes\":[\"integer\",\"integer[][]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5480,6 +6285,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "\nvar FreqStack = function() {\n    \n};\n\n/** \n * @param {number} val\n * @return {void}\n */\nFreqStack.prototype.push = function(val) {\n    \n};\n\n/**\n * @return {number}\n */\nFreqStack.prototype.pop = function() {\n    \n};\n\n/** \n * Your FreqStack object will be instantiated and called as such:\n * var obj = new FreqStack()\n * obj.push(val)\n * var param_2 = obj.pop()\n */",
     testCases: "[]",
+    solution: "class FreqStack {\n  private freq = new Map<number, number>();\n  private groups = new Map<number, number[]>();\n  private maxFreq = 0;\n\n  push(val: number): void {\n    const f = (this.freq.get(val) ?? 0) + 1;\n    this.freq.set(val, f);\n    this.maxFreq = Math.max(this.maxFreq, f);\n    if (!this.groups.has(f)) this.groups.set(f, []);\n    this.groups.get(f)!.push(val);\n  }\n\n  pop(): number {\n    const g = this.groups.get(this.maxFreq)!;\n    const val = g.pop()!;\n    this.freq.set(val, this.maxFreq - 1);\n    if (g.length === 0) this.maxFreq--;\n    return val;\n  }\n}",
+    approach: "Map значення→частота + Map частота→стек значень + maxFreq. push інкрементує й кладе на стек цієї частоти; pop бере з maxFreq-стека.\n\n**Складність:** Time O(1), Space O(n)",
   },
   {
     slug: "valid-arrangement-of-pairs",
@@ -5492,6 +6299,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} pairs\n * @return {number[][]}\n */\nvar validArrangement = function(pairs) {\n    \n};",
     testCases: "[]",
+    approach: "Ейлерів шлях у орграфі: старт — вершина з out-in === 1 (інакше будь-яка); Ієрхольцер (DFS зі стеком), результат розверни.\n\n**Складність:** Time O(E), Space O(E)",
   },
   {
     slug: "find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree",
@@ -5504,6 +6312,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[][]}\n */\nvar findCriticalAndPseudoCriticalEdges = function(n, edges) {\n    \n};",
     testCases: "[]",
+    approach: "Порахуй вагу MST. Для кожного ребра: без нього MST важче/незв'язний → critical; інакше форсуй його в MST і якщо вага не зросла → pseudo-critical. Union-Find + сортування ребер.\n\n**Складність:** Time O(E²·α), Space O(V)",
   },
   {
     slug: "count-fertile-pyramids-in-a-land",
@@ -5516,6 +6325,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar countPyramids = function(grid) {\n    \n};",
     testCases: "[]",
+    approach: "DP знизу вгору (і для перевернутих — зверху вниз): dp[i][j] = 1 + min(трьох сусідів у попередньому ряді), якщо клітинка родюча; сумуй (dp-1).\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
     slug: "maximize-spanning-tree-stability-with-upgrades",
@@ -5528,6 +6338,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number} k\n * @return {number}\n */\nvar maxStability = function(n, edges, k) {\n    \n};",
     testCases: "[{\"input\":\"[3,[[0,1,2,1],[1,2,3,0]],1]\",\"expected\":\"2\"},{\"input\":\"[3,[[0,1,4,0],[1,2,3,0],[0,2,1,0]],2]\",\"expected\":\"6\"},{\"input\":\"[3,[[0,1,1,1],[1,2,1,1],[2,0,1,1]],0]\",\"expected\":\"-1\"}]",
+    solution: "class UnionFind {\n    p: number[];\n    size: number[];\n    cnt: number;\n\n    constructor(n: number) {\n        this.p = Array.from({ length: n }, (_, i) => i);\n        this.size = new Array(n).fill(1);\n        this.cnt = n;\n    }\n\n    find(x: number): number {\n        if (this.p[x] !== x) {\n            this.p[x] = this.find(this.p[x]);\n        }\n        return this.p[x];\n    }\n\n    union(a: number, b: number): boolean {\n        const pa = this.find(a);\n        const pb = this.find(b);\n        if (pa === pb) return false;\n\n        if (this.size[pa] > this.size[pb]) {\n            this.p[pb] = pa;\n            this.size[pa] += this.size[pb];\n        } else {\n            this.p[pa] = pb;\n            this.size[pb] += this.size[pa];\n        }\n\n        this.cnt--;\n        return true;\n    }\n}\n\nlet N: number;\nlet E: number[][];\nlet K: number;\n\nfunction check(lim: number): boolean {\n    const uf = new UnionFind(N);\n\n    for (const [u, v, s] of E) {\n        if (s >= lim) {\n            uf.union(u, v);\n        }\n    }\n\n    let rem = K;\n    for (const [u, v, s] of E) {\n        if (s * 2 >= lim && rem > 0) {\n            if (uf.union(u, v)) {\n                rem--;\n            }\n        }\n    }\n\n    return uf.cnt === 1;\n}\n\nfunction maxStability(n: number, edges: number[][], k: number): number {\n    N = n;\n    E = edges;\n    K = k;\n\n    const uf = new UnionFind(n);\n    let mn = 1e6;\n\n    for (const [u, v, s, must] of edges) {\n        if (must) {\n            mn = Math.min(mn, s);\n            if (!uf.union(u, v)) return -1;\n        }\n    }\n\n    for (const [u, v] of edges) {\n        uf.union(u, v);\n    }\n\n    if (uf.cnt > 1) return -1;\n\n    let l = 1,\n        r = mn;\n\n    while (l < r) {\n        const mid = (l + r + 1) >> 1;\n        if (check(mid)) {\n            l = mid;\n        } else {\n            r = mid - 1;\n        }\n    }\n\n    return l;\n}",
+    approach: "Бінарний пошук по мінімальній стабільності x: жадібно будуй кістяк, вимагаючи ребер ≥ x (апгрейдимо ті, чия подвоєна вага дотягує), рахуючи використані апгрейди ≤ k.\n\n**Складність:** Time O(E·log·α), Space O(V)",
     signature: "{\"name\":\"maxStability\",\"paramTypes\":[\"integer\",\"integer[][]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5541,6 +6353,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {boolean}\n */\nvar xorGame = function(nums) {\n    \n};",
     testCases: "[]",
+    approach: "Аліса виграє, якщо XOR усіх чисел === 0, або якщо кількість чисел парна.\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
     slug: "shortest-path-visiting-all-nodes",
@@ -5553,6 +6366,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} graph\n * @return {number}\n */\nvar shortestPathLength = function(graph) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,3],[0],[0],[0]]]\",\"expected\":\"4\"},{\"input\":\"[[[1],[0,2,4],[1,3,4],[2],[1,2]]]\",\"expected\":\"4\"}]",
+    solution: "function shortestPathLength(graph: number[][]): number {\n    const n = graph.length;\n    const q: number[][] = [];\n    const vis: boolean[][] = new Array(n).fill(false).map(() => new Array(1 << n).fill(false));\n    for (let i = 0; i < n; ++i) {\n        q.push([i, 1 << i]);\n        vis[i][1 << i] = true;\n    }\n    for (let ans = 0; ; ++ans) {\n        for (let k = q.length; k; --k) {\n            const [i, st] = q.shift()!;\n            if (st === (1 << n) - 1) {\n                return ans;\n            }\n            for (const j of graph[i]) {\n                const nst = st | (1 << j);\n                if (!vis[j][nst]) {\n                    vis[j][nst] = true;\n                    q.push([j, nst]);\n                }\n            }\n        }\n    }\n}",
+    approach: "BFS по станах (вузол, бітмаска відвіданих); старт — усі вузли одночасно; мета — маска === (1<<n)-1.\n\n**Складність:** Time O(2ⁿ·n²), Space O(2ⁿ·n)",
     signature: "{\"name\":\"shortestPathLength\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5566,6 +6381,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} m\n * @param {number[]} group\n * @param {number[][]} beforeItems\n * @return {number[]}\n */\nvar sortItems = function(n, m, group, beforeItems) {\n    \n};",
     testCases: "[{\"input\":\"[8,2,[-1,-1,1,0,0,1,0,-1],[[],[6],[5],[6],[3,6],[],[],[]]]\",\"expected\":\"[7,0,5,2,6,3,4,1]\"},{\"input\":\"[8,2,[-1,-1,1,0,0,1,0,-1],[[],[6],[5],[6],[3],[],[4],[]]]\",\"expected\":\"[]\"}]",
+    solution: "function sortItems(n: number, m: number, group: number[], beforeItems: number[][]): number[] {\n    let idx = m;\n    const groupItems: number[][] = new Array(n + m).fill(0).map(() => []);\n    const itemDegree: number[] = new Array(n).fill(0);\n    const gorupDegree: number[] = new Array(n + m).fill(0);\n    const itemGraph: number[][] = new Array(n).fill(0).map(() => []);\n    const groupGraph: number[][] = new Array(n + m).fill(0).map(() => []);\n    for (let i = 0; i < n; ++i) {\n        if (group[i] === -1) {\n            group[i] = idx++;\n        }\n        groupItems[group[i]].push(i);\n    }\n    for (let i = 0; i < n; ++i) {\n        for (const j of beforeItems[i]) {\n            if (group[i] === group[j]) {\n                ++itemDegree[i];\n                itemGraph[j].push(i);\n            } else {\n                ++gorupDegree[group[i]];\n                groupGraph[group[j]].push(group[i]);\n            }\n        }\n    }\n    let items = new Array(n + m).fill(0).map((_, i) => i);\n    const topoSort = (graph: number[][], degree: number[], items: number[]): number[] => {\n        const q: number[] = [];\n        for (const i of items) {\n            if (degree[i] === 0) {\n                q.push(i);\n            }\n        }\n        const ans: number[] = [];\n        while (q.length) {\n            const i = q.pop()!;\n            ans.push(i);\n            for (const j of graph[i]) {\n                if (--degree[j] === 0) {\n                    q.push(j);\n                }\n            }\n        }\n        return ans.length === items.length ? ans : [];\n    };\n    const groupOrder = topoSort(groupGraph, gorupDegree, items);\n    if (groupOrder.length === 0) {\n        return [];\n    }\n    const ans: number[] = [];\n    for (const gi of groupOrder) {\n        items = groupItems[gi];\n        const itemOrder = topoSort(itemGraph, itemDegree, items);\n        if (itemOrder.length !== items.length) {\n            return [];\n        }\n        ans.push(...itemOrder);\n    }\n    return ans;\n}",
+    approach: "Дай безгруповим власні групи. Дві топологічні сортування: між групами і всередині кожної групи; склей. Цикл → [].\n\n**Складність:** Time O(V+E), Space O(V+E)",
     signature: "{\"name\":\"sortItems\",\"paramTypes\":[\"integer\",\"integer\",\"integer[]\",\"list<list<integer>>\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5579,6 +6396,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number} m\n * @param {number} k\n * @return {number}\n */\nvar numOfArrays = function(n, m, k) {\n    \n};",
     testCases: "[]",
+    approach: "DP[i][j][max] — масивів довжини i з рівно j «оновленнями максимуму» і поточним максимумом max; переходи: додаємо ≤max (без оновлення) або новий максимум.\n\n**Складність:** Time O(n·k·m²), Space O(n·k·m)",
   },
   {
     slug: "sum-of-distances-in-tree",
@@ -5591,6 +6409,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number[]}\n */\nvar sumOfDistancesInTree = function(n, edges) {\n    \n};",
     testCases: "[{\"input\":\"[6,[[0,1],[0,2],[2,3],[2,4],[2,5]]]\",\"expected\":\"[8,12,6,10,10,10]\"},{\"input\":\"[1,[]]\",\"expected\":\"[0]\"},{\"input\":\"[2,[[1,0]]]\",\"expected\":\"[1,1]\"}]",
+    solution: "function sumOfDistancesInTree(n: number, edges: number[][]): number[] {\n    const g: number[][] = Array.from({ length: n }, () => []);\n    for (const [a, b] of edges) {\n        g[a].push(b);\n        g[b].push(a);\n    }\n    const ans: number[] = new Array(n).fill(0);\n    const size: number[] = new Array(n).fill(0);\n    const dfs1 = (i: number, fa: number, d: number) => {\n        ans[0] += d;\n        size[i] = 1;\n        for (const j of g[i]) {\n            if (j !== fa) {\n                dfs1(j, i, d + 1);\n                size[i] += size[j];\n            }\n        }\n    };\n    const dfs2 = (i: number, fa: number, t: number) => {\n        ans[i] = t;\n        for (const j of g[i]) {\n            if (j !== fa) {\n                dfs2(j, i, t - size[j] + n - size[j]);\n            }\n        }\n    };\n    dfs1(0, -1, 0);\n    dfs2(0, -1, ans[0]);\n    return ans;\n}",
+    approach: "Rerooting: перший DFS рахує count[v] і суму відстаней для кореня; другий DFS переносить відповідь на дітей: ans[child] = ans[v] + (n - 2·count[child]).\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"sumOfDistancesInTree\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5604,6 +6424,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums1\n * @param {number[]} nums2\n * @return {number}\n */\nvar goodTriplets = function(nums1, nums2) {\n    \n};",
     testCases: "[{\"input\":\"[[2,0,1,3],[0,1,2,3]]\",\"expected\":\"1\"},{\"input\":\"[[4,0,1,3,2],[4,1,0,2,3]]\",\"expected\":\"4\"}]",
+    solution: "class BinaryIndexedTree {\n    private c: number[];\n    private n: number;\n\n    constructor(n: number) {\n        this.n = n;\n        this.c = Array(n + 1).fill(0);\n    }\n\n    private static lowbit(x: number): number {\n        return x & -x;\n    }\n\n    update(x: number, delta: number): void {\n        while (x <= this.n) {\n            this.c[x] += delta;\n            x += BinaryIndexedTree.lowbit(x);\n        }\n    }\n\n    query(x: number): number {\n        let s = 0;\n        while (x > 0) {\n            s += this.c[x];\n            x -= BinaryIndexedTree.lowbit(x);\n        }\n        return s;\n    }\n}\n\nfunction goodTriplets(nums1: number[], nums2: number[]): number {\n    const n = nums1.length;\n    const pos = new Map<number, number>();\n    nums2.forEach((v, i) => pos.set(v, i + 1));\n\n    const tree = new BinaryIndexedTree(n);\n    let ans = 0;\n\n    for (const num of nums1) {\n        const p = pos.get(num)!;\n        const left = tree.query(p);\n        const total = tree.query(n);\n        const right = n - p - (total - left);\n        ans += left * right;\n        tree.update(p, 1);\n    }\n\n    return ans;\n}",
+    approach: "Перепозиціонуй за перестановкою; BIT/Merge Sort: для кожного середнього елемента рахуй, скільки спільних елементів зліва менше і справа більше в обох масивах.\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"goodTriplets\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"long\"}",
   },
   {
@@ -5617,6 +6439,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n */\nvar Graph = function(n, edges) {\n    \n};\n\n/** \n * @param {number[]} edge\n * @return {void}\n */\nGraph.prototype.addEdge = function(edge) {\n    \n};\n\n/** \n * @param {number} node1 \n * @param {number} node2\n * @return {number}\n */\nGraph.prototype.shortestPath = function(node1, node2) {\n    \n};\n\n/** \n * Your Graph object will be instantiated and called as such:\n * var obj = new Graph(n, edges)\n * obj.addEdge(edge)\n * var param_2 = obj.shortestPath(node1,node2)\n */",
     testCases: "[]",
+    solution: "class Graph {\n    private g: number[][] = [];\n\n    constructor(n: number, edges: number[][]) {\n        this.g = Array.from({ length: n }, () => Array(n).fill(Infinity));\n        for (const [f, t, c] of edges) {\n            this.g[f][t] = c;\n        }\n    }\n\n    addEdge(edge: number[]): void {\n        const [f, t, c] = edge;\n        this.g[f][t] = c;\n    }\n\n    shortestPath(node1: number, node2: number): number {\n        const n = this.g.length;\n        const dist: number[] = Array(n).fill(Infinity);\n        dist[node1] = 0;\n        const vis: boolean[] = Array(n).fill(false);\n        for (let i = 0; i < n; ++i) {\n            let t = -1;\n            for (let j = 0; j < n; ++j) {\n                if (!vis[j] && (t === -1 || dist[j] < dist[t])) {\n                    t = j;\n                }\n            }\n            vis[t] = true;\n            for (let j = 0; j < n; ++j) {\n                dist[j] = Math.min(dist[j], dist[t] + this.g[t][j]);\n            }\n        }\n        return dist[node2] >= Infinity ? -1 : dist[node2];\n    }\n}\n\n/**\n * Your Graph object will be instantiated and called as such:\n * var obj = new Graph(n, edges)\n * obj.addEdge(edge)\n * var param_2 = obj.shortestPath(node1,node2)\n */",
+    approach: "Зберігай список суміжності; addEdge — push; shortestPath — Дейкстра з min-heap від node1 до node2.\n\n**Складність:** Time O(E log V) на запит, Space O(V+E)",
   },
   {
     slug: "jump-game-v",
@@ -5629,6 +6453,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr\n * @param {number} d\n * @return {number}\n */\nvar maxJumps = function(arr, d) {\n    \n};",
     testCases: "[{\"input\":\"[[6,4,14,6,8,13,9,7,10,6,12],2]\",\"expected\":\"4\"},{\"input\":\"[[3,3,3,3,3],3]\",\"expected\":\"1\"},{\"input\":\"[[7,6,5,4,3,2,1],1]\",\"expected\":\"7\"}]",
+    solution: "function maxJumps(arr: number[], d: number): number {\n    const n = arr.length;\n    const f: number[] = new Array(n).fill(0);\n    const dfs = (i: number): number => {\n        if (f[i] !== 0) {\n            return f[i];\n        }\n        let ans = 1;\n        for (let j = i - 1; j >= 0; j--) {\n            if (i - j > d || arr[j] >= arr[i]) {\n                break;\n            }\n            ans = Math.max(ans, 1 + dfs(j));\n        }\n        for (let j = i + 1; j < n; j++) {\n            if (j - i > d || arr[j] >= arr[i]) {\n                break;\n            }\n            ans = Math.max(ans, 1 + dfs(j));\n        }\n        f[i] = ans;\n        return ans;\n    };\n    let ans = 0;\n    for (let i = 0; i < n; i++) {\n        ans = Math.max(ans, dfs(i));\n    }\n    return ans;\n}",
+    approach: "Сортуй індекси за значенням зростаюче; DP: dp[i] = 1 + max(dp сусідів у межах d, нижчих за arr[i]). Обробка від менших до більших.\n\n**Складність:** Time O(n·d), Space O(n)",
     signature: "{\"name\":\"maxJumps\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5642,6 +6468,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} formula\n * @return {string}\n */\nvar countOfAtoms = function(formula) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"H2O\\\"]\",\"expected\":\"\\\"H2O\\\"\"},{\"input\":\"[\\\"Mg(OH)2\\\"]\",\"expected\":\"\\\"H2MgO2\\\"\"},{\"input\":\"[\\\"K4(ON(SO3)2)2\\\"]\",\"expected\":\"\\\"K4N2O14S4\\\"\"}]",
+    solution: "function countOfAtoms(formula: string): string {\n    const getCount = (formula: string, factor = 1) => {\n        const n = formula.length;\n        const cnt: Record<string, number> = {};\n        const s: string[] = [];\n        let [atom, c] = ['', 0];\n\n        for (let i = 0; i <= n; i++) {\n            if (formula[i] === '(') {\n                const stk: string[] = ['('];\n                let j = i;\n                while (stk.length) {\n                    j++;\n                    if (formula[j] === '(') stk.push('(');\n                    else if (formula[j] === ')') stk.pop();\n                }\n\n                const molecule = formula.slice(i + 1, j);\n                const nextFactor: string[] = [];\n\n                while (isDigit(formula[++j])) {\n                    nextFactor.push(formula[j]);\n                }\n\n                const nextC = getCount(molecule, +nextFactor.join('') || 1);\n                for (const [atom, c] of Object.entries(nextC)) {\n                    cnt[atom] = (cnt[atom] ?? 0) + c * factor;\n                }\n\n                i = j - 1;\n                continue;\n            }\n\n            if (s.length && (!formula[i] || isUpper(formula[i]))) {\n                [atom, c] = getAtom(s);\n\n                c *= factor;\n                cnt[atom] = (cnt[atom] ?? 0) + c;\n                s.length = 0;\n            }\n\n            s.push(formula[i]);\n        }\n\n        return cnt;\n    };\n\n    return Object.entries(getCount(formula))\n        .sort(([a], [b]) => a.localeCompare(b))\n        .map(([a, b]) => (b > 1 ? a + b : a))\n        .join('');\n}\n\nconst regex = {\n    atom: /(\\D+)(\\d+)?/,\n    isUpper: /[A-Z]+/,\n};\nconst getAtom = (s: string[]): [string, number] => {\n    const [_, atom, c] = regex.atom.exec(s.join(''))!;\n    return [atom, c ? +c : 1];\n};\nconst isDigit = (ch: string) => !Number.isNaN(Number.parseInt(ch));\nconst isUpper = (ch: string) => regex.isUpper.test(ch);",
+    approach: "Рекурсивний парсер / стек Map. '(' — новий рівень, ')число' — помнож верхню Map і злий у нижню. Наприкінці сортуй елементи, додай кількість (крім 1).\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"countOfAtoms\",\"paramTypes\":[\"string\"],\"returnType\":\"string\"}",
   },
   {
@@ -5655,6 +6483,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} fruits\n * @return {number}\n */\nvar maxCollectedFruits = function(fruits) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,3,4],[5,6,8,7],[9,10,11,12],[13,14,15,16]]]\",\"expected\":\"100\"},{\"input\":\"[[[1,1],[1,1]]]\",\"expected\":\"4\"}]",
+    solution: "function maxCollectedFruits(fruits: number[][]): number {\n    const n = fruits.length;\n    const inf = 1 << 29;\n    const f: number[][] = Array.from({ length: n }, () => Array(n).fill(-inf));\n\n    f[0][n - 1] = fruits[0][n - 1];\n    for (let i = 1; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            f[i][j] = Math.max(f[i - 1][j], f[i - 1][j - 1]) + fruits[i][j];\n            if (j + 1 < n) {\n                f[i][j] = Math.max(f[i][j], f[i - 1][j + 1] + fruits[i][j]);\n            }\n        }\n    }\n\n    f[n - 1][0] = fruits[n - 1][0];\n    for (let j = 1; j < n; j++) {\n        for (let i = j + 1; i < n; i++) {\n            f[i][j] = Math.max(f[i][j - 1], f[i - 1][j - 1]) + fruits[i][j];\n            if (i + 1 < n) {\n                f[i][j] = Math.max(f[i][j], f[i + 1][j - 1] + fruits[i][j]);\n            }\n        }\n    }\n\n    let ans = f[n - 2][n - 1] + f[n - 1][n - 2];\n    for (let i = 0; i < n; i++) {\n        ans += fruits[i][i];\n    }\n\n    return ans;\n}",
+    approach: "Три «діти»: діагональ (фіксована сума головної діагоналі) + два — DP руху вздовж верхньої та лівої зони до (n-1,n-1), не заходячи на діагональ.\n\n**Складність:** Time O(n²), Space O(n²)",
     signature: "{\"name\":\"maxCollectedFruits\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5668,6 +6498,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {boolean}\n */\nvar isGoodArray = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[12,5,7,23]]\",\"expected\":\"true\"},{\"input\":\"[[29,6,10]]\",\"expected\":\"true\"},{\"input\":\"[[3,6]]\",\"expected\":\"false\"}]",
+    solution: "function isGoodArray(nums: number[]): boolean {\n    return nums.reduce(gcd) === 1;\n}\n\nfunction gcd(a: number, b: number): number {\n    return b === 0 ? a : gcd(b, a % b);\n}",
+    approach: "За теоремою Безу масив «хороший» ⇔ gcd усіх чисел === 1.\n\n**Складність:** Time O(n·log), Space O(1)",
     signature: "{\"name\":\"isGoodArray\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"boolean\"}",
   },
   {
@@ -5681,6 +6513,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @return {number}\n */\nvar countOrders = function(n) {\n    \n};",
     testCases: "[]",
+    approach: "Рекурентність: ans(n) = ans(n-1)·(2n-1)·n (для n-ї пари є 2n-1 позицій під pickup і далі місце під delivery). За модулем 1e9+7.\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
     slug: "count-all-possible-routes",
@@ -5693,6 +6526,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} locations\n * @param {number} start\n * @param {number} finish\n * @param {number} fuel\n * @return {number}\n */\nvar countRoutes = function(locations, start, finish, fuel) {\n    \n};",
     testCases: "[{\"input\":\"[[2,3,6,8,4],1,3,5]\",\"expected\":\"4\"},{\"input\":\"[[4,3,1],1,0,6]\",\"expected\":\"5\"},{\"input\":\"[[5,2,1],0,2,3]\",\"expected\":\"0\"}]",
+    solution: "function countRoutes(locations: number[], start: number, finish: number, fuel: number): number {\n    const n = locations.length;\n    const f = Array.from({ length: n }, () => Array(fuel + 1).fill(-1));\n    const mod = 1e9 + 7;\n    const dfs = (i: number, k: number): number => {\n        if (k < Math.abs(locations[i] - locations[finish])) {\n            return 0;\n        }\n        if (f[i][k] !== -1) {\n            return f[i][k];\n        }\n        let ans = i === finish ? 1 : 0;\n        for (let j = 0; j < n; ++j) {\n            if (j !== i) {\n                const x = Math.abs(locations[i] - locations[j]);\n                ans = (ans + dfs(j, k - x)) % mod;\n            }\n        }\n        return (f[i][k] = ans);\n    };\n    return dfs(start, fuel);\n}",
+    approach: "DP з мемо: f(city, fuelLeft) = Σ f(next, fuelLeft - |loc[city]-loc[next]|) для всіх next; +1, якщо city === finish.\n\n**Складність:** Time O(n²·fuel), Space O(n·fuel)",
     signature: "{\"name\":\"countRoutes\",\"paramTypes\":[\"integer[]\",\"integer\",\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5706,6 +6541,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} requests\n * @return {number}\n */\nvar maximumRequests = function(n, requests) {\n    \n};",
     testCases: "[{\"input\":\"[5,[[0,1],[1,0],[0,1],[1,2],[2,0],[3,4]]]\",\"expected\":\"5\"},{\"input\":\"[3,[[0,0],[1,2],[2,1]]]\",\"expected\":\"3\"},{\"input\":\"[4,[[0,3],[3,1],[1,2],[2,0]]]\",\"expected\":\"4\"}]",
+    solution: "function maximumRequests(n: number, requests: number[][]): number {\n    const m = requests.length;\n    let ans = 0;\n    const check = (mask: number): boolean => {\n        const cnt = Array(n).fill(0);\n        for (let i = 0; i < m; ++i) {\n            if ((mask >> i) & 1) {\n                const [f, t] = requests[i];\n                --cnt[f];\n                ++cnt[t];\n            }\n        }\n        return cnt.every(v => v === 0);\n    };\n    for (let mask = 0; mask < 1 << m; ++mask) {\n        const cnt = bitCount(mask);\n        if (ans < cnt && check(mask)) {\n            ans = cnt;\n        }\n    }\n    return ans;\n}\n\nfunction bitCount(i: number): number {\n    i = i - ((i >>> 1) & 0x55555555);\n    i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);\n    i = (i + (i >>> 4)) & 0x0f0f0f0f;\n    i = i + (i >>> 8);\n    i = i + (i >>> 16);\n    return i & 0x3f;\n}",
+    approach: "n ≤ 20, requests ≤ 16 → перебирай бітмаски підмножин запитів; для кожної перевір, що баланс кожної будівлі 0; максимізуй popcount.\n\n**Складність:** Time O(2^R·(R+n)), Space O(n)",
     signature: "{\"name\":\"maximumRequests\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5719,6 +6556,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number[][]} swaps\n * @return {number}\n */\nvar maxAlternatingSum = function(nums, swaps) {\n    \n};",
     testCases: "[]",
+    approach: "Свопи в межах компонент зв'язності (за allowedSwaps) → у кожній компоненті вільно переставляй; жадібно клади більші значення на «плюсові» позиції компоненти.\n\n**Складність:** Time O(n log n·α), Space O(n)",
   },
   {
     slug: "maximize-subarrays-after-removing-one-conflicting-pair",
@@ -5731,6 +6569,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} conflictingPairs\n * @return {number}\n */\nvar maxSubarrays = function(n, conflictingPairs) {\n    \n};",
     testCases: "[{\"input\":\"[4,[[2,3],[1,4]]]\",\"expected\":\"9\"},{\"input\":\"[5,[[1,2],[2,5],[3,5]]]\",\"expected\":\"12\"}]",
+    solution: "function maxSubarrays(n: number, conflictingPairs: number[][]): number {\n    const g: number[][] = Array.from({ length: n + 1 }, () => []);\n    for (let [a, b] of conflictingPairs) {\n        if (a > b) {\n            [a, b] = [b, a];\n        }\n        g[a].push(b);\n    }\n\n    const cnt: number[] = Array(n + 2).fill(0);\n    let ans = 0,\n        add = 0;\n    let b1 = n + 1,\n        b2 = n + 1;\n\n    for (let a = n; a > 0; a--) {\n        for (const b of g[a]) {\n            if (b < b1) {\n                b2 = b1;\n                b1 = b;\n            } else if (b < b2) {\n                b2 = b;\n            }\n        }\n        ans += b1 - a;\n        cnt[b1] += b2 - b1;\n        add = Math.max(add, cnt[b1]);\n    }\n\n    ans += add;\n    return ans;\n}",
+    approach: "Для кожного правого кінця r тримай два найближчі лівих обмеження; сумуй базову кількість валідних підмасивів + виграш від видалення кожної пари (segment/prefix).\n\n**Складність:** Time O(n + m), Space O(n)",
     signature: "{\"name\":\"maxSubarrays\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"long\"}",
   },
   {
@@ -5744,6 +6584,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar maximumScore = function(grid) {\n    \n};",
     testCases: "[]",
+    approach: "DP по стовпцях зі станом (висота заливки попереднього, поточного стовпця); префіксні суми стовпців для швидкого підрахунку очок. 3 переходи (росте/спадає/тримається).\n\n**Складність:** Time O(n³), Space O(n²)",
   },
   {
     slug: "find-the-number-of-ways-to-place-people-ii",
@@ -5756,6 +6597,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} points\n * @return {number}\n */\nvar numberOfPairs = function(points) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,1],[2,2],[3,3]]]\",\"expected\":\"0\"},{\"input\":\"[[[6,2],[4,4],[2,6]]]\",\"expected\":\"2\"},{\"input\":\"[[[3,1],[1,3],[1,1]]]\",\"expected\":\"2\"}]",
+    solution: "function numberOfPairs(points: number[][]): number {\n    points.sort((a, b) => (a[0] === b[0] ? b[1] - a[1] : a[0] - b[0]));\n    const n = points.length;\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        const [_, y1] = points[i];\n        let maxY = -Infinity;\n        for (let j = i + 1; j < n; ++j) {\n            const [_, y2] = points[j];\n            if (maxY < y2 && y2 <= y1) {\n                maxY = y2;\n                ++ans;\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Сортуй за x зростаюче, за y спадаюче; для кожного i йди по j>i, тримай «поточний максимум y ≤ y_i»; пара валідна, якщо y_j між ними й нічого не заважає.\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"numberOfPairs\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5769,6 +6612,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar maximumScore = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[1,4,3,7,4,5],3]\",\"expected\":\"15\"},{\"input\":\"[[5,5,4,5,4,1,1,1],0]\",\"expected\":\"20\"}]",
+    solution: "function maximumScore(nums: number[], k: number): number {\n    const n = nums.length;\n    const left: number[] = Array(n).fill(-1);\n    const right: number[] = Array(n).fill(n);\n    const stk: number[] = [];\n    for (let i = 0; i < n; ++i) {\n        while (stk.length && nums[stk.at(-1)] >= nums[i]) {\n            stk.pop();\n        }\n        if (stk.length) {\n            left[i] = stk.at(-1);\n        }\n        stk.push(i);\n    }\n    stk.length = 0;\n    for (let i = n - 1; ~i; --i) {\n        while (stk.length && nums[stk.at(-1)] > nums[i]) {\n            stk.pop();\n        }\n        if (stk.length) {\n            right[i] = stk.at(-1);\n        }\n        stk.push(i);\n    }\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        if (left[i] + 1 <= k && k <= right[i] - 1) {\n            ans = Math.max(ans, nums[i] * (right[i] - left[i] - 1));\n        }\n    }\n    return ans;\n}",
+    approach: "Два вказівники від k назовні: завжди розширюй у бік вищого сусіда; score = min по вікну · довжина; тримай максимум.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"maximumScore\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5782,6 +6627,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} heightMap\n * @return {number}\n */\nvar trapRainWater = function(heightMap) {\n    \n};",
     testCases: "[]",
+    solution: "function trapRainWater(heightMap: number[][]): number {\n    const m = heightMap.length;\n    const n = heightMap[0].length;\n    const vis: boolean[][] = Array.from({ length: m }, () => new Array(n).fill(false));\n    const pq = new PriorityQueue<number[]>((a, b) => a[0] - b[0]);\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (i === 0 || i === m - 1 || j === 0 || j === n - 1) {\n                pq.enqueue([heightMap[i][j], i, j]);\n                vis[i][j] = true;\n            }\n        }\n    }\n\n    let ans = 0;\n    const dirs = [-1, 0, 1, 0, -1];\n    while (!pq.isEmpty()) {\n        const [h, i, j] = pq.dequeue();\n        for (let k = 0; k < 4; ++k) {\n            const x = i + dirs[k];\n            const y = j + dirs[k + 1];\n            if (x >= 0 && x < m && y >= 0 && y < n && !vis[x][y]) {\n                ans += Math.max(0, h - heightMap[x][y]);\n                vis[x][y] = true;\n                pq.enqueue([Math.max(h, heightMap[x][y]), x, y]);\n            }\n        }\n    }\n    return ans;\n}",
+    approach: "Min-heap межі: почни з усіх граничних клітинок; діставай найнижчу, для сусідів усередині додавай воду max(0, рівень - висота), пуш із оновленим рівнем.\n\n**Складність:** Time O(m·n·log(mn)), Space O(m·n)",
   },
   {
     slug: "brace-expansion-ii",
@@ -5794,6 +6641,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} expression\n * @return {string[]}\n */\nvar braceExpansionII = function(expression) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"{a,b}{c,{d,e}}\\\"]\",\"expected\":\"[\\\"ac\\\",\\\"ad\\\",\\\"ae\\\",\\\"bc\\\",\\\"bd\\\",\\\"be\\\"]\"},{\"input\":\"[\\\"{{a,z},a{b,c},{ab,z}}\\\"]\",\"expected\":\"[\\\"a\\\",\\\"ab\\\",\\\"ac\\\",\\\"z\\\"]\"}]",
+    solution: "function braceExpansionII(expression: string): string[] {\n    const dfs = (exp: string) => {\n        const j = exp.indexOf('}');\n        if (j === -1) {\n            s.add(exp);\n            return;\n        }\n        const i = exp.lastIndexOf('{', j);\n        const a = exp.substring(0, i);\n        const c = exp.substring(j + 1);\n        for (const b of exp.substring(i + 1, j).split(',')) {\n            dfs(a + b + c);\n        }\n    };\n    const s: Set<string> = new Set();\n    dfs(expression);\n    return Array.from(s).sort();\n}",
+    approach: "Рекурсивний парсер: конкатенація = декартів добуток множин, кома = об'єднання. Стек для вкладених '{}'. Результат сортуй.\n\n**Складність:** Time O(вихід·log), Space O(вихід)",
     signature: "{\"name\":\"braceExpansionII\",\"paramTypes\":[\"string\"],\"returnType\":\"list<string>\"}",
   },
   {
@@ -5807,6 +6656,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} quality\n * @param {number[]} wage\n * @param {number} k\n * @return {number}\n */\nvar mincostToHireWorkers = function(quality, wage, k) {\n    \n};",
     testCases: "[]",
+    approach: "Сортуй за ratio wage/quality зростаюче; йди, тримаючи max-heap якостей розміру k; вартість = сумаQuality · поточний ratio; мінімізуй.\n\n**Складність:** Time O(n log n), Space O(k)",
   },
   {
     slug: "sum-of-k-mirror-numbers",
@@ -5819,6 +6669,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} k\n * @param {number} n\n * @return {number}\n */\nvar kMirror = function(k, n) {\n    \n};",
     testCases: "[{\"input\":\"[2,5]\",\"expected\":\"25\"},{\"input\":\"[3,7]\",\"expected\":\"499\"},{\"input\":\"[7,17]\",\"expected\":\"20379000\"}]",
+    solution: "function kMirror(k: number, n: number): number {\n    function check(x: number, k: number): boolean {\n        const s: number[] = [];\n        while (x > 0) {\n            s.push(x % k);\n            x = Math.floor(x / k);\n        }\n        for (let i = 0, j = s.length - 1; i < j; i++, j--) {\n            if (s[i] !== s[j]) {\n                return false;\n            }\n        }\n        return true;\n    }\n\n    let ans = 0;\n    for (let l = 1; ; l++) {\n        const x = Math.pow(10, Math.floor((l - 1) / 2));\n        const y = Math.pow(10, Math.floor((l + 1) / 2));\n        for (let i = x; i < y; i++) {\n            let v = i;\n            let j = l % 2 === 0 ? i : Math.floor(i / 10);\n            while (j > 0) {\n                v = v * 10 + (j % 10);\n                j = Math.floor(j / 10);\n            }\n            if (check(v, k)) {\n                ans += v;\n                n--;\n                if (n === 0) {\n                    return ans;\n                }\n            }\n        }\n    }\n}",
+    approach: "Генеруй десяткові паліндроми за зростанням (по половинках); перевіряй, чи паліндром і в базі k; бери перші n, сумуй.\n\n**Складність:** Time O(n·довжина), Space O(1)",
     signature: "{\"name\":\"kMirror\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"long\"}",
   },
   {
@@ -5832,6 +6684,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minimumSum = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,0,1],[1,1,1]]]\",\"expected\":\"5\"},{\"input\":\"[[[1,0,1,0],[0,1,0,1]]]\",\"expected\":\"5\"}]",
+    solution: "function minimumSum(grid: number[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    let ans = m * n;\n    const inf = Number.MAX_SAFE_INTEGER;\n    const f = (i1: number, j1: number, i2: number, j2: number): number => {\n        let [x1, y1] = [inf, inf];\n        let [x2, y2] = [-inf, -inf];\n        for (let i = i1; i <= i2; i++) {\n            for (let j = j1; j <= j2; j++) {\n                if (grid[i][j] === 1) {\n                    x1 = Math.min(x1, i);\n                    y1 = Math.min(y1, j);\n                    x2 = Math.max(x2, i);\n                    y2 = Math.max(y2, j);\n                }\n            }\n        }\n        return x1 === inf ? 0 : (x2 - x1 + 1) * (y2 - y1 + 1);\n    };\n\n    for (let i1 = 0; i1 < m - 1; i1++) {\n        for (let i2 = i1 + 1; i2 < m - 1; i2++) {\n            ans = Math.min(\n                ans,\n                f(0, 0, i1, n - 1) + f(i1 + 1, 0, i2, n - 1) + f(i2 + 1, 0, m - 1, n - 1),\n            );\n        }\n    }\n\n    for (let j1 = 0; j1 < n - 1; j1++) {\n        for (let j2 = j1 + 1; j2 < n - 1; j2++) {\n            ans = Math.min(\n                ans,\n                f(0, 0, m - 1, j1) + f(0, j1 + 1, m - 1, j2) + f(0, j2 + 1, m - 1, n - 1),\n            );\n        }\n    }\n\n    for (let i = 0; i < m - 1; i++) {\n        for (let j = 0; j < n - 1; j++) {\n            ans = Math.min(ans, f(0, 0, i, j) + f(0, j + 1, i, n - 1) + f(i + 1, 0, m - 1, n - 1));\n            ans = Math.min(\n                ans,\n                f(0, 0, i, n - 1) + f(i + 1, 0, m - 1, j) + f(i + 1, j + 1, m - 1, n - 1),\n            );\n            ans = Math.min(ans, f(0, 0, i, j) + f(i + 1, 0, m - 1, j) + f(0, j + 1, m - 1, n - 1));\n            ans = Math.min(\n                ans,\n                f(0, 0, m - 1, j) + f(0, j + 1, i, n - 1) + f(i + 1, j + 1, m - 1, n - 1),\n            );\n        }\n    }\n\n    return ans;\n}",
+    approach: "Три прямокутники → перебирай усі способи розрізати сітку на 3 частини (2 горизонтальні лінії, або 1 гориз.+1 верт. у кожній половині); для кожної частини — мінімальний bounding box.\n\n**Складність:** Time O(m²·n² або m·n·(m+n)), Space O(1)",
     signature: "{\"name\":\"minimumSum\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5845,6 +6699,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} events\n * @param {number} k\n * @return {number}\n */\nvar maxValue = function(events, k) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,4],[3,4,3],[2,3,1]],2]\",\"expected\":\"7\"},{\"input\":\"[[[1,2,4],[3,4,3],[2,3,10]],2]\",\"expected\":\"10\"},{\"input\":\"[[[1,1,1],[2,2,2],[3,3,3],[4,4,4]],3]\",\"expected\":\"9\"}]",
+    solution: "function maxValue(events: number[][], k: number): number {\n    events.sort((a, b) => a[0] - b[0]);\n    const n = events.length;\n    const f: number[][] = Array.from({ length: n }, () => Array(k + 1).fill(0));\n\n    const dfs = (i: number, k: number): number => {\n        if (i >= n || k <= 0) {\n            return 0;\n        }\n        if (f[i][k] > 0) {\n            return f[i][k];\n        }\n\n        const ed = events[i][1],\n            val = events[i][2];\n\n        let left = i + 1,\n            right = n;\n        while (left < right) {\n            const mid = (left + right) >> 1;\n            if (events[mid][0] > ed) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        }\n        const p = left;\n\n        f[i][k] = Math.max(dfs(i + 1, k), dfs(p, k - 1) + val);\n        return f[i][k];\n    };\n\n    return dfs(0, k);\n}",
+    approach: "Сортуй за end; DP[i][j] = max(пропустити подію i, відвідати: value[i] + DP[наступна_несумісна][j-1]); бінарний пошук наступної.\n\n**Складність:** Time O(n log n · k), Space O(n·k)",
     signature: "{\"name\":\"maxValue\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5858,6 +6714,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar maxCoins = function(nums) {\n    \n};",
     testCases: "[{\"input\":\"[[3,1,5,8]]\",\"expected\":\"167\"},{\"input\":\"[[1,5]]\",\"expected\":\"10\"}]",
+    solution: "function maxCoins(nums: number[]): number {\n    const n = nums.length;\n    const arr = Array(n + 2).fill(1);\n    for (let i = 0; i < n; i++) {\n        arr[i + 1] = nums[i];\n    }\n\n    const f: number[][] = Array.from({ length: n + 2 }, () => Array(n + 2).fill(0));\n    for (let i = n - 1; i >= 0; i--) {\n        for (let j = i + 2; j <= n + 1; j++) {\n            for (let k = i + 1; k < j; k++) {\n                f[i][j] = Math.max(f[i][j], f[i][k] + f[k][j] + arr[i] * arr[k] * arr[j]);\n            }\n        }\n    }\n    return f[0][n + 1];\n}",
     approach: "Interval DP, k=last burst. O(n³)\n\n**Складність:** Time O(n³), Space O(n²)",
     signature: "{\"name\":\"maxCoins\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -5872,6 +6729,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} stoneValue\n * @return {string}\n */\nvar stoneGameIII = function(stoneValue) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,7]]\",\"expected\":\"\\\"Bob\\\"\"},{\"input\":\"[[1,2,3,-9]]\",\"expected\":\"\\\"Alice\\\"\"},{\"input\":\"[[1,2,3,6]]\",\"expected\":\"\\\"Tie\\\"\"}]",
+    solution: "function stoneGameIII(stoneValue: number[]): string {\n    const n = stoneValue.length;\n    const f = new Array<number>(n).fill(Number.MIN_SAFE_INTEGER);\n\n    const dfs = (i: number): number => {\n        if (i >= n) {\n            return 0;\n        }\n\n        if (f[i] !== Number.MIN_SAFE_INTEGER) {\n            return f[i];\n        }\n\n        let ans = Number.MIN_SAFE_INTEGER;\n        let s = 0;\n\n        for (let j = i; j < i + 3 && j < n; j++) {\n            s += stoneValue[j];\n            ans = Math.max(ans, s - dfs(j + 1));\n        }\n\n        f[i] = ans;\n        return ans;\n    };\n\n    const res = dfs(0);\n\n    if (res === 0) {\n        return 'Tie';\n    }\n    return res > 0 ? 'Alice' : 'Bob';\n}",
+    approach: "DP з кінця: dp[i] = max по take=1..3 від (сума взятих - dp[i+take]); знак dp[0] визначає переможця.\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"stoneGameIII\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"string\"}",
   },
   {
@@ -5885,6 +6744,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edgeList\n * @param {number[][]} queries\n * @return {boolean[]}\n */\nvar distanceLimitedPathsExist = function(n, edgeList, queries) {\n    \n};",
     testCases: "[]",
+    approach: "Офлайн: сортуй запити і ребра за вагою/лімітом; Union-Find поступово додає ребра < limit, потім перевіряє зв'язність пари.\n\n**Складність:** Time O((E+Q)·log), Space O(V)",
   },
   {
     slug: "find-the-string-with-lcp",
@@ -5897,6 +6757,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} lcp\n * @return {string}\n */\nvar findTheString = function(lcp) {\n    \n};",
     testCases: "[{\"input\":\"[[[4,0,2,0],[0,3,0,1],[2,0,2,0],[0,1,0,1]]]\",\"expected\":\"\\\"abab\\\"\"},{\"input\":\"[[[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,1]]]\",\"expected\":\"\\\"aaaa\\\"\"},{\"input\":\"[[[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,3]]]\",\"expected\":\"\\\"\\\"\"}]",
+    solution: "function findTheString(lcp: number[][]): string {\n    let i: number = 0;\n    const n: number = lcp.length;\n    let s: string = '\\0'.repeat(n);\n    for (let ascii = 97; ascii < 123; ++ascii) {\n        const c: string = String.fromCharCode(ascii);\n        while (i < n && s[i] !== '\\0') {\n            ++i;\n        }\n        if (i === n) {\n            break;\n        }\n        for (let j = i; j < n; ++j) {\n            if (lcp[i][j]) {\n                s = s.substring(0, j) + c + s.substring(j + 1);\n            }\n        }\n    }\n    if (s.indexOf('\\0') !== -1) {\n        return '';\n    }\n    for (i = n - 1; ~i; --i) {\n        for (let j = n - 1; ~j; --j) {\n            if (s[i] === s[j]) {\n                if (i === n - 1 || j === n - 1) {\n                    if (lcp[i][j] !== 1) {\n                        return '';\n                    }\n                } else if (lcp[i][j] !== lcp[i + 1][j + 1] + 1) {\n                    return '';\n                }\n            } else if (lcp[i][j]) {\n                return '';\n            }\n        }\n    }\n    return s;\n}",
+    approach: "Жадібно призначай літери: якщо lcp[i][j] > 0 — s[i] === s[j] (Union-Find/пряме присвоєння за зростанням літер). Потім перевір, що реальні LCP збігаються з матрицею.\n\n**Складність:** Time O(n²), Space O(n²)",
     signature: "{\"name\":\"findTheString\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"string\"}",
   },
   {
@@ -5910,6 +6772,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} robot\n * @param {number[][]} factory\n * @return {number}\n */\nvar minimumTotalDistance = function(robot, factory) {\n    \n};",
     testCases: "[{\"input\":\"[[0,4,6],[[2,2],[6,2]]]\",\"expected\":\"4\"},{\"input\":\"[[1,-1],[[-2,1],[2,1]]]\",\"expected\":\"2\"}]",
+    solution: "function minimumTotalDistance(robot: number[], factory: number[][]): number {\n    robot.sort((a, b) => a - b);\n    factory.sort((a, b) => a[0] - b[0]);\n\n    const n = robot.length;\n    const m = factory.length;\n    const f: number[][] = Array.from({ length: n }, () => Array(m).fill(-1));\n\n    const dfs = (i: number, j: number): number => {\n        if (i === n) return 0;\n        if (j === m) return 1e15;\n        if (f[i][j] !== -1) return f[i][j];\n\n        let ans = dfs(i, j + 1);\n        let totalDist = 0;\n        const [pos, capacity] = factory[j];\n\n        for (let k = 0; k < capacity; k++) {\n            if (i + k >= n) break;\n            totalDist += Math.abs(robot[i + k] - pos);\n            ans = Math.min(ans, totalDist + dfs(i + k + 1, j + 1));\n        }\n\n        return (f[i][j] = ans);\n    };\n\n    return dfs(0, 0);\n}",
+    approach: "Сортуй роботи і фабрики; DP[i][j] = min(не брати фабрику j, або взяти k роботів на неї): DP[i+k][j+1] + Σ відстаней. Префіксні суми відстаней.\n\n**Складність:** Time O(m·n·limit), Space O(m·n)",
     signature: "{\"name\":\"minimumTotalDistance\",\"paramTypes\":[\"list<integer>\",\"integer[][]\"],\"returnType\":\"long\"}",
   },
   {
@@ -5923,6 +6787,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} grid\n * @return {number}\n */\nvar minFallingPathSum = function(grid) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"13\"},{\"input\":\"[[[7]]]\",\"expected\":\"7\"}]",
+    solution: "function minFallingPathSum(grid: number[][]): number {\n    const n = grid.length;\n    const f: number[] = Array(n).fill(0);\n    for (const row of grid) {\n        const g = [...row];\n        for (let i = 0; i < n; ++i) {\n            let t = Infinity;\n            for (let j = 0; j < n; ++j) {\n                if (j !== i) {\n                    t = Math.min(t, f[j]);\n                }\n            }\n            g[i] += t === Infinity ? 0 : t;\n        }\n        f.splice(0, n, ...g);\n    }\n    return Math.min(...f);\n}",
+    approach: "DP по рядках, тримаючи два найменші значення попереднього рядка (min1, min2); для кожного стовпця бери min1, або min2 якщо стовпець === аргмін.\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"minFallingPathSum\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5936,6 +6802,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[]} cuts\n * @return {number}\n */\nvar minCost = function(n, cuts) {\n    \n};",
     testCases: "[{\"input\":\"[7,[1,3,4,5]]\",\"expected\":\"16\"},{\"input\":\"[9,[5,6,1,4,2]]\",\"expected\":\"22\"}]",
+    solution: "function minCost(n: number, cuts: number[]): number {\n    cuts.push(0, n);\n    cuts.sort((a, b) => a - b);\n    const m = cuts.length;\n    const f: number[][] = Array.from({ length: m }, () => Array(m).fill(0));\n    for (let l = 2; l < m; l++) {\n        for (let i = 0; i < m - l; i++) {\n            const j = i + l;\n            f[i][j] = Infinity;\n            for (let k = i + 1; k < j; k++) {\n                f[i][j] = Math.min(f[i][j], f[i][k] + f[k][j] + cuts[j] - cuts[i]);\n            }\n        }\n    }\n    return f[0][m - 1];\n}",
+    approach: "Додай 0 і n до розрізів, сортуй; інтервальне DP: dp[i][j] = (cuts[j]-cuts[i]) + min по k між ними (dp[i][k] + dp[k][j]).\n\n**Складність:** Time O(m³), Space O(m²)",
     signature: "{\"name\":\"minCost\",\"paramTypes\":[\"integer\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5949,6 +6817,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} arr1\n * @param {number[]} arr2\n * @return {number}\n */\nvar getXORSum = function(arr1, arr2) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3],[6,5]]\",\"expected\":\"0\"},{\"input\":\"[[12],[4]]\",\"expected\":\"4\"}]",
+    solution: "function getXORSum(arr1: number[], arr2: number[]): number {\n    const a = arr1.reduce((acc, x) => acc ^ x);\n    const b = arr2.reduce((acc, x) => acc ^ x);\n    return a & b;\n}",
+    approach: "Розкриття: XOR по (a_i AND b_j) = (XOR усіх a) AND (XOR усіх b).\n\n**Складність:** Time O(n+m), Space O(1)",
     signature: "{\"name\":\"getXORSum\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
   {
@@ -5962,6 +6832,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} obstacles\n * @return {number[]}\n */\nvar longestObstacleCourseAtEachPosition = function(obstacles) {\n    \n};",
     testCases: "[{\"input\":\"[[1,2,3,2]]\",\"expected\":\"[1,2,3,3]\"},{\"input\":\"[[2,2,1]]\",\"expected\":\"[1,2,1]\"},{\"input\":\"[[3,1,5,6,4,2]]\",\"expected\":\"[1,1,2,3,2,2]\"}]",
+    solution: "class BinaryIndexedTree {\n    private n: number;\n    private c: number[];\n\n    constructor(n: number) {\n        this.n = n;\n        this.c = Array(n + 1).fill(0);\n    }\n\n    update(x: number, v: number): void {\n        while (x <= this.n) {\n            this.c[x] = Math.max(this.c[x], v);\n            x += x & -x;\n        }\n    }\n\n    query(x: number): number {\n        let s = 0;\n        while (x > 0) {\n            s = Math.max(s, this.c[x]);\n            x -= x & -x;\n        }\n        return s;\n    }\n}\n\nfunction longestObstacleCourseAtEachPosition(obstacles: number[]): number[] {\n    const nums: number[] = [...obstacles];\n    nums.sort((a, b) => a - b);\n    const n: number = nums.length;\n    const ans: number[] = [];\n    const tree: BinaryIndexedTree = new BinaryIndexedTree(n);\n    const search = (x: number): number => {\n        let [l, r] = [0, n];\n        while (l < r) {\n            const mid = (l + r) >> 1;\n            if (nums[mid] >= x) {\n                r = mid;\n            } else {\n                l = mid + 1;\n            }\n        }\n        return l;\n    };\n    for (let k = 0; k < n; ++k) {\n        const i: number = search(obstacles[k]) + 1;\n        ans[k] = tree.query(i) + 1;\n        tree.update(i, ans[k]);\n    }\n    return ans;\n}",
+    approach: "«Найдовша неспадна підпослідовність» онлайн: масив tails + бінарний пошук (upper_bound); answer[i] = позиція вставки + 1.\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"longestObstacleCourseAtEachPosition\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -5975,6 +6847,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number} time\n * @param {number} change\n * @return {number}\n */\nvar secondMinimum = function(n, edges, time, change) {\n    \n};",
     testCases: "[]",
+    approach: "Модифікований BFS/Дейкстра, що зберігає дві найкращі відстані до кожного вузла; при прибутті додай очікування світлофора, якщо потрапив у «червону» фазу.\n\n**Складність:** Time O(V+E), Space O(V)",
   },
   {
     slug: "stamping-the-sequence",
@@ -5987,6 +6860,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {string} stamp\n * @param {string} target\n * @return {number[]}\n */\nvar movesToStamp = function(stamp, target) {\n    \n};",
     testCases: "[{\"input\":\"[\\\"abc\\\",\\\"ababc\\\"]\",\"expected\":\"[1,0,2]\"},{\"input\":\"[\\\"abca\\\",\\\"aabcaca\\\"]\",\"expected\":\"[2,3,0,1]\"}]",
+    solution: "function movesToStamp(stamp: string, target: string): number[] {\n    const m: number = stamp.length;\n    const n: number = target.length;\n    const indeg: number[] = Array(n - m + 1).fill(m);\n    const g: number[][] = Array.from({ length: n }, () => []);\n    const q: number[] = [];\n    for (let i = 0; i < n - m + 1; ++i) {\n        for (let j = 0; j < m; ++j) {\n            if (target[i + j] === stamp[j]) {\n                if (--indeg[i] === 0) {\n                    q.push(i);\n                }\n            } else {\n                g[i + j].push(i);\n            }\n        }\n    }\n\n    const ans: number[] = [];\n    const vis: boolean[] = Array(n).fill(false);\n    while (q.length) {\n        const i: number = q.shift()!;\n        ans.push(i);\n        for (let j = 0; j < m; ++j) {\n            if (!vis[i + j]) {\n                vis[i + j] = true;\n                for (const k of g[i + j]) {\n                    if (--indeg[k] === 0) {\n                        q.push(k);\n                    }\n                }\n            }\n        }\n    }\n    if (!vis.every(v => v)) {\n        return [];\n    }\n    ans.reverse();\n    return ans;\n}",
+    approach: "Зворотній процес: шукай вікна, що збігаються зі stamp (з урахуванням уже «затертих» '?'), заміняй на '?', записуй позиції; повтори, поки все не стане '?'. Розверни список.\n\n**Складність:** Time O(n·(n-m)), Space O(n)",
     signature: "{\"name\":\"movesToStamp\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer[]\"}",
   },
   {
@@ -6000,6 +6875,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[][]} mat\n * @param {number} k\n * @return {number}\n */\nvar kthSmallest = function(mat, k) {\n    \n};",
     testCases: "[{\"input\":\"[[[1,3,11],[2,4,6]],5]\",\"expected\":\"7\"},{\"input\":\"[[[1,3,11],[2,4,6]],9]\",\"expected\":\"17\"},{\"input\":\"[[[1,10,10],[1,4,5],[2,3,6]],7]\",\"expected\":\"9\"}]",
+    solution: "function kthSmallest(mat: number[][], k: number): number {\n    let pre: number[] = [0];\n    for (const cur of mat) {\n        const next: number[] = [];\n        for (const a of pre) {\n            for (const b of cur) {\n                next.push(a + b);\n            }\n        }\n        pre = next.sort((a, b) => a - b).slice(0, k);\n    }\n    return pre[k - 1];\n}",
+    approach: "Поступово зливай рядки: тримай k найменших часткових сум (min-heap або відсічення), додаючи наступний рядок.\n\n**Складність:** Time O(m·k·log k), Space O(k)",
     signature: "{\"name\":\"kthSmallest\",\"paramTypes\":[\"integer[][]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -6013,6 +6890,8 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar minKBitFlips = function(nums, k) {\n    \n};",
     testCases: "[{\"input\":\"[[0,1,0],1]\",\"expected\":\"2\"},{\"input\":\"[[1,1,0],2]\",\"expected\":\"-1\"},{\"input\":\"[[0,0,0,1,0,1,1,0],3]\",\"expected\":\"3\"}]",
+    solution: "function minKBitFlips(nums: number[], k: number): number {\n    const n = nums.length;\n    const d: number[] = Array(n + 1).fill(0);\n    let [ans, s] = [0, 0];\n    for (let i = 0; i < n; ++i) {\n        s += d[i];\n        if (s % 2 === nums[i] % 2) {\n            if (i + k > n) {\n                return -1;\n            }\n            d[i]++;\n            d[i + k]--;\n            s++;\n            ans++;\n        }\n    }\n    return ans;\n}",
+    approach: "Розсувне вікно з різницевим масивом/чергою: тримай поточну «парність фліпів»; якщо ефективний біт 0 — фліпай вікно [i, i+k), лічильник++. Якщо i+k > n — неможливо.\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"minKBitFlips\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
   {
@@ -6025,6 +6904,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function replaceElements(arr: number[]): number[] {\n    for (let i = arr.length - 1, mx = -1; ~i; --i) {\n        const x = arr[i];\n        arr[i] = mx;\n        mx = Math.max(mx, x);\n    }\n    return arr;\n}",
     approach: "Iterate right→left, track max. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6037,6 +6917,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"abc\\\",\\\"ahbgdc\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"axc\\\",\\\"ahbgdc\\\"]\",\"expected\":\"false\"}]",
+    solution: "function isSubsequence(s: string, t: string): boolean {\n    const m = s.length;\n    const n = t.length;\n    let i = 0;\n    for (let j = 0; i < m && j < n; ++j) {\n        if (s[i] === t[j]) {\n            ++i;\n        }\n    }\n    return i === m;\n}",
     approach: "Two pointers. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"isSubsequence\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"boolean\"}",
   },
@@ -6050,6 +6931,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function generate(numRows: number): number[][] {\n    const f: number[][] = [[1]];\n    for (let i = 0; i < numRows - 1; ++i) {\n        const g: number[] = [1];\n        for (let j = 1; j < f[i].length; ++j) {\n            g.push(f[i][j - 1] + f[i][j]);\n        }\n        g.push(1);\n        f.push(g);\n    }\n    return f;\n}",
     approach: "[1] + [prev[i-1]+prev[i]] + [1]. O(n²)\n\n**Складність:** Time O(n²), Space O(n²)",
   },
   {
@@ -6062,6 +6944,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[3,2,3]]\",\"expected\":\"3\"},{\"input\":\"[[2,2,1,1,1,2,2]]\",\"expected\":\"2\"}]",
+    solution: "function majorityElement(nums: number[]): number {\n    let cnt: number = 0;\n    let m: number = 0;\n    for (const x of nums) {\n        if (cnt === 0) {\n            m = x;\n            cnt = 1;\n        } else {\n            cnt += m === x ? 1 : -1;\n        }\n    }\n    return m;\n}",
     approach: "Boyer-Moore voting. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"majorityElement\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -6102,6 +6985,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function encode(strs: string[]): string {\n  return strs.map((s) => s.length + '#' + s).join('');\n}\n\nfunction decode(s: string): string[] {\n  const res: string[] = [];\n  let i = 0;\n  while (i < s.length) {\n    let j = i;\n    while (s[j] !== '#') j++;\n    const len = parseInt(s.slice(i, j), 10);\n    res.push(s.slice(j + 1, j + 1 + len));\n    i = j + 1 + len;\n  }\n  return res;\n}",
     approach: "Prefix length + string. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6114,6 +6998,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function productExceptSelf(nums: number[]): number[] {\n    const n = nums.length;\n    const ans: number[] = new Array(n);\n    for (let i = 0, left = 1; i < n; ++i) {\n        ans[i] = left;\n        left *= nums[i];\n    }\n    for (let i = n - 1, right = 1; i >= 0; --i) {\n        ans[i] *= right;\n        right *= nums[i];\n    }\n    return ans;\n}",
     approach: "Prefix * suffix. O(n)\n\n**Складність:** Time O(n), Space O(1) (без output-масиву)",
   },
   {
@@ -6167,6 +7052,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function twoSum(numbers: number[], target: number): number[] {\n    const n = numbers.length;\n    for (let i = 0; ; ++i) {\n        const x = target - numbers[i];\n        let l = i + 1;\n        let r = n - 1;\n        while (l < r) {\n            const mid = (l + r) >> 1;\n            if (numbers[mid] >= x) {\n                r = mid;\n            } else {\n                l = mid + 1;\n            }\n        }\n        if (numbers[l] === x) {\n            return [i + 1, l + 1];\n        }\n    }\n}",
     approach: "l++/r-- по сумі. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6179,6 +7065,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function maxArea(height: number[]): number {\n    let [l, r] = [0, height.length - 1];\n    let ans = 0;\n    while (l < r) {\n        const t = Math.min(height[l], height[r]) * (r - l);\n        ans = Math.max(ans, t);\n        if (height[l] < height[r]) {\n            ++l;\n        } else {\n            --r;\n        }\n    }\n    return ans;\n}",
     approach: "Рухай менший pointer. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6191,6 +7078,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function trap(height: number[]): number {\n    const n = height.length;\n    const left: number[] = new Array(n).fill(height[0]);\n    const right: number[] = new Array(n).fill(height[n - 1]);\n    for (let i = 1; i < n; ++i) {\n        left[i] = Math.max(left[i - 1], height[i]);\n        right[n - i - 1] = Math.max(right[n - i], height[n - i - 1]);\n    }\n    let ans = 0;\n    for (let i = 0; i < n; ++i) {\n        ans += Math.min(left[i], right[i]) - height[i];\n    }\n    return ans;\n}",
     approach: "leftMax/rightMax two pointers. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6203,6 +7091,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function maxProfit(prices: number[]): number {\n    let ans = 0;\n    let mi = prices[0];\n    for (const v of prices) {\n        ans = Math.max(ans, v - mi);\n        mi = Math.min(mi, v);\n    }\n    return ans;\n}",
     approach: "Track min, max profit. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6215,6 +7104,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function lengthOfLongestSubstring(s: string): number {\n    let ans = 0;\n    const cnt = new Map<string, number>();\n    const n = s.length;\n    for (let l = 0, r = 0; r < n; ++r) {\n        cnt.set(s[r], (cnt.get(s[r]) || 0) + 1);\n        while (cnt.get(s[r])! > 1) {\n            cnt.set(s[l], cnt.get(s[l])! - 1);\n            ++l;\n        }\n        ans = Math.max(ans, r - l + 1);\n    }\n    return ans;\n}",
     approach: "Set + shrink window. O(n)\n\n**Складність:** Time O(n), Space O(min(n, k))",
   },
   {
@@ -6227,6 +7117,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function characterReplacement(s: string, k: number): number {\n    const idx = (c: string) => c.charCodeAt(0) - 65;\n    const cnt: number[] = Array(26).fill(0);\n    const n = s.length;\n    let [l, mx] = [0, 0];\n    for (let r = 0; r < n; ++r) {\n        mx = Math.max(mx, ++cnt[idx(s[r])]);\n        if (r - l + 1 - mx > k) {\n            --cnt[idx(s[l++])];\n        }\n    }\n    return n - l;\n}",
     approach: "maxCount freq, shrink if needed. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6239,6 +7130,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"ab\\\",\\\"eidbaooo\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"ab\\\",\\\"eidboaoo\\\"]\",\"expected\":\"false\"}]",
+    solution: "function checkInclusion(s1: string, s2: string): boolean {\n    let need = 0;\n    const cnt: number[] = Array(26).fill(0);\n    const a = 'a'.charCodeAt(0);\n    for (const c of s1) {\n        if (++cnt[c.charCodeAt(0) - a] === 1) {\n            need++;\n        }\n    }\n\n    const [m, n] = [s1.length, s2.length];\n    for (let i = 0; i < n; i++) {\n        let c = s2.charCodeAt(i) - a;\n        if (--cnt[c] === 0) {\n            need--;\n        }\n        if (i >= m) {\n            c = s2.charCodeAt(i - m) - a;\n            if (++cnt[c] === 1) {\n                need++;\n            }\n        }\n        if (need === 0) {\n            return true;\n        }\n    }\n    return false;\n}",
     approach: "Fixed window, freq compare. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"checkInclusion\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"boolean\"}",
   },
@@ -6252,6 +7144,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function findAnagrams(s: string, p: string): number[] {\n    const m = s.length;\n    const n = p.length;\n    const ans: number[] = [];\n    if (m < n) {\n        return ans;\n    }\n    const cnt1: number[] = new Array(26).fill(0);\n    const cnt2: number[] = new Array(26).fill(0);\n    const idx = (c: string) => c.charCodeAt(0) - 'a'.charCodeAt(0);\n    for (const c of p) {\n        ++cnt1[idx(c)];\n    }\n    for (const c of s.slice(0, n - 1)) {\n        ++cnt2[idx(c)];\n    }\n    for (let i = n - 1; i < m; ++i) {\n        ++cnt2[idx(s[i])];\n        if (cnt1.toString() === cnt2.toString()) {\n            ans.push(i - n + 1);\n        }\n        --cnt2[idx(s[i - n + 1])];\n    }\n    return ans;\n}",
     approach: "Window + freq compare. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6264,6 +7157,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function minWindow(s: string, t: string): string {\n    const need: number[] = Array(128).fill(0);\n    const window: number[] = Array(128).fill(0);\n    for (let i = 0; i < t.length; i++) {\n        need[t.charCodeAt(i)]++;\n    }\n    const [m, n] = [s.length, t.length];\n    let [k, mi, cnt] = [-1, m + 1, 0];\n    for (let l = 0, r = 0; r < m; r++) {\n        let c = s.charCodeAt(r);\n        if (++window[c] <= need[c]) {\n            cnt++;\n        }\n        while (cnt === n) {\n            if (r - l + 1 < mi) {\n                mi = r - l + 1;\n                k = l;\n            }\n\n            c = s.charCodeAt(l);\n            if (window[c] <= need[c]) {\n                cnt--;\n            }\n            window[c]--;\n            l++;\n        }\n    }\n    return k < 0 ? '' : s.substring(k, k + mi);\n}",
     approach: "Expand+shrink, track chars. O(n)\n\n**Складність:** Time O(n), Space O(k)",
   },
   {
@@ -6276,6 +7170,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function maxSlidingWindow(nums: number[], k: number): number[] {\n  const dq: number[] = []; // indices, decreasing values\n  const res: number[] = [];\n  for (let i = 0; i < nums.length; i++) {\n    if (dq.length && dq[0] <= i - k) dq.shift();\n    while (dq.length && nums[dq[dq.length - 1]] <= nums[i]) dq.pop();\n    dq.push(i);\n    if (i >= k - 1) res.push(nums[dq[0]]);\n  }\n  return res;\n}",
     approach: "Monotonic deque. O(n)\n\n**Складність:** Time O(n), Space O(k)",
   },
   {
@@ -6288,6 +7183,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[\\\"5\\\",\\\"2\\\",\\\"C\\\",\\\"D\\\",\\\"+\\\"]]\",\"expected\":\"30\"},{\"input\":\"[[\\\"5\\\",\\\"-2\\\",\\\"4\\\",\\\"C\\\",\\\"D\\\",\\\"9\\\",\\\"+\\\",\\\"+\\\"]]\",\"expected\":\"27\"},{\"input\":\"[[\\\"1\\\",\\\"C\\\"]]\",\"expected\":\"0\"}]",
+    solution: "function calPoints(operations: string[]): number {\n    const stk: number[] = [];\n    for (const op of operations) {\n        if (op === '+') {\n            stk.push(stk.at(-1)! + stk.at(-2)!);\n        } else if (op === 'D') {\n            stk.push(stk.at(-1)! << 1);\n        } else if (op === 'C') {\n            stk.pop();\n        } else {\n            stk.push(+op);\n        }\n    }\n    return stk.reduce((a, b) => a + b, 0);\n}",
     approach: "Simulate stack. O(n)\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"calPoints\",\"paramTypes\":[\"string[]\"],\"returnType\":\"integer\"}",
   },
@@ -6301,6 +7197,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class MinStack {\n    stk1: number[];\n    stk2: number[];\n\n    constructor() {\n        this.stk1 = [];\n        this.stk2 = [Infinity];\n    }\n\n    push(val: number): void {\n        this.stk1.push(val);\n        this.stk2.push(Math.min(val, this.stk2[this.stk2.length - 1]));\n    }\n\n    pop(): void {\n        this.stk1.pop();\n        this.stk2.pop();\n    }\n\n    top(): number {\n        return this.stk1[this.stk1.length - 1];\n    }\n\n    getMin(): number {\n        return this.stk2[this.stk2.length - 1];\n    }\n}\n\n/**\n * Your MinStack object will be instantiated and called as such:\n * var obj = new MinStack()\n * obj.push(x)\n * obj.pop()\n * var param_3 = obj.top()\n * var param_4 = obj.getMin()\n */",
     approach: "Parallel min stack. O(1)\n\n**Складність:** Time O(1) на операцію, Space O(n)",
   },
   {
@@ -6313,6 +7210,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function evalRPN(tokens: string[]): number {\n    const stack = [];\n    for (const token of tokens) {\n        if (/\\d/.test(token)) {\n            stack.push(Number(token));\n        } else {\n            const a = stack.pop();\n            const b = stack.pop();\n            switch (token) {\n                case '+':\n                    stack.push(b + a);\n                    break;\n                case '-':\n                    stack.push(b - a);\n                    break;\n                case '*':\n                    stack.push(b * a);\n                    break;\n                case '/':\n                    stack.push(~~(b / a));\n                    break;\n            }\n        }\n    }\n    return stack[0];\n}",
     approach: "Pop2, push result. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6325,6 +7223,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[73,74,75,71,69,72,76,73]]\",\"expected\":\"[1,1,4,2,1,1,0,0]\"},{\"input\":\"[[30,40,50,60]]\",\"expected\":\"[1,1,1,0]\"},{\"input\":\"[[30,60,90]]\",\"expected\":\"[1,1,0]\"}]",
+    solution: "function dailyTemperatures(temperatures: number[]): number[] {\n    const n = temperatures.length;\n    const ans: number[] = Array(n).fill(0);\n    const stk: number[] = [];\n    for (let i = n - 1; ~i; --i) {\n        while (stk.length && temperatures[stk.at(-1)!] <= temperatures[i]) {\n            stk.pop();\n        }\n        if (stk.length) {\n            ans[i] = stk.at(-1)! - i;\n        }\n        stk.push(i);\n    }\n    return ans;\n}",
     approach: "Monotonic stack (decreasing). O(n)\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"dailyTemperatures\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
@@ -6338,6 +7237,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[12,[10,8,0,5,3],[2,4,1,1,3]]\",\"expected\":\"3\"},{\"input\":\"[10,[3],[3]]\",\"expected\":\"1\"},{\"input\":\"[100,[0,2,4],[4,2,1]]\",\"expected\":\"1\"}]",
+    solution: "function carFleet(target: number, position: number[], speed: number[]): number {\n    const n = position.length;\n    const idx = Array(n)\n        .fill(0)\n        .map((_, i) => i)\n        .sort((i, j) => position[j] - position[i]);\n    let ans = 0;\n    let pre = 0;\n    for (const i of idx) {\n        const t = (target - position[i]) / speed[i];\n        if (t > pre) {\n            ++ans;\n            pre = t;\n        }\n    }\n    return ans;\n}",
     approach: "Sort desc, track speed. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"carFleet\",\"paramTypes\":[\"integer\",\"integer[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -6351,6 +7251,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[5,10,-5]]\",\"expected\":\"[5,10]\"},{\"input\":\"[[8,-8]]\",\"expected\":\"[]\"},{\"input\":\"[[10,2,-5]]\",\"expected\":\"[10]\"},{\"input\":\"[[3,5,-6,2,-1,4]]\",\"expected\":\"[-6,2,4]\"}]",
+    solution: "function asteroidCollision(asteroids: number[]): number[] {\n    const stk: number[] = [];\n    for (const x of asteroids) {\n        if (x > 0) {\n            stk.push(x);\n        } else {\n            while (stk.length && stk.at(-1) > 0 && stk.at(-1) < -x) {\n                stk.pop();\n            }\n            if (stk.length && stk.at(-1) === -x) {\n                stk.pop();\n            } else if (!stk.length || stk.at(-1) < 0) {\n                stk.push(x);\n            }\n        }\n    }\n    return stk;\n}",
     approach: "Resolve collisions. O(n)\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"asteroidCollision\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
@@ -6364,6 +7265,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function largestRectangleArea(heights: number[]): number {\n  const st: number[] = []; // increasing indices\n  let best = 0;\n  for (let i = 0; i <= heights.length; i++) {\n    const h = i === heights.length ? 0 : heights[i];\n    while (st.length && heights[st[st.length - 1]] >= h) {\n      const top = st.pop()!;\n      const left = st.length ? st[st.length - 1] : -1;\n      best = Math.max(best, heights[top] * (i - left - 1));\n    }\n    st.push(i);\n  }\n  return best;\n}",
     approach: "Monotonic stack. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6376,6 +7278,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[-1,0,3,5,9,12],9]\",\"expected\":\"4\"},{\"input\":\"[[-1,0,3,5,9,12],2]\",\"expected\":\"-1\"}]",
+    solution: "function search(nums: number[], target: number): number {\n    let [l, r] = [0, nums.length - 1];\n    while (l < r) {\n        const mid = (l + r) >> 1;\n        if (nums[mid] >= target) {\n            r = mid;\n        } else {\n            l = mid + 1;\n        }\n    }\n    return nums[l] === target ? l : -1;\n}",
     approach: "Classic. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"search\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -6389,6 +7292,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function searchMatrix(matrix: number[][], target: number): boolean {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    let left = 0;\n    let right = m * n;\n    while (left < right) {\n        const mid = (left + right) >>> 1;\n        const i = Math.floor(mid / n);\n        const j = mid % n;\n        if (matrix[i][j] === target) {\n            return true;\n        }\n\n        if (matrix[i][j] < target) {\n            left = mid + 1;\n        } else {\n            right = mid;\n        }\n    }\n    return false;\n}",
     approach: "Flatten index. O(log mn)\n\n**Складність:** Time O(log(m·n)), Space O(1)",
   },
   {
@@ -6401,6 +7305,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[3,6,7,11],8]\",\"expected\":\"4\"},{\"input\":\"[[30,11,23,4,20],5]\",\"expected\":\"30\"},{\"input\":\"[[30,11,23,4,20],6]\",\"expected\":\"23\"}]",
+    solution: "function minEatingSpeed(piles: number[], h: number): number {\n    let [l, r] = [1, Math.max(...piles)];\n    while (l < r) {\n        const mid = (l + r) >> 1;\n        const s = piles.map(x => Math.ceil(x / mid)).reduce((a, b) => a + b);\n        if (s <= h) {\n            r = mid;\n        } else {\n            l = mid + 1;\n        }\n    }\n    return l;\n}",
     approach: "BS on speed [1..max]. O(n log max)\n\n**Складність:** Time O(n log max), Space O(1)",
     signature: "{\"name\":\"minEatingSpeed\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -6414,6 +7319,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function findMin(nums: number[]): number {\n    let l = 0,\n        r = nums.length - 1;\n    while (l < r) {\n        let mid = (l + r) >> 1;\n        if (nums[mid] > nums[nums.length - 1]) {\n            l = mid + 1;\n        } else {\n            r = mid;\n        }\n    }\n    return nums[l];\n}",
     approach: "Compare mid vs right. O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -6426,6 +7332,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function search(nums: number[], target: number): number {\n    const n = nums.length;\n    let left = 0,\n        right = n - 1;\n    while (left < right) {\n        const mid = (left + right) >> 1;\n        if (nums[0] <= nums[mid]) {\n            if (nums[0] <= target && target <= nums[mid]) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        } else {\n            if (nums[mid] < target && target <= nums[n - 1]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n    }\n    return nums[left] == target ? left : -1;\n}",
     approach: "Which half sorted? O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
   },
   {
@@ -6438,6 +7345,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class TimeMap {\n  private store = new Map<string, [number, string][]>();\n\n  set(key: string, value: string, timestamp: number): void {\n    if (!this.store.has(key)) this.store.set(key, []);\n    this.store.get(key)!.push([timestamp, value]);\n  }\n\n  get(key: string, timestamp: number): string {\n    const arr = this.store.get(key);\n    if (!arr) return '';\n    let lo = 0, hi = arr.length - 1, res = '';\n    while (lo <= hi) {\n      const mid = (lo + hi) >> 1;\n      if (arr[mid][0] <= timestamp) { res = arr[mid][1]; lo = mid + 1; }\n      else hi = mid - 1;\n    }\n    return res;\n  }\n}",
     approach: "BS on timestamps. O(log n)\n\n**Складність:** Time O(log n) на get, O(1) на set, Space O(n)",
   },
   {
@@ -6450,6 +7358,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function shipWithinDays(weights: number[], days: number): number {\n    let left = 0;\n    let right = 0;\n    for (const w of weights) {\n        left = Math.max(left, w);\n        right += w;\n    }\n    const check = (mx: number) => {\n        let ws = 0;\n        let cnt = 1;\n        for (const w of weights) {\n            ws += w;\n            if (ws > mx) {\n                ws = w;\n                ++cnt;\n            }\n        }\n        return cnt <= days;\n    };\n    while (left < right) {\n        const mid = (left + right) >> 1;\n        if (check(mid)) {\n            right = mid;\n        } else {\n            left = mid + 1;\n        }\n    }\n    return left;\n}",
     approach: "BS capacity [max..sum]. O(n log sum)\n\n**Складність:** Time O(n log sum), Space O(1)",
   },
   {
@@ -6462,6 +7371,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n    const m = nums1.length;\n    const n = nums2.length;\n    const f = (i: number, j: number, k: number): number => {\n        if (i >= m) {\n            return nums2[j + k - 1];\n        }\n        if (j >= n) {\n            return nums1[i + k - 1];\n        }\n        if (k == 1) {\n            return Math.min(nums1[i], nums2[j]);\n        }\n        const p = Math.floor(k / 2);\n        const x = i + p - 1 < m ? nums1[i + p - 1] : 1 << 30;\n        const y = j + p - 1 < n ? nums2[j + p - 1] : 1 << 30;\n        return x < y ? f(i + p, j, k - p) : f(i, j + p, k - p);\n    };\n    const a = f(0, 0, Math.floor((m + n + 1) / 2));\n    const b = f(0, 0, Math.floor((m + n + 2) / 2));\n    return (a + b) / 2;\n}",
     approach: "BS on smaller, partition. O(log min(m,n))\n\n**Складність:** Time O(log min(m,n)), Space O(1)",
   },
   {
@@ -6474,6 +7384,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"[5,4,3,2,1]\"},{\"input\":\"[[1,2]]\",\"expected\":\"[2,1]\"},{\"input\":\"[[]]\",\"expected\":\"[]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction reverseList(head: ListNode | null): ListNode | null {\n    if (head == null) {\n        return head;\n    }\n    let pre = null;\n    let cur = head;\n    while (cur != null) {\n        const next = cur.next;\n        cur.next = pre;\n        [pre, cur] = [cur, next];\n    }\n    return pre;\n}",
     approach: "prev/cur/next iterative. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"reverseList\",\"paramTypes\":[\"ListNode\"],\"returnType\":\"ListNode\"}",
   },
@@ -6487,6 +7398,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {\n    if (list1 == null || list2 == null) {\n        return list1 || list2;\n    }\n    if (list1.val < list2.val) {\n        list1.next = mergeTwoLists(list1.next, list2);\n        return list1;\n    } else {\n        list2.next = mergeTwoLists(list1, list2.next);\n        return list2;\n    }\n}",
     approach: "Dummy head, compare. O(n+m)\n\n**Складність:** Time O(n+m), Space O(1)",
   },
   {
@@ -6499,6 +7411,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[3,2,0,-4],1]\",\"expected\":\"false\"},{\"input\":\"[[1,2],0]\",\"expected\":\"false\"},{\"input\":\"[[1],-1]\",\"expected\":\"false\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction hasCycle(head: ListNode | null): boolean {\n    const s: Set<ListNode> = new Set();\n    for (; head; head = head.next) {\n        if (s.has(head)) {\n            return true;\n        }\n        s.add(head);\n    }\n    return false;\n}",
     approach: "Floyd slow/fast. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"hasCycle\",\"paramTypes\":[\"ListNode\",\"integer\"],\"returnType\":\"boolean\"}",
   },
@@ -6512,6 +7425,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction isPalindrome(head: ListNode | null): boolean {\n    let slow: ListNode = head,\n        fast: ListNode = head.next;\n    while (fast != null && fast.next != null) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n    let cur: ListNode = slow.next;\n    slow.next = null;\n    let prev: ListNode = null;\n    while (cur != null) {\n        let t: ListNode = cur.next;\n        cur.next = prev;\n        prev = cur;\n        cur = t;\n    }\n    while (prev != null) {\n        if (prev.val != head.val) return false;\n        prev = prev.next;\n        head = head.next;\n    }\n    return true;\n}",
     approach: "Find mid, reverse, compare. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6524,6 +7438,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3,4]]\",\"expected\":\"[1,4,2,3]\"},{\"input\":\"[[1,2,3,4,5]]\",\"expected\":\"[1,5,2,4,3]\"}]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\n/**\n Do not return anything, modify head in-place instead.\n */\nfunction reorderList(head: ListNode | null): void {\n    let slow = head;\n    let fast = head;\n    while (fast && fast.next) {\n        slow = slow.next;\n        fast = fast.next.next;\n    }\n\n    let next = slow.next;\n    slow.next = null;\n    while (next) {\n        [next.next, slow, next] = [slow, next, next.next];\n    }\n\n    let left = head;\n    let right = slow;\n    while (right.next) {\n        const next = left.next;\n        left.next = right;\n        right = right.next;\n        left.next.next = next;\n        left = left.next.next;\n    }\n}",
     approach: "Find mid, reverse, merge. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"reorderList\",\"paramTypes\":[\"ListNode\"],\"returnType\":\"void\"}",
   },
@@ -6537,6 +7452,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {\n    const dummy = new ListNode(0, head);\n    let fast = dummy;\n    let slow = dummy;\n    while (n--) {\n        fast = fast.next;\n    }\n    while (fast.next) {\n        slow = slow.next;\n        fast = fast.next;\n    }\n    slow.next = slow.next.next;\n    return dummy.next;\n}",
     approach: "Two pointers n apart. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6549,6 +7465,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for _Node.\n * class _Node {\n *     val: number\n *     next: _Node | null\n *     random: _Node | null\n *\n *     constructor(val?: number, next?: _Node, random?: _Node) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *         this.random = (random===undefined ? null : random)\n *     }\n * }\n */\n\nfunction copyRandomList(head: _Node | null): _Node | null {\n    const d: Map<_Node, _Node> = new Map();\n    const dummy = new _Node();\n    let tail = dummy;\n    for (let cur = head; cur; cur = cur.next) {\n        const node = new _Node(cur.val);\n        tail.next = node;\n        tail = node;\n        d.set(cur, node);\n    }\n    for (let cur = head; cur; cur = cur.next) {\n        d.get(cur)!.random = cur.random ? d.get(cur.random)! : null;\n    }\n    return dummy.next;\n}",
     approach: "3 pass or HashMap. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6561,6 +7478,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function findDuplicate(nums: number[]): number {\n    let l = 0;\n    let r = nums.length - 1;\n    while (l < r) {\n        const mid = (l + r) >> 1;\n        let cnt = 0;\n        for (const v of nums) {\n            if (v <= mid) {\n                ++cnt;\n            }\n        }\n        if (cnt > mid) {\n            r = mid;\n        } else {\n            l = mid + 1;\n        }\n    }\n    return l;\n}",
     approach: "Floyd cycle (indices). O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6573,6 +7491,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class Node {\n    key: number;\n    val: number;\n    prev: Node | null;\n    next: Node | null;\n\n    constructor(key: number, val: number) {\n        this.key = key;\n        this.val = val;\n        this.prev = null;\n        this.next = null;\n    }\n}\n\nclass LRUCache {\n    private size: number;\n    private capacity: number;\n    private head: Node;\n    private tail: Node;\n    private cache: Map<number, Node>;\n\n    constructor(capacity: number) {\n        this.size = 0;\n        this.capacity = capacity;\n        this.head = new Node(0, 0);\n        this.tail = new Node(0, 0);\n        this.head.next = this.tail;\n        this.tail.prev = this.head;\n        this.cache = new Map();\n    }\n\n    get(key: number): number {\n        if (!this.cache.has(key)) {\n            return -1;\n        }\n        const node = this.cache.get(key)!;\n        this.removeNode(node);\n        this.addToHead(node);\n        return node.val;\n    }\n\n    put(key: number, value: number): void {\n        if (this.cache.has(key)) {\n            const node = this.cache.get(key)!;\n            this.removeNode(node);\n            node.val = value;\n            this.addToHead(node);\n        } else {\n            const node = new Node(key, value);\n            this.cache.set(key, node);\n            this.addToHead(node);\n            if (++this.size > this.capacity) {\n                const nodeToRemove = this.tail.prev!;\n                this.cache.delete(nodeToRemove.key);\n                this.removeNode(nodeToRemove);\n                --this.size;\n            }\n        }\n    }\n\n    private removeNode(node: Node): void {\n        if (!node) return;\n        node.prev!.next = node.next;\n        node.next!.prev = node.prev;\n    }\n\n    private addToHead(node: Node): void {\n        node.next = this.head.next;\n        node.prev = this.head;\n        this.head.next!.prev = node;\n        this.head.next = node;\n    }\n}\n\n/**\n * Your LRUCache object will be instantiated and called as such:\n * var obj = new LRUCache(capacity)\n * var param_1 = obj.get(key)\n * obj.put(key,value)\n */",
     approach: "HashMap + DLL. O(1)\n\n**Складність:** Time O(1) на операцію, Space O(capacity)",
   },
   {
@@ -6585,6 +7504,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction reverseKGroup(head: ListNode | null, k: number): ListNode | null {\n    const dummy = new ListNode(0, head);\n    let pre = dummy;\n    while (pre !== null) {\n        let cur: ListNode | null = pre;\n        for (let i = 0; i < k; i++) {\n            cur = cur?.next || null;\n            if (cur === null) {\n                return dummy.next;\n            }\n        }\n\n        const node = pre.next;\n        const nxt = cur?.next || null;\n        cur!.next = null;\n        pre.next = reverse(node);\n        node!.next = nxt;\n        pre = node!;\n    }\n\n    return dummy.next;\n}\n\nfunction reverse(head: ListNode | null): ListNode | null {\n    let dummy: ListNode | null = null;\n    let cur = head;\n\n    while (cur !== null) {\n        const nxt = cur.next;\n        cur.next = dummy;\n        dummy = cur;\n        cur = nxt;\n    }\n\n    return dummy;\n}",
     approach: "Count k, reverse, recurse. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6597,6 +7517,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[4,2,7,1,3,6,9]]\",\"expected\":\"[4,7,2,9,6,3,1]\"},{\"input\":\"[[2,1,3]]\",\"expected\":\"[2,3,1]\"},{\"input\":\"[[]]\",\"expected\":\"[]\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction invertTree(root: TreeNode | null): TreeNode | null {\n    if (!root) {\n        return root;\n    }\n    const l = invertTree(root.left);\n    const r = invertTree(root.right);\n    root.left = r;\n    root.right = l;\n    return root;\n}",
     approach: "Swap left/right recursively. O(n)\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"invertTree\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"TreeNode\"}",
   },
@@ -6610,6 +7531,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction maxDepth(root: TreeNode | null): number {\n    if (root === null) {\n        return 0;\n    }\n    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));\n}",
     approach: "max(left,right)+1. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6622,6 +7544,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction diameterOfBinaryTree(root: TreeNode | null): number {\n    let ans = 0;\n    const dfs = (root: TreeNode | null): number => {\n        if (!root) {\n            return 0;\n        }\n        const [l, r] = [dfs(root.left), dfs(root.right)];\n        ans = Math.max(ans, l + r);\n        return 1 + Math.max(l, r);\n    };\n    dfs(root);\n    return ans;\n}",
     approach: "max(leftH+rightH) globally. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6634,6 +7557,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[3,9,20,null,null,15,7]]\",\"expected\":\"true\"},{\"input\":\"[[1,2,2,3,3,null,null,4,4]]\",\"expected\":\"false\"},{\"input\":\"[[]]\",\"expected\":\"true\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction isBalanced(root: TreeNode | null): boolean {\n    const dfs = (root: TreeNode | null) => {\n        if (root == null) {\n            return 0;\n        }\n        const left = dfs(root.left);\n        const right = dfs(root.right);\n        if (left === -1 || right === -1 || Math.abs(left - right) > 1) {\n            return -1;\n        }\n        return 1 + Math.max(left, right);\n    };\n    return dfs(root) > -1;\n}",
     approach: "Height DFS, return -1. O(n)\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"isBalanced\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"boolean\"}",
   },
@@ -6647,6 +7571,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3],[1,2,3]]\",\"expected\":\"true\"},{\"input\":\"[[1,2],[1,null,2]]\",\"expected\":\"false\"},{\"input\":\"[[1,2,1],[1,1,2]]\",\"expected\":\"false\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction isSameTree(p: TreeNode | null, q: TreeNode | null): boolean {\n    if (p == null && q == null) {\n        return true;\n    }\n    if (p == null || q == null || p.val !== q.val) {\n        return false;\n    }\n    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n}",
     approach: "Recursive equal check. O(n)\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"isSameTree\",\"paramTypes\":[\"TreeNode\",\"TreeNode\"],\"returnType\":\"boolean\"}",
   },
@@ -6660,6 +7585,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\nfunction isSubtree(root: TreeNode | null, subRoot: TreeNode | null): boolean {\n    const same = (p: TreeNode | null, q: TreeNode | null): boolean => {\n        if (!p || !q) {\n            return p === q;\n        }\n        return p.val === q.val && same(p.left, q.left) && same(p.right, q.right);\n    };\n    if (!root) {\n        return false;\n    }\n    return same(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);\n}",
     approach: "isSameTree per node. O(n·m)\n\n**Складність:** Time O(n·m), Space O(h)",
   },
   {
@@ -6672,6 +7598,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction sortedArrayToBST(nums: number[]): TreeNode | null {\n    const dfs = (l: number, r: number): TreeNode | null => {\n        if (l > r) {\n            return null;\n        }\n        const mid = (l + r) >> 1;\n        return new TreeNode(nums[mid], dfs(l, mid - 1), dfs(mid + 1, r));\n    };\n    return dfs(0, nums.length - 1);\n}",
     approach: "mid=root, recurse. O(n)\n\n**Складність:** Time O(n), Space O(log n)",
   },
   {
@@ -6684,6 +7611,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[5,4,8,11,null,13,4,7,2,null,null,null,1],22]\",\"expected\":\"true\"},{\"input\":\"[[1,2,3],5]\",\"expected\":\"false\"},{\"input\":\"[[],0]\",\"expected\":\"false\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction hasPathSum(root: TreeNode | null, targetSum: number): boolean {\n    if (root === null) {\n        return false;\n    }\n    const { val, left, right } = root;\n    if (left === null && right === null) {\n        return targetSum - val === 0;\n    }\n    return hasPathSum(left, targetSum - val) || hasPathSum(right, targetSum - val);\n}",
     approach: "DFS subtract target. O(n)\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"hasPathSum\",\"paramTypes\":[\"TreeNode\",\"integer\"],\"returnType\":\"boolean\"}",
   },
@@ -6697,6 +7625,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,2,3,4,4,3]]\",\"expected\":\"true\"},{\"input\":\"[[1,2,2,null,3,null,3]]\",\"expected\":\"false\"}]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction isSymmetric(root: TreeNode | null): boolean {\n    const dfs = (root1: TreeNode | null, root2: TreeNode | null): boolean => {\n        if (root1 === root2) {\n            return true;\n        }\n        if (!root1 || !root2 || root1.val !== root2.val) {\n            return false;\n        }\n        return dfs(root1.left, root2.right) && dfs(root1.right, root2.left);\n    };\n    return dfs(root.left, root.right);\n}",
     approach: "Compare mirror recursive. O(n)\n\n**Складність:** Time O(n), Space O(h)",
     signature: "{\"name\":\"isSymmetric\",\"paramTypes\":[\"TreeNode\"],\"returnType\":\"boolean\"}",
   },
@@ -6710,6 +7639,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction lowestCommonAncestor(\n    root: TreeNode | null,\n    p: TreeNode | null,\n    q: TreeNode | null,\n): TreeNode | null {\n    while (root) {\n        if (root.val > p.val && root.val > q.val) {\n            root = root.left;\n        } else if (root.val < p.val && root.val < q.val) {\n            root = root.right;\n        } else {\n            return root;\n        }\n    }\n}",
     approach: "Both → right. O(h)\n\n**Складність:** Time O(h), Space O(1)",
   },
   {
@@ -6722,6 +7652,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction levelOrder(root: TreeNode | null): number[][] {\n    const ans: number[][] = [];\n    if (!root) {\n        return ans;\n    }\n    const q: TreeNode[] = [root];\n    while (q.length) {\n        const t: number[] = [];\n        const qq: TreeNode[] = [];\n        for (const { val, left, right } of q) {\n            t.push(val);\n            left && qq.push(left);\n            right && qq.push(right);\n        }\n        ans.push(t);\n        q.splice(0, q.length, ...qq);\n    }\n    return ans;\n}",
     approach: "BFS queue. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6734,6 +7665,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction rightSideView(root: TreeNode | null): number[] {\n    const ans: number[] = [];\n    if (!root) {\n        return ans;\n    }\n    const q: TreeNode[] = [root];\n    while (q.length > 0) {\n        ans.push(q[0].val);\n        const nq: TreeNode[] = [];\n        for (const { left, right } of q) {\n            if (right) {\n                nq.push(right);\n            }\n            if (left) {\n                nq.push(left);\n            }\n        }\n        q.length = 0;\n        q.push(...nq);\n    }\n    return ans;\n}",
     approach: "BFS, last of each level. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6746,6 +7678,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction goodNodes(root: TreeNode | null): number {\n    let ans = 0;\n    const dfs = (root: TreeNode | null, mx: number) => {\n        if (!root) {\n            return;\n        }\n        if (mx <= root.val) {\n            ++ans;\n            mx = root.val;\n        }\n        dfs(root.left, mx);\n        dfs(root.right, mx);\n    };\n    dfs(root, -1e6);\n    return ans;\n}",
     approach: "DFS track max by path. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6758,6 +7691,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction isValidBST(root: TreeNode | null): boolean {\n    let prev: TreeNode | null = null;\n    const dfs = (root: TreeNode | null): boolean => {\n        if (!root) {\n            return true;\n        }\n        if (!dfs(root.left)) {\n            return false;\n        }\n        if (prev && prev.val >= root.val) {\n            return false;\n        }\n        prev = root;\n        return dfs(root.right);\n    };\n    return dfs(root);\n}",
     approach: "DFS min/max bounds. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6770,6 +7704,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction kthSmallest(root: TreeNode | null, k: number): number {\n    const dfs = (root: TreeNode | null) => {\n        if (root == null) {\n            return -1;\n        }\n        const { val, left, right } = root;\n        const l = dfs(left);\n        if (l !== -1) {\n            return l;\n        }\n        k--;\n        if (k === 0) {\n            return val;\n        }\n        return dfs(right);\n    };\n    return dfs(root);\n}",
     approach: "Inorder traversal. O(h+k)\n\n**Складність:** Time O(h+k), Space O(h)",
   },
   {
@@ -6782,6 +7717,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction buildTree(preorder: number[], inorder: number[]): TreeNode | null {\n    const d: Map<number, number> = new Map();\n    const n = inorder.length;\n    for (let i = 0; i < n; ++i) {\n        d.set(inorder[i], i);\n    }\n    const dfs = (i: number, j: number, n: number): TreeNode | null => {\n        if (n <= 0) {\n            return null;\n        }\n        const v = preorder[i];\n        const k = d.get(v)!;\n        const l = dfs(i + 1, j, k - j);\n        const r = dfs(i + 1 + k - j, k + 1, n - 1 - (k - j));\n        return new TreeNode(v, l, r);\n    };\n    return dfs(0, 0, n);\n}",
     approach: "preorder[0]=root, find inorder. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6794,6 +7730,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * class TreeNode {\n *     val: number\n *     left: TreeNode | null\n *     right: TreeNode | null\n *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.left = (left===undefined ? null : left)\n *         this.right = (right===undefined ? null : right)\n *     }\n * }\n */\n\nfunction maxPathSum(root: TreeNode | null): number {\n    let ans = -1001;\n    const dfs = (root: TreeNode | null): number => {\n        if (!root) {\n            return 0;\n        }\n        const left = Math.max(0, dfs(root.left));\n        const right = Math.max(0, dfs(root.right));\n        ans = Math.max(ans, left + right + root.val);\n        return Math.max(left, right) + root.val;\n    };\n    dfs(root);\n    return ans;\n}",
     approach: "DFS maxGain. O(n)\n\n**Складність:** Time O(n), Space O(h)",
   },
   {
@@ -6806,6 +7743,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for a binary tree node.\n * function TreeNode(val) {\n *     this.val = val;\n *     this.left = this.right = null;\n * }\n */\n\n/**\n * Encodes a tree to a single string.\n *\n * @param {TreeNode} root\n * @return {string}\n */\nvar serialize = function (root) {\n    if (root === null) {\n        return null;\n    }\n    const ans = [];\n    const q = [root];\n    let index = 0;\n    while (index < q.length) {\n        const node = q[index++];\n        if (node !== null) {\n            ans.push(node.val.toString());\n            q.push(node.left);\n            q.push(node.right);\n        } else {\n            ans.push('#');\n        }\n    }\n    return ans.join(',');\n};\n\n/**\n * Decodes your encoded data to tree.\n *\n * @param {string} data\n * @return {TreeNode}\n */\nvar deserialize = function (data) {\n    if (data === null) {\n        return null;\n    }\n    const vals = data.split(',');\n    let i = 0;\n    const root = new TreeNode(parseInt(vals[i++]));\n    const q = [root];\n    let index = 0;\n    while (index < q.length) {\n        const node = q[index++];\n        if (vals[i] !== '#') {\n            node.left = new TreeNode(+vals[i]);\n            q.push(node.left);\n        }\n        i++;\n        if (vals[i] !== '#') {\n            node.right = new TreeNode(+vals[i]);\n            q.push(node.right);\n        }\n        i++;\n    }\n    return root;\n};\n\n/**\n * Your functions will be called as such:\n * deserialize(serialize(root));\n */",
     approach: "BFS or preorder. O(n)\n\n**Складність:** Time O(n), Space O(n)",
   },
   {
@@ -6818,6 +7756,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class TrieNode {\n    children;\n    isEnd;\n    constructor() {\n        this.children = new Array(26);\n        this.isEnd = false;\n    }\n}\n\nclass Trie {\n    root;\n    constructor() {\n        this.root = new TrieNode();\n    }\n\n    insert(word: string): void {\n        let head = this.root;\n        for (let char of word) {\n            let index = char.charCodeAt(0) - 97;\n            if (!head.children[index]) {\n                head.children[index] = new TrieNode();\n            }\n            head = head.children[index];\n        }\n        head.isEnd = true;\n    }\n\n    search(word: string): boolean {\n        let head = this.searchPrefix(word);\n        return head != null && head.isEnd;\n    }\n\n    startsWith(prefix: string): boolean {\n        return this.searchPrefix(prefix) != null;\n    }\n\n    private searchPrefix(prefix: string) {\n        let head = this.root;\n        for (let char of prefix) {\n            let index = char.charCodeAt(0) - 97;\n            if (!head.children[index]) return null;\n            head = head.children[index];\n        }\n        return head;\n    }\n}",
     approach: "TrieNode={children:Map,isEnd}. O(m)\n\n**Складність:** Time O(m) на операцію, Space O(n·m)",
   },
   {
@@ -6830,6 +7769,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class WordDictionary {\n  private root: any = {};\n\n  addWord(word: string): void {\n    let node = this.root;\n    for (const c of word) node = node[c] ??= {};\n    node.$ = true;\n  }\n\n  search(word: string): boolean {\n    const dfs = (node: any, i: number): boolean => {\n      if (!node) return false;\n      if (i === word.length) return !!node.$;\n      const c = word[i];\n      if (c === '.') return Object.keys(node).some((k) => k !== '$' && dfs(node[k], i + 1));\n      return dfs(node[c], i + 1);\n    };\n    return dfs(this.root, 0);\n  }\n}",
     approach: "Trie+DFS for '.'. O(m·26^k)\n\n**Складність:** Time O(m) / O(26^k·m) з '.', Space O(n·m)",
   },
   {
@@ -6842,6 +7782,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[\\\"o\\\",\\\"a\\\",\\\"a\\\",\\\"n\\\"],[\\\"e\\\",\\\"t\\\",\\\"a\\\",\\\"e\\\"],[\\\"i\\\",\\\"h\\\",\\\"k\\\",\\\"r\\\"],[\\\"i\\\",\\\"f\\\",\\\"l\\\",\\\"v\\\"]],[\\\"oath\\\",\\\"pea\\\",\\\"eat\\\",\\\"rain\\\"]]\",\"expected\":\"[\\\"oath\\\",\\\"eat\\\"]\"},{\"input\":\"[[[\\\"a\\\",\\\"b\\\"],[\\\"c\\\",\\\"d\\\"]],[\\\"abcb\\\"]]\",\"expected\":\"[]\"}]",
+    solution: "class Trie {\n    children: Trie[];\n    ref: number;\n\n    constructor() {\n        this.children = new Array(26);\n        this.ref = -1;\n    }\n\n    insert(w: string, ref: number): void {\n        let node: Trie = this;\n        for (let i = 0; i < w.length; i++) {\n            const c = w.charCodeAt(i) - 97;\n            if (node.children[c] == null) {\n                node.children[c] = new Trie();\n            }\n            node = node.children[c];\n        }\n        node.ref = ref;\n    }\n}\n\nfunction findWords(board: string[][], words: string[]): string[] {\n    const tree = new Trie();\n    for (let i = 0; i < words.length; ++i) {\n        tree.insert(words[i], i);\n    }\n    const m = board.length;\n    const n = board[0].length;\n    const ans: string[] = [];\n    const dirs: number[] = [-1, 0, 1, 0, -1];\n    const dfs = (node: Trie, i: number, j: number) => {\n        const idx = board[i][j].charCodeAt(0) - 97;\n        if (node.children[idx] == null) {\n            return;\n        }\n        node = node.children[idx];\n        if (node.ref != -1) {\n            ans.push(words[node.ref]);\n            node.ref = -1;\n        }\n        const c = board[i][j];\n        board[i][j] = '#';\n        for (let k = 0; k < 4; ++k) {\n            const x = i + dirs[k];\n            const y = j + dirs[k + 1];\n            if (x >= 0 && x < m && y >= 0 && y < n && board[x][y] != '#') {\n                dfs(node, x, y);\n            }\n        }\n        board[i][j] = c;\n    };\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            dfs(tree, i, j);\n        }\n    }\n    return ans;\n}",
     approach: "Trie+DFS+backtrack. O(m·n·4^L)\n\n**Складність:** Time O(m·n·4^L), Space O(Σm)",
     signature: "{\"name\":\"findWords\",\"paramTypes\":[\"character[][]\",\"string[]\"],\"returnType\":\"list<string>\"}",
   },
@@ -6855,6 +7796,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class KthLargest {\n    #k: number = 0;\n    #minQ = new MinPriorityQueue<number>();\n\n    constructor(k: number, nums: number[]) {\n        this.#k = k;\n        for (const x of nums) {\n            this.add(x);\n        }\n    }\n\n    add(val: number): number {\n        this.#minQ.enqueue(val);\n        if (this.#minQ.size() > this.#k) {\n            this.#minQ.dequeue();\n        }\n        return this.#minQ.front();\n    }\n}\n\n/**\n * Your KthLargest object will be instantiated and called as such:\n * var obj = new KthLargest(k, nums)\n * var param_1 = obj.add(val)\n */",
     approach: "Min-heap size k. O(log k)\n\n**Складність:** Time O(log k) на add, Space O(k)",
   },
   {
@@ -6867,6 +7809,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function lastStoneWeight(stones: number[]): number {\n    const pq = new MaxPriorityQueue<number>();\n    for (const x of stones) {\n        pq.enqueue(x);\n    }\n    while (pq.size() > 1) {\n        const y = pq.dequeue();\n        const x = pq.dequeue();\n        if (x !== y) {\n            pq.enqueue(y - x);\n        }\n    }\n    return pq.isEmpty() ? 0 : pq.dequeue();\n}",
     approach: "Max-heap, pop2, push diff. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -6879,6 +7822,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function kClosest(points: number[][], k: number): number[][] {\n    points.sort((a, b) => Math.hypot(a[0], a[1]) - Math.hypot(b[0], b[1]));\n    return points.slice(0, k);\n}",
     approach: "Min-heap by dist. O(n log k)\n\n**Складність:** Time O(n log k), Space O(k)",
   },
   {
@@ -6891,6 +7835,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function findKthLargest(nums: number[], k: number): number {\n    const n = nums.length;\n    k = n - k;\n    const quickSort = (l: number, r: number): number => {\n        if (l === r) {\n            return nums[l];\n        }\n        let [i, j] = [l - 1, r + 1];\n        const x = nums[(l + r) >> 1];\n        while (i < j) {\n            while (nums[++i] < x);\n            while (nums[--j] > x);\n            if (i < j) {\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n            }\n        }\n        if (j < k) {\n            return quickSort(j + 1, r);\n        }\n        return quickSort(l, j);\n    };\n    return quickSort(0, n - 1);\n}",
     approach: "Min-heap or QuickSelect. O(n log k)\n\n**Складність:** Time O(n log k), Space O(k)",
   },
   {
@@ -6903,6 +7848,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function leastInterval(tasks: string[], n: number): number {\n  const freq = new Array(26).fill(0);\n  for (const t of tasks) freq[t.charCodeAt(0) - 65]++;\n  const max = Math.max(...freq);\n  const maxCount = freq.filter((f) => f === max).length;\n  return Math.max(tasks.length, (max - 1) * (n + 1) + maxCount);\n}",
     approach: "Freq count formula. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -6915,6 +7861,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class Twitter {\n  private time = 0;\n  private tweets = new Map<number, [number, number][]>();\n  private follows = new Map<number, Set<number>>();\n\n  postTweet(userId: number, tweetId: number): void {\n    if (!this.tweets.has(userId)) this.tweets.set(userId, []);\n    this.tweets.get(userId)!.push([this.time++, tweetId]);\n  }\n\n  getNewsFeed(userId: number): number[] {\n    const users = new Set(this.follows.get(userId) ?? []);\n    users.add(userId);\n    const all: [number, number][] = [];\n    for (const u of users) all.push(...(this.tweets.get(u) ?? []));\n    return all.sort((a, b) => b[0] - a[0]).slice(0, 10).map((x) => x[1]);\n  }\n\n  follow(followerId: number, followeeId: number): void {\n    if (!this.follows.has(followerId)) this.follows.set(followerId, new Set());\n    this.follows.get(followerId)!.add(followeeId);\n  }\n\n  unfollow(followerId: number, followeeId: number): void {\n    this.follows.get(followerId)?.delete(followeeId);\n  }\n}",
     approach: "Heap merge k feeds. O(k log k)\n\n**Складність:** Time O(k log k) на getNewsFeed, Space O(n)",
   },
   {
@@ -6927,6 +7874,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function reorganizeString(s: string): string {\n  const freq = new Map<string, number>();\n  for (const c of s) freq.set(c, (freq.get(c) ?? 0) + 1);\n  const sorted = [...freq.entries()].sort((a, b) => b[1] - a[1]);\n  if (sorted[0][1] > (s.length + 1) >> 1) return '';\n  const res = new Array(s.length);\n  let i = 0;\n  for (const [c, count] of sorted) {\n    for (let k = 0; k < count; k++) {\n      if (i >= s.length) i = 1;\n      res[i] = c;\n      i += 2;\n    }\n  }\n  return res.join('');\n}",
     approach: "Max-heap, alternate. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -6939,6 +7887,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class MedianFinder {\n    #minQ = new MinPriorityQueue<number>();\n    #maxQ = new MaxPriorityQueue<number>();\n\n    addNum(num: number): void {\n        const [minQ, maxQ] = [this.#minQ, this.#maxQ];\n        maxQ.enqueue(num);\n        minQ.enqueue(maxQ.dequeue());\n        if (minQ.size() - maxQ.size() > 1) {\n            maxQ.enqueue(minQ.dequeue());\n        }\n    }\n\n    findMedian(): number {\n        const [minQ, maxQ] = [this.#minQ, this.#maxQ];\n        if (minQ.size() === maxQ.size()) {\n            return (minQ.front() + maxQ.front()) / 2;\n        }\n        return minQ.front();\n    }\n}\n\n/**\n * Your MedianFinder object will be instantiated and called as such:\n * var obj = new MedianFinder()\n * obj.addNum(num)\n * var param_2 = obj.findMedian()\n */",
     approach: "Two heaps balance. O(log n)\n\n**Складність:** Time O(log n) на addNum, O(1) на findMedian, Space O(n)",
   },
   {
@@ -6951,6 +7900,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,2]]\",\"expected\":\"[[1,2,2],[1,2],[1],[2,2],[2],[]]\"},{\"input\":\"[[0]]\",\"expected\":\"[[0],[]]\"}]",
+    solution: "function subsetsWithDup(nums: number[]): number[][] {\n    nums.sort((a, b) => a - b);\n    const n = nums.length;\n    const t: number[] = [];\n    const ans: number[][] = [];\n    const dfs = (i: number): void => {\n        if (i >= n) {\n            ans.push([...t]);\n            return;\n        }\n        t.push(nums[i]);\n        dfs(i + 1);\n        t.pop();\n        while (i + 1 < n && nums[i] === nums[i + 1]) {\n            i++;\n        }\n        dfs(i + 1);\n    };\n    dfs(0);\n    return ans;\n}",
     approach: "Sort + skip dupes. O(2^n)\n\n**Складність:** Time O(n·2^n), Space O(n)",
     signature: "{\"name\":\"subsetsWithDup\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"list<list<integer>>\"}",
   },
@@ -6964,6 +7914,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[\\\"A\\\",\\\"B\\\",\\\"C\\\",\\\"E\\\"],[\\\"S\\\",\\\"F\\\",\\\"C\\\",\\\"S\\\"],[\\\"A\\\",\\\"D\\\",\\\"E\\\",\\\"E\\\"]],\\\"ABCCED\\\"]\",\"expected\":\"true\"},{\"input\":\"[[[\\\"A\\\",\\\"B\\\",\\\"C\\\",\\\"E\\\"],[\\\"S\\\",\\\"F\\\",\\\"C\\\",\\\"S\\\"],[\\\"A\\\",\\\"D\\\",\\\"E\\\",\\\"E\\\"]],\\\"SEE\\\"]\",\"expected\":\"true\"},{\"input\":\"[[[\\\"A\\\",\\\"B\\\",\\\"C\\\",\\\"E\\\"],[\\\"S\\\",\\\"F\\\",\\\"C\\\",\\\"S\\\"],[\\\"A\\\",\\\"D\\\",\\\"E\\\",\\\"E\\\"]],\\\"ABCB\\\"]\",\"expected\":\"false\"}]",
+    solution: "function exist(board: string[][], word: string): boolean {\n    const [m, n] = [board.length, board[0].length];\n    const dirs = [-1, 0, 1, 0, -1];\n    const dfs = (i: number, j: number, k: number): boolean => {\n        if (k === word.length - 1) {\n            return board[i][j] === word[k];\n        }\n        if (board[i][j] !== word[k]) {\n            return false;\n        }\n        const c = board[i][j];\n        board[i][j] = '0';\n        for (let u = 0; u < 4; ++u) {\n            const [x, y] = [i + dirs[u], j + dirs[u + 1]];\n            const ok = x >= 0 && x < m && y >= 0 && y < n;\n            if (ok && board[x][y] !== '0' && dfs(x, y, k + 1)) {\n                return true;\n            }\n        }\n        board[i][j] = c;\n        return false;\n    };\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (dfs(i, j, 0)) {\n                return true;\n            }\n        }\n    }\n    return false;\n}",
     approach: "DFS+backtrack, mark visited. O(m·n·4^L)\n\n**Складність:** Time O(m·n·4^L), Space O(L)",
     signature: "{\"name\":\"exist\",\"paramTypes\":[\"character[][]\",\"string\"],\"returnType\":\"boolean\"}",
   },
@@ -6977,6 +7928,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function partition(s: string): string[][] {\n    const n = s.length;\n    const f: boolean[][] = Array.from({ length: n }, () => Array(n).fill(true));\n    for (let i = n - 1; i >= 0; --i) {\n        for (let j = i + 1; j < n; ++j) {\n            f[i][j] = s[i] === s[j] && f[i + 1][j - 1];\n        }\n    }\n    const ans: string[][] = [];\n    const t: string[] = [];\n    const dfs = (i: number) => {\n        if (i === n) {\n            ans.push(t.slice());\n            return;\n        }\n        for (let j = i; j < n; ++j) {\n            if (f[i][j]) {\n                t.push(s.slice(i, j + 1));\n                dfs(j + 1);\n                t.pop();\n            }\n        }\n    };\n    dfs(0);\n    return ans;\n}",
     approach: "Backtrack + isPalin. O(n·2^n)\n\n**Складність:** Time O(n·2^n), Space O(n)",
   },
   {
@@ -6989,6 +7941,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function letterCombinations(digits: string): string[] {\n    if (digits.length === 0) {\n        return [];\n    }\n    const ans: string[] = [''];\n    const d = ['abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];\n    for (const i of digits) {\n        const s = d[+i - 2];\n        const t: string[] = [];\n        for (const a of ans) {\n            for (const b of s) {\n                t.push(a + b);\n            }\n        }\n        ans.splice(0, ans.length, ...t);\n    }\n    return ans;\n}",
     approach: "Backtrack per digit. O(4^n)\n\n**Складність:** Time O(4^n), Space O(n)",
   },
   {
@@ -7001,6 +7954,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]]\",\"expected\":\"16\"},{\"input\":\"[[[1]]]\",\"expected\":\"4\"},{\"input\":\"[[[1,0]]]\",\"expected\":\"4\"}]",
+    solution: "function islandPerimeter(grid: number[][]): number {\n    let m = grid.length,\n        n = grid[0].length;\n    let ans = 0;\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            let top = 0,\n                left = 0;\n            if (i > 0) {\n                top = grid[i - 1][j];\n            }\n            if (j > 0) {\n                left = grid[i][j - 1];\n            }\n            let cur = grid[i][j];\n            if (cur != top) ++ans;\n            if (cur != left) ++ans;\n        }\n    }\n    // 最后一行， 最后一列\n    for (let i = 0; i < m; ++i) {\n        if (grid[i][n - 1] == 1) ++ans;\n    }\n    for (let j = 0; j < n; ++j) {\n        if (grid[m - 1][j] == 1) ++ans;\n    }\n    return ans;\n}",
     approach: "Count 4 sides − adjacent. O(m·n)\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"islandPerimeter\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
@@ -7014,6 +7968,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[\\\"1\\\",\\\"1\\\",\\\"1\\\",\\\"1\\\",\\\"0\\\"],[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"1\\\",\\\"0\\\"],[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"],[\\\"0\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"]]]\",\"expected\":\"1\"},{\"input\":\"[[[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"],[\\\"1\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\",\\\"0\\\"],[\\\"0\\\",\\\"0\\\",\\\"1\\\",\\\"0\\\",\\\"0\\\"],[\\\"0\\\",\\\"0\\\",\\\"0\\\",\\\"1\\\",\\\"1\\\"]]]\",\"expected\":\"3\"}]",
+    solution: "function numIslands(grid: string[][]): number {\n    const m = grid.length;\n    const n = grid[0].length;\n    let ans = 0;\n    const dirs = [-1, 0, 1, 0, -1];\n\n    const dfs = (i: number, j: number) => {\n        grid[i][j] = '0';\n        for (let k = 0; k < 4; ++k) {\n            const x = i + dirs[k];\n            const y = j + dirs[k + 1];\n            if (grid[x]?.[y] === '1') {\n                dfs(x, y);\n            }\n        }\n    };\n\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (grid[i][j] === '1') {\n                dfs(i, j);\n                ans++;\n            }\n        }\n    }\n\n    return ans;\n}",
     approach: "DFS/BFS flood fill. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"numIslands\",\"paramTypes\":[\"character[][]\"],\"returnType\":\"integer\"}",
   },
@@ -7027,6 +7982,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * Definition for _Node.\n * class _Node {\n *     val: number\n *     neighbors: _Node[]\n *\n *     constructor(val?: number, neighbors?: _Node[]) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.neighbors = (neighbors===undefined ? [] : neighbors)\n *     }\n * }\n *\n */\n\nfunction cloneGraph(node: _Node | null): _Node | null {\n    const g: Map<_Node, _Node> = new Map();\n    const dfs = (node: _Node | null): _Node | null => {\n        if (!node) {\n            return null;\n        }\n        if (g.has(node)) {\n            return g.get(node);\n        }\n        const cloned = new _Node(node.val);\n        g.set(node, cloned);\n        for (const nxt of node.neighbors) {\n            cloned.neighbors.push(dfs(nxt));\n        }\n        return cloned;\n    };\n    return dfs(node);\n}",
     approach: "BFS+HashMap old→new. O(n)\n\n**Складність:** Time O(V+E), Space O(V)",
   },
   {
@@ -7039,6 +7995,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function wallsAndGates(rooms: number[][]): void {\n  const m = rooms.length, n = rooms[0].length;\n  const q: [number, number][] = [];\n  for (let i = 0; i < m; i++)\n    for (let j = 0; j < n; j++) if (rooms[i][j] === 0) q.push([i, j]);\n  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];\n  while (q.length) {\n    const [r, c] = q.shift()!;\n    for (const [dr, dc] of dirs) {\n      const nr = r + dr, nc = c + dc;\n      if (nr < 0 || nc < 0 || nr >= m || nc >= n || rooms[nr][nc] !== 2147483647) continue;\n      rooms[nr][nc] = rooms[r][c] + 1;\n      q.push([nr, nc]);\n    }\n  }\n}",
     approach: "Multi-source BFS. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7051,6 +8008,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[2,1,1],[1,1,0],[0,1,1]]]\",\"expected\":\"4\"},{\"input\":\"[[[2,1,1],[0,1,1],[1,0,1]]]\",\"expected\":\"-1\"},{\"input\":\"[[[0,2]]]\",\"expected\":\"0\"}]",
+    solution: "function orangesRotting(grid: number[][]): number {\n    const m: number = grid.length;\n    const n: number = grid[0].length;\n    const q: number[][] = [];\n    let cnt: number = 0;\n    for (let i: number = 0; i < m; ++i) {\n        for (let j: number = 0; j < n; ++j) {\n            if (grid[i][j] === 1) {\n                cnt++;\n            } else if (grid[i][j] === 2) {\n                q.push([i, j]);\n            }\n        }\n    }\n    const dirs: number[] = [-1, 0, 1, 0, -1];\n    for (let ans = 1; q.length && cnt; ++ans) {\n        const t: number[][] = [];\n        for (const [i, j] of q) {\n            for (let d = 0; d < 4; ++d) {\n                const [x, y] = [i + dirs[d], j + dirs[d + 1]];\n                if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] === 1) {\n                    grid[x][y] = 2;\n                    t.push([x, y]);\n                    if (--cnt === 0) {\n                        return ans;\n                    }\n                }\n            }\n        }\n        q.splice(0, q.length, ...t);\n    }\n    return cnt > 0 ? -1 : 0;\n}",
     approach: "Multi-source BFS. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"orangesRotting\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
@@ -7064,6 +8022,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function pacificAtlantic(heights: number[][]): number[][] {\n    const m = heights.length,\n        n = heights[0].length;\n    const vis1: boolean[][] = Array.from({ length: m }, () => Array(n).fill(false));\n    const vis2: boolean[][] = Array.from({ length: m }, () => Array(n).fill(false));\n    const q1: [number, number][] = [];\n    const q2: [number, number][] = [];\n    const dirs = [-1, 0, 1, 0, -1];\n\n    for (let i = 0; i < m; ++i) {\n        q1.push([i, 0]);\n        vis1[i][0] = true;\n        q2.push([i, n - 1]);\n        vis2[i][n - 1] = true;\n    }\n    for (let j = 0; j < n; ++j) {\n        q1.push([0, j]);\n        vis1[0][j] = true;\n        q2.push([m - 1, j]);\n        vis2[m - 1][j] = true;\n    }\n\n    const bfs = (q: [number, number][], vis: boolean[][]) => {\n        while (q.length) {\n            const [x, y] = q.shift()!;\n            for (let k = 0; k < 4; ++k) {\n                const nx = x + dirs[k],\n                    ny = y + dirs[k + 1];\n                if (\n                    nx >= 0 &&\n                    nx < m &&\n                    ny >= 0 &&\n                    ny < n &&\n                    !vis[nx][ny] &&\n                    heights[nx][ny] >= heights[x][y]\n                ) {\n                    vis[nx][ny] = true;\n                    q.push([nx, ny]);\n                }\n            }\n        }\n    };\n\n    bfs(q1, vis1);\n    bfs(q2, vis2);\n\n    const ans: number[][] = [];\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (vis1[i][j] && vis2[i][j]) {\n                ans.push([i, j]);\n            }\n        }\n    }\n    return ans;\n}",
     approach: "Reverse BFS from edges. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7076,6 +8035,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"O\\\",\\\"O\\\",\\\"X\\\"],[\\\"X\\\",\\\"X\\\",\\\"O\\\",\\\"X\\\"],[\\\"X\\\",\\\"O\\\",\\\"X\\\",\\\"X\\\"]]]\",\"expected\":\"[[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"X\\\",\\\"X\\\",\\\"X\\\"],[\\\"X\\\",\\\"O\\\",\\\"X\\\",\\\"X\\\"]]\"},{\"input\":\"[[[\\\"X\\\"]]]\",\"expected\":\"[[\\\"X\\\"]]\"}]",
+    solution: "function solve(board: string[][]): void {\n    const m = board.length;\n    const n = board[0].length;\n    const dirs: number[] = [-1, 0, 1, 0, -1];\n    const dfs = (i: number, j: number): void => {\n        if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] !== 'O') {\n            return;\n        }\n        board[i][j] = '.';\n        for (let k = 0; k < 4; ++k) {\n            dfs(i + dirs[k], j + dirs[k + 1]);\n        }\n    };\n    for (let i = 0; i < m; ++i) {\n        dfs(i, 0);\n        dfs(i, n - 1);\n    }\n    for (let j = 0; j < n; ++j) {\n        dfs(0, j);\n        dfs(m - 1, j);\n    }\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (board[i][j] === '.') {\n                board[i][j] = 'O';\n            } else if (board[i][j] === 'O') {\n                board[i][j] = 'X';\n            }\n        }\n    }\n}",
     approach: "Mark border-O's, flip rest. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"solve\",\"paramTypes\":[\"character[][]\"],\"returnType\":\"void\"}",
   },
@@ -7089,6 +8049,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[2,[[1,0]]]\",\"expected\":\"true\"},{\"input\":\"[2,[[1,0],[0,1]]]\",\"expected\":\"false\"}]",
+    solution: "function canFinish(numCourses: number, prerequisites: number[][]): boolean {\n    const g: number[][] = Array.from({ length: numCourses }, () => []);\n    const indeg: number[] = Array(numCourses).fill(0);\n    for (const [a, b] of prerequisites) {\n        g[b].push(a);\n        indeg[a]++;\n    }\n    const q: number[] = [];\n    for (let i = 0; i < numCourses; ++i) {\n        if (indeg[i] === 0) {\n            q.push(i);\n        }\n    }\n    for (const i of q) {\n        --numCourses;\n        for (const j of g[i]) {\n            if (--indeg[j] === 0) {\n                q.push(j);\n            }\n        }\n    }\n    return numCourses === 0;\n}",
     approach: "Cycle detection (topo). O(V+E)\n\n**Складність:** Time O(V+E), Space O(V+E)",
     signature: "{\"name\":\"canFinish\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"boolean\"}",
   },
@@ -7102,6 +8063,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[2,[[1,0]]]\",\"expected\":\"[0,1]\"},{\"input\":\"[4,[[1,0],[2,0],[3,1],[3,2]]]\",\"expected\":\"[0,1,2,3]\"},{\"input\":\"[1,[]]\",\"expected\":\"[0]\"}]",
+    solution: "function findOrder(numCourses: number, prerequisites: number[][]): number[] {\n    const g: number[][] = Array.from({ length: numCourses }, () => []);\n    const indeg: number[] = new Array(numCourses).fill(0);\n    for (const [a, b] of prerequisites) {\n        g[b].push(a);\n        indeg[a]++;\n    }\n    const q: number[] = [];\n    for (let i = 0; i < numCourses; ++i) {\n        if (indeg[i] === 0) {\n            q.push(i);\n        }\n    }\n    const ans: number[] = [];\n    while (q.length) {\n        const i = q.shift()!;\n        ans.push(i);\n        for (const j of g[i]) {\n            if (--indeg[j] === 0) {\n                q.push(j);\n            }\n        }\n    }\n    return ans.length === numCourses ? ans : [];\n}",
     approach: "Topological sort (Kahn's). O(V+E)\n\n**Складність:** Time O(V+E), Space O(V+E)",
     signature: "{\"name\":\"findOrder\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
@@ -7115,6 +8077,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[5,[[0,1],[0,2],[0,3],[1,4]]]\",\"expected\":\"true\"},{\"input\":\"[5,[[0,1],[1,2],[2,3],[1,3],[1,4]]]\",\"expected\":\"false\"}]",
+    solution: "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {boolean}\n */\nvar validTree = function (n, edges) {\n    const p = Array.from({ length: n }, (_, i) => i);\n    const find = x => {\n        if (p[x] !== x) {\n            p[x] = find(p[x]);\n        }\n        return p[x];\n    };\n    for (const [a, b] of edges) {\n        const pa = find(a);\n        const pb = find(b);\n        if (pa === pb) {\n            return false;\n        }\n        p[pa] = pb;\n        --n;\n    }\n    return n === 1;\n};",
     approach: "V-1 edges, no cycle. O(V+E)\n\n**Складність:** Time O(V+E), Space O(V+E)",
     signature: "{\"name\":\"validTree\",\"paramTypes\":[\"integer\",\"integer[][]\"],\"returnType\":\"boolean\"}",
   },
@@ -7128,6 +8091,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function countComponents(n: number, edges: number[][]): number {\n    const g: number[][] = Array.from({ length: n }, () => []);\n    for (const [a, b] of edges) {\n        g[a].push(b);\n        g[b].push(a);\n    }\n    const vis: boolean[] = Array(n).fill(false);\n    const dfs = (i: number): number => {\n        if (vis[i]) {\n            return 0;\n        }\n        vis[i] = true;\n        for (const j of g[i]) {\n            dfs(j);\n        }\n        return 1;\n    };\n    return g.reduce((acc, _, i) => acc + dfs(i), 0);\n}",
     approach: "Union-Find or DFS. O(V+E)\n\n**Складність:** Time O(V+E), Space O(V)",
   },
   {
@@ -7140,6 +8104,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[1,2],[1,3],[2,3]]]\",\"expected\":\"[2,3]\"},{\"input\":\"[[[1,2],[2,3],[3,4],[1,4],[1,5]]]\",\"expected\":\"[1,4]\"}]",
+    solution: "function findRedundantConnection(edges: number[][]): number[] {\n    const n = edges.length;\n    const p: number[] = Array.from({ length: n }, (_, i) => i);\n    const find = (x: number): number => {\n        if (p[x] !== x) {\n            p[x] = find(p[x]);\n        }\n        return p[x];\n    };\n    for (let i = 0; ; ++i) {\n        const pa = find(edges[i][0] - 1);\n        const pb = find(edges[i][1] - 1);\n        if (pa === pb) {\n            return edges[i];\n        }\n        p[pa] = pb;\n    }\n}",
     approach: "Union-Find. O(n α(n))\n\n**Складність:** Time O(n·α(n)), Space O(n)",
     signature: "{\"name\":\"findRedundantConnection\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[]\"}",
   },
@@ -7153,6 +8118,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"hit\\\",\\\"cog\\\",[\\\"hot\\\",\\\"dot\\\",\\\"dog\\\",\\\"lot\\\",\\\"log\\\",\\\"cog\\\"]]\",\"expected\":\"5\"},{\"input\":\"[\\\"hit\\\",\\\"cog\\\",[\\\"hot\\\",\\\"dot\\\",\\\"dog\\\",\\\"lot\\\",\\\"log\\\"]]\",\"expected\":\"0\"}]",
+    solution: "function ladderLength(beginWord: string, endWord: string, wordList: string[]): number {\n    if (!wordList.includes(endWord)) return 0;\n\n    const replace = (s: string, i: number, ch: string) => s.slice(0, i) + ch + s.slice(i + 1);\n    const { length } = beginWord;\n    const words: Record<string, string[]> = {};\n    const g: Record<string, string[]> = {};\n\n    for (const w of [beginWord, ...wordList]) {\n        const derivatives: string[] = [];\n\n        for (let i = 0; i < length; i++) {\n            const nextW = replace(w, i, '*');\n            derivatives.push(nextW);\n\n            g[nextW] ??= [];\n            g[nextW].push(w);\n        }\n\n        words[w] = derivatives;\n    }\n\n    let ans = 0;\n    let q = words[beginWord];\n    const vis = new Set<string>([beginWord]);\n\n    while (q.length) {\n        const nextQ: string[] = [];\n        ans++;\n\n        for (const variant of q) {\n            for (const w of g[variant]) {\n                if (w === endWord) return ans + 1;\n\n                if (vis.has(w)) continue;\n                vis.add(w);\n\n                nextQ.push(...words[w]);\n            }\n        }\n\n        q = nextQ;\n    }\n\n    return 0;\n}",
     approach: "BFS level by level. O(n·m²)\n\n**Складність:** Time O(n·m²), Space O(n·m)",
     signature: "{\"name\":\"ladderLength\",\"paramTypes\":[\"string\",\"string\",\"list<string>\"],\"returnType\":\"integer\"}",
   },
@@ -7166,6 +8132,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function minCostConnectPoints(points: number[][]): number {\n    const n = points.length;\n    const g: number[][] = Array(n)\n        .fill(0)\n        .map(() => Array(n).fill(0));\n    const dist: number[] = Array(n).fill(1 << 30);\n    const vis: boolean[] = Array(n).fill(false);\n    for (let i = 0; i < n; ++i) {\n        const [x1, y1] = points[i];\n        for (let j = i + 1; j < n; ++j) {\n            const [x2, y2] = points[j];\n            const t = Math.abs(x1 - x2) + Math.abs(y1 - y2);\n            g[i][j] = t;\n            g[j][i] = t;\n        }\n    }\n    let ans = 0;\n    dist[0] = 0;\n    for (let i = 0; i < n; ++i) {\n        let j = -1;\n        for (let k = 0; k < n; ++k) {\n            if (!vis[k] && (j === -1 || dist[k] < dist[j])) {\n                j = k;\n            }\n        }\n        vis[j] = true;\n        ans += dist[j];\n        for (let k = 0; k < n; ++k) {\n            if (!vis[k]) {\n                dist[k] = Math.min(dist[k], g[j][k]);\n            }\n        }\n    }\n    return ans;\n}",
     approach: "Kruskal or Prim. O(E log E)\n\n**Складність:** Time O(E log E), Space O(V+E)",
   },
   {
@@ -7178,6 +8145,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[2,1,1],[2,3,1],[3,4,1]],4,2]\",\"expected\":\"2\"},{\"input\":\"[[[1,2,1]],2,1]\",\"expected\":\"1\"},{\"input\":\"[[[1,2,1]],2,2]\",\"expected\":\"-1\"}]",
+    solution: "function networkDelayTime(times: number[][], n: number, k: number): number {\n    const g: number[][] = Array.from({ length: n }, () => Array(n).fill(Infinity));\n    for (const [u, v, w] of times) {\n        g[u - 1][v - 1] = w;\n    }\n    const dist: number[] = Array(n).fill(Infinity);\n    dist[k - 1] = 0;\n    const vis: boolean[] = Array(n).fill(false);\n    for (let i = 0; i < n; ++i) {\n        let t = -1;\n        for (let j = 0; j < n; ++j) {\n            if (!vis[j] && (t === -1 || dist[j] < dist[t])) {\n                t = j;\n            }\n        }\n        vis[t] = true;\n        for (let j = 0; j < n; ++j) {\n            dist[j] = Math.min(dist[j], dist[t] + g[t][j]);\n        }\n    }\n    const ans = Math.max(...dist);\n    return ans === Infinity ? -1 : ans;\n}",
     approach: "Dijkstra. O(E log V)\n\n**Складність:** Time O(E log V), Space O(V+E)",
     signature: "{\"name\":\"networkDelayTime\",\"paramTypes\":[\"integer[][]\",\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7191,6 +8159,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function findCheapestPrice(n: number, flights: number[][], src: number, dst: number, k: number): number {\n  let dist = new Array(n).fill(Infinity);\n  dist[src] = 0;\n  for (let i = 0; i <= k; i++) {\n    const next = [...dist];\n    for (const [u, v, w] of flights) {\n      if (dist[u] + w < next[v]) next[v] = dist[u] + w;\n    }\n    dist = next;\n  }\n  return dist[dst] === Infinity ? -1 : dist[dst];\n}",
     approach: "Bellman-Ford K+1 iters. O(K·E)\n\n**Складність:** Time O(K·E), Space O(V)",
   },
   {
@@ -7203,6 +8172,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class UnionFind {\n    private p: number[];\n    private size: number[];\n\n    constructor(n: number) {\n        this.p = Array.from({ length: n }, (_, i) => i);\n        this.size = Array(n).fill(1);\n    }\n\n    find(x: number): number {\n        if (this.p[x] !== x) {\n            this.p[x] = this.find(this.p[x]);\n        }\n        return this.p[x];\n    }\n\n    union(a: number, b: number): boolean {\n        const pa = this.find(a);\n        const pb = this.find(b);\n        if (pa === pb) {\n            return false;\n        }\n        if (this.size[pa] > this.size[pb]) {\n            this.p[pb] = pa;\n            this.size[pa] += this.size[pb];\n        } else {\n            this.p[pa] = pb;\n            this.size[pb] += this.size[pa];\n        }\n        return true;\n    }\n\n    connected(a: number, b: number): boolean {\n        return this.find(a) === this.find(b);\n    }\n}\n\nfunction minimumEffortPath(heights: number[][]): number {\n    const m = heights.length;\n    const n = heights[0].length;\n    const uf = new UnionFind(m * n);\n    const edges: number[][] = [];\n    const dirs = [1, 0, 1];\n\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            for (let k = 0; k < 2; ++k) {\n                const x = i + dirs[k];\n                const y = j + dirs[k + 1];\n                if (x >= 0 && x < m && y >= 0 && y < n) {\n                    const d = Math.abs(heights[i][j] - heights[x][y]);\n                    edges.push([d, i * n + j, x * n + y]);\n                }\n            }\n        }\n    }\n\n    edges.sort((a, b) => a[0] - b[0]);\n\n    for (const [h, a, b] of edges) {\n        uf.union(a, b);\n        if (uf.connected(0, m * n - 1)) {\n            return h;\n        }\n    }\n\n    return 0;\n}",
     approach: "Dijkstra on grid. O(m·n log(m·n))\n\n**Складність:** Time O(m·n log(m·n)), Space O(m·n)",
   },
   {
@@ -7215,6 +8185,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[\\\"MUC\\\",\\\"LHR\\\"],[\\\"JFK\\\",\\\"MUC\\\"],[\\\"SFO\\\",\\\"SJC\\\"],[\\\"LHR\\\",\\\"SFO\\\"]]]\",\"expected\":\"[\\\"JFK\\\",\\\"MUC\\\",\\\"LHR\\\",\\\"SFO\\\",\\\"SJC\\\"]\"},{\"input\":\"[[[\\\"JFK\\\",\\\"SFO\\\"],[\\\"JFK\\\",\\\"ATL\\\"],[\\\"SFO\\\",\\\"ATL\\\"],[\\\"ATL\\\",\\\"JFK\\\"],[\\\"ATL\\\",\\\"SFO\\\"]]]\",\"expected\":\"[\\\"JFK\\\",\\\"ATL\\\",\\\"JFK\\\",\\\"SFO\\\",\\\"ATL\\\",\\\"SFO\\\"]\"}]",
+    solution: "function findItinerary(tickets: string[][]): string[] {\n    const g: Record<string, string[]> = {};\n    tickets.sort((a, b) => b[1].localeCompare(a[1]));\n    for (const [f, t] of tickets) {\n        g[f] = g[f] || [];\n        g[f].push(t);\n    }\n    const ans: string[] = [];\n    const dfs = (f: string) => {\n        while (g[f] && g[f].length) {\n            const t = g[f].pop()!;\n            dfs(t);\n        }\n        ans.push(f);\n    };\n    dfs('JFK');\n    return ans.reverse();\n}",
     approach: "Eulerian path (Hierholzer). O(E log E)\n\n**Складність:** Time O(E log E), Space O(E)",
     signature: "{\"name\":\"findItinerary\",\"paramTypes\":[\"list<list<string>>\"],\"returnType\":\"list<string>\"}",
   },
@@ -7228,6 +8199,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function alienOrder(words: string[]): string {\n  const adj = new Map<string, Set<string>>();\n  const indeg = new Map<string, number>();\n  for (const w of words) for (const c of w) { adj.set(c, adj.get(c) ?? new Set()); indeg.set(c, indeg.get(c) ?? 0); }\n  for (let i = 0; i + 1 < words.length; i++) {\n    const a = words[i], b = words[i + 1];\n    const len = Math.min(a.length, b.length);\n    let j = 0;\n    for (; j < len; j++) {\n      if (a[j] !== b[j]) {\n        if (!adj.get(a[j])!.has(b[j])) { adj.get(a[j])!.add(b[j]); indeg.set(b[j], indeg.get(b[j])! + 1); }\n        break;\n      }\n    }\n    if (j === len && a.length > b.length) return '';\n  }\n  const q = [...indeg.keys()].filter((c) => indeg.get(c) === 0);\n  let res = '';\n  while (q.length) {\n    const c = q.shift()!;\n    res += c;\n    for (const nb of adj.get(c)!) { indeg.set(nb, indeg.get(nb)! - 1); if (indeg.get(nb) === 0) q.push(nb); }\n  }\n  return res.length === indeg.size ? res : '';\n}",
     approach: "Topological sort. O(n)\n\n**Складність:** Time O(C), Space O(1) (26 літер)",
   },
   {
@@ -7240,6 +8212,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[2]\",\"expected\":\"2\"},{\"input\":\"[3]\",\"expected\":\"3\"}]",
+    solution: "function climbStairs(n: number): number {\n    let p = 1;\n    let q = 1;\n    for (let i = 1; i < n; i++) {\n        [p, q] = [q, p + q];\n    }\n    return q;\n}",
     approach: "dp[i]=dp[i-1]+dp[i-2]. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"climbStairs\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7253,6 +8226,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function minCostClimbingStairs(cost: number[]): number {\n    const n = cost.length;\n    const f: number[] = Array(n).fill(-1);\n    const dfs = (i: number): number => {\n        if (i >= n) {\n            return 0;\n        }\n        if (f[i] < 0) {\n            f[i] = cost[i] + Math.min(dfs(i + 1), dfs(i + 2));\n        }\n        return f[i];\n    };\n    return Math.min(dfs(0), dfs(1));\n}",
     approach: "dp[i]=cost+min(dp[i-1],dp[i-2]). O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7265,6 +8239,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3,1]]\",\"expected\":\"4\"},{\"input\":\"[[2,7,9,3,1]]\",\"expected\":\"12\"}]",
+    solution: "function rob(nums: number[]): number {\n    const n = nums.length;\n    const f: number[] = Array(n).fill(-1);\n    const dfs = (i: number): number => {\n        if (i >= n) {\n            return 0;\n        }\n        if (f[i] < 0) {\n            f[i] = Math.max(nums[i] + dfs(i + 2), dfs(i + 1));\n        }\n        return f[i];\n    };\n    return dfs(0);\n}",
     approach: "dp[i]=max(skip,take). O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"rob\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -7278,6 +8253,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[2,3,2]]\",\"expected\":\"3\"},{\"input\":\"[[1,2,3,1]]\",\"expected\":\"4\"},{\"input\":\"[[1,2,3]]\",\"expected\":\"3\"}]",
+    solution: "function rob(nums: number[]): number {\n    const n = nums.length;\n    if (n === 1) {\n        return nums[0];\n    }\n    const robRange = (l: number, r: number): number => {\n        let [f, g] = [0, 0];\n        for (; l <= r; ++l) {\n            [f, g] = [Math.max(f, g), f + nums[l]];\n        }\n        return Math.max(f, g);\n    };\n    return Math.max(robRange(0, n - 2), robRange(1, n - 1));\n}",
     approach: "Two passes (skip first or last). O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"rob\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -7291,6 +8267,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function longestPalindrome(s: string): string {\n    const n = s.length;\n    const f: boolean[][] = Array(n)\n        .fill(0)\n        .map(() => Array(n).fill(true));\n    let k = 0;\n    let mx = 1;\n    for (let i = n - 2; i >= 0; --i) {\n        for (let j = i + 1; j < n; ++j) {\n            f[i][j] = false;\n            if (s[i] === s[j]) {\n                f[i][j] = f[i + 1][j - 1];\n                if (f[i][j] && mx < j - i + 1) {\n                    mx = j - i + 1;\n                    k = i;\n                }\n            }\n        }\n    }\n    return s.slice(k, k + mx);\n}",
     approach: "Expand around center. O(n²)\n\n**Складність:** Time O(n²), Space O(1)",
   },
   {
@@ -7303,6 +8280,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"abc\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"aaa\\\"]\",\"expected\":\"6\"}]",
+    solution: "/**\n * @param {string} s\n * @return {number}\n */\nvar countSubstrings = function (s) {\n    let ans = 0;\n    const n = s.length;\n    for (let k = 0; k < n * 2 - 1; ++k) {\n        let i = k >> 1;\n        let j = (k + 1) >> 1;\n        while (~i && j < n && s[i] == s[j]) {\n            ++ans;\n            --i;\n            ++j;\n        }\n    }\n    return ans;\n};",
     approach: "Expand, count. O(n²)\n\n**Складність:** Time O(n²), Space O(1)",
     signature: "{\"name\":\"countSubstrings\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
@@ -7316,6 +8294,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"12\\\"]\",\"expected\":\"2\"},{\"input\":\"[\\\"226\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"06\\\"]\",\"expected\":\"0\"}]",
+    solution: "function numDecodings(s: string): number {\n    const n = s.length;\n    const f: number[] = new Array(n + 1).fill(0);\n    f[0] = 1;\n    for (let i = 1; i <= n; ++i) {\n        if (s[i - 1] !== '0') {\n            f[i] = f[i - 1];\n        }\n        if (i > 1 && (s[i - 2] === '1' || (s[i - 2] === '2' && s[i - 1] <= '6'))) {\n            f[i] += f[i - 2];\n        }\n    }\n    return f[n];\n}",
     approach: "dp[i] += valid 1-digit + 2-digit. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"numDecodings\",\"paramTypes\":[\"string\"],\"returnType\":\"integer\"}",
   },
@@ -7329,6 +8308,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,5],11]\",\"expected\":\"3\"},{\"input\":\"[[2],3]\",\"expected\":\"-1\"},{\"input\":\"[[1],0]\",\"expected\":\"0\"}]",
+    solution: "function coinChange(coins: number[], amount: number): number {\n    const m = coins.length;\n    const n = amount;\n    const f: number[][] = Array(m + 1)\n        .fill(0)\n        .map(() => Array(n + 1).fill(1 << 30));\n    f[0][0] = 0;\n    for (let i = 1; i <= m; ++i) {\n        for (let j = 0; j <= n; ++j) {\n            f[i][j] = f[i - 1][j];\n            if (j >= coins[i - 1]) {\n                f[i][j] = Math.min(f[i][j], f[i][j - coins[i - 1]] + 1);\n            }\n        }\n    }\n    return f[m][n] > n ? -1 : f[m][n];\n}",
     approach: "dp[amt]=min(dp[amt-coin]+1). O(n·amt)\n\n**Складність:** Time O(n·amount), Space O(amount)",
     signature: "{\"name\":\"coinChange\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7342,6 +8322,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function maxProduct(nums: number[]): number {\n    let [f, g, ans] = [nums[0], nums[0], nums[0]];\n    for (let i = 1; i < nums.length; ++i) {\n        const [ff, gg] = [f, g];\n        f = Math.max(nums[i], ff * nums[i], gg * nums[i]);\n        g = Math.min(nums[i], ff * nums[i], gg * nums[i]);\n        ans = Math.max(ans, f);\n    }\n    return ans;\n}",
     approach: "Track min/max ending. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7354,6 +8335,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"leetcode\\\",[\\\"leet\\\",\\\"code\\\"]]\",\"expected\":\"true\"},{\"input\":\"[\\\"applepenapple\\\",[\\\"apple\\\",\\\"pen\\\"]]\",\"expected\":\"true\"},{\"input\":\"[\\\"catsandog\\\",[\\\"cats\\\",\\\"dog\\\",\\\"sand\\\",\\\"and\\\",\\\"cat\\\"]]\",\"expected\":\"false\"}]",
+    solution: "function wordBreak(s: string, wordDict: string[]): boolean {\n    const words = new Set(wordDict);\n    const n = s.length;\n    const f: boolean[] = new Array(n + 1).fill(false);\n    f[0] = true;\n    for (let i = 1; i <= n; ++i) {\n        for (let j = 0; j < i; ++j) {\n            if (f[j] && words.has(s.substring(j, i))) {\n                f[i] = true;\n                break;\n            }\n        }\n    }\n    return f[n];\n}",
     approach: "dp[i] = any dp[j], s[j..i] in set. O(n²)\n\n**Складність:** Time O(n²), Space O(n)",
     signature: "{\"name\":\"wordBreak\",\"paramTypes\":[\"string\",\"list<string>\"],\"returnType\":\"boolean\"}",
   },
@@ -7367,6 +8349,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function lengthOfLIS(nums: number[]): number {\n    const n = nums.length;\n    const f: number[] = new Array(n).fill(1);\n    for (let i = 1; i < n; ++i) {\n        for (let j = 0; j < i; ++j) {\n            if (nums[j] < nums[i]) {\n                f[i] = Math.max(f[i], f[j] + 1);\n            }\n        }\n    }\n    return Math.max(...f);\n}",
     approach: "dp[i]=max(dp[j]+1). O(n²) or O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
   },
   {
@@ -7379,6 +8362,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function canPartition(nums: number[]): boolean {\n    const s = nums.reduce((a, b) => a + b, 0);\n    if (s % 2 === 1) {\n        return false;\n    }\n    const n = nums.length;\n    const m = s >> 1;\n    const f: boolean[][] = Array.from({ length: n + 1 }, () => Array(m + 1).fill(false));\n    f[0][0] = true;\n    for (let i = 1; i <= n; ++i) {\n        const x = nums[i - 1];\n        for (let j = 0; j <= m; ++j) {\n            f[i][j] = f[i - 1][j] || (j >= x && f[i - 1][j - x]);\n        }\n    }\n    return f[n][m];\n}",
     approach: "Subset sum DP, target=sum/2. O(n·sum)\n\n**Складність:** Time O(n·sum), Space O(sum)",
   },
   {
@@ -7391,6 +8375,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[12]\",\"expected\":\"3\"},{\"input\":\"[13]\",\"expected\":\"2\"}]",
+    solution: "function numSquares(n: number): number {\n    const m = Math.floor(Math.sqrt(n));\n    const f: number[][] = Array(m + 1)\n        .fill(0)\n        .map(() => Array(n + 1).fill(1 << 30));\n    f[0][0] = 0;\n    for (let i = 1; i <= m; ++i) {\n        for (let j = 0; j <= n; ++j) {\n            f[i][j] = f[i - 1][j];\n            if (j >= i * i) {\n                f[i][j] = Math.min(f[i][j], f[i][j - i * i] + 1);\n            }\n        }\n    }\n    return f[m][n];\n}",
     approach: "dp[i]=min(dp[i-j²]+1). O(n√n)\n\n**Складність:** Time O(n√n), Space O(n)",
     signature: "{\"name\":\"numSquares\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7404,6 +8389,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3],4]\",\"expected\":\"7\"},{\"input\":\"[[9],3]\",\"expected\":\"0\"}]",
+    solution: "function combinationSum4(nums: number[], target: number): number {\n    const f: number[] = Array(target + 1).fill(0);\n    f[0] = 1;\n    for (let i = 1; i <= target; ++i) {\n        for (const x of nums) {\n            if (i >= x) {\n                f[i] += f[i - x];\n            }\n        }\n    }\n    return f[target];\n}",
     approach: "Unbounded knapsack (order). O(n·target)\n\n**Складність:** Time O(n·target), Space O(target)",
     signature: "{\"name\":\"combinationSum4\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7417,6 +8403,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[3,7]\",\"expected\":\"28\"},{\"input\":\"[3,2]\",\"expected\":\"3\"}]",
+    solution: "function uniquePaths(m: number, n: number): number {\n    const f: number[][] = Array(m)\n        .fill(0)\n        .map(() => Array(n).fill(0));\n    f[0][0] = 1;\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (i > 0) {\n                f[i][j] += f[i - 1][j];\n            }\n            if (j > 0) {\n                f[i][j] += f[i][j - 1];\n            }\n        }\n    }\n    return f[m - 1][n - 1];\n}",
     approach: "dp[i][j]=dp[i-1][j]+dp[i][j-1]. O(m·n)\n\n**Складність:** Time O(m·n), Space O(n)",
     signature: "{\"name\":\"uniquePaths\",\"paramTypes\":[\"integer\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7430,6 +8417,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function longestCommonSubsequence(text1: string, text2: string): number {\n    const m = text1.length;\n    const n = text2.length;\n    const f = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    for (let i = 1; i <= m; i++) {\n        for (let j = 1; j <= n; j++) {\n            if (text1[i - 1] === text2[j - 1]) {\n                f[i][j] = f[i - 1][j - 1] + 1;\n            } else {\n                f[i][j] = Math.max(f[i - 1][j], f[i][j - 1]);\n            }\n        }\n    }\n    return f[m][n];\n}",
     approach: "dp[i][j] = dp[i-1][j-1]+1 or max. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7442,6 +8430,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function maxProfit(prices: number[]): number {\n    const n = prices.length;\n    const f: number[][] = Array.from({ length: n }, () => Array.from({ length: 2 }, () => -1));\n    const dfs = (i: number, j: number): number => {\n        if (i >= n) {\n            return 0;\n        }\n        if (f[i][j] !== -1) {\n            return f[i][j];\n        }\n        let ans = dfs(i + 1, j);\n        if (j) {\n            ans = Math.max(ans, prices[i] + dfs(i + 2, 0));\n        } else {\n            ans = Math.max(ans, -prices[i] + dfs(i + 1, 1));\n        }\n        return (f[i][j] = ans);\n    };\n    return dfs(0, 0);\n}",
     approach: "States: hold/sold/rest. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7454,6 +8443,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[5,[1,2,5]]\",\"expected\":\"4\"},{\"input\":\"[3,[2]]\",\"expected\":\"0\"},{\"input\":\"[10,[10]]\",\"expected\":\"1\"}]",
+    solution: "function change(amount: number, coins: number[]): number {\n    const [m, n] = [coins.length, amount];\n    const f: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    f[0][0] = 1;\n    for (let i = 1; i <= m; ++i) {\n        for (let j = 0; j <= n; ++j) {\n            f[i][j] = f[i - 1][j];\n            if (j >= coins[i - 1]) {\n                f[i][j] += f[i][j - coins[i - 1]];\n            }\n        }\n    }\n    return f[m][n];\n}",
     approach: "Unbounded knapsack. O(n·amt)\n\n**Складність:** Time O(n·amount), Space O(amount)",
     signature: "{\"name\":\"change\",\"paramTypes\":[\"integer\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -7467,6 +8457,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,1,1,1,1],3]\",\"expected\":\"5\"},{\"input\":\"[[1],1]\",\"expected\":\"1\"}]",
+    solution: "function findTargetSumWays(nums: number[], target: number): number {\n    const s = nums.reduce((a, b) => a + b, 0);\n    if (s < target || (s - target) % 2) {\n        return 0;\n    }\n    const [m, n] = [nums.length, ((s - target) / 2) | 0];\n    const f: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    f[0][0] = 1;\n    for (let i = 1; i <= m; i++) {\n        for (let j = 0; j <= n; j++) {\n            f[i][j] = f[i - 1][j];\n            if (j >= nums[i - 1]) {\n                f[i][j] += f[i - 1][j - nums[i - 1]];\n            }\n        }\n    }\n    return f[m][n];\n}",
     approach: "+/- assignment DP. O(n·sum)\n\n**Складність:** Time O(n·sum), Space O(sum)",
     signature: "{\"name\":\"findTargetSumWays\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7480,6 +8471,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"aabcc\\\",\\\"dbbca\\\",\\\"aadbbcbcac\\\"]\",\"expected\":\"true\"},{\"input\":\"[\\\"aabcc\\\",\\\"dbbca\\\",\\\"aadbbbaccc\\\"]\",\"expected\":\"false\"},{\"input\":\"[\\\"\\\",\\\"\\\",\\\"\\\"]\",\"expected\":\"true\"}]",
+    solution: "function isInterleave(s1: string, s2: string, s3: string): boolean {\n    const m = s1.length;\n    const n = s2.length;\n    if (m + n !== s3.length) {\n        return false;\n    }\n    const f: number[][] = new Array(m + 1).fill(0).map(() => new Array(n + 1).fill(0));\n    const dfs = (i: number, j: number): boolean => {\n        if (i >= m && j >= n) {\n            return true;\n        }\n        if (f[i][j]) {\n            return f[i][j] === 1;\n        }\n        f[i][j] = -1;\n        if (i < m && s1[i] === s3[i + j] && dfs(i + 1, j)) {\n            f[i][j] = 1;\n        }\n        if (f[i][j] === -1 && j < n && s2[j] === s3[i + j] && dfs(i, j + 1)) {\n            f[i][j] = 1;\n        }\n        return f[i][j] === 1;\n    };\n    return dfs(0, 0);\n}",
     approach: "Can form s3 from s1+s2. O(m·n)\n\n**Складність:** Time O(m·n), Space O(n)",
     signature: "{\"name\":\"isInterleave\",\"paramTypes\":[\"string\",\"string\",\"string\"],\"returnType\":\"boolean\"}",
   },
@@ -7493,6 +8485,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function maximalSquare(matrix: string[][]): number {\n  const m = matrix.length, n = matrix[0].length;\n  const dp = new Array(n + 1).fill(0);\n  let best = 0, prev = 0;\n  for (let i = 1; i <= m; i++) {\n    prev = 0;\n    for (let j = 1; j <= n; j++) {\n      const temp = dp[j];\n      if (matrix[i - 1][j - 1] === '1') {\n        dp[j] = Math.min(dp[j], dp[j - 1], prev) + 1;\n        best = Math.max(best, dp[j]);\n      } else dp[j] = 0;\n      prev = temp;\n    }\n  }\n  return best * best;\n}",
     approach: "dp[i][j]=min(top,left,diag)+1. O(m·n)\n\n**Складність:** Time O(m·n), Space O(n)",
   },
   {
@@ -7505,6 +8498,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"horse\\\",\\\"ros\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"intention\\\",\\\"execution\\\"]\",\"expected\":\"5\"}]",
+    solution: "function minDistance(word1: string, word2: string): number {\n    const m = word1.length;\n    const n = word2.length;\n    const f: number[][] = Array(m + 1)\n        .fill(0)\n        .map(() => Array(n + 1).fill(0));\n    for (let j = 1; j <= n; ++j) {\n        f[0][j] = j;\n    }\n    for (let i = 1; i <= m; ++i) {\n        f[i][0] = i;\n        for (let j = 1; j <= n; ++j) {\n            if (word1[i - 1] === word2[j - 1]) {\n                f[i][j] = f[i - 1][j - 1];\n            } else {\n                f[i][j] = Math.min(f[i - 1][j], f[i][j - 1], f[i - 1][j - 1]) + 1;\n            }\n        }\n    }\n    return f[m][n];\n}",
     approach: "dp[i][j] = edit ops. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"minDistance\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
@@ -7518,6 +8512,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function longestIncreasingPath(matrix: number[][]): number {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    const f: number[][] = Array(m)\n        .fill(0)\n        .map(() => Array(n).fill(0));\n    const dirs = [-1, 0, 1, 0, -1];\n    const dfs = (i: number, j: number): number => {\n        if (f[i][j] > 0) {\n            return f[i][j];\n        }\n        for (let k = 0; k < 4; ++k) {\n            const x = i + dirs[k];\n            const y = j + dirs[k + 1];\n            if (x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j]) {\n                f[i][j] = Math.max(f[i][j], dfs(x, y));\n            }\n        }\n        return ++f[i][j];\n    };\n    let ans = 0;\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            ans = Math.max(ans, dfs(i, j));\n        }\n    }\n    return ans;\n}",
     approach: "DFS+memo. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7530,6 +8525,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"rabbbit\\\",\\\"rabbit\\\"]\",\"expected\":\"3\"},{\"input\":\"[\\\"babgbag\\\",\\\"bag\\\"]\",\"expected\":\"5\"}]",
+    solution: "function numDistinct(s: string, t: string): number {\n    const m = s.length;\n    const n = t.length;\n    const f: number[][] = new Array(m + 1).fill(0).map(() => new Array(n + 1).fill(0));\n    for (let i = 0; i <= m; ++i) {\n        f[i][0] = 1;\n    }\n    for (let i = 1; i <= m; ++i) {\n        for (let j = 1; j <= n; ++j) {\n            f[i][j] = f[i - 1][j];\n            if (s[i - 1] === t[j - 1]) {\n                f[i][j] += f[i - 1][j - 1];\n            }\n        }\n    }\n    return f[m][n];\n}",
     approach: "dp[i][j] = ways s[0..j] in t[0..i]. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
     signature: "{\"name\":\"numDistinct\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"integer\"}",
   },
@@ -7543,6 +8539,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function (s, p) {\n    const m = s.length;\n    const n = p.length;\n    const f = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));\n    const dfs = (i, j) => {\n        if (j >= n) {\n            return i === m;\n        }\n        if (f[i][j]) {\n            return f[i][j] === 1;\n        }\n        let res = -1;\n        if (j + 1 < n && p[j + 1] === '*') {\n            if (dfs(i, j + 2) || (i < m && (s[i] === p[j] || p[j] === '.') && dfs(i + 1, j))) {\n                res = 1;\n            }\n        } else if (i < m && (s[i] === p[j] || p[j] === '.') && dfs(i + 1, j + 1)) {\n            res = 1;\n        }\n        f[i][j] = res;\n        return res === 1;\n    };\n    return dfs(0, 0);\n};",
     approach: "dp[i][j] with * handling. O(m·n)\n\n**Складність:** Time O(m·n), Space O(m·n)",
   },
   {
@@ -7555,6 +8552,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function maxSubArray(nums: number[]): number {\n    let [ans, f] = [nums[0], nums[0]];\n    for (let i = 1; i < nums.length; ++i) {\n        f = Math.max(f, 0) + nums[i];\n        ans = Math.max(ans, f);\n    }\n    return ans;\n}",
     approach: "Kadane's algorithm. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7567,6 +8565,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[2,3,1,1,4]]\",\"expected\":\"true\"},{\"input\":\"[[3,2,1,0,4]]\",\"expected\":\"false\"}]",
+    solution: "function canJump(nums: number[]): boolean {\n    let mx: number = 0;\n    for (let i = 0; i < nums.length; ++i) {\n        if (mx < i) {\n            return false;\n        }\n        mx = Math.max(mx, i + nums[i]);\n    }\n    return true;\n}",
     approach: "Track maxReach. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"canJump\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"boolean\"}",
   },
@@ -7580,6 +8579,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3,4,5],[3,4,5,1,2]]\",\"expected\":\"3\"},{\"input\":\"[[2,3,4],[3,4,3]]\",\"expected\":\"-1\"}]",
+    solution: "function canCompleteCircuit(gas: number[], cost: number[]): number {\n    const n = gas.length;\n    let i = n - 1;\n    let j = n - 1;\n    let s = 0;\n    let cnt = 0;\n    while (cnt < n) {\n        s += gas[j] - cost[j];\n        ++cnt;\n        j = (j + 1) % n;\n        while (s < 0 && cnt < n) {\n            --i;\n            s += gas[i] - cost[i];\n            ++cnt;\n        }\n    }\n    return s < 0 ? -1 : i;\n}",
     approach: "Sum≥0 → solution; track start. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"canCompleteCircuit\",\"paramTypes\":[\"integer[]\",\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -7593,6 +8593,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3,6,2,3,4,7,8],3]\",\"expected\":\"true\"},{\"input\":\"[[1,2,3,4,5],4]\",\"expected\":\"false\"}]",
+    solution: "function isNStraightHand(hand: number[], groupSize: number): boolean {\n    if (hand.length % groupSize !== 0) {\n        return false;\n    }\n    const cnt = new Map<number, number>();\n    for (const x of hand) {\n        cnt.set(x, (cnt.get(x) || 0) + 1);\n    }\n    hand.sort((a, b) => a - b);\n    for (const x of hand) {\n        if (cnt.get(x)! > 0) {\n            for (let y = x; y < x + groupSize; y++) {\n                if ((cnt.get(y) || 0) === 0) {\n                    return false;\n                }\n                cnt.set(y, cnt.get(y)! - 1);\n            }\n        }\n    }\n    return true;\n}",
     approach: "Sort+greedy groups. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"isNStraightHand\",\"paramTypes\":[\"integer[]\",\"integer\"],\"returnType\":\"boolean\"}",
   },
@@ -7606,6 +8607,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function mergeTriplets(triplets: number[][], target: number[]): boolean {\n    const [x, y, z] = target;\n    let [d, e, f] = [0, 0, 0];\n    for (const [a, b, c] of triplets) {\n        if (a <= x && b <= y && c <= z) {\n            d = Math.max(d, a);\n            e = Math.max(e, b);\n            f = Math.max(f, c);\n        }\n    }\n    return d === x && e === y && f === z;\n}",
     approach: "Check valid, max each pos. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7618,6 +8620,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function checkValidString(s: string): boolean {\n  let lo = 0, hi = 0;\n  for (const c of s) {\n    if (c === '(') { lo++; hi++; }\n    else if (c === ')') { lo--; hi--; }\n    else { lo--; hi++; }\n    if (hi < 0) return false;\n    if (lo < 0) lo = 0;\n  }\n  return lo === 0;\n}",
     approach: "Track min/max open count. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7630,6 +8633,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[0,30],[5,10],[15,20]]]\",\"expected\":\"false\"},{\"input\":\"[[[7,10],[2,4]]]\",\"expected\":\"true\"}]",
+    solution: "function canAttendMeetings(intervals: number[][]): boolean {\n    intervals.sort((a, b) => a[0] - b[0]);\n    for (let i = 1; i < intervals.length; ++i) {\n        if (intervals[i][0] < intervals[i - 1][1]) {\n            return false;\n        }\n    }\n    return true;\n}",
     approach: "Sort by start, check overlap. O(n log n)\n\n**Складність:** Time O(n log n), Space O(1)",
     signature: "{\"name\":\"canAttendMeetings\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"boolean\"}",
   },
@@ -7643,6 +8647,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[1,3],[6,9]],[2,5]]\",\"expected\":\"[[1,5],[6,9]]\"},{\"input\":\"[[[1,2],[3,5],[6,7],[8,10],[12,16]],[4,8]]\",\"expected\":\"[[1,2],[3,10],[12,16]]\"}]",
+    solution: "function insert(intervals: number[][], newInterval: number[]): number[][] {\n    const merge = (intervals: number[][]): number[][] => {\n        intervals.sort((a, b) => a[0] - b[0]);\n        const ans: number[][] = [intervals[0]];\n        for (let i = 1; i < intervals.length; ++i) {\n            if (ans.at(-1)[1] < intervals[i][0]) {\n                ans.push(intervals[i]);\n            } else {\n                ans.at(-1)[1] = Math.max(ans.at(-1)[1], intervals[i][1]);\n            }\n        }\n        return ans;\n    };\n\n    intervals.push(newInterval);\n    return merge(intervals);\n}",
     approach: "Iterate, merge overlapping. O(n)\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"insert\",\"paramTypes\":[\"integer[][]\",\"integer[]\"],\"returnType\":\"integer[][]\"}",
   },
@@ -7656,6 +8661,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[1,3],[2,6],[8,10],[15,18]]]\",\"expected\":\"[[1,6],[8,10],[15,18]]\"},{\"input\":\"[[[1,4],[4,5]]]\",\"expected\":\"[[1,5]]\"},{\"input\":\"[[[4,7],[1,4]]]\",\"expected\":\"[[1,7]]\"}]",
+    solution: "function merge(intervals: number[][]): number[][] {\n    intervals.sort((a, b) => a[0] - b[0]);\n    const ans: number[][] = [];\n    let [st, ed] = intervals[0];\n    for (const [s, e] of intervals.slice(1)) {\n        if (ed < s) {\n            ans.push([st, ed]);\n            [st, ed] = [s, e];\n        } else {\n            ed = Math.max(ed, e);\n        }\n    }\n    ans.push([st, ed]);\n    return ans;\n}",
     approach: "Sort by start, merge. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"merge\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer[][]\"}",
   },
@@ -7669,6 +8675,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function eraseOverlapIntervals(intervals: number[][]): number {\n    intervals.sort((a, b) => a[1] - b[1]);\n    let [ans, pre] = [intervals.length, -Infinity];\n    for (const [l, r] of intervals) {\n        if (pre <= l) {\n            --ans;\n            pre = r;\n        }\n    }\n    return ans;\n}",
     approach: "Sort by end, greedy count. O(n log n)\n\n**Складність:** Time O(n log n), Space O(1)",
   },
   {
@@ -7681,6 +8688,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[0,30],[5,10],[15,20]]]\",\"expected\":\"2\"},{\"input\":\"[[[7,10],[2,4]]]\",\"expected\":\"1\"}]",
+    solution: "function minMeetingRooms(intervals: number[][]): number {\n    const m = Math.max(...intervals.map(([_, r]) => r));\n    const d: number[] = Array(m + 1).fill(0);\n    for (const [l, r] of intervals) {\n        d[l]++;\n        d[r]--;\n    }\n    let [ans, s] = [0, 0];\n    for (const v of d) {\n        s += v;\n        ans = Math.max(ans, s);\n    }\n    return ans;\n}",
     approach: "Min-heap end times. O(n log n)\n\n**Складність:** Time O(n log n), Space O(n)",
     signature: "{\"name\":\"minMeetingRooms\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"integer\"}",
   },
@@ -7694,6 +8702,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function minInterval(intervals: number[][], queries: number[]): number[] {\n    const n = intervals.length;\n    const m = queries.length;\n\n    intervals.sort((a, b) => a[0] - b[0]);\n    const qs = queries.map((x, i) => [x, i] as [number, number]).sort((a, b) => a[0] - b[0]);\n\n    const ans = Array<number>(m).fill(-1);\n    const pq = new PriorityQueue<[number, number]>((a, b) =>\n        a[0] === b[0] ? a[1] - b[1] : a[0] - b[0],\n    );\n\n    let i = 0;\n    for (const [x, idx] of qs) {\n        while (i < n && intervals[i][0] <= x) {\n            const [l, r] = intervals[i];\n            pq.enqueue([r - l + 1, r]);\n            i++;\n        }\n\n        while (pq.size() > 0 && pq.front()![1] < x) {\n            pq.dequeue();\n        }\n\n        if (pq.size() > 0) {\n            ans[idx] = pq.front()![0];\n        }\n    }\n\n    return ans;\n}",
     approach: "Offline + min-heap. O((n+q) log n)\n\n**Складність:** Time O((n+q) log n), Space O(n)",
   },
   {
@@ -7706,6 +8715,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[19]\",\"expected\":\"true\"},{\"input\":\"[2]\",\"expected\":\"false\"}]",
+    solution: "function isHappy(n: number): boolean {\n    const getNext = (n: number) => {\n        let res = 0;\n        while (n !== 0) {\n            res += (n % 10) ** 2;\n            n = Math.floor(n / 10);\n        }\n        return res;\n    };\n    const set = new Set();\n    while (n !== 1) {\n        const next = getNext(n);\n        if (set.has(next)) {\n            return false;\n        }\n        set.add(next);\n        n = next;\n    }\n    return true;\n}",
     approach: "Floyd cycle (digit sum). O(log n)\n\n**Складність:** Time O(log n), Space O(1)",
     signature: "{\"name\":\"isHappy\",\"paramTypes\":[\"integer\"],\"returnType\":\"boolean\"}",
   },
@@ -7719,6 +8729,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[1,2,3]]\",\"expected\":\"[1,2,4]\"},{\"input\":\"[[4,3,2,1]]\",\"expected\":\"[4,3,2,2]\"},{\"input\":\"[[9]]\",\"expected\":\"[1,0]\"}]",
+    solution: "function plusOne(digits: number[]): number[] {\n    const n = digits.length;\n    for (let i = n - 1; i >= 0; i--) {\n        if (10 > ++digits[i]) {\n            return digits;\n        }\n        digits[i] %= 10;\n    }\n    return [1, ...digits];\n}",
     approach: "Iterate right, carry. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"plusOne\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer[]\"}",
   },
@@ -7732,6 +8743,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[1,2,3],[4,5,6],[7,8,9]]]\",\"expected\":\"[1,2,3,6,9,8,7,4,5]\"},{\"input\":\"[[[1,2,3,4],[5,6,7,8],[9,10,11,12]]]\",\"expected\":\"[1,2,3,4,8,12,11,10,9,5,6,7]\"}]",
+    solution: "function spiralOrder(matrix: number[][]): number[] {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    const ans: number[] = [];\n    const vis: boolean[][] = Array.from({ length: m }, () => Array(n).fill(false));\n    const dirs = [0, 1, 0, -1, 0];\n    for (let h = m * n, i = 0, j = 0, k = 0; h > 0; --h) {\n        ans.push(matrix[i][j]);\n        vis[i][j] = true;\n        const x = i + dirs[k];\n        const y = j + dirs[k + 1];\n        if (x < 0 || x >= m || y < 0 || y >= n || vis[x][y]) {\n            k = (k + 1) % 4;\n        }\n        i += dirs[k];\n        j += dirs[k + 1];\n    }\n    return ans;\n}",
     approach: "4 boundaries, shrink. O(m·n)\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"spiralOrder\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"list<integer>\"}",
   },
@@ -7745,6 +8757,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[[1,1,1],[1,0,1],[1,1,1]]]\",\"expected\":\"[[1,0,1],[0,0,0],[1,0,1]]\"},{\"input\":\"[[[0,1,2,0],[3,4,5,2],[1,3,1,5]]]\",\"expected\":\"[[0,0,0,0],[0,4,5,0],[0,3,1,0]]\"}]",
+    solution: "/**\n Do not return anything, modify matrix in-place instead.\n */\nfunction setZeroes(matrix: number[][]): void {\n    const m = matrix.length;\n    const n = matrix[0].length;\n    const row: boolean[] = Array(m).fill(false);\n    const col: boolean[] = Array(n).fill(false);\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (matrix[i][j] === 0) {\n                row[i] = col[j] = true;\n            }\n        }\n    }\n    for (let i = 0; i < m; ++i) {\n        for (let j = 0; j < n; ++j) {\n            if (row[i] || col[j]) {\n                matrix[i][j] = 0;\n            }\n        }\n    }\n}",
     approach: "Mark rows/cols first. O(m·n)\n\n**Складність:** Time O(m·n), Space O(1)",
     signature: "{\"name\":\"setZeroes\",\"paramTypes\":[\"integer[][]\"],\"returnType\":\"void\"}",
   },
@@ -7758,6 +8771,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "class DetectSquares {\n  private count = new Map<string, number>();\n  private points: [number, number][] = [];\n\n  add(point: number[]): void {\n    const [x, y] = point;\n    this.count.set(x + ',' + y, (this.count.get(x + ',' + y) ?? 0) + 1);\n    this.points.push([x, y]);\n  }\n\n  count(point: number[]): number {\n    const [px, py] = point;\n    let res = 0;\n    for (const [x, y] of this.points) {\n      if (Math.abs(x - px) !== Math.abs(y - py) || x === px) continue;\n      res += (this.count.get(x + ',' + py) ?? 0) * (this.count.get(px + ',' + y) ?? 0);\n    }\n    return res;\n  }\n}",
     approach: "Count points (x,y). O(n)\n\n**Складність:** Time O(n) на count, Space O(n)",
   },
   {
@@ -7770,6 +8784,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function isRobotBounded(instructions: string): boolean {\n    const dist: number[] = new Array(4).fill(0);\n    let k = 0;\n    for (const c of instructions) {\n        if (c === 'L') {\n            k = (k + 1) % 4;\n        } else if (c === 'R') {\n            k = (k + 3) % 4;\n        } else {\n            ++dist[k];\n        }\n    }\n    return (dist[0] === dist[2] && dist[1] === dist[3]) || k !== 0;\n}",
     approach: "After 4 cycles → returns or infinite. O(n)\n\n**Складність:** Time O(n), Space O(1)",
   },
   {
@@ -7782,6 +8797,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[2,2,1]]\",\"expected\":\"1\"},{\"input\":\"[[4,1,2,1,2]]\",\"expected\":\"4\"},{\"input\":\"[[1]]\",\"expected\":\"1\"}]",
+    solution: "function singleNumber(nums: number[]): number {\n    return nums.reduce((r, v) => r ^ v);\n}",
     approach: "XOR all. a^a=0, a^0=a. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"singleNumber\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -7795,6 +8811,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function hammingWeight(n: number): number {\n    let ans: number = 0;\n    while (n !== 0) {\n        ans++;\n        n &= n - 1;\n    }\n    return ans;\n}",
     approach: "n &= (n-1) clears lowest bit. O(k)\n\n**Складність:** Time O(k), Space O(1)",
   },
   {
@@ -7807,6 +8824,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[2]\",\"expected\":\"[0,1,1]\"},{\"input\":\"[5]\",\"expected\":\"[0,1,1,2,1,2]\"}]",
+    solution: "function countBits(n: number): number[] {\n    const ans: number[] = Array(n + 1).fill(0);\n    for (let i = 0; i <= n; ++i) {\n        ans[i] = bitCount(i);\n    }\n    return ans;\n}\n\nfunction bitCount(n: number): number {\n    let count = 0;\n    while (n) {\n        n &= n - 1;\n        ++count;\n    }\n    return count;\n}",
     approach: "dp[i]=dp[i>>1]+(i&1). O(n)\n\n**Складність:** Time O(n), Space O(n)",
     signature: "{\"name\":\"countBits\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer[]\"}",
   },
@@ -7820,6 +8838,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[43261596]\",\"expected\":\"964176192\"},{\"input\":\"[2147483644]\",\"expected\":\"1073741822\"}]",
+    solution: "function reverseBits(n: number): number {\n    let ans = 0;\n    for (let i = 0; i < 32 && n; ++i) {\n        ans |= (n & 1) << (31 - i);\n        n >>= 1;\n    }\n    return ans >>> 0;\n}",
     approach: "32 iters: (result<<1)|(n&1). O(1)\n\n**Складність:** Time O(1) (32 ітерації), Space O(1)",
     signature: "{\"name\":\"reverseBits\",\"paramTypes\":[\"integer\"],\"returnType\":\"integer\"}",
   },
@@ -7833,6 +8852,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[[3,0,1]]\",\"expected\":\"2\"},{\"input\":\"[[0,1]]\",\"expected\":\"2\"},{\"input\":\"[[9,6,4,2,3,5,7,0,1]]\",\"expected\":\"8\"}]",
+    solution: "function missingNumber(nums: number[]): number {\n    const n = nums.length;\n    let ans = n;\n    for (let i = 0; i < n; ++i) {\n        ans ^= i ^ nums[i];\n    }\n    return ans;\n}",
     approach: "XOR 0..n ^ nums. O(n)\n\n**Складність:** Time O(n), Space O(1)",
     signature: "{\"name\":\"missingNumber\",\"paramTypes\":[\"integer[]\"],\"returnType\":\"integer\"}",
   },
@@ -7846,6 +8866,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[{\"input\":\"[\\\"11\\\",\\\"1\\\"]\",\"expected\":\"\\\"100\\\"\"},{\"input\":\"[\\\"1010\\\",\\\"1011\\\"]\",\"expected\":\"\\\"10101\\\"\"}]",
+    solution: "function addBinary(a: string, b: string): string {\n    let i = a.length - 1;\n    let j = b.length - 1;\n    const ans: number[] = [];\n    for (let carry = 0; i >= 0 || j >= 0 || carry; --i, --j) {\n        carry += (i >= 0 ? a[i] : '0').charCodeAt(0) - '0'.charCodeAt(0);\n        carry += (j >= 0 ? b[j] : '0').charCodeAt(0) - '0'.charCodeAt(0);\n        ans.push(carry % 2);\n        carry >>= 1;\n    }\n    return ans.reverse().join('');\n}",
     approach: "Simulate with carry. O(n)\n\n**Складність:** Time O(max(m,n)), Space O(max(m,n))",
     signature: "{\"name\":\"addBinary\",\"paramTypes\":[\"string\",\"string\"],\"returnType\":\"string\"}",
   },
@@ -7859,6 +8880,7 @@ const rawProblems: Omit<StaticProblem, 'id'>[] = [
     companies: "[]",
     starterCode: "",
     testCases: "[]",
+    solution: "function getSum(a: number, b: number): number {\n  while (b !== 0) {\n    const carry = (a & b) << 1;\n    a = a ^ b;\n    b = carry;\n  }\n  return a;\n}",
     approach: "XOR (no carry) + AND<<1. O(1)\n\n**Складність:** Time O(1), Space O(1)",
   },
 ]
