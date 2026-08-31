@@ -64,23 +64,52 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
       },
       {
         term: 'function foo() {}',
-        desc:
-          'Declaration: підіймається цілим тілом (виклик вище — ок); динамічний <code>this</code>; має <code>arguments</code>, <code>prototype</code>; можна <code>new</code>',
+        desc: 'Declaration: hoisted цілим тілом; динамічний <code>this</code>; має <code>arguments</code>, <code>prototype</code>; можна <code>new</code>',
+        code: `sayHi();                       // ✓ працює — declaration піднята цілком
+function sayHi() {
+  console.log("Hi", arguments); // власний arguments
+}
+
+function User(name) { this.name = name; }
+new User("Ann");               // ✓ конструктор`,
       },
       {
         term: 'const foo = function () {}',
-        desc:
-          'Expression: у TDZ до свого рядка (раніше — ReferenceError); далі як declaration. Named FE (<code>= function bar() {}</code>) — рекурсія + читабельні stack-trace',
+        desc: 'Expression: у TDZ до свого рядка; далі як declaration. Named FE — рекурсія + читабельні stack-trace',
+        code: `greet();                       // ❌ ReferenceError — const у TDZ
+const greet = function () {};
+
+// Named Function Expression: імʼя видиме лише в тілі
+const fact = function f(n: number): number {
+  return n <= 1 ? 1 : n * f(n - 1); // рекурсія через 'f', не через 'fact'
+};`,
       },
       {
         term: 'const foo = () => {}',
-        desc:
-          'Arrow: лексичний <code>this</code> (<code>call/apply/bind</code> не діють), немає <code>arguments</code>/<code>new</code>/<code>prototype</code> — для колбеків',
+        desc: 'Arrow: лексичний <code>this</code> (<code>call/apply/bind</code> не діють), немає <code>arguments</code>/<code>new</code>/<code>prototype</code>',
+        code: `class Timer {
+  seconds = 0;
+  start() {
+    setInterval(() => { this.seconds++; }, 1000); // this = інстанс Timer
+    // function () {...} тут → this === undefined (класичний баг)
+  }
+}
+
+const A = () => {};
+new A();                       // ❌ TypeError: A is not a constructor`,
       },
       {
         term: 'counter (closure)',
         desc: 'кожен виклик фабрики = ізольований приватний стан',
-        chips: ['const makeCounter = () =&gt; { let n = 0; return () =&gt; ++n; };'],
+        code: `const makeCounter = () => {
+  let n = 0;                    // приватна, живе в замиканні
+  return () => ++n;
+};
+
+const a = makeCounter();
+const b = makeCounter();
+a(); a(); // 1, 2
+b();      // 1 — власний n, не спільний з a`,
       },
     ],
   },
@@ -158,23 +187,45 @@ export const javascriptQuickRefBlocks: QuickRefBlock[] = [
       {
         term: 'debounce',
         desc: 'скидає таймер на кожен виклик → спрацьовує через N мс <b>тиші</b> (search input)',
-        chips: [
-          'const debounce = (fn, ms) =&gt; { let t; return (...a) =&gt; { clearTimeout(t); t = setTimeout(() =&gt; fn(...a), ms); }; };',
-        ],
+        code: `function debounce<T extends unknown[]>(fn: (...a: T) => void, ms: number) {
+  let t: ReturnType<typeof setTimeout>;
+  return (...args: T) => {
+    clearTimeout(t);                       // кожен новий виклик відсуває запуск
+    t = setTimeout(() => fn(...args), ms);
+  };
+}`,
       },
       {
         term: 'throttle (leading)',
         desc: 'виконує одразу, далі ігнорує виклики N мс (scroll / resize)',
-        chips: [
-          'const throttle = (fn, ms) =&gt; { let last = 0; return (...a) =&gt; { const now = Date.now(); if (now - last &gt;= ms) { last = now; fn(...a); } }; };',
-        ],
+        code: `function throttle<T extends unknown[]>(fn: (...a: T) => void, ms: number) {
+  let last = 0;
+  return (...args: T) => {
+    const now = Date.now();
+    if (now - last >= ms) {                 // вікно відкрите — виконуємо
+      last = now;
+      fn(...args);
+    }
+  };
+}`,
       },
       {
         term: 'throttle (trailing)',
         desc: 'те саме, але гарантує ще й <b>останній</b> виклик у кінці вікна',
-        chips: [
-          'const throttle = (fn, ms) =&gt; { let t, last = 0; const run = (a) =&gt; { last = Date.now(); fn(...a); }; return (...a) =&gt; { const gap = Date.now() - last; clearTimeout(t); gap &gt;= ms ? run(a) : (t = setTimeout(() =&gt; run(a), ms - gap)); }; };',
-        ],
+        code: `function throttle<T extends unknown[]>(fn: (...a: T) => void, ms: number) {
+  let t: ReturnType<typeof setTimeout> | undefined;
+  let last = 0;
+  const run = (args: T) => {
+    last = Date.now();
+    fn(...args);
+  };
+  return (...args: T) => {
+    const gap = Date.now() - last;
+    clearTimeout(t);
+    if (gap >= ms) run(args);               // вікно відкрите — одразу
+    else t = setTimeout(() => run(args), ms - gap); // інакше — в кінці вікна
+  };
+}`,
       },
       {
         term: 'механіка',

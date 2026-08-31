@@ -183,6 +183,8 @@ export interface QuickRefEntry {
   term: string
   desc?: string // HTML string (dangerouslySetInnerHTML), may contain inline <b>/<code>
   chips?: string[] // small pill badges right after the term, e.g. call signature or timing
+  code?: string // multi-line snippet — hidden, revealed formatted on hover/focus + click dialog
+  codeLanguage?: string // defaults to 'typescript'
 }
 
 export interface QuickRefGroup {

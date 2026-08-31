@@ -1,12 +1,21 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import type { QuickRefBlock, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
+import 'highlight.js/styles/github-dark.css'
+import type { QuickRefBlock, QuickRefEntry, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
 import { quickRefBlockKeys } from '@/lib/cheatsheet/quickrefKeys'
 import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import { highlight } from '@/lib/cheatsheet/highlight'
 import { breadcrumbJsonLd } from '@/lib/seo'
 import { JsonLd } from '@/components/JsonLd'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
 import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
@@ -47,24 +56,108 @@ function BlockLabel({ label }: { label?: string }) {
   return <div className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</div>
 }
 
+function EntryHead({ entry, hasCode }: { entry: QuickRefEntry; hasCode?: boolean }) {
+  return (
+    <>
+      <div className="flex flex-wrap items-baseline gap-2">
+        <span className="font-mono font-semibold text-slate-200">{entry.term}</span>
+        {entry.chips && entry.chips.length > 0 && <ChipList chips={entry.chips} />}
+        {hasCode && (
+          <span className="shrink-0 rounded bg-white/5 px-1 font-mono text-[10px] text-slate-500">
+            {'{…}'}
+          </span>
+        )}
+      </div>
+      {entry.desc && (
+        <div
+          className="mt-1 text-xs text-slate-400"
+          dangerouslySetInnerHTML={{ __html: entry.desc }}
+        />
+      )}
+    </>
+  )
+}
+
+function EntryRow({ entry }: { entry: QuickRefEntry }) {
+  const highlighted = useMemo(
+    () => (entry.code ? highlight(entry.code, entry.codeLanguage ?? 'typescript') : ''),
+    [entry.code, entry.codeLanguage],
+  )
+  const [hintOpen, setHintOpen] = useState(false)
+
+  if (!entry.code) {
+    return (
+      <div className="text-sm leading-snug">
+        <EntryHead entry={entry} />
+      </div>
+    )
+  }
+
+  return (
+    <Dialog>
+      <div
+        className="relative text-sm leading-snug"
+        onMouseEnter={() => setHintOpen(true)}
+        onMouseLeave={() => setHintOpen(false)}
+      >
+        <DialogTrigger asChild>
+          <button
+            type="button"
+            onFocus={() => setHintOpen(true)}
+            onBlur={() => setHintOpen(false)}
+            className="w-full cursor-help rounded-md text-left transition-colors hover:bg-white/5"
+          >
+            <EntryHead entry={entry} hasCode />
+          </button>
+        </DialogTrigger>
+
+        {hintOpen && (
+          <div
+            role="tooltip"
+            className="absolute left-0 right-0 top-full z-30 mt-1 rounded-lg border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur"
+          >
+            <pre className="overflow-x-auto text-[12px] leading-relaxed [&_code.hljs]:!bg-transparent [&_code.hljs]:!p-0">
+              <code
+                className="hljs bg-transparent font-mono"
+                dangerouslySetInnerHTML={{ __html: highlighted }}
+              />
+            </pre>
+          </div>
+        )}
+      </div>
+
+      <DialogContent className="max-w-2xl p-0">
+        <DialogHeader className="mb-0 border-b border-white/10 px-5 py-3 pr-12">
+          <DialogTitle className="font-mono text-sm font-medium text-slate-200">
+            {entry.term}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="px-5 py-4">
+          {entry.desc && (
+            <p
+              className="text-sm text-slate-300"
+              dangerouslySetInnerHTML={{ __html: entry.desc }}
+            />
+          )}
+          <pre className="mt-3 overflow-x-auto rounded-lg bg-black/30 p-4 text-[13px] leading-relaxed [&_code.hljs]:!p-0">
+            <code
+              className="hljs bg-transparent font-mono"
+              dangerouslySetInnerHTML={{ __html: highlighted }}
+            />
+          </pre>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 function QuickRefGroupBlock({ group }: { group: QuickRefGroup }) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-white/5 bg-white/[0.03] p-3">
       <BlockLabel label={group.label} />
       <div className="flex flex-col gap-2">
         {group.entries.map((entry) => (
-          <div key={entry.term} className="text-sm leading-snug">
-            <div className="flex flex-wrap items-baseline gap-2">
-              <span className="font-mono font-semibold text-slate-200">{entry.term}</span>
-              {entry.chips && entry.chips.length > 0 && <ChipList chips={entry.chips} />}
-            </div>
-            {entry.desc && (
-              <div
-                className="mt-1 text-xs text-slate-400"
-                dangerouslySetInnerHTML={{ __html: entry.desc }}
-              />
-            )}
-          </div>
+          <EntryRow key={entry.term} entry={entry} />
         ))}
       </div>
     </div>

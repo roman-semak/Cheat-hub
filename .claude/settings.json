@@ -63,7 +63,10 @@
       "Bash(python3 -c \"import json;d=json.load\\(open\\('src/lib/cheatsheet/contentManifest.generated.json'\\)\\);print\\('valid json,',len\\(d['entries']\\),'entries'\\)\")",
       "Bash(python3 -c ' *)",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('entries:',len\\(d\\)\\); print\\('with hint:',sum\\(1 for v in d.values\\(\\) if v.get\\('hint'\\)\\)\\); print\\('with solution:',sum\\(1 for v in d.values\\(\\) if v.get\\('solution'\\)\\)\\)\")",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(curl -s -o /dev/null -w \"js:%{http_code} \" http://localhost:5001/quickref/javascript)",
+      "Bash(curl -s -o /dev/null -w \"react:%{http_code} \" http://localhost:5001/quickref/react)",
+      "Bash(curl -s -o /dev/null -w \"angular:%{http_code}\\\\n\" http://localhost:5001/quickref/angular)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"
