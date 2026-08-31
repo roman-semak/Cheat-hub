@@ -66,7 +66,8 @@
       "Bash(node -e ' *)",
       "Bash(curl -s -o /dev/null -w \"js:%{http_code} \" http://localhost:5001/quickref/javascript)",
       "Bash(curl -s -o /dev/null -w \"react:%{http_code} \" http://localhost:5001/quickref/react)",
-      "Bash(curl -s -o /dev/null -w \"angular:%{http_code}\\\\n\" http://localhost:5001/quickref/angular)"
+      "Bash(curl -s -o /dev/null -w \"angular:%{http_code}\\\\n\" http://localhost:5001/quickref/angular)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5001/angular)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"

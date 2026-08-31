@@ -1161,48 +1161,70 @@ export const angularContent: TopicContent = {
       "title": "🔁 Lifecycle Hooks — Execution Order",
       interviewQuestions: [
         {
-          "question": "У якому порядку викликаються <code>ngOnChanges</code>, <code>ngOnInit</code> і <code>ngAfterViewInit</code>, і чому саме в такому?",
-          "answer": "<code>ngOnChanges</code> викликається першим (і перед кожним наступним оновленням вхідних <code>@Input()</code>) — Angular ще до ініціалізації повідомляє про початкові значення. <code>ngOnInit</code> — одразу після першого <code>ngOnChanges</code>, коли компонент вже має свої вхідні дані й можна безпечно ініціалізувати логіку. <code>ngAfterViewInit</code> — лише після того, як дочірні в'юшки (включно з <code>@ViewChild</code>) повністю ініціалізовані, бо до цього моменту звернення до них дало б <code>undefined</code>."
+          "question": "Назвіть повний порядок lifecycle-хуків і вкажіть, які викликаються один раз, а які на кожен CD-цикл.",
+          "answer": "<code>constructor</code> (не хук) → <code>ngOnChanges</code> → <code>ngOnInit</code> → <code>ngDoCheck</code> → <code>ngAfterContentInit</code> → <code>ngAfterContentChecked</code> → <code>ngAfterViewInit</code> → <code>ngAfterViewChecked</code> → (цикли повторюються) → <code>ngOnDestroy</code>. <strong>Раз:</strong> <code>ngOnInit</code>, обидва <code>*Init</code>, <code>ngOnDestroy</code>. <strong>Щоцикл:</strong> <code>ngDoCheck</code>, обидва <code>*Checked</code>. <code>ngOnChanges</code> — перед init і на кожну зміну <code>@Input()</code>. Порядок такий, бо він повторює фази CD: спершу вхідні дані (<code>OnChanges</code>), потім власна ініціалізація (<code>OnInit</code>), потім спроєктований контент (<code>AfterContent*</code>), потім власний view з дочірніми компонентами (<code>AfterView*</code>) — від «зовні всередину» дерева."
         },
         {
-          question: `Коли обраш ngOnInit?`,
-          answer: `Для ініціалізації, API запитів; constructor для DI.`,
+          "question": "Чому ініціалізацію, що залежить від <code>@Input()</code>, не можна робити в <code>constructor</code>?",
+          "answer": "У момент виклику <code>constructor</code> Angular ще не встиг присвоїти вхідні властивості — вони <code>undefined</code>. <code>@Input()</code> гарантовано доступні лише з першого <code>ngOnChanges</code> / <code>ngOnInit</code>. Тому <code>constructor</code> — <strong>тільки DI</strong> (<code>inject()</code> / параметри), а вся логіка ініціалізації (HTTP, підписки, обчислення від inputs) — у <code>ngOnInit</code>, коли компонент уже «зібраний»."
         },
         {
-          question: `ngOnChanges use case?`,
-          answer: `Слухати зміни @Input; ngOnInit не спрацює якщо @Input змінюється.`,
+          "question": "За якою умовою спрацьовує <code>ngOnChanges</code> і як це пов'язано з <code>OnPush</code>?",
+          "answer": "<code>ngOnChanges</code> реагує лише на зміну <strong>reference</strong> вхідного <code>@Input()</code> — тобто на нове присвоєння ззовні. Мутація того самого об'єкта/масиву (<code>this.user.name = …</code>, <code>arr.push(…)</code>) хук <strong>не</strong> викликає — рівно та сама логіка, що й у <code>OnPush</code> CD. Тому з immutable-даними <code>ngOnChanges</code> і <code>OnPush</code> працюють передбачувано; для мутацій довелось би вручну ловити зміни в <code>ngDoCheck</code>."
         },
         {
-          question: `Difference ngAfterViewInit vs ngAfterContentInit?`,
-          answer: `ViewInit — own template; ContentInit — projected content.`,
+          "question": "Звідки береться <code>ExpressionChangedAfterItHasBeenCheckedError</code> у <code>ngAfterViewInit</code> і як його правильно прибрати?",
+          "answer": "У dev-режимі Angular після проходу CD робить <strong>другу</strong> перевірку прив'язок. Якщо в <code>ngAfterViewInit</code> (яка виконується вже після перевірки view) змінити значення, від якого залежить template, друга перевірка побачить розбіжність зі стабільним значенням і кине помилку. Фікс: винести зміну за межі поточного циклу — <code>Promise.resolve().then(…)</code> / <code>setTimeout(…)</code>, або явно попросити ще один прохід через <code>cdr.detectChanges()</code>, або перейти на signals, де такої dev-перевірки немає."
         },
         {
-          question: `Cleanup in ngOnDestroy vs DestroyRef?`,
-          answer: `DestroyRef modern; ngOnDestroy legacy but still valid.`,
+          "question": "Як сучасний Angular (16+) дозволяє обійтися без частини хуків?",
+          "answer": "<strong>Cleanup:</strong> <code>takeUntilDestroyed()</code> (в injection context) або <code>takeUntilDestroyed(inject(DestroyRef))</code> / <code>destroyRef.onDestroy(fn)</code> замість ручного <code>destroy$</code> + <code>ngOnDestroy</code>. <strong>DOM:</strong> <code>afterNextRender</code> / <code>afterRender</code> — SSR-безпечна заміна DOM-логіки з <code>ngAfterViewInit</code> (не виконуються на сервері). <strong>Реактивність:</strong> signal <code>input()</code> + <code>computed()</code> / <code>effect()</code> дають похідний стан і реакцію на зміни без <code>ngOnChanges</code> та <code>ngDoCheck</code>. Практично лишаються переважно <code>ngOnInit</code> і рідкісні <code>*After*Init</code>."
         },
       ],
       "blocks": [
         {
           "kind": "paragraph",
-          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-15\">ngOnInit, OnDestroy</span>\n            <span class=\"ver ver-16\">DestroyRef modern</span>\n            <span class=\"ver ver-19\">takeUntilDestroyed ✦</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Еволюція</div>\n            <div class=\"changelog-row\"><span class=\"chver\">v2-14</span><span class=\"changelog-text\">OnInit, OnDestroy decorators</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v16</span><span class=\"changelog-text\">DestroyRef, modern cleanup patterns</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v19 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> takeUntilDestroyed standard, DestroyRef preferred</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Lifecycle:</strong> створення → ініціалізація → оновлення → знищення.</p>\n            <p><strong>Modern approach:</strong> замість ngOnInit використовувати constructor з inject(); замість ngOnDestroy — DestroyRef.</p>\n          </div><h3 class=\"topic\">Execution Order</h3><p><strong>Що це:</strong> Angular компонент проходить фіксований lifecycle: конструктор → ngOnChanges → ngOnInit → рендер → ngAfterViewInit → знищення. Кожен hook дозволяє вставити код на своєму етапі. <strong>Навіщо:</strong> Розуміти коли які дані доступні. Коли рендериться DOM.</p>"
+          "html": "<div class=\"version-row\"><span class=\"ver ver-15\">OnInit / OnDestroy + інтерфейси</span><span class=\"ver ver-16\">takeUntilDestroyed / DestroyRef</span><span class=\"ver ver-16\">afterNextRender / afterRender</span><span class=\"ver ver-19\">signal inputs ✦</span></div><div class=\"changelog changelog-past\"><div class=\"changelog-title\">🕐 Еволюція</div><div class=\"changelog-row\"><span class=\"chver\">v2-15</span><span class=\"changelog-text\">8 lifecycle-хуків + інтерфейси (OnInit, OnChanges, OnDestroy…)</span></div><div class=\"changelog-row\"><span class=\"chver\">v16</span><span class=\"changelog-text\">takeUntilDestroyed(), DestroyRef, afterNextRender / afterRender</span></div><div class=\"changelog-row\"><span class=\"chver\">v17+ ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> signal input() + computed/effect — частина хуків більше не потрібна</span></div></div><h3 class=\"topic\">Що це <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> lifecycle hooks — методи-колбеки, які Angular викликає у фіксовані моменти життя компонента/директиви: від створення, через оновлення <code>@Input()</code> і рендер, до знищення. Кожен хук має інтерфейс (<code>OnInit</code>, <code>OnDestroy</code>…) — імплементувати не обов'язково, але це best practice (типобезпека + читабельність). <strong>Навіщо:</strong> це «точки входу» для ініціалізації, реакції на зміни, роботи з DOM і прибирання ресурсів.</p><div class=\"alert\"><span class=\"icon\">🎯</span> <span>Хуки — це <strong>впорядкована послідовність колбеків, прив'язана до change detection</strong>: більшість викликаються <strong>під час CD-циклу</strong>, тому must-know — їх точний порядок і що можна робити в кожному.</span></div>"
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "1. constructor() // DI injections\n2. ngOnChanges() // @Input properties change\n3. ngOnInit() // Component initialized\n4. ngDoCheck() // Custom change detection\n5. ngAfterContentInit() // Content projected\n6. ngAfterViewInit() // View rendered, @ViewChild available\n7. ngAfterViewChecked() // View checked\n8. ngOnDestroy() // Component destroyed"
+          "code": "constructor()           // не хук: DI. @Input() ще undefined\n  ↓\nngOnChanges(changes)    // перед ngOnInit + на КОЖНУ зміну @Input()\n  ↓\nngOnInit()              // РАЗ, після першого ngOnChanges — основна ініціалізація\n  ↓\nngDoCheck()             // щоцикл CD — custom change detection (дорогий)\n  ↓\nngAfterContentInit()    // РАЗ, після проекції <ng-content>; @ContentChild доступні\nngAfterContentChecked() // щоцикл, після перевірки контенту\n  ↓\nngAfterViewInit()       // РАЗ, після ініт. view + дочірніх; @ViewChild + DOM доступні\nngAfterViewChecked()    // щоцикл, після перевірки view\n  ↓\n      ... компонент живе, CD-цикли повторюються ...\n  ↓\nngOnDestroy()           // РАЗ, перед знищенням — cleanup"
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">DestroyRef Pattern (Modern)</h3><p><strong>Що це:</strong> DestroyRef — сучасний спосіб відписатись від Observable при знищенні. inject(DestroyRef) + takeUntilDestroyed(). <strong>Навіщо:</strong> Уникнути memory leaks у модерному Angular. Замість ngOnDestroy.</p>"
+          "html": "<h3 class=\"topic\">Хуки детально</h3><p><strong><code>constructor</code></strong> (не lifecycle hook) — лише <strong>DI</strong>, не логіка. <code>@Input()</code> тут ще <strong>недоступні</strong> (undefined); усе, що залежить від inputs → у <code>ngOnInit</code>.</p><p><strong><code>ngOnChanges(changes: SimpleChanges)</code></strong> — перед <code>ngOnInit</code> і на <strong>кожну зміну <code>@Input()</code></strong>. Отримує <code>{ previousValue, currentValue, firstChange }</code>. Спрацьовує на зміну <strong>reference</strong>: мутація об'єкта-інпута хук <strong>не</strong> тригерить (як і <code>OnPush</code>).</p><p><strong><code>ngOnInit()</code></strong> — <strong>раз</strong>, після першого <code>ngOnChanges</code>. Основна ініціалізація: HTTP-запити, підписки, налаштування. Чому не в constructor: тут <code>@Input()</code> уже встановлені, компонент «готовий».</p><p><strong><code>ngDoCheck()</code></strong> — на <strong>кожен</strong> CD-цикл. Custom change detection: зловити зміни, яких Angular не бачить сам (напр. мутація об'єкта при <code>OnPush</code>). <strong>Дорогий</strong> — тримай легким; здебільшого не потрібен, краще immutable + <code>OnPush</code>.</p><p><strong><code>ngAfterContentInit()</code> / <code>ngAfterContentChecked()</code></strong> — проєкція контенту (<code>&lt;ng-content&gt;</code>): <code>Init</code> раз після ініціалізації спроєктованого контенту, <code>Checked</code> — щоцикл. Тут доступні <code>@ContentChild</code> / <code>@ContentChildren</code>.</p><p><strong><code>ngAfterViewInit()</code> / <code>ngAfterViewChecked()</code></strong> — власний view + дочірні компоненти: <code>Init</code> раз (тут доступні <code>@ViewChild</code> / <code>@ViewChildren</code> і <strong>можна працювати з DOM</strong>), <code>Checked</code> — щоцикл.</p><p><strong><code>ngOnDestroy()</code></strong> — <strong>раз</strong>, перед знищенням компонента: прибирання ресурсів (unsubscribe, timers, listeners). Критично проти <strong>memory leaks</strong>.</p><div class=\"alert warn\"><span class=\"icon\">⚠️</span> <span><strong>Топ-пастка:</strong> зміна binding у <code>ngAfterViewInit</code> → <code>ExpressionChangedAfterItHasBeenCheckedError</code> (dev): CD уже перевірив view, а ти міняєш стан, і друга dev-перевірка бачить розбіжність. Фікс: <code>Promise.resolve().then(…)</code>, <code>setTimeout</code>, <code>cdr.detectChanges()</code> або перехід на signals.</span></div>"
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// Instead of ngOnDestroy, use DestroyRef\nconstructor() {\n  const destroyRef = inject(DestroyRef);\n  \n  this.http.get('/api')\n    .pipe(takeUntilDestroyed())\n    .subscribe(data => this.data = data);\n  \n  destroyRef.onDestroy(() => {\n    // Custom cleanup (timers, listeners, etc)\n  });\n}"
+          "code": "// constructor — тільки DI\nconstructor(private api: UserApi) {}\n\n// ngOnChanges — реакція на новий @Input (reference-based)\nngOnChanges(changes: SimpleChanges) {\n  if (changes['userId']) {\n    const { previousValue, currentValue } = changes['userId'];\n    this.loadUser(currentValue);\n  }\n}\n\n// ngOnInit — основна ініціалізація, inputs вже доступні\nngOnInit() {\n  this.user$ = this.api.getUser(this.userId);\n}\n\n// ngDoCheck — ручна перевірка мутації (тримати легким!)\nngDoCheck() {\n  if (this.item.name !== this.prevName) {\n    this.prevName = this.item.name;\n    this.recompute();\n  }\n}"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "@ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;\n\nngAfterViewInit() {\n  const ctx = this.canvas.nativeElement.getContext('2d'); // DOM готовий\n}\n\nngOnDestroy() {\n  this.destroy$.next();                               // завершити RxJS-підписки\n  this.destroy$.complete();\n  clearInterval(this.timer);                          // таймери\n  window.removeEventListener('resize', this.handler); // listeners\n}"
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Lifecycle hooks fully signal-aware</span></div></div>"
+          "html": "<h3 class=\"topic\">Init vs Checked · раз vs щоцикл</h3><p><strong><code>…Init</code></strong> (<code>ngAfterContentInit</code>, <code>ngAfterViewInit</code>) — <strong>один раз</strong> після першої ініціалізації. <strong><code>…Checked</code></strong> (<code>ngAfterContentChecked</code>, <code>ngAfterViewChecked</code>) — <strong>щоцикл</strong> CD. Важку логіку клади в <code>…Init</code>, не в <code>…Checked</code>.</p><div class=\"table-wrap\"><table><tr><th>Хук</th><th>Частота</th></tr><tr><td><code>ngOnChanges</code></td><td>на кожну зміну <code>@Input</code> (+ перед init)</td></tr><tr><td><code>ngOnInit</code></td><td><strong>раз</strong></td></tr><tr><td><code>ngDoCheck</code></td><td><strong>щоцикл</strong></td></tr><tr><td><code>ngAfterContentInit</code></td><td><strong>раз</strong></td></tr><tr><td><code>ngAfterContentChecked</code></td><td><strong>щоцикл</strong></td></tr><tr><td><code>ngAfterViewInit</code></td><td><strong>раз</strong></td></tr><tr><td><code>ngAfterViewChecked</code></td><td><strong>щоцикл</strong></td></tr><tr><td><code>ngOnDestroy</code></td><td><strong>раз</strong></td></tr></table></div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Де що робити</h3><div class=\"table-wrap\"><table><tr><th>Задача</th><th>Хук</th></tr><tr><td>DI (інжект сервісів)</td><td><code>constructor</code></td></tr><tr><td>Ініціалізація, HTTP, підписки</td><td><code>ngOnInit</code></td></tr><tr><td>Реакція на зміну <code>@Input()</code></td><td><code>ngOnChanges</code></td></tr><tr><td>DOM / <code>@ViewChild</code></td><td><code>ngAfterViewInit</code></td></tr><tr><td>Спроєктований контент / <code>@ContentChild</code></td><td><code>ngAfterContentInit</code></td></tr><tr><td>Прибирання (unsubscribe, timers, listeners)</td><td><code>ngOnDestroy</code></td></tr><tr><td>Custom change detection (рідко)</td><td><code>ngDoCheck</code></td></tr></table></div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Сучасні альтернативи (v16+) <span class=\"tag tag-new\">NEW</span></h3><p><strong><code>takeUntilDestroyed()</code></strong> замість ручного <code>destroy$</code> + <code>ngOnDestroy</code>: в injection context — без аргументів, поза ним — із <code>inject(DestroyRef)</code>.</p><p><strong><code>afterNextRender()</code> / <code>afterRender()</code></strong> — DOM-логіка, безпечна для SSR (виконується лише в браузері) — часткова заміна <code>ngAfterViewInit</code>.</p><p><strong>Signals</strong> зменшують потребу в хуках: derived state й реакцію на зміни роблять через <code>computed</code> / <code>effect</code> замість <code>ngOnChanges</code> / <code>ngDoCheck</code>.</p><div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Signal-first: більшість компонентів обходяться constructor + inject() + effect(); із хуків лишаються переважно ngOnInit та рідкісні After*Init</span></div></div>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "// 1. Автовідписка без ngOnDestroy\nthis.data$.pipe(takeUntilDestroyed()).subscribe(v => (this.value = v));\n\n// поза injection context:\nconstructor(private destroyRef: DestroyRef) {}\nthis.data$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(/* … */);\n\n// 2. Signals замість ngOnChanges\nuserId = input.required<string>();                    // signal input\nuser = computed(() => this.cache.get(this.userId())); // авто-реакція, без ngOnChanges"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Пастки <span class=\"tag tag-pit\">PIT</span></h3><ul class=\"list\"><li><strong>Логіка в <code>constructor</code> замість <code>ngOnInit</code></strong> → <code>@Input()</code> ще undefined.</li><li><strong>HTTP / підписки без cleanup</strong> → memory leak (потрібен <code>ngOnDestroy</code> / <code>takeUntilDestroyed</code>).</li><li><strong>Зміна стану в <code>ngAfterViewInit</code></strong> → <code>ExpressionChangedAfterItHasBeenCheckedError</code>.</li><li><strong>Важка логіка в <code>…Checked</code> / <code>ngDoCheck</code></strong> → перф-проблеми (викликаються щоцикл).</li><li><strong><code>ngOnChanges</code> при мутації об'єкта</strong> → не спрацює, потрібна нова reference.</li><li><strong><code>@ViewChild</code> у <code>ngOnInit</code></strong> → ще <code>undefined</code>, тільки з <code>ngAfterViewInit</code>.</li><li><strong>DOM-код у <code>ngAfterViewInit</code> без урахування SSR</strong> → падає на сервері; <code>afterNextRender</code> або перевірка платформи.</li></ul>"
         }
       ]
     },
@@ -1211,57 +1233,120 @@ export const angularContent: TopicContent = {
       "title": "🎭 Content Projection & ViewChild",
       interviewQuestions: [
         {
-          "question": "Чим <code>&lt;ng-content&gt;</code> (content projection) відрізняється від передачі даних через звичайний <code>@Input()</code>?",
-          "answer": "<code>@Input()</code> передає <em>дані</em>, які компонент сам вирішує, як відрендерити. <code>&lt;ng-content&gt;</code> дозволяє батьківському компоненту передати <strong>готову розмітку/шаблон</strong> усередину дочірнього — сам дочірній компонент лише визначає, <em>де</em> цей контент з'явиться в його структурі, не контролюючи його вміст. Це аналог <code>children</code> у React."
+          "question": "Кому належить контент, спроектований через <code>&lt;ng-content&gt;</code> — батьку чи компоненту-обгортці, і які практичні наслідки?",
+          "answer": "Належить <strong>батьку</strong>. Контент створюється й керується батьківським компонентом; прив'язки (<code>{{ }}</code>, <code>[prop]</code>) у ньому обчислюються в <strong>контексті батька</strong>, а change detection для нього — частина батьківського дерева. Наслідок: з проектованого контенту не можна «дотягтися» до внутрішніх змінних обгортки, а сама обгортка бачить ці елементи через <code>@ContentChild</code> лише в <code>ngAfterContentInit</code>."
         },
         {
-          question: `ViewChild vs ContentChild?`,
-          answer: `ViewChild — own template; ContentChild — projected.`,
+          "question": "Чим відрізняються <code>@ViewChild</code> і <code>@ContentChild</code> і в якому lifecycle-хуку кожен стає доступним?",
+          "answer": "<code>@ViewChild(ren)</code> дістає елементи з <strong>власного шаблону</strong> компонента й доступний у <code>ngAfterViewInit</code> (або в <code>ngOnInit</code> з <code>{ static: true }</code> для статичних елементів). <code>@ContentChild(ren)</code> дістає елементи зі <strong>спроектованого через <code>&lt;ng-content&gt;</code> контенту</strong> й доступний у <code>ngAfterContentInit</code>. Content-хук спрацьовує раніше за view-хук, бо контент ініціалізується до в'юшки."
         },
         {
-          question: `Коли можна читати ViewChild?`,
-          answer: `AfterViewInit; не в constructor або ngOnInit.`,
+          "question": "Що робить опція <code>{ static: true }</code> у <code>@ViewChild</code> і коли її не можна застосовувати?",
+          "answer": "<code>static: true</code> виконує запит <em>до</em> першого change detection, тому результат доступний уже в <code>ngOnInit</code> — але лише для елементів, що <strong>гарантовано присутні</strong> в шаблоні (не всередині <code>*ngIf</code>/<code>*ngFor</code>). Для умовних елементів потрібен <code>static: false</code> (дефолт), інакше отримаєш <code>undefined</code>. Signal-queries (<code>viewChild()</code>) знімають цю дилему — вони реактивні й не залежать від таймінгу хуків."
         },
         {
-          question: `Named slots use case?`,
-          answer: `Flexible component layout; multiple insertion points.`,
-        },
-        {
-          question: `ViewChildren (plural)?`,
-          answer: `QueryList для всіх елементів, changes observable.`,
+          "question": "Чому <code>@ViewChildren</code>/<code>@ContentChildren</code> повертають <code>QueryList</code>, а не звичайний масив?",
+          "answer": "<code>QueryList</code> — <strong>жива реактивна колекція</strong>: вона сама оновлюється, коли <code>@for</code>/<code>*ngFor</code> додає чи видаляє елементи, і має <code>.changes</code> (Observable) для підписки на цю динаміку. Якщо одразу зробити <code>.toArray()</code> і працювати зі знімком-масивом, реактивність втрачається. Signal-варіант <code>viewChildren()</code> повертає вже реактивний масив-сигнал."
         },
       ],
       "blocks": [
         {
           "kind": "paragraph",
-          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-15\">ng-content, named slots</span>\n            <span class=\"ver ver-16\">ContentChild signal</span>\n            <span class=\"ver ver-19\">improved DX ✦</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Еволюція</div>\n            <div class=\"changelog-row\"><span class=\"chver\">v2-14</span><span class=\"changelog-text\">ng-content, @ContentChild/@ViewChild decorator</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v16</span><span class=\"changelog-text\">ContentChild/ViewChild signals (read property)</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v19 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> Signal-based queries stable, decorator still works</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>ng-content:</strong> Місце для проекції контенту з батьківського компонента.</p>\n            <p><strong>@ViewChild:</strong> Отримати елемент із власного template.</p>\n            <p><strong>@ContentChild:</strong> Отримати спроєктований контент.</p>\n          </div><h3 class=\"topic\">@ViewChild vs @ContentChild</h3><p><strong>Що це:</strong> @ViewChild отримує посилання на елемент з власного template компонента. @ContentChild — на елемент, який прийшов через ng-content від батька. <strong>Навіщо:</strong> Доступ до child компонента для контролю його поведінки (викликати методи, читати значення).</p>"
+          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-15\">&lt;ng-content&gt; + select</span>\n            <span class=\"ver ver-16\">signal inputs / queries preview</span>\n            <span class=\"ver ver-19\">viewChild()/contentChild() stable ✦</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Еволюція</div>\n            <div class=\"changelog-row\"><span class=\"chver\">v2</span><span class=\"changelog-text\">&lt;ng-content&gt;, single &amp; multi-slot (select), @ViewChild/@ContentChild декоратори</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v9</span><span class=\"changelog-text\">Ivy: точніший static vs dynamic resolution для queries</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v17.2 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> signal-based queries — viewChild(), viewChildren(), contentChild(), contentChildren() (+ .required)</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Content Projection:</strong> компонент приймає розмітку ззовні (від батька) і вставляє її у слоти через <code>&lt;ng-content&gt;</code>. Angular-аналог <code>children</code> у React / slots у Web Components.</p>\n            <p><strong>Queries (ViewChild / ContentChild):</strong> типобезпечний доступ до елементів і компонентів — із власного шаблону (<em>view</em>) або зі спроектованого контенту (<em>content</em>).</p>\n          </div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Content Projection — <code>&lt;ng-content&gt;</code></h3><p><strong>Навіщо:</strong> будувати гнучкі переюзабельні компоненти-обгортки (Card, Modal, Panel), де структуру й стилі задає компонент, а вміст — споживач.</p><p><strong>Single-slot:</strong> один <code>&lt;ng-content&gt;</code> без атрибутів приймає весь переданий контент. <strong>Multi-slot:</strong> кілька <code>&lt;ng-content select=\"...\"&gt;</code> розкладають контент по слотах за будь-яким CSS-селектором — атрибут <code>[attr]</code>, клас <code>.class</code>, тег, компонент. <code>&lt;ng-content&gt;</code> без <code>select</code> — це catch-all (один default-slot на компонент) для контенту, що не підійшов під інші слоти.</p>"
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// @ViewChild — from own template\n@ViewChild('inputEl') input!: ElementRef;\n\n// @ContentChild — from projected content\n@ContentChild(ButtonDirective) button!: ButtonDirective;\n\n// Signal-based (v16+)\n@ViewChild('inputEl', { read: ElementRef }) \ninput = viewChild.required<ElementRef>();"
+          "code": "// single-slot wrapper\n@Component({\n  selector: 'app-card',\n  template: `\n    <div class=\"card\">\n      <ng-content></ng-content>   <!-- контент ззовні -->\n    </div>\n  `,\n})\nexport class CardComponent {}"
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">@ViewChildren / @ContentChildren — множина елементів</h3><p><strong>Що це:</strong> множинні версії @ViewChild/@ContentChild. Повертають <code>QueryList&lt;T&gt;</code> — live-колекцію, яка сама оновлюється при зміні DOM (напр. *ngFor додав/видалив елемент), з <code>.changes</code> Observable для підписки. Signal-версія — <code>viewChildren()</code> повертає звичайний масив-сигнал. <strong>Навіщо:</strong> отримати доступ до ВСІХ дочірніх елементів/директив одного типу одразу (напр. усі вкладки, усі пункти меню).</p>"
+          "kind": "code",
+          "language": "html",
+          "code": "<app-card>\n  <h2>Title</h2>       <!-- спроектується в ng-content -->\n  <p>Body text</p>\n</app-card>"
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// Decorator-based — QueryList\n@ViewChildren(TabComponent) tabs!: QueryList<TabComponent>;\n\nngAfterViewInit() {\n  console.log(this.tabs.length);\n  this.tabs.changes.subscribe(list => console.log('tabs changed', list.length));\n}\n\n// Signal-based (v17+) — простий reactive масив, без AfterViewInit-таймінгу\ntabs = viewChildren(TabComponent);\ntabCount = computed(() => this.tabs().length);"
+          "code": "// multi-slot: розкладка за CSS-селектором\n@Component({\n  selector: 'app-panel',\n  template: `\n    <header><ng-content select=\"[panel-title]\"></ng-content></header>\n    <main><ng-content select=\".panel-body\"></ng-content></main>\n    <footer><ng-content></ng-content></footer>  <!-- default slot -->\n  `,\n})\nexport class PanelComponent {}"
+        },
+        {
+          "kind": "code",
+          "language": "html",
+          "code": "<app-panel>\n  <h1 panel-title>Header</h1>         <!-- header slot (за атрибутом) -->\n  <div class=\"panel-body\">Body</div>  <!-- main slot (за класом) -->\n  <button>OK</button>                  <!-- footer (default) -->\n</app-panel>"
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Named Slots (Multiple Projections)</h3>"
+          "html": "<h3 class=\"topic\">Проектований контент належить БАТЬКУ <span class=\"tag tag-key\">KEY</span></h3><div class=\"alert alert-good\"><strong>Найважливіший концепт для інтерв'ю.</strong> Спроектований контент створюється й керується <strong>батьком</strong>, не дитиною; прив'язки (<code>{{ }}</code>, <code>[prop]</code>) у ньому обчислюються в <strong>контексті батька</strong>; його change detection — частина батьківського дерева. Тому з проектованого контенту не можна «дотягтися» до внутрішніх змінних обгортки — він живе у scope батька.</div>"
+        },
+        {
+          "kind": "code",
+          "language": "html",
+          "code": "<!-- parentValue належить батьку, не app-card -->\n<app-card>{{ parentValue }}</app-card>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">ngProjectAs та умовна проекція</h3><p><strong><code>ngProjectAs</code>:</strong> коли обгортаєш контент (напр. у <code>&lt;ng-container&gt;</code>) і треба, щоб він потрапив у певний слот попри власний селектор.</p><p><strong>Умовна проекція:</strong> щоб рендерити обгортку слота лише за наявності контенту — перевіряй кількість/наявність через <code>@ContentChild</code> / <code>contentChildren()</code>, а не через CSS <code>:empty</code>.</p>"
+        },
+        {
+          "kind": "code",
+          "language": "html",
+          "code": "<ng-container ngProjectAs=\"[panel-title]\">\n  <h1>Проектується як title попри тег</h1>\n</ng-container>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Queries — 4 декоратори <span class=\"tag tag-key\">KEY</span></h3><div class=\"table-wrap\"><table><tr><th>Декоратор</th><th>Що дістає</th><th>Звідки</th></tr><tr><td><code>@ViewChild</code></td><td>один елемент / компонент</td><td>з <strong>власного view</strong> (шаблону компонента)</td></tr><tr><td><code>@ViewChildren</code></td><td>список (<code>QueryList</code>)</td><td>з власного view</td></tr><tr><td><code>@ContentChild</code></td><td>один елемент / компонент</td><td>зі <strong>спроектованого контенту</strong> (<code>&lt;ng-content&gt;</code>)</td></tr><tr><td><code>@ContentChildren</code></td><td>список (<code>QueryList</code>)</td><td>зі спроектованого контенту</td></tr></table></div><div class=\"alert alert-good\"><strong>🎯 Головна різниця:</strong> <em>View</em> = те, що в <strong>моєму шаблоні</strong>; <em>Content</em> = те, що <strong>проектується ззовні</strong> через <code>&lt;ng-content&gt;</code>. <code>@ViewChild</code> не бачить проектований контент, <code>@ContentChild</code> не бачить власний шаблон.</div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">@ViewChild — доступ до власного view</h3><p><strong>Способи запиту:</strong> template reference variable (<code>@ViewChild('nameInput')</code>), тип компонента / директиви (<code>@ViewChild(ChildComponent)</code>), provider token. <strong>Timing:</strong> доступний у <code>ngAfterViewInit</code> (в <code>ngOnInit</code> ще <code>undefined</code>).</p><div class=\"alert warn\"><strong>Опція <code>static</code>:</strong> <code>{ static: true }</code> — запит до першого CD, доступний у <code>ngOnInit</code>, але <strong>лише</strong> для елементів поза <code>*ngIf</code>/<code>*ngFor</code>. <code>{ static: false }</code> (дефолт) — після CD, у <code>ngAfterViewInit</code>; потрібен для умовних елементів.</div>"
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// Child component template\n<div class=\"header\">\n  <ng-content select=\"[header]\"></ng-content>\n</div>\n<div class=\"body\">\n  <ng-content></ng-content> <!-- default slot -->\n</div>\n\n// Parent using slots\n<app-card>\n  <div header>Title</div>\n  <p>Body content</p>\n</app-card>"
+          "code": "@Component({\n  template: `\n    <input #nameInput />\n    <app-child></app-child>\n  `,\n})\nexport class ParentComponent implements AfterViewInit {\n  @ViewChild('nameInput') input!: ElementRef<HTMLInputElement>;  // за template ref\n  @ViewChild(ChildComponent) child!: ChildComponent;             // за типом\n\n  ngAfterViewInit() {\n    this.input.nativeElement.focus();   // DOM доступний ТУТ\n    this.child.someMethod();\n  }\n}\n\n// static: доступ раніше, лише для статичних елементів\n@ViewChild('ref', { static: true })  el!: ElementRef;   // -> ngOnInit\n@ViewChild('ref', { static: false }) el!: ElementRef;   // -> ngAfterViewInit (дефолт)"
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Signals for queries, better observable integration</span></div></div>"
+          "html": "<h3 class=\"topic\">@ContentChild — доступ до спроектованого контенту</h3><p><strong>Timing:</strong> доступний у <code>ngAfterContentInit</code> (не <code>ngAfterViewInit</code>). Це фундамент <strong>compound component pattern</strong> (Tabs/Tab, Accordion/Panel) — батько-обгортка керує колекцією проектованих дочірніх компонентів.</p>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "@Component({\n  selector: 'app-tabs',\n  template: `<ng-content></ng-content>`,\n})\nexport class TabsComponent implements AfterContentInit {\n  @ContentChildren(TabComponent) tabs!: QueryList<TabComponent>;\n\n  ngAfterContentInit() {\n    console.log(this.tabs.length);   // усі app-tab, проектовані ззовні\n    this.tabs.first?.activate();\n  }\n}"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">QueryList — динамічна колекція</h3><p><code>@ViewChildren</code> / <code>@ContentChildren</code> повертають <code>QueryList&lt;T&gt;</code> — не масив, а <strong>реактивну live-колекцію</strong>: <code>.changes</code> (Observable, емітить при зміні складу), <code>.first</code>, <code>.last</code>, <code>.length</code>, <code>.toArray()</code>, <code>.forEach()</code>.</p><div class=\"alert warn\">Не заміняй <code>QueryList</code> збереженим масивом — втратиш реактивність <code>.changes</code> при додаванні/видаленні елементів через <code>@for</code>/<code>*ngFor</code>.</div>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "@ViewChildren(ItemComponent) items!: QueryList<ItemComponent>;\n\nngAfterViewInit() {\n  this.items.forEach(i => i.init());\n  this.items.changes.subscribe(list => {   // реагує на додавання / видалення\n    console.log('items changed', list.length);\n  });\n}"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Timing — зведена таблиця <span class=\"tag tag-key\">KEY</span></h3><div class=\"table-wrap\"><table><tr><th>Запит</th><th>Доступний у</th></tr><tr><td><code>@ViewChild</code> / <code>@ViewChildren</code></td><td><code>ngAfterViewInit</code> (або <code>ngOnInit</code> з <code>static: true</code>)</td></tr><tr><td><code>@ContentChild</code> / <code>@ContentChildren</code></td><td><code>ngAfterContentInit</code></td></tr></table></div><p>Логіка порядку: спершу ініціалізується контент (<code>ngAfterContentInit</code>), потім view (<code>ngAfterViewInit</code>) — тому content-запити готові раніше.</p>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Signal Queries (v17.2+) — сучасний підхід <span class=\"tag tag-key\">KEY</span></h3><p>Signal-based запити замінюють декоратори: реактивні (працюють у <code>computed</code> / <code>effect</code>), без залежності від lifecycle-хуків і таймінг-проблем, типобезпечніші. Декоратори досі валідні — це legacy-стиль.</p>"
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": "// замість @ViewChild / @ContentChild\ninput = viewChild<ElementRef>('nameInput');   // Signal<ElementRef | undefined>\nitems = viewChildren(ItemComponent);           // Signal<readonly ItemComponent[]>\ntab   = contentChild(TabComponent);\ntabs  = contentChildren(TabComponent);\n\n// required — кидає, якщо не знайдено (тип без undefined)\nfirstInput = viewChild.required<ElementRef>('nameInput');\n\n// використання — як звичайний signal, без AfterViewInit\nconstructor() {\n  effect(() => this.input()?.nativeElement.focus());\n}"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<h3 class=\"topic\">Пастки <span class=\"tag tag-pit\">PIT</span></h3><div class=\"alert warn\"><ul class=\"list\"><li><strong>Плутати View і Content</strong> — <code>@ViewChild</code> не бачить проектований контент, <code>@ContentChild</code> не бачить власний шаблон. Головна помилка.</li><li><strong><code>@ViewChild</code> у <code>ngOnInit</code></strong> -> <code>undefined</code> (треба <code>ngAfterViewInit</code> або <code>static: true</code>).</li><li><strong><code>@ContentChild</code> у <code>ngAfterViewInit</code></strong> замість <code>ngAfterContentInit</code> — концептуально пізно для init-логіки.</li><li><strong>Зміна стану через ViewChild після CD</strong> -> <code>ExpressionChangedAfterItHasBeenCheckedError</code>.</li><li><strong><code>QueryList</code> -> збережений масив</strong> -> втрата <code>.changes</code>-реактивності.</li><li><strong>Прямий DOM через <code>nativeElement</code></strong> — уникай, де можна (<code>Renderer2</code> для SSR-safe маніпуляцій).</li><li><strong><code>static: true</code> на елементі всередині <code>*ngIf</code></strong> -> <code>undefined</code> (динамічний елемент вимагає <code>static: false</code>).</li></ul></div>"
+        },
+        {
+          "kind": "paragraph",
+          "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Signal queries — рекомендований дефолт; декоратори поступово в legacy, тісніша інтеграція з zoneless CD</span></div></div>"
         }
       ]
     },
