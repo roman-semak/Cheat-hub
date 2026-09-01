@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import 'highlight.js/styles/github-dark.css'
 import type { QuickRefBlock, QuickRefEntry, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
-import { quickRefBlockKeys } from '@/lib/cheatsheet/quickrefKeys'
-import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import { QUICKREF_TOPICS } from '@/lib/cheatsheet/quickref'
+import { getTopic } from '@/lib/cheatsheet/registry'
 import { highlight } from '@/lib/cheatsheet/highlight'
 import { breadcrumbJsonLd } from '@/lib/seo'
 import { JsonLd } from '@/components/JsonLd'
@@ -19,7 +20,6 @@ import {
 import { cn } from '@/lib/utils'
 import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
 import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
-import { StatusMarker, StatusGlyph } from './StatusMarker'
 
 function isChipRow(block: QuickRefBlock): block is Extract<QuickRefBlock, { chips: string[] }> {
   return 'chips' in block
@@ -180,49 +180,10 @@ function renderBlock(block: QuickRefBlock) {
   return <QuickRefGroupBlock group={block} />
 }
 
-// Anchor id for a block's wrapper, used for both scroll targeting and the
-// IntersectionObserver spy below.
-function blockAnchorId(id: string) {
-  return `qr-block-${id}`
-}
-
 export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: QuickRefBlock[] }) {
   const columnCount = useColumnCount()
   const ids = useMemo(() => blocks.map((_, i) => String(i)), [blocks])
   const { buckets, itemRef } = useMasonry(ids, columnCount)
-  const [activeId, setActiveId] = useState(ids[0] ?? '')
-
-  // Per-block status. Keys derived from block labels via the shared helper
-  // (same as the stamp-new-content script).
-  const pairs = useMemo(
-    () => quickRefBlockKeys(blocks).map((k) => sameKey(`quickref:${meta.slug}:${k}`)),
-    [blocks, meta.slug],
-  )
-  const { statusOf, cycle } = useContentStatus(pairs)
-
-  // Page scrolls at the window level here (no dedicated scroll container like
-  // ProseTopicView has), so this observes the viewport directly rather than
-  // reusing useScrollSpy (which requires a root element ref).
-  useEffect(() => {
-    if (ids.length === 0) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveId(entry.target.id.replace('qr-block-', ''))
-        })
-      },
-      { rootMargin: '-48px 0px -70% 0px', threshold: 0 },
-    )
-    ids.forEach((id) => {
-      const el = document.getElementById(blockAnchorId(id))
-      if (el) observer.observe(el)
-    })
-    return () => observer.disconnect()
-  }, [ids])
-
-  const jump = (id: string) => {
-    document.getElementById(blockAnchorId(id))?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
 
   return (
     <div>
@@ -234,24 +195,24 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
       />
       <h1 className="sr-only">{meta.title} — Шпаргалка</h1>
       <nav className="sticky top-0 z-20 flex items-center gap-1 overflow-x-auto border-b border-white/10 bg-slate-950/90 px-3 py-1.5 backdrop-blur">
-        {blocks.map((block, i) => {
-          const id = String(i)
+        {QUICKREF_TOPICS.map((slug) => {
+          const t = getTopic(slug)
+          if (!t) return null
+          const active = slug === meta.slug
           return (
-            <button
-              key={id}
-              type="button"
-              title={block.label ?? meta.title}
-              onClick={() => jump(id)}
+            <Link
+              key={slug}
+              href={`/quickref/${slug}`}
               className={cn(
-                'relative shrink-0 rounded-md px-2 py-1 text-base leading-none transition-colors',
-                activeId === id ? 'bg-white/10' : 'hover:bg-white/5',
+                'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors',
+                active
+                  ? 'bg-white/10 font-medium text-white'
+                  : 'text-slate-400 hover:bg-white/5 hover:text-slate-200',
               )}
             >
-              {block.icon ?? meta.icon}
-              <span className="absolute right-0.5 top-0.5">
-                <StatusGlyph status={statusOf(pairs[i])} className="h-1.5 w-1.5" />
-              </span>
-            </button>
+              <span>{t.icon}</span>
+              <span>{t.title}</span>
+            </Link>
           )
         })}
       </nav>
@@ -263,19 +224,8 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
               {bucket.map((id) => {
                 const block = blocks[Number(id)]
                 if (!block) return null
-                const pair = pairs[Number(id)]
                 return (
-                  <div
-                    key={id}
-                    id={blockAnchorId(id)}
-                    ref={itemRef(id)}
-                    className="relative scroll-mt-14"
-                  >
-                    <StatusMarker
-                      status={statusOf(pair)}
-                      onCycle={() => cycle(pair)}
-                      className="absolute -right-1 -top-1 z-10 bg-slate-900/80"
-                    />
+                  <div key={id} ref={itemRef(id)}>
                     {renderBlock(block)}
                   </div>
                 )

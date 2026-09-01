@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, User } from 'lucide-react'
 import { TOPICS, FORMAT_LABELS, formatHref, topicHref, ACCENT, getTopic } from '@/lib/cheatsheet/registry'
-import { QUICKREF_TOPICS } from '@/lib/cheatsheet/quickref'
 import type { TopicMeta, TopicSlug } from '@/lib/cheatsheet/types'
 import { useUserStore } from '@/lib/userStore'
 import { cn } from '@/lib/utils'
@@ -15,10 +14,11 @@ interface CheatSidebarProps {
   onToggle: () => void
 }
 
-// Sub-links for one topic: quickref sub-topics for the `quickref` topic,
-// otherwise its declared formats. Shared between the inline list (shown
-// under the active topic when expanded) and the flyout (shown on tap when
-// collapsed) so the two states can't drift apart.
+// Sub-links for one topic: its declared formats. Shared between the inline
+// list (shown under the active topic when expanded) and the flyout (shown on
+// tap when collapsed) so the two states can't drift apart. The `quickref`
+// topic has no sub-links — its React/JS/Angular switch lives in the top tab
+// bar inside the page (see QuickRefTopicView).
 function TopicSubLinks({
   topic,
   pathname,
@@ -30,35 +30,7 @@ function TopicSubLinks({
   accentTextClass: string
   onNavigate?: () => void
 }) {
-  if (topic.slug === 'quickref') {
-    return (
-      <>
-        {QUICKREF_TOPICS.map((slug) => {
-          const subTopic = getTopic(slug)
-          if (!subTopic) return null
-          const href = `/quickref/${slug}`
-          const subActive = pathname === href
-          return (
-            <li key={slug}>
-              <Link
-                href={href}
-                onClick={onNavigate}
-                className={cn(
-                  'flex items-center gap-1.5 rounded px-2 py-1 text-xs transition-colors',
-                  subActive
-                    ? cn('bg-white/5 font-medium', accentTextClass)
-                    : 'text-slate-400 hover:text-slate-200',
-                )}
-              >
-                <span>{subTopic.icon}</span>
-                <span className="truncate">{subTopic.title}</span>
-              </Link>
-            </li>
-          )
-        })}
-      </>
-    )
-  }
+  if (topic.slug === 'quickref') return null
 
   return (
     <>
@@ -187,7 +159,7 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
                   )}
                 </Link>
 
-                {!collapsed && isActive && (
+                {!collapsed && isActive && topic.slug !== 'quickref' && (
                   <ul className="mb-1 ml-7 mt-0.5 flex flex-col gap-0.5 border-l border-white/10 pl-2">
                     <TopicSubLinks topic={topic} pathname={pathname} accentTextClass={accent.text} />
                   </ul>
@@ -237,14 +209,16 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
             <span className="text-base">{flyoutTopic.icon}</span>
             <span className="truncate">{flyoutTopic.title}</span>
           </Link>
-          <ul className="mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-2">
-            <TopicSubLinks
-              topic={flyoutTopic}
-              pathname={pathname}
-              accentTextClass={ACCENT[flyoutTopic.accent].text}
-              onNavigate={() => setOpenFlyout(null)}
-            />
-          </ul>
+          {flyoutTopic.slug !== 'quickref' && (
+            <ul className="mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-2">
+              <TopicSubLinks
+                topic={flyoutTopic}
+                pathname={pathname}
+                accentTextClass={ACCENT[flyoutTopic.accent].text}
+                onNavigate={() => setOpenFlyout(null)}
+              />
+            </ul>
+          )}
         </div>
       )}
     </aside>
