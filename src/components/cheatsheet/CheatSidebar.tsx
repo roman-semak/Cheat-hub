@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, User } from 'lucide-react'
-import { TOPICS, FORMAT_LABELS, formatHref, topicHref, ACCENT, getTopic } from '@/lib/cheatsheet/registry'
-import type { TopicMeta, TopicSlug } from '@/lib/cheatsheet/types'
+import { TOPICS, FORMAT_LABELS, formatHref, topicHref, ACCENT } from '@/lib/cheatsheet/registry'
+import type { TopicMeta } from '@/lib/cheatsheet/types'
 import { useUserStore } from '@/lib/userStore'
 import { cn } from '@/lib/utils'
 
@@ -14,21 +13,18 @@ interface CheatSidebarProps {
   onToggle: () => void
 }
 
-// Sub-links for one topic: its declared formats. Shared between the inline
-// list (shown under the active topic when expanded) and the flyout (shown on
-// tap when collapsed) so the two states can't drift apart. The `quickref`
-// topic has no sub-links — its React/JS/Angular switch lives in the top tab
-// bar inside the page (see QuickRefTopicView).
+// Sub-links for one topic: its declared formats. Rendered inline under the
+// active topic when the sidebar is expanded. The `quickref` topic has no
+// sub-links — its React/JS/Angular switch lives in the top tab bar inside the
+// page (see QuickRefTopicView).
 function TopicSubLinks({
   topic,
   pathname,
   accentTextClass,
-  onNavigate,
 }: {
   topic: TopicMeta
   pathname: string
   accentTextClass: string
-  onNavigate?: () => void
 }) {
   if (topic.slug === 'quickref') return null
 
@@ -41,7 +37,6 @@ function TopicSubLinks({
           <li key={format}>
             <Link
               href={href}
-              onClick={onNavigate}
               className={cn(
                 'block rounded px-2 py-1 text-xs transition-colors',
                 formatActive
@@ -62,40 +57,6 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
   const pathname = usePathname()
   const { data } = useUserStore()
   const profileActive = pathname === '/profile'
-
-  // Collapsed-rail flyout: tap an icon to reveal its name + sub-links next
-  // to the rail, since the 56px rail has no room for text and native title
-  // tooltips don't work on touch (iPad). `top` is the tapped icon's
-  // viewport position; the flyout is `fixed` (not absolute) so the nav
-  // list's `overflow-y-auto` can't clip it.
-  const [openFlyout, setOpenFlyout] = useState<{ slug: TopicSlug; top: number } | null>(null)
-  const flyoutRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!openFlyout) return
-
-    const handlePointerDown = (e: MouseEvent) => {
-      if (flyoutRef.current && !flyoutRef.current.contains(e.target as Node)) {
-        setOpenFlyout(null)
-      }
-    }
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenFlyout(null)
-    }
-    document.addEventListener('mousedown', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [openFlyout])
-
-  // Close the flyout after a navigation completes.
-  useEffect(() => {
-    setOpenFlyout(null)
-  }, [pathname])
-
-  const flyoutTopic = openFlyout ? getTopic(openFlyout.slug) : undefined
 
   return (
     <aside
@@ -140,12 +101,6 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
                 <Link
                   href={topicHref(topic)}
                   title={topic.title}
-                  onClick={(e) => {
-                    if (!collapsed) return
-                    e.preventDefault()
-                    const top = e.currentTarget.getBoundingClientRect().top
-                    setOpenFlyout((prev) => (prev?.slug === topic.slug ? null : { slug: topic.slug, top }))
-                  }}
                   className={cn(
                     'flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors',
                     isActive
@@ -190,37 +145,6 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
           )}
         </Link>
       </div>
-
-      {/* Collapsed-rail flyout */}
-      {collapsed && openFlyout && flyoutTopic && (
-        <div
-          ref={flyoutRef}
-          className="fixed z-50 w-52 rounded-lg border border-white/10 bg-slate-900 p-2 shadow-2xl"
-          style={{ left: 64, top: Math.min(openFlyout.top, window.innerHeight - 260) }}
-        >
-          <Link
-            href={topicHref(flyoutTopic)}
-            onClick={() => setOpenFlyout(null)}
-            className={cn(
-              'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:bg-white/5',
-              ACCENT[flyoutTopic.accent].text,
-            )}
-          >
-            <span className="text-base">{flyoutTopic.icon}</span>
-            <span className="truncate">{flyoutTopic.title}</span>
-          </Link>
-          {flyoutTopic.slug !== 'quickref' && (
-            <ul className="mt-1 flex flex-col gap-0.5 border-l border-white/10 pl-2">
-              <TopicSubLinks
-                topic={flyoutTopic}
-                pathname={pathname}
-                accentTextClass={ACCENT[flyoutTopic.accent].text}
-                onNavigate={() => setOpenFlyout(null)}
-              />
-            </ul>
-          )}
-        </div>
-      )}
     </aside>
   )
 }

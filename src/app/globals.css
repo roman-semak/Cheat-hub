@@ -108,6 +108,19 @@
   @apply bg-transparent p-0 text-slate-200;
 }
 
+/* Command listings from the Git cheat-sheet markup:
+   <div class="cmd-block"><div class="cmd-label">clone</div>git clone &lt;url&gt;</div>
+   The command itself is a bare text node after the label, so the block carries
+   the code styling and the label is lifted out above it (bottom: 100%).
+   pre-wrap keeps the inline `#` comments aligned. */
+.cheat-prose .cmd-block {
+  @apply relative mb-2 mt-6 overflow-x-auto rounded-lg border border-white/10 bg-black/40 px-3 py-2 font-mono text-[12.5px] leading-relaxed text-slate-200;
+  white-space: pre-wrap;
+}
+.cheat-prose .cmd-label {
+  @apply absolute bottom-full left-0.5 mb-1 whitespace-nowrap font-sans text-[10.5px] font-semibold uppercase tracking-wide text-slate-400;
+}
+
 /* Syntax-highlight tokens from the original highlighter */
 .cheat-prose .kw {
   @apply text-purple-300;
@@ -256,19 +269,21 @@
    frame around the sheet. Purely visual — no logic/routing/data changes.
 --------------------------------------------------------------------------- */
 .paper {
-  --paper-bg: #f4ecd8; /* the sheet */
-  --paper-raised: #efe6cf; /* cards, panels, table headers */
-  --paper-sunken: #e7dabb; /* inline code, chips, inputs */
-  --paper-ink: #33291a; /* body text */
-  --paper-ink-soft: #6b5d47; /* secondary text, captions */
-  --paper-ink-faint: #9a8c72; /* tertiary text, status markers */
-  --paper-rule: rgba(51, 41, 26, 0.14); /* borders, rules */
-  --paper-link: #8a5320;
-  --paper-link-hover: #6d3f18;
-  --paper-accent: #96652f; /* section accents on paper */
-  --paper-selection: #dcc48f;
-  --paper-code-bg: #2b2620; /* code listings stay a dark "island" */
-  --paper-code-ink: #e8e0d0;
+  --paper-bg: #fdfbf7; /* the canvas — barely-warm white */
+  --paper-raised: #f4ecd8; /* cards, panels, sticky bars — the cream */
+  --paper-sunken: #e9dcbe; /* active states, chips, inline code, table th */
+  --paper-ink: #1c1917; /* body text */
+  --paper-ink-soft: #44403c; /* secondary text, captions */
+  --paper-ink-faint: #57534e; /* tertiary text, status markers */
+  --paper-title: #1e3a5f; /* h1–h4, .topic, card titles */
+  --paper-label: #1d4ed8; /* uppercase labels, .cmd-label, links */
+  --paper-rule: rgba(28, 25, 23, 0.18); /* borders, rules */
+  --paper-link: #1d4ed8;
+  --paper-link-hover: #1e40af;
+  --paper-accent: #1e3a5f; /* section accents on paper */
+  --paper-selection: #cfe0f5;
+  --paper-code-bg: #1e1b18; /* every code example is an editor-dark island */
+  --paper-code-ink: #e7e3dc;
   --paper-serif: 'Iowan Old Style', 'Charter', 'Palatino', 'Palatino Linotype',
     'Book Antiqua', Georgia, Cambria, 'Times New Roman', serif;
   --paper-mono: var(--font-mono), 'JetBrains Mono', ui-monospace, SFMono-Regular,
@@ -285,6 +300,7 @@
 .paper code,
 .paper pre,
 .paper .hljs,
+.paper .cmd-block,
 .paper .font-mono {
   font-family: var(--paper-mono);
 }
@@ -333,12 +349,20 @@
 }
 .paper .cheat-prose pre {
   background: var(--paper-code-bg);
-  border-color: rgba(51, 41, 26, 0.25);
+  border-color: rgba(28, 25, 23, 0.28);
   color: var(--paper-code-ink);
 }
 .paper .cheat-prose pre code {
   background: transparent;
   color: var(--paper-code-ink);
+}
+.paper .cheat-prose .cmd-block {
+  background: var(--paper-code-bg);
+  border-color: rgba(28, 25, 23, 0.28);
+  color: var(--paper-code-ink);
+}
+.paper .cheat-prose .cmd-label {
+  color: var(--paper-label);
 }
 .paper .cheat-prose .card {
   background: var(--paper-raised);
@@ -381,7 +405,7 @@
 .paper .cheat-prose .badge {
   background: var(--paper-sunken);
   border-color: var(--paper-rule);
-  color: var(--paper-ink-soft);
+  color: var(--paper-ink);
 }
 .paper .cheat-prose .tag-key {
   background: #e5ddd0;
@@ -519,22 +543,44 @@
   background-image: none;
 }
 
-.paper .bg-white\/5,
-.paper .bg-white\/10,
-.paper .bg-white\/\[0\.03\],
-.paper .bg-white\/\[0\.04\],
-.paper .bg-black\/20,
-.paper .bg-black\/30,
-.paper .bg-slate-900,
-.paper .bg-slate-950\/80,
-.paper .bg-slate-950\/90,
-.paper .bg-slate-950\/95 {
+/* Two surface tiers, so an active state can still read against its own panel.
+   `:not(pre)` everywhere — a <pre> is a code example and is always dark. */
+.paper .bg-white\/\[0\.03\]:not(pre),
+.paper .bg-white\/\[0\.04\]:not(pre),
+.paper .bg-black\/20:not(pre),
+.paper .bg-black\/30:not(pre),
+.paper .bg-slate-900:not(pre),
+.paper .bg-slate-950\/80:not(pre),
+.paper .bg-slate-950\/90:not(pre) {
   background-color: var(--paper-raised);
   backdrop-filter: none;
 }
-.paper .bg-black\/40 {
-  background-color: var(--paper-code-bg);
+.paper .bg-white\/5:not(pre),
+.paper .bg-white\/10:not(pre) {
+  background-color: var(--paper-sunken);
+  backdrop-filter: none;
 }
+/* Every code example is an editor-dark island, wherever it appears. */
+.paper pre {
+  background-color: var(--paper-code-bg);
+  border: 1px solid rgba(28, 25, 23, 0.28);
+  color: var(--paper-code-ink);
+}
+.paper pre code,
+.paper pre .hljs {
+  background: transparent;
+  color: inherit;
+}
+/* The QuickRef hover hint wraps its <pre> in a panel — keep the frame dark too,
+   otherwise the code sits in a cream border. LinksBlock's text tooltip has no
+   <pre>, so :has() leaves it light. */
+.paper [role='tooltip']:has(pre),
+.paper .bg-slate-950\/95:has(pre) {
+  background-color: var(--paper-code-bg);
+  border-color: rgba(28, 25, 23, 0.3);
+  backdrop-filter: none;
+}
+
 .paper .bg-indigo-600 {
   background-color: var(--paper-accent);
 }
@@ -553,13 +599,34 @@
   border-color: var(--paper-rule);
 }
 
+/* On a near-white canvas a cream input would read as a panel, not a field. */
 .paper input,
 .paper select {
-  background-color: var(--paper-raised);
+  background-color: #ffffff;
+  border-color: var(--paper-rule);
   color: var(--paper-ink);
 }
 .paper input::placeholder {
   color: var(--paper-ink-faint);
+}
+
+/* Headings and small-caps labels get their own saturated colour so they stop
+   dissolving into the page. Both need !important: the `.paper .text-slate-*`
+   remaps above are (0,2,0) and would otherwise beat these element selectors —
+   the same tie documented on `.paper b`. */
+.paper h1,
+.paper h2,
+.paper h3,
+.paper h4,
+.paper .cheat-prose .topic,
+.paper .cheat-prose .changelog-title,
+.paper .cheat-prose .interview-tips-title {
+  color: var(--paper-title) !important;
+}
+/* QuickRef BlockLabel, the hooks-catalog labels, .flip-card-label — the
+   captions that were washed out at 2.6:1. */
+.paper .uppercase.tracking-wide {
+  color: var(--paper-label) !important;
 }
 
 /* Component class hooks. */

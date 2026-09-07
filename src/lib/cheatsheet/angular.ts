@@ -224,6 +224,41 @@ export const angularContent: TopicContent = {
         },
         {
           "kind": "paragraph",
+          "html": `<h3 class="topic">NgModule → standalone: міграція</h3><p><strong>Що це:</strong> Офіційна схематика <code>@angular/core:standalone</code>, яку ганяють <strong>тричі</strong> — кожен прогін робить один крок і його треба закомітити окремо. <strong>Навіщо:</strong> Standalone дає явний граф залежностей (кращий tree-shaking), прибирає boilerplate і відкриває <code>loadComponent</code> та <code>@defer</code>, які з NgModule не працюють.</p><p>З <strong>v19</strong> <code>standalone: true</code> — значення за замовчуванням, тож у новому коді прапорець не пишуть узагалі; навпаки, компонент усередині NgModule тепер має явно позначатись <code>standalone: false</code>.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// Три прогони, кожен — окремий коміт
+ng generate @angular/core:standalone   # 1. Convert all components to standalone
+ng generate @angular/core:standalone   # 2. Remove unnecessary NgModule classes
+ng generate @angular/core:standalone   # 3. Switch to standalone bootstrapping
+
+// Було: NgModule-бутстрап
+@NgModule({
+  declarations: [AppComponent],
+  imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(routes)],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+platformBrowserDynamic().bootstrapModule(AppModule);
+
+// Стало: функціональні провайдери
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([authInterceptor])),
+  ],
+});
+
+// ❗ SharedModule зазвичай не конвертується, а РОЗПАДАЄТЬСЯ:
+//    кожен компонент імпортує рівно те, що вживає в шаблоні.
+//    Barrel-модуль «усе для всіх» — це саме те, що ламало tree-shaking.
+// ❗ Модулі сторонніх бібліотек (напр. MatButtonModule) імпортуються
+//    у standalone-компонент напряму, через його власний imports: [].`
+        },
+        {
+          "kind": "paragraph",
           "html": "<h3 class=\"topic\">Strict Mode — компіляція, не runtime <span class=\"tag tag-key\">KEY</span></h3><p><strong>Що це:</strong> <code>ng new --strict</code> вмикає пакет TypeScript- і Angular-специфічних перевірок: TS <code>strict: true</code> (strictNullChecks, noImplicitAny, ...), <code>strictTemplates</code> (типізована перевірка шаблонів — biндинги, event-обробники, змінні <code>*ngFor</code>/<code>@for</code>), <code>strictInjectionParameters</code> (усі DI-параметри мають явний тип) та бюджети бандла (bundle budgets) в <code>angular.json</code>. <strong>Навіщо:</strong> зловити помилки типів у шаблонах і DI ще під час компіляції — до того, як вони стануть runtime-багом у продакшні.</p><div class=\"alert alert-good\">\n            <strong>Ключова відмінність від React:</strong> Angular strict mode — це <em>compile-time</em> перемикач: він не змінює, як застосунок поводиться в браузері. Без нього код компілюється й виконується так само в runtime — просто типізовані помилки не ловляться заздалегідь і спливають пізніше (частіше в проді). Це відрізняється від React <code>&lt;StrictMode&gt;</code>, який змінює саму runtime-поведінку в dev-режимі (див. розділ Strict Mode в React).</div>"
         },
         {
@@ -234,6 +269,171 @@ export const angularContent: TopicContent = {
         {
           "kind": "paragraph",
           "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">NgModule fully deprecated, function-based everything</span></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "templates-control-flow",
+      "title": "🎛️ Шаблони — @if / @for / @switch",
+      interviewQuestions: [
+        {
+          "question": "Чим новий control flow (<code>@if</code>/<code>@for</code>) кращий за структурні директиви <code>*ngIf</code>/<code>*ngFor</code> — окрім того, що «синтаксис гарніший»?",
+          "answer": "Це не директиви, а <strong>синтаксис самого компілятора</strong>, і з цього випливає все інше. По-перше, нічого не треба імпортувати: зникає <code>CommonModule</code> в <code>imports</code> і клас помилок «шаблон мовчки не працює, бо забув імпорт». По-друге, менший бандл — рантайм вбудованого control flow легший за директиви <code>NgIf</code>/<code>NgFor</code>, і він tree-shake-иться разом із невикористаними гілками. По-третє, точніше <strong>звуження типів</strong> у шаблоні: компілятор бачить умову як звичайний <code>if</code>, а не як окремий вбудований view з власним контекстом. По-четверте, <code>@if</code> не створює DOM-вузла, тому зникає потреба в <code>&lt;ng-container *ngIf&gt;</code> як обхідному маневрі для правила «одна структурна директива на елемент»."
+        },
+        {
+          "question": "Чому <code>track</code> у <code>@for</code> зробили обовʼязковим, і що зламається, якщо написати <code>track $index</code> на списку, який сортується або фільтрується?",
+          "answer": "У <code>*ngFor</code> <code>trackBy</code> був опційним, і його систематично забували — через що будь-яка зміна масиву перемальовувала весь список: O(n) операцій із DOM замість точкового патчу. Компілятор тепер просто не пропускає <code>@for</code> без <code>track</code>. Але <code>track $index</code> — це «обовʼязковий про людське око»: Angular вважатиме, що елемент на позиції 2 лишився тим самим елементом, хоча після сортування там уже інша сутність. DOM перевикористається <strong>неправильно</strong>: локальний стан вузлів «переїде» на чужі рядки — введений текст в інпуті опиниться навпроти іншого запису, стан чекбоксів зміститься, анімації спрацюють не там. Тому <code>track</code> має бути стабільним унікальним ідентифікатором сутності (<code>item.id</code>), а <code>$index</code> допустимий лише для списків, які ніколи не переупорядковуються."
+        },
+        {
+          question: `ng-container vs ng-template?`,
+          answer: `ng-container — логічна обгортка, що не створює DOM-вузол, рендериться одразу. ng-template — оголошення шаблону, який сам по собі НЕ рендериться; його вставляють через ngTemplateOutlet або структурну директиву.`,
+        },
+        {
+          question: `Структурні директиви вже видалили?`,
+          answer: `Ні. *ngIf/*ngFor/*ngSwitch позначені deprecated у v20, але працюють. Змішувати старий і новий синтаксис в одному проєкті можна.`,
+        },
+        {
+          question: `Що дає @empty?`,
+          answer: `Блок, що рендериться, коли колекція порожня — замість окремого @if (items.length === 0). Раніше в *ngFor такого не було взагалі.`,
+        },
+        {
+          question: `Як мігрувати шаблони?`,
+          answer: `ng generate @angular/core:control-flow — офіційна схематика, переписує *ngIf/*ngFor/*ngSwitch автоматично.`,
+        },
+        {
+          question: `CommonModule ще потрібен?`,
+          answer: `Для control flow — ні. Для пайпів (AsyncPipe, DatePipe, CurrencyPipe) — так, або імпортуй їх поштучно.`,
+        },
+      ],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": `<div class="version-row">
+            <span class="ver ver-15">*ngIf / *ngFor</span>
+            <span class="ver ver-17">@if / @for / @switch</span>
+            <span class="ver ver-19">built-in ✦</span>
+          </div><div class="changelog changelog-past">
+            <div class="changelog-title">🕐 Еволюція</div>
+            <div class="changelog-row"><span class="chver">v2-16</span><span class="changelog-text">Структурні директиви *ngIf / *ngFor / *ngSwitch, обовʼязковий CommonModule</span></div>
+            <div class="changelog-row"><span class="chver">v17</span><span class="changelog-text">Новий control flow @if/@for/@switch (developer preview) + @defer</span></div>
+            <div class="changelog-row"><span class="chver">v18</span><span class="changelog-text">Control flow стабільний; схематика автоматичної міграції шаблонів</span></div>
+            <div class="changelog-row"><span class="chver">v20 ✦</span><span class="changelog-text"><strong>Поточна:</strong> структурні директиви deprecated, новий синтаксис — дефолт для нового коду</span></div>
+          </div><div style="background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
+            <p><strong>Control flow —</strong> це <em>синтаксис компілятора</em>, а не набір директив. Angular розбирає <code>@if</code>/<code>@for</code>/<code>@switch</code> на етапі компіляції шаблону і генерує звичайні інструкції.</p>
+            <p><strong>Наслідки:</strong> нічого не імпортуєш (<code>CommonModule</code> більше не потрібен для умов і циклів), рантайм легший, типи в шаблоні звужуються точніше, і блоки <strong>не створюють DOM-вузлів</strong>.</p>
+            <p><strong>Сумісність:</strong> старі структурні директиви працюють і далі — міграція поступова, файл за файлом.</p>
+          </div><h3 class="topic">@if / @else if / @else</h3><p><strong>Що це:</strong> Умовний рендер із повноцінними гілками і аліасом <code>as</code>. <strong>Навіщо:</strong> Замість зв'язки <code>*ngIf="c; else tpl"</code> + окремий <code>&lt;ng-template #tpl&gt;</code> — читабельний блок, де видно всі гілки поруч.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `@if (user(); as u) {
+  <p>{{ u.name }}</p>
+} @else if (loading()) {
+  <app-spinner />
+} @else {
+  <p>Немає даних</p>
+}
+
+// З async pipe — розпаковка ОДИН раз, без дублювання підписки
+@if (user$ | async; as user) {
+  <app-profile [user]="user" />
+}
+
+// ❌ Старий еквівалент вимагав ng-template на кожну гілку:
+// <div *ngIf="user; else loadingTpl">…</div>
+// <ng-template #loadingTpl>…</ng-template>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">@for — track обовʼязковий <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Цикл із обовʼязковим <code>track</code> і власним блоком <code>@empty</code>. <strong>Навіщо:</strong> <code>trackBy</code> у <code>*ngFor</code> був опційним і його масово забували — кожна зміна масиву перемальовувала весь список. Тепер компілятор просто не дасть зібратись без <code>track</code>.</p><p>Контекстні змінні всередині блоку: <code>$index</code>, <code>$first</code>, <code>$last</code>, <code>$even</code>, <code>$odd</code>, <code>$count</code> — і будь-яку можна перейменувати через <code>let</code>. Механіку самого trackBy та її вплив на продуктивність розібрано в секції <strong>⚡ Performance Optimization</strong>.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `@for (item of items(); track item.id) {
+  <li>{{ $index + 1 }}. {{ item.name }}</li>
+} @empty {
+  <li class="muted">Список порожній</li>
+}
+
+// Аліаси контекстних змінних через let
+@for (row of rows(); track row.id; let i = $index, isLast = $last) {
+  <tr [class.last]="isLast">{{ i }} — {{ row.title }}</tr>
+}
+
+// ❌ track $index на списку, що сортується/фільтрується:
+//    Angular вважає «елемент №2 лишився №2», хоча там уже інша сутність.
+//    DOM реюзається неправильно — введений текст і стан чекбоксів
+//    «переїжджають» на чужі рядки.
+// ✅ track — завжди стабільний унікальний id сутності.`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">@switch / @case / @default</h3><p><strong>Що це:</strong> Вибір однієї гілки за значенням. <strong>Навіщо:</strong> Замість трьох окремих директив (<code>*ngSwitch</code> на контейнері + <code>*ngSwitchCase</code> + <code>*ngSwitchDefault</code> на дітях) — один блок. Порівняння суворе (<code>===</code>), fall-through немає, <code>break</code> не потрібен.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `@switch (status()) {
+  @case ('loading') { <app-spinner /> }
+  @case ('error')   { <app-error [msg]="error()" /> }
+  @case ('empty')   { <app-empty /> }
+  @default          { <app-content [data]="data()" /> }
+}
+
+// @default опційний: якщо не збіглось нічого — не рендериться нічого.
+// ❗ Порівняння суворе: @case (1) не спіймає рядок '1'.`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Старий синтаксис і що з ним робити</h3><p><strong>Що це:</strong> Мапа «структурна директива → блок control flow». <strong>Навіщо:</strong> На співбесіді питають обидва синтаксиси, а в реальному проєкті вони ще довго житимуть поруч.</p><div class="table-wrap">
+            <table>
+              <tr><th>Старе</th><th>Нове</th><th>Нюанс</th></tr>
+              <tr><td><code>*ngIf="c"</code></td><td><code>@if (c) { }</code></td><td>не створює DOM-вузла</td></tr>
+              <tr><td><code>*ngIf="c; else tpl"</code></td><td><code>@else { }</code></td><td><code>ng-template</code> для else більше не потрібен</td></tr>
+              <tr><td><code>*ngIf="x as y"</code></td><td><code>@if (x; as y)</code></td><td>той самий аліас</td></tr>
+              <tr><td><code>*ngFor</code> + <code>trackBy</code></td><td><code>@for (… ; track …)</code></td><td><strong>track обовʼязковий</strong></td></tr>
+              <tr><td>— (не було)</td><td><code>@empty { }</code></td><td>гілка для порожньої колекції</td></tr>
+              <tr><td><code>*ngSwitch</code> / <code>*ngSwitchCase</code></td><td><code>@switch</code> / <code>@case</code></td><td>один блок замість трьох директив</td></tr>
+              <tr><td><code>ng-container</code></td><td><strong>лишається</strong></td><td>обгортка без DOM-вузла</td></tr>
+              <tr><td><code>ng-template</code></td><td><strong>лишається</strong></td><td><code>ngTemplateOutlet</code>, кастомна проєкція</td></tr>
+            </table>
+          </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// Автоматична міграція всіх шаблонів проєкту
+ng generate @angular/core:control-flow
+
+// ❗ ng-container і ng-template НЕ зникають.
+// ng-container — логічна обгортка, що не створює DOM-елемент.
+// Раніше він був обхідним маневром для правила
+// «одна структурна директива на елемент»:
+<ng-container *ngIf="ready">
+  <div *ngFor="let x of items">{{ x }}</div>
+</ng-container>
+
+// У новому синтаксисі обхід не потрібен — @if сам не створює вузла:
+@if (ready) {
+  @for (x of items(); track x.id) { <div>{{ x }}</div> }
+}
+
+// ng-template лишається актуальним для ngTemplateOutlet і проєкції
+<ng-template #emptyTpl>Нічого не знайдено</ng-template>
+<ng-container [ngTemplateOutlet]="emptyTpl" />`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="grid3">
+            <div class="card green"><h4>✅ Добре</h4><p><code>track</code> за стабільним id сутності. <code>@empty</code> замість окремої перевірки довжини. <code>@if (x$ | async; as x)</code> — одна підписка на весь блок.</p></div>
+            <div class="card red"><h4>❌ Погано</h4><p><code>track $index</code> на динамічному списку. Виклик методу в умові <code>@if (getUser())</code> — виконується щоцикл CD. Вкладені <code>@for</code> без осмисленого <code>track</code> на кожному рівні.</p></div>
+            <div class="card blue"><h4>⚡ Памʼятка</h4><p>Блоки control flow <strong>не створюють DOM-вузлів</strong> — тому <code>&lt;ng-container&gt;</code> як обхід більше не потрібен. Він лишається лише там, де треба згрупувати без обгортки.</p></div>
+          </div><div class="alert warn">
+            <span class="icon">⚠️</span>
+            <span><strong>CommonModule ще потрібен</strong> — але вже не для умов і циклів, а для <em>пайпів</em>: <code>AsyncPipe</code>, <code>DatePipe</code>, <code>CurrencyPipe</code>, <code>JsonPipe</code>. У standalone-компонентах їх краще імпортувати поштучно (<code>imports: [AsyncPipe, DatePipe]</code>) — це точніше для tree-shaking.</span>
+          </div><div class="changelog changelog-future"><div class="changelog-title">🔮 2025+</div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">Структурні директиви deprecated; новий код пишеться лише на @if/@for/@switch</span></div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">Синергія з signals: @for над signal-колекцією + zoneless CD оновлює лише змінені рядки</span></div></div>`
         }
       ]
     },
@@ -1537,6 +1737,37 @@ readonly results$ = toObservable(this.query).pipe(
         },
         {
           "kind": "paragraph",
+          "html": `<h3 class="topic">Антипатерн: метод у шаблоні замість pure pipe <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Виклик методу компонента прямо в інтерполяції — <code>{{ getTotal(items) }}</code>. Angular не знає, від чого залежить результат, тому змушений викликати метод на <strong>кожному циклі change detection</strong>: на кожен клік, кожен таймер, кожну подію будь-де в застосунку. <strong>Навіщо знати:</strong> Це найтихіша просадка продуктивності в Angular — код виглядає ідеально чистим, а профайлер показує тисячі викликів за секунду.</p><p>Pure pipe вирішує це безкоштовно: Angular кешує результат і перевикликає <code>transform</code> лише тоді, коли змінилось <em>посилання</em> на аргумент. Альтернативи — <code>computed()</code> для сигналів або звичайне поле, яке перераховують у момент зміни даних.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// ❌ Метод у шаблоні — виконується КОЖЕН цикл CD
+// template: <p>{{ getTotal(items) }}</p>
+getTotal(items: Item[]) {
+  return items.reduce((s, i) => s + i.price, 0);   // O(n) щоцикл
+}
+
+// ✅ Варіант 1 — pure pipe: мемоізація за посиланням аргументу
+@Pipe({ name: 'total' })          // pure: true — дефолт
+export class TotalPipe implements PipeTransform {
+  transform(items: Item[]): number {
+    return items.reduce((s, i) => s + i.price, 0);
+  }
+}
+// template: <p>{{ items | total }}</p>
+
+// ✅ Варіант 2 — computed(): перерахунок лише на зміну сигналу
+readonly total = computed(() =>
+  this.items().reduce((s, i) => s + i.price, 0),
+);
+// template: <p>{{ total() }}</p>
+
+// ⚠️ Той самий антипатерн у біндингах і умовах — не лише в інтерполяції:
+// [disabled]="isFormInvalid()"   @if (hasAccess(user))   [class.x]="calc()"`
+        },
+        {
+          "kind": "paragraph",
           "html": "<h3 class=\"topic\">Custom Pipes — Practical Examples</h3>"
         },
         {
@@ -1893,12 +2124,83 @@ readonly results$ = toObservable(this.query).pipe(
         },
         {
           "kind": "paragraph",
-          "html": "<h3 class=\"topic\">@defer Lazy Loading</h3><p><strong>Що це:</strong> @defer завантажує компонент/блок лише коли виконується умова: on idle (процесор вільний), on viewport (видимий), on interaction (користувач клікнув). <strong>Навіщо:</strong> Скоротити initial bundle. Більш динамічні і responsive додатки.</p>"
+          "html": `<h3 class="topic">Virtual Scrolling (CDK)</h3><p><strong>Що це:</strong> <code>@angular/cdk/scrolling</code> рендерить лише ті рядки списку, що зараз видно у вʼюпорті, підміняючи решту порожнім простором потрібної висоти. <strong>Навіщо:</strong> 10 000 рядків у DOM — це і памʼять, і час верстки на кожен цикл CD. Віртуалізація тримає в DOM десятки вузлів замість десятків тисяч, незалежно від довжини списку.</p>`
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// Load component when idle\n@defer (on idle) {\n  <app-heavy-component />\n} @placeholder {\n  <p>Loading...</p>\n}\n\n// Load on viewport intersection\n@defer (on viewport) {\n  <app-chart />\n}"
+          "code": `import { ScrollingModule } from '@angular/cdk/scrolling';
+
+@Component({
+  imports: [ScrollingModule],
+  template: \`
+    <!-- itemSize — висота рядка в px, обовʼязкова для fixed-size стратегії -->
+    <cdk-virtual-scroll-viewport itemSize="48" class="h-96">
+      <div *cdkVirtualFor="let row of rows; trackBy: trackById" class="row">
+        {{ row.name }}
+      </div>
+    </cdk-virtual-scroll-viewport>
+  \`,
+})
+export class BigListComponent {}
+
+// ❗ Контейнер мусить мати явну висоту (h-96 / height: 400px),
+//    інакше вʼюпорт має нульовий розмір і не рендериться нічого.
+// ❗ Рядки різної висоти — потрібна autosize-стратегія
+//    (@angular/cdk-experimental/scrolling), fixed-size не підійде.`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">runOutsideAngular — часті події поза Zone <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Zone.js патчить асинхронні API, тож <em>кожен</em> <code>mousemove</code>, <code>scroll</code> чи тік <code>requestAnimationFrame</code> тригерить повний цикл change detection. <code>NgZone.runOutsideAngular()</code> виконує код поза зоною — CD не запускається взагалі. <strong>Навіщо:</strong> Drag-and-drop, канвас-анімація чи scroll-трекер на 60 fps інакше дають 60 циклів CD за секунду на рівному місці.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `export class DragCanvasComponent implements AfterViewInit, OnDestroy {
+  private readonly zone = inject(NgZone);
+
+  ngAfterViewInit() {
+    // Слухач створюється ПОЗА зоною — CD на кожен рух миші не запускається
+    this.zone.runOutsideAngular(() => {
+      window.addEventListener('mousemove', this.onMove);
+    });
+  }
+
+  private onMove = (e: MouseEvent) => {
+    this.x = e.clientX;                     // дешево: без CD
+    this.paintCanvas();
+
+    if (this.shouldCommit(e)) {
+      // Повернутись у зону лише тоді, коли треба реально оновити UI
+      this.zone.run(() => this.commit(this.x));
+    }
+  };
+
+  ngOnDestroy() {
+    window.removeEventListener('mousemove', this.onMove);   // ❗ інакше витік
+  }
+}
+
+// ⚡ У zoneless-режимі (v18+) Zone.js немає взагалі — замість
+//    runOutsideAngular просто не чіпаєш signals у гарячому колбеку.`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Сім важелів Angular-специфічної оптимізації</h3><p><strong>Що це:</strong> Зведення технік, які дають найбільший ефект саме в Angular (на відміну від загальновебових). <strong>Навіщо:</strong> Мати порядок дій: спочатку прибрати зайві перевірки дерева, потім зайвий DOM, і лише потім різати бандл.</p><div class="table-wrap">
+            <table>
+              <tr><th>Важіль</th><th>Що дає</th></tr>
+              <tr><td><strong>OnPush</strong> change detection</td><td>менше перевірок дерева — компонент дивиться лише на зміну посилання <code>@Input</code>, власну подію чи <code>async</code> pipe</td></tr>
+              <tr><td><code>track</code> у <code>@for</code></td><td>перевикористання DOM замість перестворення</td></tr>
+              <tr><td>Signals / <code>computed</code></td><td>fine-grained CD: оновлюється лише те місце шаблону, що читає сигнал</td></tr>
+              <tr><td>Virtual scrolling (CDK)</td><td>рендер лише видимих рядків великого списку</td></tr>
+              <tr><td><code>@defer</code> / lazy routes</td><td>менший початковий бандл, кращий LCP</td></tr>
+              <tr><td><code>runOutsideAngular</code></td><td>часті події (scroll, mousemove) без CD</td></tr>
+              <tr><td>Pure pipes замість методів у шаблоні</td><td>мемоізація — не виконується щоцикл</td></tr>
+            </table>
+          </div><div class="alert good">
+            <span class="icon">✅</span>
+            <span>Повний розбір <code>@defer</code> — тригери, <code>@placeholder</code>/<code>@loading</code>/<code>@error</code>, <code>prefetch</code> і поведінка під SSR — у власній секції <strong>⏳ @defer — Deferrable Views</strong> нижче.</span>
+          </div>`
         },
         {
           "kind": "paragraph",
@@ -1912,6 +2214,161 @@ readonly results$ = toObservable(this.query).pipe(
         {
           "kind": "paragraph",
           "html": "<div class=\"changelog changelog-future\"><div class=\"changelog-title\">🔮 2025+</div><div class=\"changelog-row\"><span class=\"chver\">2025</span><span class=\"changelog-text\">Automatic performance profiling, signals remove need for many optimizations</span></div></div>"
+        }
+      ]
+    },
+    {
+      "id": "defer-deferrable-views",
+      "title": "⏳ @defer — Deferrable Views",
+      interviewQuestions: [
+        {
+          "question": "Коли брати <code>@defer</code>, а коли lazy-роут через <code>loadComponent</code> — і чи можна їх поєднувати?",
+          "answer": "<code>loadComponent</code>/<code>loadChildren</code> відкладають <strong>цілий сегмент маршруту</strong>: код їде, коли користувач туди навігував. <code>@defer</code> відкладає <strong>шматок шаблону всередині вже відкритої сторінки</strong> — важкий графік, мапу, WYSIWYG-редактор, коментарі під статтею. Вони не конкурують, а нашаровуються: роут приїжджає своїм chunkʼом, а всередині нього ще й важкі блоки виносяться окремо. Практичне правило: якщо контент має власний URL — це роут; якщо це частина поточного екрана, яку більшість користувачів не побачить або побачить не одразу — це <code>@defer</code>."
+        },
+        {
+          "question": "Що станеться з вмістом <code>@defer</code> під час SSR, і як це змінилось у v19?",
+          "answer": "На сервері <code>@defer</code> рендерить <strong><code>@placeholder</code>, а не сам вміст</strong> — тобто відкладений контент не потрапляє у відданий HTML і його не бачать пошукові боти. Це прямий наслідок того, що тригери (<code>viewport</code>, <code>interaction</code>) — браузерні поняття. Звідси два практичні правила: не загортати в <code>@defer</code> те, що потрібне для SEO, і ніколи не загортати LCP-елемент, бо ви гарантовано погіршите метрику, яку намагались покращити. З v19 зʼявились <code>hydrate</code>-тригери (<code>@defer (hydrate on viewport)</code>) для incremental hydration: сервер рендерить <em>справжній</em> вміст у HTML, а клієнт гідратує цей острівець лише коли спрацює тригер — тобто SEO зберігається, а JS довантажується ліниво."
+        },
+        {
+          question: `Який тригер за замовчуванням?`,
+          answer: `on idle — якщо тригер не вказано взагалі. Спрацьовує, коли браузер вільний (requestIdleCallback).`,
+        },
+        {
+          question: `Чому дефернути можна лише standalone?`,
+          answer: `Бандлер має відокремити залежність в окремий chunk. NgModule тягне за собою весь модуль, тож межу chunkʼа провести неможливо.`,
+        },
+        {
+          question: `Навіщо minimum і after?`,
+          answer: `Проти мерехтіння. minimum тримає placeholder/спінер не менше N мс; after не показує спінер перші N мс — на швидкій мережі chunk встигне і спінер не мигне взагалі.`,
+        },
+        {
+          question: `Коли prefetch?`,
+          answer: `Коли взаємодія має бути миттєвою: chunk тягнеться заздалегідь (on idle), а показується по кліку. Класика — важкий редактор чи модал за кнопкою.`,
+        },
+        {
+          question: `Чому chunk не відокремився?`,
+          answer: `Той самий компонент імпортується ще й в eager-частині шаблону або в іншому не-deferred місці. Тоді бандлер кладе його в основний бандл.`,
+        },
+      ],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": `<div class="version-row">
+            <span class="ver ver-17">@defer preview</span>
+            <span class="ver ver-17">v18 stable</span>
+            <span class="ver ver-19">hydrate on … ✦</span>
+          </div><div class="changelog changelog-past">
+            <div class="changelog-title">🕐 Еволюція</div>
+            <div class="changelog-row"><span class="chver">до v17</span><span class="changelog-text">Лише ручний ViewContainerRef.createComponent() + динамічний import()</span></div>
+            <div class="changelog-row"><span class="chver">v17</span><span class="changelog-text">@defer у developer preview, разом із новим control flow</span></div>
+            <div class="changelog-row"><span class="chver">v18</span><span class="changelog-text">Стабільний; повний набір тригерів і prefetch</span></div>
+            <div class="changelog-row"><span class="chver">v19 ✦</span><span class="changelog-text"><strong>Поточна:</strong> @defer (hydrate on …) — incremental hydration під SSR</span></div>
+          </div><div style="background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
+            <p><strong>@defer —</strong> lazy-завантаження <em>шматка шаблону</em> окремим JS-chunkʼом, за декларативним тригером.</p>
+            <p><strong>Чим відрізняється від lazy-роуту:</strong> роут відкладає цілу сторінку по навігації; <code>@defer</code> — блок усередині вже відкритої сторінки.</p>
+            <p><strong>Обмеження:</strong> дефернути можна лише <strong>standalone</strong>-компоненти/директиви/пайпи, і вони не мають імпортуватись в eager-частині того ж шаблону — інакше бандлеру нема де провести межу chunkʼа.</p>
+          </div><h3 class="topic">Блоки: @placeholder / @loading / @error</h3><p><strong>Що це:</strong> Три опційні блоки навколо основного, кожен для своєї фази. <strong>Навіщо:</strong> Параметри <code>minimum</code> і <code>after</code> існують не для краси — вони прибирають мерехтіння, коли chunk приїжджає за 40 мс і спінер встигає блимнути.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `@defer (on viewport) {
+  <app-heavy-chart [data]="data()" />
+} @placeholder (minimum 500ms) {
+  <div class="skeleton"></div>
+} @loading (after 100ms; minimum 1s) {
+  <app-spinner />
+} @error {
+  <p>Не вдалося завантажити блок</p>
+}
+
+// @placeholder — до спрацювання тригера (він і в SSR-HTML)
+// @loading    — поки chunk летить по мережі
+// @error      — chunk не приїхав (offline, 404 на assets)
+//
+// minimum 500ms — тримати не менше, щоб не мигнуло
+// after 100ms   — не показувати спінер перші 100мс:
+//                 на швидкій мережі він не зʼявиться взагалі`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Тригери — усі сім <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Умова, за якої Angular піде по chunk. <strong>Навіщо:</strong> Це і є вся суть <code>@defer</code> — правильний тригер перетворює «менший бандл» на «швидший екран», а неправильний просто ховає контент від користувача й від Google.</p><div class="table-wrap">
+            <table>
+              <tr><th>Тригер</th><th>Коли спрацьовує</th><th>Типовий кейс</th></tr>
+              <tr><td><code>on idle</code></td><td>браузер вільний (<code>requestIdleCallback</code>)</td><td><strong>дефолт</strong>, якщо тригер не вказано</td></tr>
+              <tr><td><code>on viewport</code></td><td>блок вʼїхав у вʼюпорт</td><td>графіки, коментарі, все «нижче згину»</td></tr>
+              <tr><td><code>on interaction</code></td><td>click або keydown по placeholder</td><td>важкий редактор, модал за кнопкою</td></tr>
+              <tr><td><code>on hover</code></td><td>mouseover / focus</td><td>попереднє відкриття меню, превʼю</td></tr>
+              <tr><td><code>on timer(5s)</code></td><td>через заданий час</td><td>банер, апсел, вторинний віджет</td></tr>
+              <tr><td><code>on immediate</code></td><td>одразу після рендеру сторінки</td><td>зняти вагу з initial chunk, але показати швидко</td></tr>
+              <tr><td><code>when expr</code></td><td>булевий вираз став <code>true</code></td><td>роль користувача, фіче-флаг, стан форми</td></tr>
+            </table>
+          </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `@defer { }                       // = on idle (дефолт)
+@defer (on viewport) { }
+@defer (on interaction) { }
+@defer (on hover) { }
+@defer (on timer(5s)) { }
+@defer (on immediate) { }
+@defer (when isAdmin()) { }
+
+// Тригери комбінуються через ; — спрацює перший-ліпший
+@defer (on hover; on timer(10s)) { }
+
+// Тригер можна повісити на ІНШИЙ елемент за template-ref
+<button #openBtn>Показати звіт</button>
+@defer (on interaction(openBtn)) {
+  <app-report />
+} @placeholder {
+  <p>Звіт ще не завантажено</p>
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">prefetch — завантажити наперед, показати пізніше</h3><p><strong>Що це:</strong> Окремий набір тригерів <em>лише для завантаження</em> chunkʼа, незалежний від тригерів показу. <strong>Навіщо:</strong> Розвести в часі «взяти код» і «показати блок»: код тихо приїжджає на <code>idle</code>, а коли користувач нарешті клацне — відкриття миттєве, без спінера.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// Chunk тягнеться на idle, а показується лише по кліку.
+// Клік стає миттєвим: код уже в памʼяті.
+@defer (on interaction; prefetch on idle) {
+  <app-editor />
+} @placeholder {
+  <button>Відкрити редактор</button>
+}
+
+// prefetch має власні тригери, незалежні від основних
+@defer (on viewport; prefetch on hover) {
+  <app-gallery />
+}`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">@defer vs lazy routes vs tree-shaking</h3><p><strong>Що це:</strong> Три техніки, які постійно плутають, бо всі три «зменшують те, що вантажить браузер». <strong>Навіщо:</strong> Вони працюють на різних рівнях і складаються одна з одною, а не замінюють.</p><div class="table-wrap">
+            <table>
+              <tr><th></th><th>@defer</th><th>Lazy route</th><th>Tree-shaking</th></tr>
+              <tr><td>Що робить</td><td>відкладає блок шаблону</td><td>відкладає сегмент маршруту</td><td>прибирає невикористаний код</td></tr>
+              <tr><td>Коли</td><td>runtime, по тригеру</td><td>runtime, по навігації</td><td>build-time</td></tr>
+              <tr><td>Механізм</td><td><code>@defer</code> → окремий chunk</td><td><code>loadComponent</code> / <code>loadChildren</code></td><td>ESM-граф + Terser</td></tr>
+              <tr><td>Гранулярність</td><td>частина сторінки</td><td>ціла сторінка</td><td>будь-який export</td></tr>
+            </table>
+          </div><p>Деталі — у секціях <strong>🗺️ Routing — Lazy Loading &amp; Guards</strong> та <strong>📦 Tree-shaking &amp; Bundle Optimization</strong>.</p>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="grid3">
+            <div class="card green"><h4>✅ Добре</h4><p>Важкі графіки, мапи, WYSIWYG-редактори, коментарі — усе «нижче згину». <code>on interaction; prefetch on idle</code> для модалів: і бандл менший, і відкриття миттєве.</p></div>
+            <div class="card red"><h4>❌ Погано</h4><p>LCP-елемент і будь-який SEO-контент — під SSR він не потрапить у HTML. Дрібні компоненти: накладні витрати окремого chunkʼа перекриють виграш.</p></div>
+            <div class="card blue"><h4>⚡ Перевірка</h4><p>Відкрий Network і переконайся, що chunk реально окремий. Якщо ні — той самий компонент десь імпортується в eager-частині, і бандлер поклав його в основний бандл.</p></div>
+          </div><div class="alert warn">
+            <span class="icon">⚠️</span>
+            <span><strong>SSR:</strong> на сервері <code>@defer</code> віддає <code>@placeholder</code>, а не вміст — відкладений контент не потрапляє у HTML і не індексується. З v19 для цього є <code>@defer (hydrate on viewport)</code>: сервер рендерить справжній вміст, а клієнт гідратує острівець лише за тригером (incremental hydration).</span>
+          </div><div class="changelog changelog-future"><div class="changelog-title">🔮 2025+</div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">Incremental hydration стабілізується — @defer стає інструментом не лише бандла, а й гідратації</span></div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">Router-level prefetch + @defer prefetch зливаються в єдину стратегію передзавантаження</span></div></div>`
         }
       ]
     },
@@ -1961,7 +2418,41 @@ readonly results$ = toObservable(this.query).pipe(
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// 1. Згенерувати stats і подивитись мапу бандла\nng build --stats-json\nnpx source-map-explorer dist/**/*.js\n// або: npx webpack-bundle-analyzer dist/stats.json\n\n// 2. Бюджети в angular.json — build падає при перевищенні\n\"budgets\": [\n  { \"type\": \"initial\", \"maximumWarning\": \"500kb\", \"maximumError\": \"1mb\" },\n  { \"type\": \"anyComponentStyle\", \"maximumWarning\": \"2kb\" }\n]\n\n// ⚠️ Barrel-файли (index.ts, що ре-експортує все) можуть ламати\n// tree-shaking: import з барелу інколи тягне сусідів. Імпортуй з\n// конкретного шляху, якщо бачиш зайве в бандлі."
+          "code": "// 1. Згенерувати stats і подивитись мапу бандла\nng build --stats-json\nnpx source-map-explorer dist/**/*.js\n// або: npx webpack-bundle-analyzer dist/stats.json\n\n// 1b. Application builder (esbuild, v17+) — читати metafile\n//     і кинути його в https://esbuild.github.io/analyze/\nnpx esbuild-visualizer --metadata dist/stats.json --open\n\n// 2. Бюджети в angular.json — build падає при перевищенні\n\"budgets\": [\n  { \"type\": \"initial\", \"maximumWarning\": \"500kb\", \"maximumError\": \"1mb\" },\n  { \"type\": \"anyComponentStyle\", \"maximumWarning\": \"2kb\" }\n]\n\n// ⚠️ Barrel-файли (index.ts, що ре-експортує все) можуть ламати\n// tree-shaking: import з барелу інколи тягне сусідів. Імпортуй з\n// конкретного шляху, якщо бачиш зайве в бандлі."
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">NgOptimizedImage — ngSrc, priority, LCP <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Директива з <code>@angular/common</code>: замінюєш <code>src</code> на <code>ngSrc</code> — і отримуєш lazy-loading за замовчуванням, автоматичний <code>srcset</code>, попередження в консолі про типові помилки і <code>priority</code> для головного зображення. <strong>Навіщо:</strong> LCP у більшості контентних сторінок — це саме картинка. Це найдешевший спосіб покращити метрику, яку інакше довелось би вигризати оптимізацією JS.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `import { NgOptimizedImage } from '@angular/common';
+
+@Component({
+  imports: [NgOptimizedImage],
+  template: \`
+    <!-- LCP-зображення: priority → preload + fetchpriority="high", БЕЗ lazy -->
+    <img ngSrc="/hero.jpg" width="1200" height="630" priority alt="Hero" />
+
+    <!-- решта — loading="lazy" автоматично -->
+    <img ngSrc="/thumb.jpg" width="200" height="200" alt="Thumb" />
+
+    <!-- адаптивне: fill + sizes; батько мусить мати position: relative -->
+    <div class="relative h-64">
+      <img ngSrc="/banner.jpg" fill sizes="(max-width: 768px) 100vw, 50vw" alt="" />
+    </div>
+  \`,
+})
+export class HeroComponent {}
+
+// ❗ width/height обовʼязкові (або fill) — саме вони резервують місце
+//    і прибирають CLS. Директива впаде з помилкою, якщо їх немає.
+// ❗ priority — рівно для ОДНОГО зображення на екран (того, що є LCP).
+//    Позначити priority усе — те саме, що не позначити нічого.
+// ⚡ Для CDN (Cloudinary, imgix, Cloudflare) підключається loader,
+//    і srcset генерується під його URL-схему:
+//    providers: [provideImgixLoader('https://my.imgix.net/')]`
         },
         {
           "kind": "paragraph",

@@ -106,10 +106,7 @@ export function ProseTopicView({
 
       <div
         ref={scrollRef}
-        className={cn(
-          'flex-1 snap-y snap-proximity overflow-y-auto scroll-smooth',
-          variant === 'cheat' && 'xl:px-8 xl:py-6',
-        )}
+        className="flex-1 snap-y snap-proximity overflow-y-auto scroll-smooth"
       >
         <MobileSectionNav items={items} activeId={activeId} onJump={jump} />
 
