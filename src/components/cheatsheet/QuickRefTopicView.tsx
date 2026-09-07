@@ -186,7 +186,7 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
   const { buckets, itemRef } = useMasonry(ids, columnCount)
 
   return (
-    <div>
+    <div className="paper min-h-screen">
       <JsonLd
         data={breadcrumbJsonLd([
           { name: 'Cheat Hub', path: '/' },

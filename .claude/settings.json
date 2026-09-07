@@ -84,10 +84,20 @@
       "Bash(git -C /Users/romansemak/GitHub/PET/cheatHub show 4069155 -- src/lib/cheatsheet/angular.ts)",
       "Bash(git -C /Users/romansemak/GitHub/PET/cheatHub fetch origin)",
       "Bash(git -C /Users/romansemak/GitHub/PET/cheatHub log --oneline origin/main -5)",
-      "Bash(git -C /Users/romansemak/GitHub/PET/cheatHub rev-list --left-right --count origin/main...HEAD)"
+      "Bash(git -C /Users/romansemak/GitHub/PET/cheatHub rev-list --left-right --count origin/main...HEAD)",
+      "Bash(rm -f /tmp/dev.log /tmp/qr-*.html; git status --short)",
+      "Bash(git -C /Users/romansemak/GitHub/PET/cheatHub status -sb)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}  %{size_download}b  %{time_total}s\\\\n\" http://localhost:5001/)",
+      "Bash(curl -s -X POST http://localhost:5001/api/run -H \"Content-Type: application/json\" -d '{\"code\":\"var twoSum = function\\(nums, target\\){const m={};for\\(let i=0;i<nums.length;i++\\){if\\(m[target-nums[i]]!==undefined\\)return [m[target-nums[i]],i];m[nums[i]]=i;}};\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[2,7,11,15],9]\",\"expected\":\"[0,1]\"}]}')",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} %{size_download}b\\\\n\" http://localhost:5001/problems/two-sum)",
+      "Bash(curl -s -o /dev/null -w \"api/run: %{http_code}\\\\n\" -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"var twoSum=function\\(n,t\\){return [0,1]}\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[2,7,11,15],9]\",\"expected\":\"[0,1]\"}]}')",
+      "Bash(/bin/ls -la /private/tmp/claude-501/-Users-romansemak-GitHub-PET-cheatHub/c65ab27c-298e-47d7-a23a-e26d3faa42b3/scratchpad)",
+      "Bash(file /private/tmp/claude-501/-Users-romansemak-GitHub-PET-cheatHub/c65ab27c-298e-47d7-a23a-e26d3faa42b3/scratchpad/*.png)",
+      "Bash(curl -s --max-time 90 http://localhost:5001/quickref)"
     ],
     "additionalDirectories": [
-      "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad"
+      "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad",
+      "/tmp"
     ]
   },
   "hooks": {

@@ -248,6 +248,323 @@
   @apply mb-2 font-semibold text-indigo-200;
 }
 
+/* ---------------------------------------------------------------------------
+   Paper reading mode — the "Шпаргалка" views (QuickRef grids, the *-cheatsheet
+   prose, LeetCode lifehacks) render on a warm sepia sheet with serif body text
+   at a larger size, so the section reads like a printed page on an iPad propped
+   behind the monitor. Scoped under .paper; the dark hub sidebar stays as the
+   frame around the sheet. Purely visual — no logic/routing/data changes.
+--------------------------------------------------------------------------- */
+.paper {
+  --paper-bg: #f4ecd8; /* the sheet */
+  --paper-raised: #efe6cf; /* cards, panels, table headers */
+  --paper-sunken: #e7dabb; /* inline code, chips, inputs */
+  --paper-ink: #33291a; /* body text */
+  --paper-ink-soft: #6b5d47; /* secondary text, captions */
+  --paper-ink-faint: #9a8c72; /* tertiary text, status markers */
+  --paper-rule: rgba(51, 41, 26, 0.14); /* borders, rules */
+  --paper-link: #8a5320;
+  --paper-link-hover: #6d3f18;
+  --paper-accent: #96652f; /* section accents on paper */
+  --paper-selection: #dcc48f;
+  --paper-code-bg: #2b2620; /* code listings stay a dark "island" */
+  --paper-code-ink: #e8e0d0;
+  --paper-serif: 'Iowan Old Style', 'Charter', 'Palatino', 'Palatino Linotype',
+    'Book Antiqua', Georgia, Cambria, 'Times New Roman', serif;
+  --paper-mono: var(--font-mono), 'JetBrains Mono', ui-monospace, SFMono-Regular,
+    Menlo, monospace;
+
+  background: var(--paper-bg);
+  color: var(--paper-ink);
+  font-family: var(--paper-serif);
+}
+.paper ::selection {
+  background: var(--paper-selection);
+  color: var(--paper-ink);
+}
+.paper code,
+.paper pre,
+.paper .hljs,
+.paper .font-mono {
+  font-family: var(--paper-mono);
+}
+
+/* Reading comfort — the whole reason for the redesign. Bump the measure text
+   up from .cheat-prose's text-sm and open the leading. */
+.paper .cheat-prose {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--paper-ink);
+}
+.paper .cheat-prose p,
+.paper .cheat-prose li,
+.paper .cheat-prose ul,
+.paper .cheat-prose .list {
+  font-size: 1.0625rem;
+}
+.paper .cheat-prose p {
+  margin: 0.85em 0;
+}
+.paper .cheat-prose h3,
+.paper .cheat-prose .topic {
+  font-size: 1.3rem;
+  font-family: var(--paper-serif);
+  color: var(--paper-ink);
+}
+.paper .cheat-prose h4 {
+  font-size: 1rem;
+  color: var(--paper-ink);
+}
+.paper .cheat-prose strong {
+  color: var(--paper-ink);
+}
+.paper .cheat-prose a {
+  color: var(--paper-link);
+}
+.paper .cheat-prose a:hover {
+  color: var(--paper-link-hover);
+}
+
+/* .cheat-prose surfaces: same selectors as the dark block, re-toned for paper.
+   .paper .cheat-prose X (0,3,1) out-specifies .cheat-prose X (0,2,1). */
+.paper .cheat-prose code {
+  background: var(--paper-sunken);
+  color: #7c4a12;
+}
+.paper .cheat-prose pre {
+  background: var(--paper-code-bg);
+  border-color: rgba(51, 41, 26, 0.25);
+  color: var(--paper-code-ink);
+}
+.paper .cheat-prose pre code {
+  color: var(--paper-code-ink);
+}
+.paper .cheat-prose .card {
+  background: var(--paper-raised);
+  border-color: var(--paper-rule);
+}
+.paper .cheat-prose .card.red {
+  background: #f3e2da;
+  border-color: rgba(150, 60, 40, 0.3);
+}
+.paper .cheat-prose .card.green {
+  background: #e6ecd9;
+  border-color: rgba(70, 110, 50, 0.3);
+}
+.paper .cheat-prose .card.blue {
+  background: #e0e6ea;
+  border-color: rgba(50, 90, 120, 0.3);
+}
+.paper .cheat-prose .card.yellow {
+  background: #f2e8c8;
+  border-color: rgba(150, 120, 40, 0.35);
+}
+.paper .cheat-prose .alert {
+  background: #ece4d0;
+  border-left-color: var(--paper-accent);
+  color: var(--paper-ink);
+}
+.paper .cheat-prose .alert.good,
+.paper .cheat-prose .alert-good {
+  background: #e6ecd9;
+  border-left-color: #5c7a3a;
+}
+.paper .cheat-prose .alert.warn,
+.paper .cheat-prose .alert-warn,
+.paper .cheat-prose .warn {
+  background: #f2e8c8;
+  border-left-color: #b8860b;
+}
+.paper .cheat-prose .tag,
+.paper .cheat-prose .pill,
+.paper .cheat-prose .badge {
+  background: var(--paper-sunken);
+  border-color: var(--paper-rule);
+  color: var(--paper-ink-soft);
+}
+.paper .cheat-prose .tag-key {
+  background: #e5ddd0;
+  border-color: rgba(80, 70, 130, 0.4);
+  color: #4b3f7a;
+}
+.paper .cheat-prose .tag-new {
+  background: #e6ecd9;
+  border-color: rgba(70, 110, 50, 0.4);
+  color: #3f6a2a;
+}
+.paper .cheat-prose .tag-pit {
+  background: #f2e8c8;
+  border-color: rgba(150, 120, 40, 0.4);
+  color: #8a5a12;
+}
+.paper .cheat-prose .table-wrap {
+  border-color: var(--paper-rule);
+}
+.paper .cheat-prose th {
+  background: var(--paper-raised);
+  color: var(--paper-ink);
+}
+.paper .cheat-prose td {
+  border-top-color: var(--paper-rule);
+  color: var(--paper-ink-soft);
+}
+.paper .cheat-prose .ver,
+.paper .cheat-prose .changelog {
+  border-color: var(--paper-rule);
+  background: var(--paper-raised);
+  color: var(--paper-ink);
+}
+.paper .cheat-prose .changelog-past {
+  background: #ece7da;
+}
+.paper .cheat-prose .changelog-future {
+  background: #e0e6ea;
+}
+.paper .cheat-prose .changelog-title {
+  color: var(--paper-ink);
+}
+.paper .cheat-prose .changelog-row {
+  border-top-color: var(--paper-rule);
+}
+.paper .cheat-prose .chver {
+  color: #7c4a12;
+}
+.paper .cheat-prose .changelog-text {
+  color: var(--paper-ink-soft);
+}
+.paper .cheat-prose .mermaid-block {
+  background: #fbf6e8;
+  border-color: var(--paper-rule);
+}
+.paper .cheat-prose .mermaid-block figcaption {
+  color: var(--paper-ink-soft);
+}
+.paper .cheat-prose .interview-tips {
+  background: #ece4d0;
+  border-color: rgba(80, 70, 130, 0.3);
+}
+.paper .cheat-prose .interview-tips-title {
+  color: #4b3f7a;
+}
+
+/* Tailwind utility remaps for the view components themselves. Scoping to
+   .paper keeps this inside the three cheatsheet views. .paper .util (0,2,0)
+   out-specifies the bare .util (0,1,0). */
+.paper .text-slate-100,
+.paper .text-slate-200,
+.paper .text-white {
+  color: var(--paper-ink);
+}
+.paper .text-slate-300,
+.paper .text-slate-400 {
+  color: var(--paper-ink-soft);
+}
+.paper .text-slate-500,
+.paper .text-slate-600 {
+  color: var(--paper-ink-faint);
+}
+.paper .text-orange-400,
+.paper .text-cyan-400,
+.paper .text-rose-300,
+.paper .text-red-300 {
+  color: var(--paper-accent);
+}
+.paper .text-transparent {
+  color: var(--paper-accent) !important;
+  -webkit-text-fill-color: var(--paper-accent);
+}
+.paper .bg-clip-text {
+  background-image: none;
+}
+
+.paper .bg-white\/5,
+.paper .bg-white\/10,
+.paper .bg-white\/\[0\.03\],
+.paper .bg-white\/\[0\.04\],
+.paper .bg-black\/20,
+.paper .bg-black\/30,
+.paper .bg-slate-900,
+.paper .bg-slate-950\/80,
+.paper .bg-slate-950\/90,
+.paper .bg-slate-950\/95 {
+  background-color: var(--paper-raised);
+  backdrop-filter: none;
+}
+.paper .bg-black\/40 {
+  background-color: var(--paper-code-bg);
+}
+.paper .bg-indigo-600 {
+  background-color: var(--paper-accent);
+}
+.paper .bg-emerald-500\/10 {
+  background-color: #e6ecd9;
+}
+.paper .bg-rose-500\/10 {
+  background-color: #f2e3dc;
+}
+
+.paper .border-white\/5,
+.paper .border-white\/10,
+.paper .border-white\/15,
+.paper .border-white\/20,
+.paper .border-orange-400\/30 {
+  border-color: var(--paper-rule);
+}
+
+.paper input,
+.paper select {
+  background-color: var(--paper-raised);
+  color: var(--paper-ink);
+}
+.paper input::placeholder {
+  color: var(--paper-ink-faint);
+}
+
+/* Component class hooks. */
+.paper .glass-dark,
+.paper .glass-subtle {
+  background: var(--paper-raised);
+  border-color: var(--paper-rule);
+  box-shadow: 0 1px 2px rgba(51, 41, 26, 0.08);
+  backdrop-filter: none;
+}
+.paper header {
+  background-image: none;
+  background-color: transparent;
+  border-color: var(--paper-rule);
+}
+.paper .flip-card-face {
+  background: var(--paper-raised);
+  border-color: var(--paper-rule);
+}
+.paper .flip-card-back {
+  background: #e9e0c6;
+}
+.paper .flip-card-label {
+  color: var(--paper-ink-soft);
+}
+.paper .flip-card-face p {
+  color: var(--paper-ink);
+}
+
+/* Denser QuickRef grids — nudge the small type up for reading distance. */
+.paper .text-xs {
+  font-size: 0.85rem;
+}
+.paper .text-\[10px\] {
+  font-size: 0.72rem;
+}
+
+/* Warm, dim scrollbar. */
+.paper ::-webkit-scrollbar-thumb,
+.paper .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(51, 41, 26, 0.22);
+}
+.paper ::-webkit-scrollbar-thumb:hover,
+.paper .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(51, 41, 26, 0.38);
+}
+
 /* Flip flashcards (question/answer), used by FlashcardsBlock */
 .flip-card {
   perspective: 1000px;

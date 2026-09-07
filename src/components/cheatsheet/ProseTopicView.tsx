@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useRef } from 'react'
+import { cn } from '@/lib/utils'
 import type { TopicContent, TopicMeta } from '@/lib/cheatsheet/types'
 import { ACCENT, formatHref } from '@/lib/cheatsheet/registry'
 import { breadcrumbJsonLd } from '@/lib/seo'
@@ -93,7 +94,7 @@ export function ProseTopicView({
           { name: meta.title, path },
         ])}
       />
-      <div className="flex h-screen">
+      <div className={cn('flex h-screen', variant === 'cheat' && 'paper')}>
         <TopicPanel
         items={items}
         activeId={activeId}
@@ -105,7 +106,10 @@ export function ProseTopicView({
 
       <div
         ref={scrollRef}
-        className="flex-1 snap-y snap-proximity overflow-y-auto scroll-smooth"
+        className={cn(
+          'flex-1 snap-y snap-proximity overflow-y-auto scroll-smooth',
+          variant === 'cheat' && 'xl:px-8 xl:py-6',
+        )}
       >
         <MobileSectionNav items={items} activeId={activeId} onJump={jump} />
 
@@ -161,7 +165,13 @@ export function ProseTopicView({
             id={section.id}
             className="min-h-[100dvh] scroll-mt-4 snap-start px-6 py-8 md:px-10"
           >
-            <div className="mx-auto max-w-3xl">
+            <div
+              className={cn(
+                'mx-auto max-w-3xl',
+                variant === 'cheat' &&
+                  'xl:rounded-lg xl:bg-[#faf3e2] xl:px-10 xl:py-9 xl:shadow-[0_1px_28px_rgba(51,41,26,0.13)]',
+              )}
+            >
               <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-slate-100">
                 <span>{section.title}</span>
                 <SectionResetButton

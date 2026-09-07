@@ -93,6 +93,37 @@ export const angularQuickRefBlocks: QuickRefBlock[] = [
     ],
   },
   {
+    label: 'RxJS: Flattening — switchMap & Co',
+    icon: '🔀',
+    entries: [
+      {
+        term: 'switchMap',
+        desc: 'скасовує попередній, лишає лише новий',
+        chips: ['search / autocomplete'],
+      },
+      {
+        term: 'mergeMap',
+        desc: 'усі паралельно, порядок не гарантований',
+        chips: ['незалежні запити'],
+      },
+      {
+        term: 'concatMap',
+        desc: 'ставить у чергу, зберігає порядок',
+        chips: ['послідовні save'],
+      },
+      {
+        term: 'exhaustMap',
+        desc: 'ігнорує нові, поки поточний не завершився',
+        chips: ['submit-кнопка'],
+      },
+      {
+        term: 'shareReplay(1)',
+        desc: 'один запит на всіх + буфер останнього — лік від cold-дублів',
+        chips: ['кеш HTTP'],
+      },
+    ],
+  },
+  {
     label: 'Forms',
     icon: '📝',
     entries: [

@@ -503,34 +503,536 @@ export const angularContent: TopicContent = {
     },
     {
       "id": "rxjs-core-operators-expanded",
-      "title": "🌊 RxJS — Core Operators EXPANDED",
+      "title": "🌊 RxJS — Основи та оператори",
       interviewQuestions: [
         {
-          "question": "Навіщо потрібен оператор <code>takeUntilDestroyed()</code>, і яку проблему він вирішує порівняно з ручним <code>ngOnDestroy</code> + <code>Subject</code>?",
-          "answer": "Без явного ansubscribe підписка на Observable, що живе довше за компонент (HTTP-полінг, WebSocket, RxJS-стор), продовжує викликати колбек і після знищення компонента — витік пам'яті й спроби оновити знищений стан. <code>takeUntilDestroyed()</code> автоматично прив'язується до <code>DestroyRef</code> поточного injection context і відписується сам, без boilerplate'у з <code>Subject</code> + <code>ngOnDestroy</code>."
+          "question": "У чому принципова різниця між <code>Promise</code> і <code>Observable</code>, і чому Angular обрав саме Observable для <code>HttpClient</code>?",
+          "answer": "<code>Promise</code> — це рівно <strong>одне</strong> значення, обчислення стартує <em>eager</em> (одразу при створенні) і скасувати його не можна. <code>Observable</code> — потік із <strong>0..∞</strong> значень, <em>lazy</em> (нічого не відбувається без <code>subscribe</code>) і <strong>скасовуваний</strong> через <code>unsubscribe()</code>. Для <code>HttpClient</code> критичне саме скасування: <code>switchMap</code> в autocomplete автоматично обриває вже відправлений XHR, коли користувач дописав літеру — з Promise це вимагало б ручного <code>AbortController</code>. Плюс потік дає <code>retry</code>, <code>timeout</code>, <code>debounceTime</code> і комбінування декларативно, без прапорців і таймерів."
         },
         {
-          question: `Memory leak in RxJS?`,
-          answer: `Unsubscribed observables keep running. Fix: takeUntilDestroyed, async pipe.`,
+          "question": "Поясни різницю між <code>switchMap</code>, <code>mergeMap</code>, <code>concatMap</code> і <code>exhaustMap</code> — і назви канонічний кейс для кожного.",
+          "answer": "Усі чотири «розплющують» Observable of Observables, і різняться лише тим, <strong>що робити з попереднім внутрішнім потоком, який ще не завершився</strong>. <code>switchMap</code> — скасовує попередній і лишає новий (search / autocomplete: релевантна лише остання відповідь). <code>mergeMap</code> — лишає всі паралельно, порядок не гарантований (незалежні запити). <code>concatMap</code> — ставить у чергу зі збереженням порядку (послідовні <code>save</code>/<code>patch</code>, де порядок критичний). <code>exhaustMap</code> — ігнорує нові, поки поточний не завершився (кнопка submit: захист від подвійного кліку). Найдорожча помилка — <code>switchMap</code> на записуючих запитах: попередні мовчки скасуються і дані загубляться."
+        },
+        {
+          question: `Чому this.http.get('/api') сам по собі не робить запиту?`,
+          answer: `Observable lazy — це лише «рецепт». Producer (сам XHR) створюється в момент subscribe. Без subscribe або async pipe запиту не буде взагалі.`,
+        },
+        {
+          question: `map чи tap?`,
+          answer: `map — трансформація (повертає нове значення), tap — side-effect (лог, аналітика), потік не змінює. Side-effect у map ламає чистоту оператора.`,
+        },
+        {
+          question: `Що станеться з потоком після error?`,
+          answer: `Термінується назавжди — жодного next більше не буде. Тому catchError ставлять усередині switchMap, щоб помилка вбила лише внутрішній потік, а не зовнішній.`,
+        },
+        {
+          question: `debounceTime vs throttleTime?`,
+          answer: `debounceTime чекає паузу і бере останнє (пошук). throttleTime пропускає перше і глушить решту на інтервал (scroll, resize).`,
+        },
+        {
+          question: `Після take(3) треба unsubscribe?`,
+          answer: `Ні — take/first/takeUntil самі викликають complete, підписка закривається автоматично.`,
         },
       ],
       "blocks": [
         {
           "kind": "paragraph",
-          "html": "<div class=\"version-row\">\n            <span class=\"ver ver-15\">RxJS 7</span>\n            <span class=\"ver ver-17\">v17 with signals</span>\n            <span class=\"ver ver-19\">v19 toObservable ✦</span>\n          </div><div class=\"changelog changelog-past\">\n            <div class=\"changelog-title\">🕐 Еволюція</div>\n            <div class=\"changelog-row\"><span class=\"chver\">RxJS 4-5</span><span class=\"changelog-text\">Legacy operators, class-based</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">RxJS 7</span><span class=\"changelog-text\">Current, pipeable operators</span></div>\n            <div class=\"changelog-row\"><span class=\"chver\">v19 ✦</span><span class=\"changelog-text\"><strong>Поточна:</strong> RxJS optional, Signals-first, but still powerful</span></div>\n          </div><div style=\"background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;\">\n            <p><strong>Observable:</strong> Колекція значень у часі. Лінивий (холодний) за замовчуванням, async за природою.</p>\n            <p><strong>pipe():</strong> Композиція операторів. Кожен оператор трансформує потік.</p>\n            <p><strong>Operators:</strong> Функції, які беруть Observable і повертають новий Observable з трансформацією.</p>\n          </div>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Memory Leaks & takeUntilDestroyed</h3><p><strong>Що це:</strong> Найчастіша memory leak в Angular — невідписана підписка на Observable. Компонент знищений, але підписка тримає reference. takeUntilDestroyed автоматично відписує при DestroyRef. <strong>Навіщо:</strong> Запобігти memory leaks і повторно запущеним запитам.</p>"
+          "html": `<div class="version-row">
+            <span class="ver ver-15">RxJS 7</span>
+            <span class="ver ver-17">signals interop</span>
+            <span class="ver ver-19">v19 Signals-first ✦</span>
+          </div><div class="changelog changelog-past">
+            <div class="changelog-title">🕐 Еволюція</div>
+            <div class="changelog-row"><span class="chver">RxJS 5</span><span class="changelog-text">Перехід на pipeable-оператори замість ланцюжка методів</span></div>
+            <div class="changelog-row"><span class="chver">RxJS 7</span><span class="changelog-text">Поточна в Angular: краща типізація, retry({ count, delay }), firstValueFrom/lastValueFrom замість toPromise()</span></div>
+            <div class="changelog-row"><span class="chver">v16 ✦</span><span class="changelog-text">takeUntilDestroyed() + toSignal/toObservable — офіційний міст у Signals</span></div>
+            <div class="changelog-row"><span class="chver">v19 ✦</span><span class="changelog-text"><strong>Поточна:</strong> Signals-first для стану, RxJS лишається для async-оркестрації</span></div>
+          </div><div style="background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
+            <p><strong>Observable —</strong> <em>lazy push-based collection</em> значень у часі. «Lazy» — нічого не робить без підписки; «push» — джерело саме проштовхує значення підписнику.</p>
+            <p><strong>Чому це фундамент Angular:</strong> на RxJS побудовані <code>HttpClient</code>, <code>Router</code> (params, events), Reactive Forms (<code>valueChanges</code>, <code>statusChanges</code>) і <code>async</code> pipe. Це не опційна бібліотека, а частина фреймворку.</p>
+            <p><strong>pipe():</strong> композиція чистих операторів — кожен бере Observable і повертає <em>новий</em> Observable, не мутуючи вихідний.</p>
+          </div><h3 class="topic">Observable vs Promise <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Promise — одне значення в майбутньому; Observable — потік із 0..∞ значень. <strong>Навіщо:</strong> Це топ-питання співбесіди і водночас причина, чому <code>http.get()</code> поводиться зовсім не так, як <code>fetch()</code>.</p><div class="table-wrap">
+            <table>
+              <tr><th></th><th>Promise</th><th>Observable</th></tr>
+              <tr><td>К-сть значень</td><td>рівно <strong>одне</strong></td><td><strong>0..∞</strong> (потік)</td></tr>
+              <tr><td>Виконання</td><td>eager — стартує одразу</td><td><strong>lazy</strong> — лише при subscribe</td></tr>
+              <tr><td>Скасування</td><td>❌ немає (лише AbortController ззовні)</td><td>✅ unsubscribe()</td></tr>
+              <tr><td>Оператори</td><td>.then / .catch</td><td>100+ (map, filter, switchMap…)</td></tr>
+              <tr><td>Retry</td><td>вручну</td><td>вбудовано: retry()</td></tr>
+              <tr><td>Синхронність</td><td>завжди async</td><td>може емітити синхронно (of)</td></tr>
+            </table>
+          </div>`
         },
         {
           "kind": "code",
           "language": "typescript",
-          "code": "// ❌ Memory leak: subscription never unsubscribed\nthis.data$ = this.http.get('/api');\nthis.data$.subscribe(data => this.data = data);\n// Component destroyed, but subscription still active!\n\n// ✅ Fix: takeUntilDestroyed (v16+)\nconstructor() {\n  this.data$ = this.http.get('/api').pipe(\n    takeUntilDestroyed() // Auto unsubscribe on destroy\n  );\n}\nthis.data$.subscribe(data => this.data = data);"
+          "code": `// Promise — eager: запит пішов у момент створення
+const p = fetch('/api/users');            // ⚡ HTTP вже в польоті
+
+// Observable — lazy: без subscribe не станеться НІЧОГО
+const users$ = this.http.get<User[]>('/api/users');   // запиту ще немає
+users$.subscribe(users => this.users = users);        // ⚡ ТЕПЕР пішов
+
+// Наслідок ліні: кожна підписка = окреме виконання
+users$.subscribe();   // запит #2
+users$.subscribe();   // запит #3  ← та сама змінна, три запити разом`
         },
         {
           "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><span>Повний розбір операторів RxJS (switchMap/mergeMap/concatMap/exhaustMap decision matrix, Subject/BehaviorSubject/ReplaySubject/AsyncSubject, Hot vs Cold, combination-оператори, catchError/retry, forkJoin vs Promise.all) — див. розділ «RxJS у React» в React. Тут — лише те, що специфічне саме для Angular: <code>takeUntilDestroyed()</code>/<code>DestroyRef</code> замість ручного unsubscribe.</span></div>"
+          "html": `<h3 class="topic">Observer, Subscription і термінація потоку</h3><p><strong>Що це:</strong> <em>Observer</em> — споживач із трьома колбеками <code>next</code>/<code>error</code>/<code>complete</code>; <em>Subscription</em> — звʼязок, який можна розірвати. <strong>Навіщо:</strong> Розуміння того, що <code>error</code> і <code>complete</code> термінують потік <strong>назавжди</strong>, пояснює половину «магічних» багів у продакшні — від форми, що перестала реагувати, до автокомпліту, який замовк після першої 500-ки.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `const sub = source$.subscribe({
+  next: (val) => console.log('значення', val),   // 0..∞ разів
+  error: (err) => console.error(err),            // ❗ термінує потік назавжди
+  complete: () => console.log('done'),           // ❗ теж термінує
+});
+
+sub.unsubscribe();   // розірвати звʼязок і скасувати роботу producer'а
+
+// ❗ Після error або complete потік мертвий — нових значень не буде НІКОЛИ.
+// Типовий баг: помилка HTTP пробилась крізь valueChanges — і поле пошуку
+// більше нічого не шукає. Лікується catchError ВСЕРЕДИНІ switchMap:
+search$.pipe(
+  switchMap(q => this.api.search(q).pipe(
+    catchError(() => of([])),   // ✅ гине лише внутрішній потік
+  )),
+);`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Створення Observables</h3><p><strong>Що це:</strong> Фабрики, які роблять потік із будь-чого — значень, масиву, Promise, DOM-події, таймера. <strong>Навіщо:</strong> Завести будь-яке джерело в єдиний пайплайн, щоб далі обробляти його тими самими операторами.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `of(1, 2, 3);                      // синхронно емітить 1,2,3 → complete
+from([1, 2, 3]);                  // з масиву / Promise / iterable
+from(fetch('/api'));              // Promise → Observable
+fromEvent(input, 'input');        // з DOM-подій (hot)
+interval(1000);                   // 0,1,2… кожну секунду (нескінченно!)
+timer(2000);                      // одне значення через 2с
+throwError(() => new Error('x')); // потік, що одразу падає
+EMPTY;                            // одразу complete, без значень
+NEVER;                            // ніколи нічого (для тестів)
+
+// defer — відкласти створення до моменту підписки
+defer(() => this.http.get('/api/now'));   // новий запит на кожну підписку`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Оператори — категорії</h3><p><strong>Що це:</strong> Чисті функції, що трансформують один Observable у новий. <strong>Навіщо:</strong> Декларативно описати обробку потоку замість імперативних прапорців, таймерів і вкладених <code>if</code>.</p><div class="alert warn">
+            <span class="icon">⚠️</span>
+            <span><strong>map vs tap:</strong> <code>map</code> — для <em>трансформації</em> (повертає нове значення), <code>tap</code> — для <em>side-effects</em> (логування, аналітика, запис у стор). Side-effect усередині <code>map</code> — класична помилка на код-рев'ю: оператор перестає бути чистим і «стріляє» повторно на кожній новій підписці.</span>
+          </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// ── Transformation ────────────────────────────────────
+map(u => u.name)                    // трансформувати кожне значення
+scan((acc, x) => acc + x, 0)        // як reduce, але емітить кожен проміжний акумулятор
+tap(v => console.log(v))            // side-effect, потік НЕ змінює
+
+// ── Filtering ─────────────────────────────────────────
+filter(u => u.isActive)             // пропустити ті, що не проходять
+take(3)                             // перші 3 → complete (сам відписується!)
+first(), last()
+takeUntil(destroy$)                 // поки не емітне destroy$
+debounceTime(300)                   // чекати паузу 300мс — search-as-you-type
+throttleTime(300)                   // перше значення, решту глушити — scroll/resize
+distinctUntilChanged()              // ігнорувати однакові значення підряд
+
+// ── Error handling ────────────────────────────────────
+catchError(() => of([]))            // перехопити, повернути fallback-потік
+retry({ count: 3, delay: 1000 })    // RxJS 7.3+: повтор із затримкою
+timeout(5000)                       // не дочекались — кинути помилку`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Flattening — higher-order оператори <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Коли кожне значення саме породжує Observable (клік → HTTP-запит), виходить Observable of Observables. Flattening-оператори «розплющують» його — і все зводиться до одного питання: <em>що робити з попереднім внутрішнім потоком, який ще не завершився</em>. <strong>Навіщо:</strong> Це топ-1 питання Angular-співбесіди; неправильний вибір дає або втрачені запити, або race condition в UI.</p><div class="table-wrap">
+            <table>
+              <tr><th>Оператор</th><th>Що робить з попереднім</th><th>Канонічний кейс</th></tr>
+              <tr><td><strong>switchMap</strong></td><td>скасовує попередній, лишає лише новий</td><td>search / autocomplete — релевантна тільки остання відповідь</td></tr>
+              <tr><td><strong>mergeMap</strong></td><td>лишає всі, працюють паралельно</td><td>незалежні запити, порядок не важливий</td></tr>
+              <tr><td><strong>concatMap</strong></td><td>ставить у чергу, зберігає порядок</td><td>послідовні save/patch — порядок критичний</td></tr>
+              <tr><td><strong>exhaustMap</strong></td><td>ігнорує нові, поки поточний не завершився</td><td>submit-кнопка — захист від подвійного кліку</td></tr>
+            </table>
+          </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// ✅ switchMap — autocomplete: актуальний лише останній запит
+this.results$ = this.searchControl.valueChanges.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(q => this.api.search(q)),   // скасовує попередній in-flight XHR
+);
+
+// ✅ exhaustMap — submit: захист від подвійного кліку
+this.saveClick$.pipe(
+  exhaustMap(() => this.api.save(this.form.value)),   // нові кліки ігноруються
+).subscribe();
+
+// ✅ concatMap — послідовні save: порядок критичний
+this.edits$.pipe(
+  concatMap(edit => this.api.patch(edit)),   // черга: наступний після завершення
+).subscribe();
+
+// ✅ mergeMap — незалежні паралельні запити
+this.ids$.pipe(
+  mergeMap(id => this.api.getUser(id)),      // усі одночасно, порядок не гарантований
+).subscribe();`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="grid3">
+            <div class="card green"><h4>✅ Добре</h4><p><code>switchMap</code> для пошуку, <code>exhaustMap</code> для submit, <code>concatMap</code> для послідовних записів. <code>map</code> для даних, <code>tap</code> для логів.</p></div>
+            <div class="card red"><h4>❌ Погано</h4><p><code>switchMap</code> на save-запитах — попередні мовчки скасуються і дані загубляться. <code>mergeMap</code> там, де важливий порядок. Side-effects усередині <code>map</code>.</p></div>
+            <div class="card blue"><h4>⚡ Памʼятка</h4><p>Назва підказує стратегію: <em>switch</em> — перемкнутись, <em>merge</em> — злити все, <em>concat</em> — склеїти по черзі, <em>exhaust</em> — дочекатись вичерпання поточного.</p></div>
+          </div><div class="alert good">
+            <span class="icon">✅</span>
+            <span><code>take(n)</code>, <code>first()</code>, <code>takeUntil()</code> самі викликають <code>complete</code> — після них підписка закривається автоматично, ручний <code>unsubscribe()</code> не потрібен.</span>
+          </div><div class="changelog changelog-future"><div class="changelog-title">🔮 2025+</div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">RxJS лишається для async-оркестрації; синхронний стан переїжджає в signals — див. розділ «RxJS — Патерни, витоки та Signals»</span></div></div>`
+        }
+      ]
+    },
+    {
+      "id": "rxjs-subjects-hot-cold",
+      "title": "🔀 RxJS — Subjects, Hot vs Cold, Multicasting",
+      interviewQuestions: [
+        {
+          "question": "Чим <code>Subject</code> відрізняється від <code>BehaviorSubject</code>, і чому для зберігання стану беруть саме другий?",
+          "answer": "<code>Subject</code> не має початкового значення і не буферизує нічого: підписник бачить лише те, що прилетить <em>після</em> його підписки — все, що було раніше, для нього не існує. <code>BehaviorSubject</code> вимагає початкового значення і завжди тримає <strong>поточне</strong>, віддаючи його новому підписнику миттєво. Саме тому він придатний для стану: компонент, який зʼявився пізніше (лениво завантажений роут, щойно відкритий модал), одразу отримує актуальні дані, а не порожній екран до наступного оновлення. Бонус — синхронний <code>.value</code>, коли значення потрібне поза потоком."
+        },
+        {
+          "question": "У шаблоні двічі використали <code>{{ users$ | async }}</code> для одного <code>this.http.get(...)</code>. Скільки піде HTTP-запитів і чому?",
+          "answer": "<strong>Два.</strong> <code>HttpClient.get()</code> повертає <em>cold</em> Observable — producer (сам XHR) створюється заново на кожну підписку, а кожен <code>async</code> pipe підписується окремо. Це одна з найчастіших причин дубльованих запитів у продакшні. Лікується або одним <code>async</code> pipe із розпаковкою в шаблонну змінну (<code>*ngIf=\"users$ | async as users\"</code>), або мультикастом через <code>shareReplay({ bufferSize: 1, refCount: false })</code> — тоді виконання одне, а результат розшарений між усіма підписниками."
+        },
+        {
+          question: `Коли ReplaySubject?`,
+          answer: `Коли пізньому підписнику треба не лише останнє, а N останніх значень — лог подій, історія повідомлень чату.`,
+        },
+        {
+          question: `Коли AsyncSubject?`,
+          answer: `Рідко: емітить лише останнє значення і лише при complete. Кейс — результат одноразової операції, який роздають усім, хто встиг підписатись.`,
+        },
+        {
+          question: `share() vs shareReplay(1)?`,
+          answer: `share() — мультикаст без буфера: хто підписався пізніше, минуле не побачить. shareReplay(1) — мультикаст + буфер останнього значення, тому годиться для кешу.`,
+        },
+        {
+          question: `Чому не віддавати Subject назовні?`,
+          answer: `Будь-хто зможе викликати .next() і зламати інваріанти стору. Назовні — тільки this.state$.asObservable() (read-only).`,
+        },
+      ],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": `<div class="version-row">
+            <span class="ver ver-15">Subject family</span>
+            <span class="ver ver-17">shareReplay refCount</span>
+            <span class="ver ver-19">signal() для стану ✦</span>
+          </div><div class="changelog changelog-past">
+            <div class="changelog-title">🕐 Еволюція</div>
+            <div class="changelog-row"><span class="chver">RxJS 6</span><span class="changelog-text">shareReplay отримав конфіг-обʼєкт: { bufferSize, refCount }</span></div>
+            <div class="changelog-row"><span class="chver">RxJS 7</span><span class="changelog-text">connectable() замість застарілих multicast/publish/refCount</span></div>
+            <div class="changelog-row"><span class="chver">v16 ✦</span><span class="changelog-text"><strong>Поточна:</strong> простий стан на BehaviorSubject дедалі частіше замінюється signal()</span></div>
+          </div><div style="background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
+            <p><strong>Subject —</strong> одночасно і Observable, і Observer: у нього можна <code>subscribe</code>, і в нього можна <code>next()</code>. Це міст між імперативним кодом і потоками.</p>
+            <p><strong>Multicasting:</strong> Subject завжди <em>hot</em> — один producer на всіх підписників. Саме він під капотом у <code>share()</code>/<code>shareReplay()</code>.</p>
+            <p><strong>Практично:</strong> Subject-и — це і основа простих state-сервісів в Angular, і спосіб перетворити cold-потік на спільний, щоб не дублювати HTTP.</p>
+          </div><h3 class="topic">Сімейство Subjects <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Чотири варіанти, що різняться лише тим, <em>що побачить підписник, який приєднався пізно</em>. <strong>Навіщо:</strong> Правильний вибір вирішує, чи побачить щойно відкритий компонент актуальні дані, чи порожній екран.</p><div class="table-wrap">
+            <table>
+              <tr><th>Тип</th><th>Що бачить пізній підписник</th><th>Типовий кейс</th></tr>
+              <tr><td><strong>Subject</strong></td><td>лише майбутні еміти</td><td>події: клік, submit, «оновити список»</td></tr>
+              <tr><td><strong>BehaviorSubject(init)</strong></td><td>одразу поточне значення</td><td><strong>стан</strong> — user, filters, theme</td></tr>
+              <tr><td><strong>ReplaySubject(n)</strong></td><td>n останніх значень</td><td>історія: лог подій, повідомлення чату</td></tr>
+              <tr><td><strong>AsyncSubject</strong></td><td>лише останнє, і лише при complete</td><td>рідко: результат одноразової операції</td></tr>
+            </table>
+          </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `@Injectable({ providedIn: 'root' })
+export class UserStore {
+  // ❗ приватний Subject — писати може лише сам стор
+  private readonly state$ = new BehaviorSubject<User | null>(null);
+
+  // ✅ назовні — тільки для читання
+  readonly user$ = this.state$.asObservable();
+
+  setUser(u: User) { this.state$.next(u); }
+
+  // синхронний доступ до поточного значення (уміє лише BehaviorSubject)
+  get current(): User | null { return this.state$.value; }
+}
+
+// ❌ Антипатерн: публічний Subject —
+// будь-який компонент зробить .next() і зламає інваріанти стору.
+readonly user$ = new BehaviorSubject<User | null>(null);   // не роби так`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Hot vs Cold <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> <em>Cold</em> — producer створюється на <strong>кожну</strong> підписку, тож кожен підписник отримує власне виконання (<code>http.get</code>, <code>defer</code>). <em>Hot</em> — producer спільний, підписники ділять один потік (<code>fromEvent</code>, <code>Subject</code>, WebSocket). <strong>Навіщо:</strong> Це пряме пояснення, звідки в Network беруться дубльовані запити, яких у коді начебто немає.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// ── COLD: новий producer на КОЖНУ підписку ──────────────
+const users$ = this.http.get<User[]>('/api/users');
+users$.subscribe();   // HTTP-запит #1
+users$.subscribe();   // HTTP-запит #2  ← та сама змінна, два запити!
+
+// Те саме в шаблоні — два async pipe = два запити:
+//   <div>{{ (users$ | async)?.length }}</div>
+//   <li *ngFor="let u of users$ | async">…</li>
+//
+// ✅ Дешевий фікс без операторів — розпакувати один раз:
+//   <ng-container *ngIf="users$ | async as users"> … </ng-container>
+
+// ── HOT: один спільний producer на всіх ─────────────────
+const clicks$ = fromEvent(button, 'click');   // DOM-подія одна на всіх
+const events$ = new Subject<string>();        // Subject завжди hot`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">share() vs shareReplay() — перетворити cold на спільний</h3><p><strong>Що це:</strong> Оператори мультикасту: одне виконання джерела розшарюється між усіма підписниками. <code>share()</code> — без буфера, <code>shareReplay(n)</code> — з буфером останніх n значень. <strong>Навіщо:</strong> Прибрати дубльовані HTTP і закешувати довідники/конфіги на час життя сервісу.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// share() — мультикаст БЕЗ буфера:
+// хто підписався пізніше, минулих значень не побачить.
+readonly live$ = this.ws.messages$.pipe(share());
+
+// shareReplay(1) — мультикаст + буфер останнього значення.
+// Класика для кешу довідників і конфігів:
+private readonly config$ = this.http.get<Config>('/api/config').pipe(
+  shareReplay({ bufferSize: 1, refCount: false }),   // кеш живе весь час життя сервісу
+);
+this.config$.subscribe();   // HTTP-запит #1
+this.config$.subscribe();   // без запиту — віддається закешоване значення
+
+// refCount: true — потік завершується, коли пішов ОСТАННІЙ підписник,
+// і наступна підписка зробить НОВИЙ запит (кеш скидається).
+readonly perScreen$ = this.http.get<Item[]>('/api/list').pipe(
+  shareReplay({ bufferSize: 1, refCount: true }),
+);`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="grid3">
+            <div class="card green"><h4>✅ Добре</h4><p>Приватний <code>BehaviorSubject</code> + публічний <code>asObservable()</code>. <code>shareReplay({ bufferSize: 1, refCount: false })</code> для конфігів і довідників, які тягнуться раз.</p></div>
+            <div class="card red"><h4>❌ Погано</h4><p>Публічний Subject у сервісі. Два <code>async</code> pipe на одному cold-потоці. <code>shareReplay</code> на нескінченному джерелі з <code>refCount: false</code>.</p></div>
+            <div class="card blue"><h4>⚡ Правило</h4><p>Cold — це «дані на запит» (HTTP), hot — це «події, що вже відбуваються» (DOM, WebSocket, Subject). Мультикаст перетворює перше на друге.</p></div>
+          </div><div class="alert warn">
+            <span class="icon">⚠️</span>
+            <span><strong>shareReplay як витік:</strong> з <code>refCount: false</code> на <strong>нескінченному</strong> джерелі (<code>interval</code>, WebSocket, <code>router.events</code>) підписка на producer тримається назавжди — навіть коли підписників нуль. Для скінченних HTTP-запитів <code>refCount: false</code> навпаки безпечний і саме те, що потрібно для кешу.</span>
+          </div><div class="changelog changelog-future"><div class="changelog-title">🔮 2025+</div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">Простий стан переїжджає на signal()/linkedSignal(); BehaviorSubject лишається там, де потрібна async-композиція</span></div></div>`
+        }
+      ]
+    },
+    {
+      "id": "rxjs-patterns-leaks-signals",
+      "title": "🧩 RxJS — Патерни, витоки та Signals",
+      interviewQuestions: [
+        {
+          "question": "Як ти гарантуєш відсутність memory leak від підписок, і чим <code>takeUntilDestroyed()</code> кращий за класичний <code>takeUntil</code> + <code>ngOnDestroy</code>?",
+          "answer": "Незакрита підписка тримає посилання на колбек, який замикає компонент — компонент знищено, а GC його не забирає, і код продовжує виконуватись (лог помилок про оновлення знищеного стану). Порядок пріоритетів: <strong>①</strong> <code>async</code> pipe — Angular підписується і відписується сам, найдекларативніше; <strong>②</strong> <code>takeUntilDestroyed()</code> для імперативної логіки; <strong>③</strong> <code>takeUntil(destroy$)</code> — класика до v16; <strong>④</strong> ручний <code>unsubscribe()</code> — найгірше. <code>takeUntilDestroyed()</code> прив'язується до <code>DestroyRef</code> поточного injection context, тобто прибирає цілий ритуал із полем <code>destroy$</code>, імплементацією <code>OnDestroy</code> і парою <code>next()</code>/<code>complete()</code> — а разом із ним і найчастішу помилку: забути додати новий pipe до <code>takeUntil</code>."
+        },
+        {
+          "question": "Чим поганий <code>subscribe</code> усередині <code>subscribe</code>, якщо результат начебто той самий?",
+          "answer": "Трьома речами. По-перше, внутрішні підписки <strong>не скасовуються</strong> зовнішнім <code>unsubscribe</code> — це готовий витік. По-друге, зникає контроль над конкурентністю: швидко перемкнули два роути — прилетять дві відповіді, і в UI може лишитись та, що стосується <em>старого</em> id (класичний race condition). По-третє, помилку з внутрішнього потоку неможливо нормально обробити зовнішнім <code>catchError</code>. Правильно — плоский пайплайн через <code>switchMap</code>/<code>concatMap</code>: він і скасовує застарілу гілку, і лишає один канал для помилок."
+        },
+        {
+          question: `combineLatest vs forkJoin?`,
+          answer: `combineLatest емітить на КОЖНУ зміну будь-якого джерела (похідний стан). forkJoin чекає complete усіх і віддає останні значення один раз — аналог Promise.all.`,
+        },
+        {
+          question: `Чому forkJoin може не спрацювати ніколи?`,
+          answer: `Бо чекає complete від усіх джерел. Дай йому Subject або valueChanges — і callback не викличеться. forkJoin тільки для скінченних потоків (HTTP).`,
+        },
+        {
+          question: `Де має стояти takeUntil у pipe?`,
+          answer: `Останнім. Оператор після нього (напр. shareReplay) створить нову підписку, яку takeUntil уже не прикриє.`,
+        },
+        {
+          question: `Memory leak in RxJS?`,
+          answer: `Unsubscribed observables keep running. Fix: async pipe, takeUntilDestroyed.`,
+        },
+        {
+          question: `RxJS чи Signals?`,
+          answer: `Signals — синхронний стан UI, без підписок і витоків. RxJS — async-потоки в часі: HTTP, debounce, скасування, оркестрація. Міст: toSignal/toObservable.`,
+        },
+      ],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "html": `<div class="version-row">
+            <span class="ver ver-15">takeUntil(destroy$)</span>
+            <span class="ver ver-17">takeUntilDestroyed()</span>
+            <span class="ver ver-19">toSignal / zoneless ✦</span>
+          </div><div class="changelog changelog-past">
+            <div class="changelog-title">🕐 Еволюція</div>
+            <div class="changelog-row"><span class="chver">до v16</span><span class="changelog-text">Ритуал: поле destroy$ + ngOnDestroy + takeUntil у кожному pipe</span></div>
+            <div class="changelog-row"><span class="chver">v16</span><span class="changelog-text">takeUntilDestroyed() + DestroyRef — відписка без boilerplate</span></div>
+            <div class="changelog-row"><span class="chver">v16</span><span class="changelog-text">toSignal() / toObservable() — офіційний інтероп із Signals</span></div>
+            <div class="changelog-row"><span class="chver">v19 ✦</span><span class="changelog-text"><strong>Поточна:</strong> zoneless + resource()/rxResource() для декларативного async-стану</span></div>
+          </div><div style="background: #1a1f2e; border-left: 4px solid #dd0031; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
+            <p><strong>Memory leak —</strong> головна пастка RxJS. Підписка тримає посилання на колбек, колбек замикає компонент: компонент знищено, а з памʼяті не пішов і продовжує працювати.</p>
+            <p><strong>Симптоми:</strong> застосунок повільнішає після навігації туди-сюди, у консолі помилки про оновлення знищеного стану, у Memory-профайлері ростуть detached DOM nodes.</p>
+            <p><strong>Ліки:</strong> чотири способи, і вони <em>не рівноцінні</em> — нижче за пріоритетом.</p>
+          </div><h3 class="topic">Сходинка боротьби з витоками <span class="tag tag-key">KEY</span></h3><p><strong>Що це:</strong> Порядок вибору способу відписки — від найдекларативнішого до найризикованішого. <strong>Навіщо:</strong> Правило «надавай перевагу <code>async</code> pipe» прибирає цілий клас багів: там, де немає ручної підписки, немає що забути відписати.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// ① НАЙКРАЩЕ — async pipe: Angular підписується і відписується сам
+readonly users$ = this.http.get<User[]>('/api/users');
+// template:  <li *ngFor="let u of users$ | async">{{ u.name }}</li>
+
+// ② takeUntilDestroyed() — v16+, коли потрібна імперативна логіка
+export class WidgetComponent {
+  private readonly destroyRef = inject(DestroyRef);
+
+  constructor() {
+    this.ws.messages$
+      .pipe(takeUntilDestroyed())        // без аргументу — лише в injection context
+      .subscribe(m => this.handle(m));
+  }
+
+  start() {
+    interval(1000)
+      .pipe(takeUntilDestroyed(this.destroyRef))   // поза конструктором — явний ref
+      .subscribe();
+  }
+}
+
+// ③ takeUntil(destroy$) — класика до v16
+private readonly destroy$ = new Subject<void>();
+ngOnInit() {
+  this.data$.pipe(takeUntil(this.destroy$)).subscribe();   // ❗ takeUntil ОСТАННІМ
+}
+ngOnDestroy() { this.destroy$.next(); this.destroy$.complete(); }
+
+// ④ ❌ Ручний unsubscribe — найгірше: багатослівно і легко забути
+private sub?: Subscription;
+ngOnDestroy() { this.sub?.unsubscribe(); }`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Практичні патерни</h3><p><strong>Що це:</strong> Чотири композиції, які покривають більшість реальних задач в Angular-застосунку. <strong>Навіщо:</strong> Саме їх просять написати на живому кодингу — і саме тут видно, чи людина мислить потоками, чи імперативно.</p>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// ── ① Autocomplete (канонічний) ─────────────────────────
+readonly results$ = this.searchControl.valueChanges.pipe(
+  debounceTime(300),          // не смикати API на кожну літеру
+  distinctUntilChanged(),     // той самий текст — не перезапитувати
+  switchMap(q => this.api.search(q).pipe(
+    catchError(() => of([])), // ❗ інакше 500-ка вбʼє зовнішній потік назавжди
+  )),
+);
+
+// ── ② Залежні запити (ланцюжок) ─────────────────────────
+readonly posts$ = this.route.params.pipe(
+  switchMap(({ id }) => this.api.getUser(id)),
+  switchMap(user => this.api.getPosts(user.id)),
+);
+
+// ── ③ Паралельні запити (аналог Promise.all) ────────────
+forkJoin({
+  user: this.api.getUser(id),
+  settings: this.api.getSettings(id),
+}).subscribe(({ user, settings }) => {
+  // виконається один раз, коли ОБИДВА зробили complete
+});
+
+// ── ④ Похідний стан ─────────────────────────────────────
+readonly total$ = combineLatest([this.items$, this.taxRate$]).pipe(
+  map(([items, tax]) => calcTotal(items, tax)),   // перерахунок на будь-яку зміну
+);`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Combination-оператори — що коли брати</h3><div class="table-wrap">
+            <table>
+              <tr><th>Оператор</th><th>Поведінка</th><th>Коли</th></tr>
+              <tr><td><strong>combineLatest</strong></td><td>останні значення з кожного при будь-якій зміні; чекає перше значення від усіх</td><td>похідний стан, залежні фільтри</td></tr>
+              <tr><td><strong>forkJoin</strong></td><td>чекає <code>complete</code> усіх, віддає останні один раз</td><td>паралельні HTTP; ❗ не працює з нескінченними потоками</td></tr>
+              <tr><td><strong>merge</strong></td><td>значення з усіх джерел як приходять</td><td>кілька джерел однієї події</td></tr>
+              <tr><td><strong>zip</strong></td><td>попарно за індексом</td><td>рідко: строга синхронізація пар</td></tr>
+              <tr><td><strong>withLatestFrom</strong></td><td>при еміті основного бере останнє з другорядного</td><td>submit + поточний стан фільтрів</td></tr>
+              <tr><td><strong>startWith</strong></td><td>підкидає початкове значення</td><td>щоб <code>combineLatest</code> не чекав першого еміту</td></tr>
+            </table>
+          </div>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">Антипатерни <span class="tag tag-key">KEY</span></h3><div class="grid3">
+            <div class="card red"><h4>❌ Nested subscribe</h4><p>Підписка в підписці: не скасовується зовнішнім unsubscribe, дає race condition і ховає помилки. Лікується <code>switchMap</code>/<code>concatMap</code>.</p></div>
+            <div class="card red"><h4>❌ Забутий unsubscribe</h4><p>Компонент знищено, а колбек живе і тримає його в памʼяті. Класика: <code>interval</code>, WebSocket, <code>router.events</code>.</p></div>
+            <div class="card red"><h4>❌ Cold-дублі</h4><p>Той самий <code>http.get</code> під кількома підписниками = кілька однакових запитів. Лікується <code>shareReplay(1)</code>.</p></div>
+          </div><div class="alert warn">
+            <span class="icon">⚠️</span>
+            <span><strong>Ще дві типові:</strong> side-effects у <code>map</code> замість <code>tap</code> (оператор перестає бути чистим) і підписка заради присвоєння в поле замість <code>async</code> pipe — зайвий імперативний код плюс ризик витоку на рівному місці.</span>
+          </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// ❌ Nested subscribe: не скасовується, порядок не контролюється
+this.route.params.subscribe(({ id }) => {
+  this.api.getUser(id).subscribe(user => {
+    this.api.getPosts(user.id).subscribe(posts => this.posts = posts);
+  });
+});
+// Швидко клацнули по двох роутах — прилетять ДВІ відповіді,
+// і в UI може лишитись та, що стосується СТАРОГО id (race condition).
+
+// ✅ Плоский пайплайн: switchMap скасовує застарілу гілку
+readonly posts$ = this.route.params.pipe(
+  switchMap(({ id }) => this.api.getUser(id)),
+  switchMap(user => this.api.getPosts(user.id)),
+);
+// template:  <li *ngFor="let p of posts$ | async">…</li>`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<h3 class="topic">RxJS vs Signals — не заміна, а розподіл ролей</h3><p><strong>Що це:</strong> Signals (v16+) — простіший примітив для <em>синхронного</em> стану з fine-grained reactivity. RxJS лишається для <em>асинхронних</em> потоків у часі. <strong>Навіщо:</strong> Це найчастіше «сучасне» питання на Angular-співбесіді, і правильна відповідь — не «Signals замінили RxJS», а розподіл зон відповідальності.</p><div class="grid2">
+            <div class="card blue"><h4>⚡ Signals</h4><p>Синхронний стан UI: лічильники, форми, derived-значення через <code>computed()</code>. Без підписок, без витоків, працює в zoneless.</p></div>
+            <div class="card green"><h4>🌊 RxJS</h4><p>Події в часі: HTTP, <code>debounceTime</code>, скасування, комбінування кількох джерел, складна оркестрація і retry.</p></div>
+          </div>`
+        },
+        {
+          "kind": "code",
+          "language": "typescript",
+          "code": `// Observable → Signal: читати в шаблоні без async pipe
+readonly user = toSignal(this.store.user$, { initialValue: null });
+
+// Signal → Observable: коли над сигналом треба debounce/switchMap
+readonly query = signal('');
+readonly results$ = toObservable(this.query).pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(q => this.api.search(q)),
+);
+
+// ❗ toSignal() сам відписується при знищенні injection context —
+// окремий takeUntilDestroyed тут не потрібен.`
+        },
+        {
+          "kind": "paragraph",
+          "html": `<div class="alert good">
+            <span class="icon">✅</span>
+            <span><strong>Відповідь на співбесіді:</strong> «Signals — для синхронного стану, RxJS — для async-потоків і оркестрації подій. Вони співіснують, є офіційний інтероп <code>toSignal()</code>/<code>toObservable()</code>». Детальніше про самі сигнали — у розділі «Signals & Computed».</span>
+          </div><div class="changelog changelog-future"><div class="changelog-title">🔮 2025+</div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">resource() / rxResource() — декларативний async-стан на сигналах поверх Observable</span></div><div class="changelog-row"><span class="chver">2025</span><span class="changelog-text">Zoneless за замовчуванням: async pipe і toSignal лишаються основним мостом до потоків</span></div></div>`
         }
       ]
     },
