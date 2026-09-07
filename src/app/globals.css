@@ -271,15 +271,18 @@
    frame around the sheet. Purely visual — no logic/routing/data changes.
 --------------------------------------------------------------------------- */
 .paper {
-  --paper-bg: #fdfbf7; /* the canvas — barely-warm white */
-  --paper-raised: #f4ecd8; /* cards, panels, sticky bars — the cream */
-  --paper-sunken: #e9dcbe; /* active states, chips, inline code, table th */
+  /* Three surface tiers. The block tier is barely off the canvas, so a block's
+     edge is carried by --paper-rule; the cream tier below it keeps chips,
+     table headers and active states clearly separated. */
+  --paper-bg: #ffffff; /* the canvas */
+  --paper-raised: #fdfbf7; /* cards, panels, sticky bars */
+  --paper-sunken: #f4ecd8; /* chips, table th, active states, inline code */
   --paper-ink: #1c1917; /* body text */
   --paper-ink-soft: #44403c; /* secondary text, captions */
   --paper-ink-faint: #57534e; /* tertiary text, status markers */
   --paper-title: #1e3a5f; /* h1–h4, .topic, card titles */
   --paper-label: #1d4ed8; /* uppercase labels, .cmd-label, links */
-  --paper-rule: rgba(28, 25, 23, 0.18); /* borders, rules */
+  --paper-rule: rgba(28, 25, 23, 0.2); /* borders — now the main block edge */
   --paper-link: #1d4ed8;
   --paper-link-hover: #1e40af;
   --paper-accent: #1e3a5f; /* section accents on paper */
@@ -370,36 +373,39 @@
   background: var(--paper-raised);
   border-color: var(--paper-rule);
 }
+/* Tinted cards and callouts sit in the *block* tier, so they are pale enough to
+   read as one row with the neutral cards — the hue carries the meaning, not the
+   weight. Chips and tags below stay in the cream tier and keep their saturation. */
 .paper .cheat-prose .card.red {
-  background: #f3e2da;
+  background: #f9eee9;
   border-color: rgba(150, 60, 40, 0.3);
 }
 .paper .cheat-prose .card.green {
-  background: #e6ecd9;
+  background: #f0f4e9;
   border-color: rgba(70, 110, 50, 0.3);
 }
 .paper .cheat-prose .card.blue {
-  background: #e0e6ea;
+  background: #eef2f4;
   border-color: rgba(50, 90, 120, 0.3);
 }
 .paper .cheat-prose .card.yellow {
-  background: #f2e8c8;
+  background: #f8f1dc;
   border-color: rgba(150, 120, 40, 0.35);
 }
 .paper .cheat-prose .alert {
-  background: #ece4d0;
+  background: #f6f0e0;
   border-left-color: var(--paper-accent);
   color: var(--paper-ink);
 }
 .paper .cheat-prose .alert.good,
 .paper .cheat-prose .alert-good {
-  background: #e6ecd9;
+  background: #f0f4e9;
   border-left-color: #5c7a3a;
 }
 .paper .cheat-prose .alert.warn,
 .paper .cheat-prose .alert-warn,
 .paper .cheat-prose .warn {
-  background: #f2e8c8;
+  background: #f8f1dc;
   border-left-color: #b8860b;
 }
 .paper .cheat-prose .tag,
@@ -442,10 +448,10 @@
   color: var(--paper-ink);
 }
 .paper .cheat-prose .changelog-past {
-  background: #ece7da;
+  background: #f5f2e9;
 }
 .paper .cheat-prose .changelog-future {
-  background: #e0e6ea;
+  background: #eef2f4;
 }
 .paper .cheat-prose .changelog-title {
   color: var(--paper-ink);
@@ -633,12 +639,14 @@
   color: var(--paper-label) !important;
 }
 
-/* Component class hooks. */
+/* Component class hooks. These are the clickable surfaces — the interview-
+   questions button and the link pills — so they take the cream tier and stay
+   visibly interactive on the white canvas. */
 .paper .glass-dark,
 .paper .glass-subtle {
-  background: var(--paper-raised);
+  background: var(--paper-sunken);
   border-color: var(--paper-rule);
-  box-shadow: 0 1px 2px rgba(51, 41, 26, 0.08);
+  box-shadow: 0 1px 2px rgba(28, 25, 23, 0.07);
   backdrop-filter: none;
 }
 .paper header {
@@ -668,14 +676,14 @@
   font-size: 0.72rem;
 }
 
-/* Warm, dim scrollbar. */
+/* Dim scrollbar, matching the ink hue. */
 .paper ::-webkit-scrollbar-thumb,
 .paper .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(51, 41, 26, 0.22);
+  background: rgba(28, 25, 23, 0.22);
 }
 .paper ::-webkit-scrollbar-thumb:hover,
 .paper .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(51, 41, 26, 0.38);
+  background: rgba(28, 25, 23, 0.38);
 }
 
 /* Flip flashcards (question/answer), used by FlashcardsBlock */
