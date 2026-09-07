@@ -96,7 +96,8 @@
       "Bash(curl -s --max-time 90 http://localhost:5001/quickref)",
       "Bash(curl -s \"http://localhost:5001/_next/static/chunks/%5Broot-of-the-server%5D__1xyzj-8._.css\" -o /tmp/app.css)",
       "Bash(curl -s -o /dev/null http://localhost:5001/git/cheatsheet)",
-      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --hide-scrollbars --window-size=1440,900 --screenshot=/private/tmp/claude-501/-Users-romansemak-GitHub-PET-cheatHub/c65ab27c-298e-47d7-a23a-e26d3faa42b3/scratchpad/v2-git-b.png http://localhost:5001/git/cheatsheet)"
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless --disable-gpu --hide-scrollbars --window-size=1440,900 --screenshot=/private/tmp/claude-501/-Users-romansemak-GitHub-PET-cheatHub/c65ab27c-298e-47d7-a23a-e26d3faa42b3/scratchpad/v2-git-b.png http://localhost:5001/git/cheatsheet)",
+      "Bash(curl -sf -o /dev/null http://localhost:5001/)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad",

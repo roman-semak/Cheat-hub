@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { problems } from '@/data/problems'
 import { TOPICS, formatHref } from '@/lib/cheatsheet/registry'
-import { QUICKREF_TOPICS } from '@/lib/cheatsheet/quickref'
+import { CHEATSHEET_ENTRIES } from '@/lib/cheatsheet/quickref'
 import { absoluteUrl, SITE_URL } from '@/lib/seo'
 import manifest from '@/lib/cheatsheet/contentManifest.generated.json'
 
@@ -27,8 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  const quickrefEntries: MetadataRoute.Sitemap = QUICKREF_TOPICS.map((topic) => ({
-    url: absoluteUrl(`/quickref/${topic}`),
+  // Cheat sheets no longer appear in `topic.formats` — they all belong to the
+  // ⚡ Шпаргалка section, whose entries carry their own (mixed) URLs.
+  const quickrefEntries: MetadataRoute.Sitemap = CHEATSHEET_ENTRIES.filter(
+    (entry) => !seen.has(entry.href),
+  ).map((entry) => ({
+    url: absoluteUrl(entry.href),
     lastModified: contentUpdatedAt,
     changeFrequency: 'monthly',
     priority: 0.6,

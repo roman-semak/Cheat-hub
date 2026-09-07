@@ -1,10 +1,27 @@
 import Link from 'next/link'
 import type { TopicMeta } from '@/lib/cheatsheet/types'
-import { ACCENT, FORMAT_LABELS, formatHref, topicHref } from '@/lib/cheatsheet/registry'
+import { ACCENT, FORMAT_LABELS, formatHref, getTopic, topicHref } from '@/lib/cheatsheet/registry'
+import { CHEATSHEET_ENTRIES } from '@/lib/cheatsheet/quickref'
 import { cn } from '@/lib/utils'
+
+// The ⚡ Шпаргалка card lists every cheat sheet in the app instead of its own
+// (single) format — that section is where all of them now live.
+function cardLinks(topic: TopicMeta): { href: string; label: string }[] {
+  if (topic.slug === 'quickref') {
+    return CHEATSHEET_ENTRIES.map((entry) => ({
+      href: entry.href,
+      label: entry.label ?? getTopic(entry.slug)?.title ?? entry.slug,
+    }))
+  }
+  return topic.formats.map((format) => ({
+    href: formatHref(topic.slug, format),
+    label: FORMAT_LABELS[format],
+  }))
+}
 
 export function TopicHubCard({ topic }: { topic: TopicMeta }) {
   const accent = ACCENT[topic.accent]
+  const links = cardLinks(topic)
 
   return (
     <div
@@ -44,22 +61,20 @@ export function TopicHubCard({ topic }: { topic: TopicMeta }) {
         </div>
       )}
 
-      {topic.slug !== 'quickref' && (
-        <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3">
-          {topic.formats.map((format) => (
-            <Link
-              key={format}
-              href={formatHref(topic.slug, format)}
-              className={cn(
-                'rounded-lg px-2.5 py-1 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10',
-                format === topic.formats[0] && accent.text,
-              )}
-            >
-              {FORMAT_LABELS[format]}
-            </Link>
-          ))}
-        </div>
-      )}
+      <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3">
+        {links.map((link, i) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cn(
+              'rounded-lg px-2.5 py-1 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10',
+              i === 0 && accent.text,
+            )}
+          >
+            {link.label}
+          </Link>
+        ))}
+      </div>
     </div>
   )
 }

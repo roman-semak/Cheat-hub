@@ -5,7 +5,7 @@ import Link from 'next/link'
 import 'highlight.js/styles/github-dark.css'
 import type { QuickRefBlock, QuickRefEntry, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
-import { QUICKREF_TOPICS } from '@/lib/cheatsheet/quickref'
+import { CHEATSHEET_ENTRIES } from '@/lib/cheatsheet/quickref'
 import { getTopic } from '@/lib/cheatsheet/registry'
 import { highlight } from '@/lib/cheatsheet/highlight'
 import { breadcrumbJsonLd } from '@/lib/seo'
@@ -195,14 +195,14 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
       />
       <h1 className="sr-only">{meta.title} — Шпаргалка</h1>
       <nav className="sticky top-0 z-20 flex items-center gap-1 overflow-x-auto border-b border-white/10 bg-slate-950/90 px-3 py-1.5 backdrop-blur">
-        {QUICKREF_TOPICS.map((slug) => {
-          const t = getTopic(slug)
+        {CHEATSHEET_ENTRIES.map((entry) => {
+          const t = getTopic(entry.slug)
           if (!t) return null
-          const active = slug === meta.slug
+          const active = entry.slug === meta.slug
           return (
             <Link
-              key={slug}
-              href={`/quickref/${slug}`}
+              key={entry.href}
+              href={entry.href}
               className={cn(
                 'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors',
                 active
@@ -211,7 +211,7 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
               )}
             >
               <span>{t.icon}</span>
-              <span>{t.title}</span>
+              <span>{entry.label ?? t.title}</span>
             </Link>
           )
         })}

@@ -18,10 +18,10 @@ export const TOPICS: TopicMeta[] = [
     title: 'Практика',
     icon: '🧩',
     blurb:
-      'Практика коду: LeetCode-редактор, шпаргалка JS/TS та інтерв’ю-завдання рівня Middle/Senior.',
+      'Практика коду: LeetCode-редактор та інтерв’ю-завдання рівня Middle/Senior.',
     accent: 'orange',
-    formats: ['practice', 'cheatsheet', 'tasks'],
-    badges: ['LeetCode', 'Шпаргалка', 'Інтерв’ю'],
+    formats: ['practice', 'tasks'],
+    badges: ['LeetCode', 'Інтерв’ю'],
   },
   {
     slug: 'architecture',
@@ -30,7 +30,7 @@ export const TOPICS: TopicMeta[] = [
     blurb:
       'Патерни, принципи, SOLID — і system design: high-level архітектура, рендеринг, real-time, кешування, масштабування, observability.',
     accent: 'violet',
-    formats: ['extended', 'cheatsheet'],
+    formats: ['extended'],
     badges: ['System Design', 'Патерни', 'Real-time'],
   },
   {
@@ -40,7 +40,7 @@ export const TOPICS: TopicMeta[] = [
     blurb:
       'Backend-стек, бази даних, API, DevOps та system design — усе для співбесіди Senior Full Stack.',
     accent: 'fuchsia',
-    formats: ['extended', 'cheatsheet', 'quiz'],
+    formats: ['extended', 'quiz'],
     badges: ['Backend', 'Бази даних', 'DevOps', 'System Design'],
   },
   {
@@ -68,7 +68,7 @@ export const TOPICS: TopicMeta[] = [
     blurb:
       'App Router, Server Components, рендеринг, кешування та Server Actions поверх React.',
     accent: 'slate',
-    formats: ['extended', 'cheatsheet', 'quiz'],
+    formats: ['extended', 'quiz'],
     badges: ['App Router', 'RSC', 'SSR/ISR'],
   },
   {
@@ -93,7 +93,7 @@ export const TOPICS: TopicMeta[] = [
     icon: '🔀',
     blurb: 'Команди, робочі процеси та вирішення конфліктів.',
     accent: 'emerald',
-    formats: ['extended', 'cheatsheet'],
+    formats: ['extended'],
   },
   {
     slug: 'ai',
@@ -101,7 +101,7 @@ export const TOPICS: TopicMeta[] = [
     icon: '🤖',
     blurb: 'AI-інструменти та робота з Claude Code.',
     accent: 'indigo',
-    formats: ['extended', 'cheatsheet'],
+    formats: ['extended'],
   },
   {
     slug: 'ide',
@@ -117,7 +117,7 @@ export const TOPICS: TopicMeta[] = [
     title: 'Шпаргалка',
     icon: '⚡',
     blurb:
-      'Компактні quick-reference шпаргалки по темах: обери React, JS/TS чи Angular з меню.',
+      'Усі шпаргалки в одному місці: React, JS/TS, Angular, Next.js, LeetCode, Architecture, Fullstack, Git, AI.',
     accent: 'pink',
     formats: ['extended'],
   },

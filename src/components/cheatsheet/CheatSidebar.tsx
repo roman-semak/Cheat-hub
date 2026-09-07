@@ -3,7 +3,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, User } from 'lucide-react'
-import { TOPICS, FORMAT_LABELS, formatHref, topicHref, ACCENT } from '@/lib/cheatsheet/registry'
+import {
+  TOPICS,
+  FORMAT_LABELS,
+  formatHref,
+  topicHref,
+  ACCENT,
+  getTopic,
+} from '@/lib/cheatsheet/registry'
+import { CHEATSHEET_ENTRIES, CHEATSHEET_HREFS } from '@/lib/cheatsheet/quickref'
 import type { TopicMeta } from '@/lib/cheatsheet/types'
 import { useUserStore } from '@/lib/userStore'
 import { cn } from '@/lib/utils'
@@ -13,50 +21,56 @@ interface CheatSidebarProps {
   onToggle: () => void
 }
 
-// Sub-links for one topic: its declared formats. Rendered inline under the
-// active topic when the sidebar is expanded. The `quickref` topic has no
-// sub-links — its React/JS/Angular switch lives in the top tab bar inside the
-// page (see QuickRefTopicView).
-function TopicSubLinks({
-  topic,
-  pathname,
-  accentTextClass,
-}: {
-  topic: TopicMeta
-  pathname: string
-  accentTextClass: string
-}) {
-  if (topic.slug === 'quickref') return null
+interface SectionLink {
+  href: string
+  label: string
+  icon?: string
+}
 
-  return (
-    <>
-      {topic.formats.map((format) => {
-        const href = formatHref(topic.slug, format)
-        const formatActive = pathname === href
-        return (
-          <li key={format}>
-            <Link
-              href={href}
-              className={cn(
-                'block rounded px-2 py-1 text-xs transition-colors',
-                formatActive
-                  ? cn('bg-white/5 font-medium', accentTextClass)
-                  : 'text-slate-400 hover:text-slate-200',
-              )}
-            >
-              {FORMAT_LABELS[format]}
-            </Link>
-          </li>
-        )
-      })}
-    </>
-  )
+// Sub-links of the active section, listed in the bottom block below the topic
+// list. The ⚡ Шпаргалка section owns every cheat sheet in the app
+// (CHEATSHEET_ENTRIES — migrated quickref boards plus the prose pages still at
+// their own URLs); every other topic lists only its own declared formats.
+function sectionLinks(topic: TopicMeta): SectionLink[] {
+  if (topic.slug === 'quickref') {
+    return CHEATSHEET_ENTRIES.map((entry) => {
+      const entryTopic = getTopic(entry.slug)
+      return {
+        href: entry.href,
+        label: entry.label ?? entryTopic?.title ?? entry.slug,
+        icon: entryTopic?.icon,
+      }
+    })
+  }
+  return topic.formats.map((format) => ({
+    href: formatHref(topic.slug, format),
+    label: FORMAT_LABELS[format],
+  }))
 }
 
 export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
   const pathname = usePathname()
   const { data } = useUserStore()
   const profileActive = pathname === '/profile'
+
+  // Cheat-sheet URLs sit under their owning topic (/git/cheatsheet, …) but
+  // belong to the ⚡ Шпаргалка section, so they must not light up that topic.
+  const cheatsheetActive = pathname.startsWith('/quickref') || CHEATSHEET_HREFS.has(pathname)
+
+  const isTopicActive = (topic: TopicMeta) => {
+    if (topic.slug === 'quickref') return cheatsheetActive
+    if (cheatsheetActive) return false
+    if (pathname === `/${topic.slug}` || pathname.startsWith(`/${topic.slug}/`)) return true
+    // A format can live outside the topic's own path (practice -> /problems),
+    // so match its href and anything nested under it (/problems/two-sum).
+    return topic.formats.some((format) => {
+      const href = formatHref(topic.slug, format)
+      return pathname === href || pathname.startsWith(`${href}/`)
+    })
+  }
+
+  const activeTopic = TOPICS.find(isTopicActive)
+  const links = activeTopic ? sectionLinks(activeTopic) : []
 
   return (
     <aside
@@ -90,12 +104,7 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <ul className="flex flex-col gap-1">
           {TOPICS.map((topic) => {
-            const accent = ACCENT[topic.accent]
-            const hrefs = topic.formats.map((f) => formatHref(topic.slug, f))
-            const isActive =
-              pathname === `/${topic.slug}` ||
-              pathname.startsWith(`/${topic.slug}/`) ||
-              hrefs.includes(pathname)
+            const isActive = topic === activeTopic
             return (
               <li key={topic.slug}>
                 <Link
@@ -110,20 +119,51 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
                 >
                   <span className="w-5 shrink-0 text-center text-base">{topic.icon}</span>
                   {!collapsed && (
-                    <span className={cn('truncate', isActive && accent.text)}>{topic.title}</span>
+                    <span className={cn('truncate', isActive && ACCENT[topic.accent].text)}>
+                      {topic.title}
+                    </span>
                   )}
                 </Link>
-
-                {!collapsed && isActive && topic.slug !== 'quickref' && (
-                  <ul className="mb-1 ml-7 mt-0.5 flex flex-col gap-0.5 border-l border-white/10 pl-2">
-                    <TopicSubLinks topic={topic} pathname={pathname} accentTextClass={accent.text} />
-                  </ul>
-                )}
               </li>
             )
           })}
         </ul>
       </nav>
+
+      {/* Formats of the active section — kept out of the topic list so the list
+          above stays a flat set of sections. Hidden on the 56px rail, which has
+          no room for labels. */}
+      {!collapsed && activeTopic && links.length > 0 && (
+        <div className="border-t border-white/10 px-2 py-2">
+          <div className="flex items-center gap-2 px-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <span className="text-sm">{activeTopic.icon}</span>
+            <span className="truncate">{activeTopic.title}</span>
+          </div>
+          <ul className="flex max-h-64 flex-col gap-0.5 overflow-y-auto">
+            {links.map((link) => {
+              const active = pathname === link.href
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      'flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors',
+                      active
+                        ? cn('bg-white/5 font-medium', ACCENT[activeTopic.accent].text)
+                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-200',
+                    )}
+                  >
+                    {link.icon && (
+                      <span className="w-4 shrink-0 text-center text-sm">{link.icon}</span>
+                    )}
+                    <span className="truncate">{link.label}</span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
 
       {/* Profile link (local user) */}
       <div className="border-t border-white/10 px-2 py-2">
