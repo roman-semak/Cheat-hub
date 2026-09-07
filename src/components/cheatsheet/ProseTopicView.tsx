@@ -162,13 +162,7 @@ export function ProseTopicView({
             id={section.id}
             className="min-h-[100dvh] scroll-mt-4 snap-start px-6 py-8 md:px-10"
           >
-            <div
-              className={cn(
-                'mx-auto max-w-3xl',
-                variant === 'cheat' &&
-                  'xl:rounded-lg xl:bg-[#faf3e2] xl:px-10 xl:py-9 xl:shadow-[0_1px_28px_rgba(51,41,26,0.13)]',
-              )}
-            >
+            <div className="mx-auto max-w-3xl">
               <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-slate-100">
                 <span>{section.title}</span>
                 <SectionResetButton
