@@ -327,7 +327,7 @@
 
 /* .cheat-prose surfaces: same selectors as the dark block, re-toned for paper.
    .paper .cheat-prose X (0,3,1) out-specifies .cheat-prose X (0,2,1). */
-.paper .cheat-prose code {
+.paper .cheat-prose :not(pre) > code {
   background: var(--paper-sunken);
   color: #7c4a12;
 }
@@ -337,6 +337,7 @@
   color: var(--paper-code-ink);
 }
 .paper .cheat-prose pre code {
+  background: transparent;
   color: var(--paper-code-ink);
 }
 .paper .cheat-prose .card {
@@ -464,10 +465,51 @@
   color: var(--paper-ink-faint);
 }
 .paper .text-orange-400,
+.paper .text-orange-300,
 .paper .text-cyan-400,
 .paper .text-rose-300,
 .paper .text-red-300 {
   color: var(--paper-accent);
+}
+.paper .text-emerald-200,
+.paper .text-emerald-300,
+.paper .text-emerald-400,
+.paper .text-green-300 {
+  color: #3f6a2a;
+}
+.paper .text-amber-300,
+.paper .text-yellow-300 {
+  color: #8a5a12;
+}
+.paper .text-indigo-200,
+.paper .text-indigo-300 {
+  color: #4b3f7a;
+}
+.paper .text-red-200 {
+  color: #9a3b2f;
+}
+
+/* Bold + inline code inside HTML fragments (chips, desc, .cheat-prose). The
+   arbitrary `[&_b]:text-slate-200` variants target <b> directly, so remap the
+   elements, not the utility classes. */
+.paper b,
+.paper strong {
+  /* !important: Tailwind emits the `[&_b]:text-slate-200` chip variant after
+     this rule at equal specificity, so it would otherwise win the tie. */
+  color: var(--paper-ink) !important;
+}
+.paper :not(pre) > code:not(.hljs) {
+  background: var(--paper-sunken);
+  color: #7c4a12;
+}
+.paper :not(pre) > code .kw,
+.paper :not(pre) > code .fn,
+.paper :not(pre) > code .str,
+.paper :not(pre) > code .num,
+.paper :not(pre) > code .type,
+.paper :not(pre) > code .jsx,
+.paper :not(pre) > code .cmt {
+  color: #7c4a12;
 }
 .paper .text-transparent {
   color: var(--paper-accent) !important;

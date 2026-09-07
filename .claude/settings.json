@@ -93,7 +93,8 @@
       "Bash(curl -s -o /dev/null -w \"api/run: %{http_code}\\\\n\" -X POST http://localhost:5001/api/run -H 'Content-Type: application/json' -d '{\"code\":\"var twoSum=function\\(n,t\\){return [0,1]}\",\"language\":\"javascript\",\"testCases\":[{\"input\":\"[[2,7,11,15],9]\",\"expected\":\"[0,1]\"}]}')",
       "Bash(/bin/ls -la /private/tmp/claude-501/-Users-romansemak-GitHub-PET-cheatHub/c65ab27c-298e-47d7-a23a-e26d3faa42b3/scratchpad)",
       "Bash(file /private/tmp/claude-501/-Users-romansemak-GitHub-PET-cheatHub/c65ab27c-298e-47d7-a23a-e26d3faa42b3/scratchpad/*.png)",
-      "Bash(curl -s --max-time 90 http://localhost:5001/quickref)"
+      "Bash(curl -s --max-time 90 http://localhost:5001/quickref)",
+      "Bash(curl -s \"http://localhost:5001/_next/static/chunks/%5Broot-of-the-server%5D__1xyzj-8._.css\" -o /tmp/app.css)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad",
