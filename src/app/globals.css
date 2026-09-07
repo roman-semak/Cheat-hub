@@ -114,7 +114,9 @@
    the code styling and the label is lifted out above it (bottom: 100%).
    pre-wrap keeps the inline `#` comments aligned. */
 .cheat-prose .cmd-block {
-  @apply relative mb-2 mt-6 overflow-x-auto rounded-lg border border-white/10 bg-black/40 px-3 py-2 font-mono text-[12.5px] leading-relaxed text-slate-200;
+  /* No overflow-x-auto: it would create a scroll container that clips the
+     absolutely-positioned label. pre-wrap wraps long commands instead. */
+  @apply relative mb-2 mt-6 rounded-lg border border-white/10 bg-black/40 px-3 py-2 font-mono text-[12.5px] leading-relaxed text-slate-200;
   white-space: pre-wrap;
 }
 .cheat-prose .cmd-label {
@@ -602,7 +604,9 @@
 /* On a near-white canvas a cream input would read as a panel, not a field. */
 .paper input,
 .paper select {
-  background-color: #ffffff;
+  /* !important: these carry `bg-black/20` etc., remapped to cream above. A form
+     field should stay white so it doesn't read as one more panel. */
+  background-color: #ffffff !important;
   border-color: var(--paper-rule);
   color: var(--paper-ink);
 }
