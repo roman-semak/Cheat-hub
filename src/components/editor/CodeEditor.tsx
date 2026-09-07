@@ -51,7 +51,7 @@ export function CodeEditor({
   signature,
 }: CodeEditorProps) {
   const [code, setCode] = useState(starterCode)
-  const [language, setLanguage] = useState<Language>('typescript')
+  const [language, setLanguage] = useState<Language>('javascript')
   const [isRunning, setIsRunning] = useState(false)
   const [results, setResults] = useState<TestResult[] | null>(null)
   const [error, setError] = useState<string | null>(null)

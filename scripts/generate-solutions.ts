@@ -7,15 +7,16 @@
 //   npm run gen:solutions -- --only=two-sum,palindrome-number
 //   npm run gen:solutions -- --limit=25 --force
 //
-// The original TypeScript is stored verbatim; it is transpiled once here only to
-// confirm it parses. Prose hints + complexity are authored separately (by hand)
-// into the same sidecar — this script never touches `hint` / `complexity`.
+// doocs ships TypeScript; it is converted to plain JavaScript before it is
+// stored (scripts/lib/ts-to-js.ts), because the popup shows JS only. Prose hints
+// + complexity are authored separately (by hand) into the same sidecar — this
+// script never touches `hint` / `complexity`.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { transform } from 'sucrase'
 import LeetCode from 'leetcode-query'
 import { problems } from '../src/data/problems'
 import { fetchReferenceSolution } from './lib/doocs'
+import { toJavaScript } from './lib/ts-to-js'
 
 /** Seeded problems predate the LeetCode import and kept short slugs. */
 const SLUG_ALIASES: Record<string, string> = {
@@ -147,14 +148,15 @@ async function main() {
         console.log('· not found on doocs')
         continue
       }
+      let js: string
       try {
-        transform(raw, { transforms: ['typescript'] })
+        js = toJavaScript(raw)
       } catch (e) {
         console.log(`· parse failed (${e instanceof Error ? e.message.split('\n')[0] : e})`)
         continue
       }
       const entry: Entry = sidecar[problem.slug] ?? {}
-      entry.solution = raw.trim()
+      entry.solution = js
       entry.solutionSource = 'doocs'
       sidecar[problem.slug] = entry
       ok++

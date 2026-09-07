@@ -79,7 +79,7 @@ export function ProblemDescription({
   const constraintsHtml = constraints ? md.render(constraints) : ''
   const editorialHtml = editorial ? md.render(editorial) : ''
   const approachHtml = approach ? md.render(approach) : ''
-  const solutionHtml = solution ? highlight(solution) : ''
+  const solutionHtml = solution ? highlight(solution, 'javascript') : ''
 
   return (
     <div className="space-y-6">

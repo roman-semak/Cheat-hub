@@ -57,7 +57,7 @@ export interface TaskCard {
   description?: string // task description (may contain inline code)
   hint?: string // approach / hint box
   complexity?: string // "Time O(n), Space O(n)"
-  code?: string // TypeScript solution (raw)
+  code?: string // JavaScript solution (raw)
   language?: string // defaults to 'typescript'
   practiceSlug?: string // -> /problems/{slug} when a DB problem exists
   placeholder?: boolean // true for "see Notion" stubs without full content

@@ -60,7 +60,7 @@ async function main() {
 
     const signature = t.meta ? JSON.stringify(t.meta) : problem.signature
     try {
-      const results = await runCode(entry.solution, 'typescript', t.cases, signature)
+      const results = await runCode(entry.solution, 'javascript', t.cases, signature)
       const failed = results.filter((r) => !r.passed)
       if (failed.length === 0) {
         pass++

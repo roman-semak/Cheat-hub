@@ -171,6 +171,7 @@ DB. That file is AUTO-GENERATED — do not hand-edit it. Pipeline:
 3. `npm run merge:leetcode` (`scripts/merge-leetcode-catalog.ts`) — folds in the
    NeetCode-250 `approach` write-ups, the `src/data/approaches.json` sidecar
    (see below), **and** `testCases` from `src/data/testcases.generated.json`.
+   Also normalises every `solution` to plain JavaScript.
    **Always run this after step 2.**
 
 ### Popup solutions — `src/data/approaches.json` (source of truth)
@@ -179,20 +180,31 @@ Fills the "Solution" popup (`approach` = UA hint + `**Складність:**` l
 `solution` = reference code) for problems the NeetCode-250 catalog does not
 cover. Keyed by slug; committed; the catalog wins on conflicts.
 
+Every stored `solution` is **plain JavaScript** — the popup ships JS only, and
+the editor opens in JavaScript (TypeScript stays as an opt-in in the language
+select).
+
 - `npm run gen:solutions` (`scripts/generate-solutions.ts`) — pulls the doocs
-  reference `solution` (original TS, verified to parse) for every problem
-  lacking one. Resumable; `-- --report` prints coverage, `-- --only=` / `--force`
-  / `--limit=` scope a subset. Falls back to a LeetCode query for the
-  `frontendId` when `problems.ts` has none.
+  reference `solution` for every problem lacking one and converts it to JS via
+  `scripts/lib/ts-to-js.ts` before writing. Resumable; `-- --report` prints
+  coverage, `-- --only=` / `--force` / `--limit=` scope a subset. Falls back to a
+  LeetCode query for the `frontendId` when `problems.ts` has none.
 - `hint` + `complexity` are **hand-authored** (Ukrainian, style like the Two Sum
   catalog entry) directly into the JSON — `gen:solutions` never touches them.
+- `npm run normalize:solutions` (`scripts/normalize-solutions.ts`) — rewrites any
+  TypeScript left in the sidecar as JS; `-- --check` reports without writing and
+  exits non-zero when something is stale. `merge:leetcode` applies the same
+  conversion to every row it renders, so non-sidecar solutions are covered too.
 - `npm run verify:approaches` (`scripts/verify-approaches.ts`) — runs every
   sidecar `solution` through `src/lib/runner.ts` against
   `testcases.generated.json`; non-zero exit on any FAIL. Run after editing.
 
 Entry shape: `{ hint?, complexity?, solution?, solutionSource?: "doocs"|"authored" }`.
 The shared doocs fetcher lives in `scripts/lib/doocs.ts`
-(used by `gen:testcases` too).
+(used by `gen:testcases` too). `scripts/lib/ts-to-js.ts` strips TS via sucrase
+(`disableESTransforms`, so `?.` / `??` survive) and rewrites the doocs
+`class ListNode { val: number … }` header comments into LeetCode's JS
+`function ListNode(val, next)` form.
 
 ### Test cases — `src/data/testcases.generated.json` (source of truth)
 

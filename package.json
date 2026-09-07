@@ -18,6 +18,7 @@
     "merge:leetcode": "tsx scripts/merge-leetcode-catalog.ts",
     "gen:testcases": "tsx scripts/generate-testcases.ts",
     "gen:solutions": "tsx scripts/generate-solutions.ts",
+    "normalize:solutions": "tsx scripts/normalize-solutions.ts",
     "verify:approaches": "tsx scripts/verify-approaches.ts"
   },
   "dependencies": {

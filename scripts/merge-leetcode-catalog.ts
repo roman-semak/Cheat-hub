@@ -10,6 +10,7 @@ import { resolve } from 'node:path'
 import { problems } from '../src/data/problems'
 import { leetcodeData } from '../src/lib/cheatsheet/leetcode'
 import { renderModule } from './lib/serialize-problems'
+import { toJavaScript } from './lib/ts-to-js'
 import type { Section, TaskCard } from '../src/lib/cheatsheet/types'
 
 const OUT = resolve('src/data/problems.ts')
@@ -138,7 +139,26 @@ for (const row of rows) {
   }
 }
 
+// The popup shows JavaScript only: whatever the source of `solution` (the DB
+// export, the NeetCode catalog, the approaches sidecar), strip any TypeScript
+// before it lands in src/data/problems.ts. Idempotent — JS passes through.
+let normalized = 0
+for (const row of rows) {
+  if (typeof row.solution !== 'string' || !row.solution.trim()) continue
+  try {
+    const js = toJavaScript(row.solution)
+    if (js !== row.solution) {
+      row.solution = js
+      normalized++
+    }
+  } catch (e) {
+    console.warn(
+      `  ! ${row.slug}: solution left as-is (${e instanceof Error ? e.message.split('\n')[0] : e})`,
+    )
+  }
+}
+
 writeFileSync(OUT, renderModule(rows), 'utf8')
 console.log(
-  `Merged catalog: ${matched} matched, ${stubs} stubs, +${approaches} approaches, ${withTests} with generated test cases, ${rows.length} problems total -> ${OUT}`,
+  `Merged catalog: ${matched} matched, ${stubs} stubs, +${approaches} approaches, ${withTests} with generated test cases, ${normalized} solutions normalized to JS, ${rows.length} problems total -> ${OUT}`,
 )
