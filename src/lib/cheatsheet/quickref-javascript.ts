@@ -493,6 +493,15 @@ Object.fromEntries(pairs);          // назад в обʼєкт`,
       { term: "str.repeat(3)", desc: "<code>'ab'</code> → <code>'ababab'</code>", chips: ['NEW'] },
       { term: "str.replace(a, b)", desc: 'замінити <b>перше</b> входження; <code>replace(/a/g, b)</code> — усі', chips: ['NEW'] },
       { term: "str.replaceAll(a, b)", desc: 'усі входження без regex', chips: ['NEW', 'ES2021'] },
+      {
+        term: 'template literals `…${x}…`',
+        desc: 'інтерполяція виразів, багаторядкові рядки без <code>\\n</code>',
+        code: `const name = 'Ann';
+\`Hi, \${name}!\`;      // інтерполяція
+\`Sum: \${1 + 2}\`;     // будь-який вираз
+\`Line1
+Line2\`;               // багаторядковий`,
+      },
     ],
   },
   {
@@ -541,7 +550,7 @@ str.trim().split(/\\s+/).length;`,
     label: 'MUT vs NEW · правило React',
     icon: '⚠️',
     chips: [
-      '<b>MUT (Array):</b> <code>push pop shift unshift splice sort reverse fill</code>',
+      '<b>MUT (Array):</b> <code>push pop shift unshift splice sort reverse fill copyWithin</code>',
       '<b>NEW (Array):</b> <code>map filter reduce slice concat flat flatMap toSorted toReversed toSpliced with join</code>',
       '<b>String:</b> усі методи NEW (рядки immutable)',
       '<b>React:</b> у стані ніколи MUT напряму → <code>[...arr]</code> / <code>toSorted</code> / <code>with</code>',
