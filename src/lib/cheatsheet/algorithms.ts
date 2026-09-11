@@ -297,5 +297,205 @@ for (const [s, e] of iv) {
         },
       ],
     },
+
+    /* ============ Searching ============ */
+    {
+      id: 'searching',
+      title: '🔍 Алгоритми пошуку',
+      interviewQuestions: [
+        {
+          question: "Чому <code>a.filter(x =&gt; b.includes(x))</code> — це прихований O(n²), і як переписати за O(n)?",
+          answer: "<code>includes</code> / <code>indexOf</code> / <code>find</code> — <strong>лінійні</strong>: кожен виклик проходить масив <code>b</code> заново. Усередині <code>filter</code> по <code>a</code> це дає O(n·m) ≈ O(n²). Фікс — один раз побудувати хеш-індекс: <code>const set = new Set(b)</code> (O(m)), далі <code>a.filter(x =&gt; set.has(x))</code> — кожна перевірка O(1) амортизовано, разом O(n + m). Ціна — O(m) додаткової пам'яті, що майже завжди виправдано, якщо перевірок багато.",
+        },
+        {
+          question: "Які передумови й типові помилки класичного binary search? Чому умова циклу — <code>low &lt;= high</code>?",
+          answer: "Передумова — дані <strong>відсортовані</strong>; на несортованих результат просто неправильний (сортувати заради одного пошуку — O(n log n), гірше за лінійний O(n); виправдано лише для багатьох запитів). При закритому інтервалі <code>[low, high]</code> умова <code>low &lt;= high</code> потрібна, бо коли <code>low === high</code> ще лишається один непереглянутий елемент — з <code>&lt;</code> його пропустиш. Інші класичні баги: <code>low = mid</code> замість <code>mid + 1</code> (нескінченний цикл) і overflow у <code>(low + high) / 2</code> у мовах з фіксованими int — безпечно <code>low + ((high - low) &gt;&gt; 1)</code>.",
+        },
+        {
+          question: "Що таке lower bound і «binary search on answer»? Наведіть приклад, де пошук іде не по масиву.",
+          answer: "<strong>Lower bound</strong> — перший індекс, де <code>arr[i] &gt;= target</code> (точка вставки зі збереженням порядку); напіввідкритий інтервал <code>[low, high)</code> і <code>while (low &lt; high)</code>. Через нього рахують first/last occurrence і кількість елементів у діапазоні. <strong>Binary search on answer</strong> — шукаємо мінімальне/максимальне <em>значення відповіді</em>, для якого монотонний предикат <code>ok(x)</code> стає істинним: мінімальна швидкість, щоб з'їсти банани за h годин (Koko), мінімальна місткість, щоб доставити вантажі за d днів. Складність — O(log(діапазон) · вартість <code>ok</code>).",
+        },
+        {
+          question: "DFS чи BFS: коли що обирати, чому BFS гарантує найкоротший шлях і навіщо графу <code>visited</code>?",
+          answer: "<strong>BFS</strong> (черга) обходить рівнями, тож перше досягнення вузла відбувається мінімальною кількістю ребер — звідси гарантія найкоротшого шляху в <em>незваженому</em> графі; ціна — пам'ять O(ширина). <strong>DFS</strong> (рекурсія/стек) — O(висота) пам'яті, природний для «відвідати все», шляхів, backtracking, топосорту, але на дуже глибоких структурах рекурсія ризикує stack overflow. У дереві кожен вузол має одного батька, а в графі є цикли й кілька шляхів до вузла — без <code>Set</code> відвіданих обхід зациклиться або обробить вузол багато разів. Для зважених графів BFS не підходить — потрібен Dijkstra.",
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Три рівні: <strong>(A)</strong> вбудовані методи JS і їхня складність — те, що реально пишуть у проді; <strong>(B)</strong> базові алгоритми — linear, binary, hash; <strong>(C)</strong> обхід дерев і графів — DFS / BFS.</p>
+  <h3 class="topic">A · Вбудовані методи пошуку <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Метод</th><th>Повертає</th><th>Складність</th><th>Нотатки</th></tr>
+      <tr><td><code>arr.indexOf(x)</code></td><td>індекс або -1</td><td><strong>O(n)</strong></td><td>строге <code>===</code>, не знаходить <code>NaN</code></td></tr>
+      <tr><td><code>arr.includes(x)</code></td><td>boolean</td><td><strong>O(n)</strong></td><td>знаходить <code>NaN</code> (SameValueZero)</td></tr>
+      <tr><td><code>arr.find(fn)</code> / <code>findIndex(fn)</code></td><td>елемент / індекс</td><td><strong>O(n)</strong></td><td>за предикатом</td></tr>
+      <tr><td><code>findLast</code> / <code>findLastIndex</code></td><td>з кінця</td><td><strong>O(n)</strong></td><td>ES2023</td></tr>
+      <tr><td><code>Set.has(x)</code></td><td>boolean</td><td><strong>O(1)</strong></td><td>хеш-lookup</td></tr>
+      <tr><td><code>Map.get(k)</code> / <code>Map.has(k)</code></td><td>значення / boolean</td><td><strong>O(1)</strong></td><td>хеш-lookup</td></tr>
+      <tr><td><code>obj[key]</code></td><td>значення</td><td><strong>O(1)</strong></td><td>хеш-lookup</td></tr>
+    </table>
+  </div>
+  <div class="alert"><span class="icon">🎯</span> <span><strong>Головний Senior-інсайт:</strong> O(n)-lookup усередині циклу = <strong>O(n²)</strong>. Якщо належність перевіряється багато разів — один раз конвертуй у <code>Set</code> / <code>Map</code> (O(n)), далі кожна перевірка O(1).</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Прихований O(n²) → O(n) через Set; тонкість indexOf vs includes',
+          code: `// ❌ O(n²) — includes лінійний, і він усередині filter
+const common = arr.filter(x => otherArr.includes(x));
+
+// ✅ O(n) — Set дає O(1) lookup
+const set = new Set(otherArr);
+const common2 = arr.filter(x => set.has(x));
+
+[NaN].indexOf(NaN);  // -1   (===, а NaN !== NaN)
+[NaN].includes(NaN); // true (SameValueZero)`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">B · Linear Search</h3>
+  <p>Прохід по кожному елементу до збігу. Працює на <strong>будь-яких</strong> (несортованих) даних. <strong>Time</strong> O(n), <strong>Space</strong> O(1) — саме це роблять <code>indexOf</code> / <code>find</code> під капотом.</p>
+  <h3 class="topic">B · Binary Search <span class="tag tag-key">KEY</span></h3>
+  <p>Працює <strong>тільки на відсортованому</strong> масиві: щокроку відкидає половину діапазону. <strong>Time</strong> O(log n), <strong>Space</strong> O(1) ітеративно / O(log n) рекурсивно.</p>
+  <ul class="list">
+    <li><strong>Передумова:</strong> сортованість. Якщо даних не відсортовано — sort O(n log n) + пошук O(log n) виправдані лише при <em>багатьох</em> пошуках.</li>
+    <li><strong><code>while (low &lt;= high)</code></strong> — саме <code>&lt;=</code> для закритого інтервалу, інакше пропустиш останній елемент.</li>
+    <li><strong>Overflow-safe mid:</strong> <code>low + ((high - low) &gt;&gt; 1)</code> — у JS не критично, але в Java/C++ це баг; згадка — сигнал досвіду.</li>
+  </ul>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Linear, binary search і lower bound (точка вставки)',
+          code: `function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) return i;
+  }
+  return -1;
+}
+
+function binarySearch(arr, target) {
+  let low = 0, high = arr.length - 1;          // закритий інтервал [low, high]
+  while (low <= high) {
+    const mid = low + ((high - low) >> 1);     // overflow-safe
+    if (arr[mid] === target) return mid;
+    if (arr[mid] < target) low = mid + 1;      // шукаємо праворуч
+    else high = mid - 1;                       // шукаємо ліворуч
+  }
+  return -1;
+}
+
+// Lower bound — перший індекс, де arr[i] >= target
+function lowerBound(arr, target) {
+  let low = 0, high = arr.length;              // напіввідкритий [low, high)
+  while (low < high) {
+    const mid = (low + high) >> 1;
+    if (arr[mid] < target) low = mid + 1;
+    else high = mid;
+  }
+  return low;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Варіації binary search (часті follow-up)</h3>
+  <ul class="list">
+    <li><strong>First / last occurrence</strong> при дублікатах — не зупинятися на першому збігу, а продовжити в потрібний бік (або lower/upper bound).</li>
+    <li><strong>Insertion point</strong> (lower / upper bound) — куди вставити, зберігши порядок; у <code>Array.prototype</code> такого методу немає.</li>
+    <li><strong>Search in rotated sorted array</strong> — класика LeetCode: на кожному кроці одна з половин гарантовано відсортована.</li>
+    <li><strong>Binary search on answer</strong> — шукаємо не в масиві, а мінімальне/максимальне значення, що задовольняє монотонну умову («мінімальна швидкість», «мінімальна місткість»).</li>
+  </ul>
+  <h3 class="topic">B · Hash-based search — найшвидший на практиці</h3>
+  <p><code>Set</code> / <code>Map</code> / об'єкт дають <strong>O(1)</strong> амортизовано через хешування. Формально це структура даних, а не «алгоритм пошуку», але саме так у фронтенді шукають найчастіше. <strong>Trade-off:</strong> O(1) пошук ціною O(n) пам'яті на індекс — майже завжди виправдано, якщо шукаєш багато разів.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Індекс за ключем: O(n) побудова, далі O(1) пошук',
+          code: `const byId = new Map(users.map(u => [u.id, u])); // O(n) один раз
+byId.get(42);                                      // O(1)`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">C · Обхід дерев і графів</h3>
+  <p>Релевантно і для фронтенду: DOM-дерево, вкладені коментарі, file explorer, дерева роутів і меню, JSON-структури.</p>
+  <p><strong>DFS (Depth-First)</strong> — іде якомога глибше, потім backtrack; рекурсія або явний стек. Порядки для бінарних дерев: <strong>pre-order</strong> (корінь → ліво → право), <strong>in-order</strong> (ліво → корінь → право — дає відсортований порядок для BST), <strong>post-order</strong> (ліво → право → корінь).</p>
+  <p><strong>BFS (Breadth-First)</strong> — рівень за рівнем через <strong>чергу</strong> (FIFO). Use case: найкоротший шлях у незваженому графі, «усі вузли на глибині k».</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>DFS</th><th>BFS</th></tr>
+      <tr><td>Структура</td><td>стек / рекурсія</td><td>черга</td></tr>
+      <tr><td>Пам'ять</td><td>O(висота)</td><td>O(ширина) — може бути велика</td></tr>
+      <tr><td>Найкоротший шлях (unweighted)</td><td>❌ не гарантує</td><td>✅ гарантує</td></tr>
+      <tr><td>Глибокі дерева</td><td>ризик stack overflow (рекурсія)</td><td>безпечніше</td></tr>
+      <tr><td>Широкі дерева</td><td>ощадливіше по пам'яті</td><td>багато пам'яті</td></tr>
+    </table>
+  </div>
+  <div class="alert"><span class="icon">🎯</span> <span>Найкоротший шлях у <strong>незваженому</strong> графі → <strong>BFS</strong>. «Відвідати все» / глибокі структури → <strong>DFS</strong>. <strong>Зважений</strong> граф → <strong>Dijkstra</strong> (priority queue, невід'ємні ваги); <strong>A*</strong> = Dijkstra + евристика (навігація, ігри).</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'DFS / BFS по дереву і DFS по графу з visited-set',
+          code: `// DFS — рекурсивно (дерево компонентів, вкладені коментарі)
+function dfs(node, visit) {
+  visit(node);
+  for (const child of node.children ?? []) dfs(child, visit);
+}
+
+// BFS — черга; індекс-вказівник замість shift() (shift — O(n))
+function bfs(root, visit) {
+  const queue = [root];
+  for (let head = 0; head < queue.length; head++) {
+    const node = queue[head];
+    visit(node);
+    queue.push(...(node.children ?? []));
+  }
+}
+
+// Граф (на відміну від дерева) потребує visited — інакше нескінченний цикл
+function dfsGraph(node, visited = new Set()) {
+  if (visited.has(node)) return;
+  visited.add(node);
+  for (const next of node.neighbors) dfsGraph(next, visited);
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Практичні frontend-кейси</h3>
+  <ul class="list">
+    <li><strong>Autocomplete / search UI:</strong> <code>filter</code> — O(n); для великих даних — індекс (<code>Map</code> за префіксом) або <strong>Trie</strong>; для справді великих — серверний пошук (Elasticsearch).</li>
+    <li><strong>Debounce</strong> на інпуті — не шукати на кожну літеру; плюс захист від race condition (скасувати застарілий запит).</li>
+    <li><strong>Знайти вузол у дереві</strong> (коментарі, меню, DOM) — DFS.</li>
+    <li><strong>Fuzzy search</strong> — бібліотеки на кшталт Fuse.js (на інтерв'ю не пишуть, але знати варто).</li>
+    <li><strong>Мемоізація</strong> дорогих фільтрів у рендері — <code>useMemo</code>.</li>
+  </ul>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Фільтр списку без перерахунку на кожен рендер',
+          code: `const filtered = useMemo(
+  () => items.filter(i => i.name.toLowerCase().includes(query.toLowerCase())),
+  [items, query],
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Пастки <span class="tag tag-pit">PIT</span></h3>
+  <ul class="list">
+    <li><strong><code>includes</code> / <code>indexOf</code> у циклі</strong> → приховане O(n²); заміни на <code>Set</code>.</li>
+    <li><strong>Binary search на несортованому</strong> → невірний результат (передумова!).</li>
+    <li><strong><code>while (low &lt; high)</code> замість <code>&lt;=</code></strong> у класичному (закритому) binary search → пропуск елемента.</li>
+    <li><strong>Рекурсивний DFS на дуже глибокому дереві</strong> → stack overflow; ітеративний варіант зі стеком.</li>
+    <li><strong>Обхід графа без <code>visited</code></strong> → нескінченний цикл.</li>
+    <li><strong><code>queue.shift()</code> у BFS</strong> — O(n) на великих масивах; індекс-вказівник або справжня deque.</li>
+  </ul>
+  <div class="alert alert-good"><span class="icon">💬</span> <span><strong>Як подати на співбесіді:</strong> «У фронтенді пошук — це переважно <code>Set</code>/<code>Map</code> для O(1) замість <code>includes</code> у циклі та <code>filter</code>/<code>find</code> для UI. Binary search руками пишу рідко, але знаю передумову (сортованість) і варіації. DFS/BFS застосовую для вкладених структур — коментарі, меню, JSON, file explorer. Для великих списків — debounce, <code>useMemo</code>, а для справді великих даних — серверний пошук».</span></div>`,
+        },
+      ],
+    },
   ],
 }
