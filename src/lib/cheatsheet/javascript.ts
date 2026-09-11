@@ -1928,6 +1928,216 @@ self.addEventListener('fetch', (event) => {
       ],
     },
     {
+      id: 'service-worker',
+      title: '⚙️ Service Worker — lifecycle, кешування, offline',
+      interviewQuestions: [
+        {
+          question: "Задеплоїли нову версію, а користувачі досі бачать стару. Що відбувається з життєвим циклом Service Worker і як це виправити?",
+          answer: "Новий SW після <code>install</code> переходить у стан <strong>waiting</strong>: поки відкрита хоч одна вкладка, контрольована старим SW, браузер його не активує — щоб не підмінити кеш і логіку «під ногами» в живої сторінки. Тому оновлення «не доїжджає», доки користувач не закриє всі вкладки. Фікс: <code>self.skipWaiting()</code> в <code>install</code> (активувати одразу) + <code>clients.claim()</code> в <code>activate</code> (взяти під контроль уже відкриті сторінки). Безпечніший UX-патерн — SW повідомляє сторінку «є оновлення», сторінка показує тост «Reload», і лише по кліку шле <code>SKIP_WAITING</code>, бо різкий <code>skipWaiting</code> може змішати старий HTML з новими чанками.",
+        },
+        {
+          question: "Які caching-стратегії ви знаєте і яку оберете для HTML, статики з хешем у назві та API-даних?",
+          answer: "<strong>Cache First</strong> — статика з content-hash у назві (JS/CSS/шрифти/картинки): вона імутабельна, мережа не потрібна. <strong>Network First</strong> — HTML і дані, що мають бути свіжими; кеш лише як офлайн-фолбек. <strong>Stale-While-Revalidate</strong> — віддати кеш миттєво й оновити його у фоні: баланс швидкості й свіжості для некритичних даних (аватари, конфіг, списки). <strong>Network Only</strong> — POST, аналітика, платежі. <strong>Cache Only</strong> — прекешований app shell. Головне правило: <code>index.html</code> ніколи не Cache First — інакше користувач застрягне на старому білді.",
+        },
+        {
+          question: "Чому в Service Worker немає <code>localStorage</code> і DOM, і як тоді зберігати стан та спілкуватися зі сторінкою?",
+          answer: "SW працює в окремому воркер-контексті, повністю <strong>асинхронному</strong> й <strong>event-driven</strong>: браузер може зупинити його між подіями будь-коли. Синхронний <code>localStorage</code> блокував би потік, тож він недоступний; DOM теж — SW не прив'язаний до жодної сторінки. Стан — у <strong>IndexedDB</strong> (структуровані дані, черги) і <strong>Cache API</strong> (пари Request/Response); глобальні змінні SW не переживають зупинку воркера. Зв'язок — <code>postMessage</code> (<code>navigator.serviceWorker.controller</code> ↔ <code>clients.matchAll()</code>), <code>BroadcastChannel</code> або <code>MessageChannel</code>.",
+        },
+        {
+          question: "Чим Service Worker відрізняється від Web Worker і навіщо в проді Workbox?",
+          answer: "<strong>Web Worker</strong> — фоновий потік для обчислень, живе, поки жива сторінка, мережу не перехоплює. <strong>Service Worker</strong> — мережевий proxy на рівні origin: персистентний між сесіями, перехоплює <code>fetch</code>, отримує push і background sync навіть коли сторінку закрито (той самий концепт — service worker у MV3-розширеннях, що замінив persistent background page). Руками SW у проді пишуть рідко: <strong>Workbox</strong> дає готові стратегії, роутинг, precache-маніфест із ревізіями й коректне версіонування — саме там найчастіше помиляються вручну.",
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що це <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Service Worker (SW)</strong> — скрипт, який браузер запускає <strong>у фоні, окремо від сторінки</strong>, як <strong>programmable network proxy</strong> між застосунком і мережею. Він перехоплює запити, віддає відповіді з кешу, дає офлайн-режим, push-повідомлення та background sync — фундамент PWA (див. секцію «SPA vs MPA vs PWA» вище).</p>
+  <ul class="list">
+    <li><strong>Окремий потік</strong> — не блокує UI, <strong>немає доступу до DOM</strong>.</li>
+    <li><strong>Event-driven</strong> — прокидається на подію, обробляє, засинає; не тримається в пам'яті постійно.</li>
+    <li><strong>HTTPS-only</strong> (крім <code>localhost</code>) — бо може перехоплювати весь трафік origin.</li>
+    <li><strong>Повністю асинхронний</strong> — жодного синхронного API: немає <code>localStorage</code>, лише IndexedDB / Cache API.</li>
+  </ul>`,
+        },
+        {
+          kind: 'mermaid',
+          caption: 'Ментальна модель: SW сам вирішує — кеш, мережа чи комбінація',
+          code: `flowchart LR
+  P["Web Page<br/>(main thread)"] -- "fetch()" --> SW["Service Worker<br/>'fetch' event"]
+  SW --> C[("Cache API")]
+  SW --> N["Network<br/>(real request)"]`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Життєвий цикл — найважливіше для інтерв'ю</h3>
+  <p><code>Register → Install → (Waiting) → Activate → Idle ⇄ Fetch/Message → Terminated</code></p>
+  <ul class="list">
+    <li><strong>Register</strong> — сторінка реєструє скрипт SW.</li>
+    <li><strong>Install</strong> — раз на кожну нову версію скрипта; тут <strong>прекешують</strong> статику. <code>event.waitUntil(promise)</code> тримає фазу, доки проміс не завершиться (reject → інсталяція провалена).</li>
+    <li><strong>Waiting</strong> — якщо вже є активний старий SW, новий <strong>чекає</strong>, поки не закриються всі вкладки зі старим. <code>self.skipWaiting()</code> — активувати одразу.</li>
+    <li><strong>Activate</strong> — тут <strong>чистять старі кеші</strong>. <code>clients.claim()</code> — новий SW одразу бере під контроль уже відкриті сторінки без перезавантаження.</li>
+  </ul>
+  <div class="alert warn"><span class="icon">⚠️</span> <span><strong>Топ-пастка:</strong> без <code>skipWaiting()</code> + <code>clients.claim()</code> нова версія не застосується, поки користувач не закриє всі вкладки — звідси баги «задеплоїли, а показується старе».</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Register → install (precache) → activate (cleanup)',
+          code: `// main.js — реєстрація
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
+// sw.js
+const CACHE = 'static-v2';
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE).then(cache =>
+      cache.addAll(['/', '/index.html', '/app.js', '/styles.css']),
+    ),
+  );
+  // self.skipWaiting(); // активувати одразу, без waiting
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim()), // контроль над уже відкритими вкладками
+  );
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Fetch event і caching-стратегії</h3>
+  <p>Серце SW: обробник <code>fetch</code> отримує кожен запит сторінки, а <code>event.respondWith(promise)</code> каже браузеру «я сам відповім».</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Стратегія</th><th>Логіка</th><th>Коли</th></tr>
+      <tr><td><strong>Cache First</strong></td><td>кеш → якщо нема, мережа</td><td>статика з хешем у назві (JS/CSS/шрифти/зображення)</td></tr>
+      <tr><td><strong>Network First</strong></td><td>мережа → якщо офлайн, кеш</td><td>HTML, дані, що мають бути свіжими</td></tr>
+      <tr><td><strong>Stale-While-Revalidate</strong></td><td>віддати кеш <em>одразу</em> + оновити кеш у фоні</td><td>баланс швидкості й свіжості (найпопулярніша)</td></tr>
+      <tr><td><strong>Network Only</strong></td><td>завжди мережа</td><td>POST, аналітика, платежі</td></tr>
+      <tr><td><strong>Cache Only</strong></td><td>завжди кеш</td><td>прекешований app shell</td></tr>
+    </table>
+  </div>
+  <p><strong>Stale-While-Revalidate</strong> — фаворит інтерв'ю: користувач бачить кеш миттєво, а наступний візит отримує оновлені дані. Компроміс — перший показ може бути трохи застарілим.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Cache First (базовий) і Stale-While-Revalidate',
+          code: `// Cache First
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then(cached => cached || fetch(event.request)),
+  );
+});
+
+// Stale-While-Revalidate
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.open('dynamic').then(async (cache) => {
+      const cached = await cache.match(event.request);
+      const network = fetch(event.request).then((res) => {
+        cache.put(event.request, res.clone()); // оновлюємо кеш у фоні
+        return res;
+      });
+      return cached || network; // миттєво кеш, паралельно — оновлення
+    }),
+  );
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">App Shell + offline fallback</h3>
+  <p><strong>App Shell:</strong> на <code>install</code> прекешуєш мінімальний «каркас» (HTML/CSS/JS оболонки) → застосунок відкривається офлайн миттєво, а контент довантажується. Для навігаційних запитів без мережі — фолбек-сторінка.</p>
+  <h3 class="topic">Push і Background Sync</h3>
+  <p><strong>Push</strong> — SW отримує повідомлення навіть коли сторінку закрито (Push API + сервер із VAPID-ключами) і показує нотифікацію. <strong>Background Sync</strong> — відкладає дію до появи мережі (напр. надіслати повідомлення, коли зв'язок повернеться).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Offline fallback, push, background sync',
+          code: `// offline fallback для навігації
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request).catch(() => caches.match('/offline.html')));
+  }
+});
+
+// push
+self.addEventListener('push', (event) => {
+  const data = event.data.json();
+  event.waitUntil(self.registration.showNotification(data.title, { body: data.body }));
+});
+
+// background sync
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'send-messages') event.waitUntil(sendQueuedMessages());
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Комунікація SW ↔ Page і storage</h3>
+  <p>DOM у SW немає, тож спілкування — через повідомлення: <code>postMessage</code>, <code>BroadcastChannel</code> або <code>MessageChannel</code> (двосторонній канал). Типовий кейс: SW каже сторінці «є оновлення» → сторінка показує тост «Reload to update» → по кліку шле <code>SKIP_WAITING</code>.</p>
+  <ul class="list">
+    <li><strong>Cache API</strong> — мережеві відповіді (пари Request/Response).</li>
+    <li><strong>IndexedDB</strong> — структуровані дані: черги, стан. Єдина async-БД, доступна в SW.</li>
+    <li>❌ <strong><code>localStorage</code> недоступний</strong> — він синхронний. Часте питання-пастка.</li>
+  </ul>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Page ↔ SW: «є оновлення» → reload',
+          code: `// SW → всі сторінки
+self.clients.matchAll().then(clients =>
+  clients.forEach(c => c.postMessage({ type: 'UPDATE_AVAILABLE' })),
+);
+
+// SW: реакція на команду сторінки
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
+// Page → SW (після кліку по тосту «Reload»)
+registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
+navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Інструменти і суміжні поняття</h3>
+  <p><strong>Workbox</strong> (Google) — де-факто стандарт: готові стратегії, роутинг, precache-маніфест, versioning. <strong>Vite PWA plugin</strong> / <strong>next-pwa</strong> генерують SW через Workbox автоматично.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>Призначення</th></tr>
+      <tr><td><strong>Service Worker</strong></td><td>мережевий proxy, offline, push; персистентний між сесіями</td></tr>
+      <tr><td><strong>Web Worker (dedicated)</strong></td><td>важкі обчислення у фоні; не проксі, живе поки жива сторінка</td></tr>
+      <tr><td><strong>Shared Worker</strong></td><td>один worker на кілька вкладок одного origin</td></tr>
+      <tr><td><strong>MV3 Extension Service Worker</strong></td><td>той самий концепт у розширеннях (замінив persistent background page); може «вмерти» між подіями</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Пастки <span class="tag tag-pit">PIT</span></h3>
+  <ul class="list">
+    <li><strong>Waiting-стан</strong> — нова версія не активується без <code>skipWaiting</code> / <code>clients.claim</code>.</li>
+    <li><strong>Кешування «назавжди»</strong> — без версіонування кешу користувачі застрягають на старому; потрібні versioned cache names або precache-маніфест Workbox.</li>
+    <li><strong><code>index.html</code> як Cache First</strong> — юзер не побачить оновлень; для HTML — Network First або SWR.</li>
+    <li><strong><code>localStorage</code> у SW</strong> — не існує, лише IndexedDB / Cache API.</li>
+    <li><strong>Стан у глобальних змінних SW</strong> — губиться, коли браузер зупиняє воркер; персистуй в IndexedDB.</li>
+    <li><strong>Debugging</strong> — SW «залипає»; DevTools → Application → Service Workers → «Update on reload».</li>
+    <li><strong>Range requests</strong> (відео/аудіо) — SW має коректно їх обробляти, інакше медіа ламається.</li>
+  </ul>
+  <div class="alert alert-good"><span class="icon">💬</span> <span><strong>Як подати на співбесіді:</strong> «Розумію SW на низькому рівні — lifecycle, fetch, стратегії, — але в проді беру Workbox, щоб не писати boilerplate і не помилитися у versioning. SW + кешування — інструмент і для Core Web Vitals: app shell для миттєвого first paint, SWR для швидкості з фоновим оновленням. У розширеннях MV3 той самий воркер може завершитися між подіями, тож комунікація потребує retry і персистентного стану в IndexedDB».</span></div>`,
+        },
+      ],
+    },
+    {
       id: 'dom-events-traversal',
       title: '🌳 DOM — навігація, події, делегування',
       interviewQuestions: [
