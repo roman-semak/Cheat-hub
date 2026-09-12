@@ -298,6 +298,171 @@ for (const [s, e] of iv) {
       ],
     },
 
+    /* ============ Sorting ============ */
+    {
+      id: 'sorting',
+      title: '🔢 Сортування',
+      interviewQuestions: [
+        {
+          question: "Що поверне <code>[10, 1, 2, 20, 3].sort()</code> і чому? Як правильно сортувати числа?",
+          answer: "<code>[1, 10, 2, 20, 3]</code>. Без компаратора <code>sort()</code> перетворює елементи на <strong>рядки</strong> і порівнює їх за UTF-16 кодами, тож <code>'10' &lt; '2'</code>, бо <code>'1' &lt; '2'</code>. Для чисел завжди передають компаратор: <code>(a, b) =&gt; a - b</code> — за зростанням, <code>b - a</code> — за спаданням. Компаратор має повертати <strong>число</strong> (&lt;0 / 0 / &gt;0); <code>(a, b) =&gt; a &gt; b</code> повертає boolean, і результат залежить від движка — класичний баг.",
+        },
+        {
+          question: "Чому <code>setItems(items.sort(cmp))</code> — баг у React, і як відсортувати правильно?",
+          answer: "<code>sort()</code> сортує <strong>in-place</strong> і повертає той самий масив: <code>arr.sort() === arr</code>. Тож ти мутуєш поточний state, а в <code>setItems</code> передаєш ту саму reference — React порівнює через <code>Object.is</code>, може пропустити ре-рендер, а мемоізовані діти й селектори бачать «тихо змінені» дані. Правильно — копія: <code>[...items].sort(cmp)</code> або ES2023 <code>items.toSorted(cmp)</code>. Ще краще — не зберігати відсортований список у state взагалі, а рахувати його як derived через <code>useMemo(() =&gt; [...items].sort(cmp), [items, cmp])</code>.",
+        },
+        {
+          question: "Що таке stable sort, чи гарантує його JS і навіщо він на практиці?",
+          answer: "Стабільне сортування зберігає відносний порядок елементів з <strong>однаковим ключем</strong>. З ES2019 <code>Array.prototype.sort</code> гарантовано стабільний у всіх движках (V8 використовує <strong>TimSort</strong> — гібрид merge + insertion). Практична користь — multi-level сортування: відсортувати за другорядним ключем, потім за головним, і рівні за головним лишаться впорядкованими за другорядним. Альтернатива в одному проході — ланцюжок компараторів <code>a.cat.localeCompare(b.cat) || b.price - a.price</code>.",
+        },
+        {
+          question: "Чому comparison sort не може бути швидшим за O(n log n), і як Counting/Radix обходять цю межу? Merge чи Quick — що і коли?",
+          answer: "Будь-яке сортування порівняннями — це бінарне дерево рішень з <code>n!</code> листками (усі перестановки), тому його висота (кількість порівнянь у гіршому) ≥ <code>log₂(n!) ≈ n log n</code>. <strong>Counting / Radix / Bucket</strong> не порівнюють, а розкладають елементи по «відрах» за значенням/розрядом — O(n + k), але лише для цілих або обмеженого діапазону. <strong>Merge</strong> — гарантований O(n log n), стабільний, але O(n) пам'яті; добре для linked lists і зовнішнього сортування. <strong>Quick</strong> — на практиці швидший (in-place, cache-friendly), але O(n²) у гіршому при поганому pivot; лікується рандомним або median-of-three pivot.",
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Дві частини: <strong>(A)</strong> практика — <code>Array.prototype.sort()</code>, яким сортують у 99% реального коду; <strong>(B)</strong> теорія алгоритмів, яку питають на інтерв'ю.</p>
+  <h3 class="topic">A · Пастка №1: сортування за замовчуванням — лексикографічне <span class="tag tag-key">KEY</span></h3>
+  <p>Без компаратора <code>sort()</code> перетворює елементи на <strong>рядки</strong> і порівнює за Unicode-кодами: <code>'10' &lt; '2'</code>, бо <code>'1' &lt; '2'</code>. Для чисел <strong>завжди</strong> передавай comparator.</p>
+  <p><strong>Контракт компаратора:</strong> повертає <code>&lt; 0</code> — <code>a</code> перед <code>b</code>; <code>&gt; 0</code> — <code>a</code> після <code>b</code>; <code>0</code> — порядок не змінюється.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Лексикографічна пастка, comparator і мутація',
+          code: `[10, 1, 2, 20, 3].sort();                // ❌ [1, 10, 2, 20, 3]
+[10, 1, 2, 20, 3].sort((a, b) => a - b); // ✅ [1, 2, 3, 10, 20] — за зростанням
+[10, 1, 2, 20, 3].sort((a, b) => b - a); // за спаданням
+
+// sort() мутує in-place і повертає ТОЙ САМИЙ масив
+const arr = [3, 1, 2];
+const sorted = arr.sort((a, b) => a - b);
+arr === sorted; // true
+
+// React: ніколи не сортуй state напряму
+setItems(items.sort(cmp));              // ❌ мутація state
+setItems([...items].sort(cmp));         // ✅ копія
+setItems(items.toSorted(cmp));          // ✅ ES2023, не мутує`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">A · Стабільність і multi-key</h3>
+  <p><strong>Stable sort</strong> — елементи з однаковим ключем зберігають відносний порядок. З <strong>ES2019</strong> <code>Array.prototype.sort</code> гарантовано стабільний. <code>toSorted()</code> (ES2023) — immutable-версія разом із <code>toReversed</code>, <code>toSpliced</code>, <code>with</code>.</p>
+  <h3 class="topic">A · Рядки — <code>localeCompare</code>, не <code>&lt;</code></h3>
+  <p>Порівняння через <code>&lt;</code> / дефолтний <code>sort()</code> ламається на не-ASCII, регістрі й локалях. <code>localeCompare</code> сортує за правилами мови; для великих масивів — <strong><code>Intl.Collator</code></strong>: колатор створюється один раз, а не на кожне порівняння.</p>
+  <h3 class="topic">A · Складність вбудованого <code>sort()</code></h3>
+  <p><strong>Time</strong> O(n log n) в середньому і найгіршому. V8 використовує <strong>TimSort</strong> — гібрид merge + insertion, стабільний; пам'ять — O(n).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Multi-key, localeCompare, Intl.Collator',
+          code: `// стабільність: спершу 2-й ключ, потім 1-й — рівні за age лишаються в порядку name
+users
+  .sort((a, b) => a.name.localeCompare(b.name)) // 2nd key
+  .sort((a, b) => a.age - b.age);               // 1st key
+
+// те саме одним компаратором: перший ненульовий результат вирішує
+data.sort((a, b) =>
+  a.category.localeCompare(b.category) || b.price - a.price, // category, потім price desc
+);
+
+['ä', 'z', 'a'].sort();                               // ❌ некоректно для локалей
+['ä', 'z', 'a'].sort((a, b) => a.localeCompare(b));  // ✅
+arr.sort((a, b) => a.localeCompare(b, 'uk', { sensitivity: 'base' })); // без регістру
+
+const collator = new Intl.Collator('uk');            // великі масиви — швидше
+arr.sort(collator.compare);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">B · Алгоритми сортування — порівняльна таблиця <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Алгоритм</th><th>Avg</th><th>Worst</th><th>Space</th><th>Stable</th><th>Ідея</th></tr>
+      <tr><td><strong>Bubble</strong></td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>✅</td><td>сусідні swap'и, «спливання»</td></tr>
+      <tr><td><strong>Selection</strong></td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>❌</td><td>знайти мінімум, поставити на місце</td></tr>
+      <tr><td><strong>Insertion</strong></td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>✅</td><td>вставка у відсортовану частину; O(n) на майже відсортованих</td></tr>
+      <tr><td><strong>Merge</strong></td><td>O(n log n)</td><td>O(n log n)</td><td><strong>O(n)</strong></td><td>✅</td><td>divide &amp; conquer + злиття</td></tr>
+      <tr><td><strong>Quick</strong></td><td>O(n log n)</td><td><strong>O(n²)</strong></td><td>O(log n)</td><td>❌</td><td>pivot + partition</td></tr>
+      <tr><td><strong>Heap</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td>❌</td><td>binary heap</td></tr>
+      <tr><td><strong>TimSort</strong></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>✅</td><td>merge + insertion (V8, Python)</td></tr>
+      <tr><td><strong>Counting / Radix</strong></td><td>O(n + k)</td><td>O(n + k)</td><td>O(n + k)</td><td>✅</td><td>без порівнянь; цілі / обмежений діапазон</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">B · Ключові інсайти</h3>
+  <ul class="list">
+    <li><strong>Нижня межа O(n log n)</strong> для comparison sort: дерево рішень має <code>n!</code> листків, його глибина ≥ <code>log(n!) ≈ n log n</code>.</li>
+    <li><strong>Як обійти:</strong> non-comparison sorts (Counting, Radix, Bucket) — O(n) для цілих / обмеженого діапазону, бо розкладають по «відрах», а не порівнюють.</li>
+    <li><strong>Merge vs Quick:</strong> Merge — гарантований O(n log n), стабільний, але O(n) пам'яті (linked lists, зовнішнє сортування). Quick — швидший на практиці (in-place, cache-friendly), але O(n²) при поганому pivot → рандомний / median-of-three pivot.</li>
+    <li><strong>Insertion sort кращий за O(n log n)</strong> на <em>малих</em> і <em>майже відсортованих</em> даних — O(n) у кращому випадку; тому TimSort використовує його для коротких під-масивів.</li>
+  </ul>`,
+        },
+        {
+          kind: 'code',
+          language: 'javascript',
+          caption: 'Quick Sort (читабельний, не in-place) і Merge Sort',
+          code: `function quickSort(arr) {
+  if (arr.length <= 1) return arr;              // база рекурсії
+  const [pivot, ...rest] = arr;                 // у проді — рандомний pivot
+  const left = rest.filter(x => x < pivot);
+  const right = rest.filter(x => x >= pivot);
+  return [...quickSort(left), pivot, ...quickSort(right)];
+}
+// ⚠️ O(n) зайвої пам'яті через spread/filter. На інтерв'ю проговори:
+// для production — in-place partition (Lomuto/Hoare) + рандомний pivot.
+
+function mergeSort(arr) {                        // O(n log n) time, O(n) space, stable
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  return merge(mergeSort(arr.slice(0, mid)), mergeSort(arr.slice(mid)));
+}
+
+function merge(a, b) {
+  const result = [];
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length) {
+    result.push(a[i] <= b[j] ? a[i++] : b[j++]); // <= зберігає стабільність
+  }
+  return [...result, ...a.slice(i), ...b.slice(j)];
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Практика для frontend-задач</h3>
+  <ul class="list">
+    <li><strong>99% часу — вбудований <code>sort()</code> з компаратором.</strong> Реалізацію руками просять як алгоритмічну задачу, не для проду.</li>
+    <li><strong>Великі списки в UI:</strong> не сортуй у кожному рендері — <code>useMemo</code>, бо O(n log n) на кожен рендер б'є по перфу.</li>
+    <li><strong>Справді великі датасети</strong> — сортуй на бекенді / в БД (індекси), не тягни все на клієнт.</li>
+    <li><strong>Derived state:</strong> відсортований список — похідні дані; рахуй під час рендеру чи в селекторі, не зберігай окремо в state (нема розсинхрону).</li>
+  </ul>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Відсортований список як derived-дані',
+          code: `const sortedItems = useMemo(
+  () => [...items].sort((a, b) => a.price - b.price),
+  [items],
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Пастки <span class="tag tag-pit">PIT</span></h3>
+  <ul class="list">
+    <li><strong><code>[3, 10, 2].sort()</code> без компаратора</strong> → лексикографічно (топ-помилка).</li>
+    <li><strong><code>sort()</code> мутує</strong> → у React копіюй (<code>[...arr]</code> / <code>toSorted</code>).</li>
+    <li><strong>Компаратор повертає boolean</strong> (<code>a &gt; b</code>) замість числа → некоректний, залежний від движка результат. Треба <code>a - b</code>.</li>
+    <li><strong>Рядки через <code>&lt;</code></strong> замість <code>localeCompare</code> / <code>Intl.Collator</code> → баги з локалями й регістром.</li>
+    <li><strong>Сортування в рендері без <code>useMemo</code></strong> → зайва робота щорендер.</li>
+  </ul>
+  <div class="alert alert-good"><span class="icon">💬</span> <span><strong>Як подати на співбесіді:</strong> «У проді — <code>Array.sort</code> з компаратором, <code>localeCompare</code> / <code>Intl.Collator</code> для багатомовних списків, immutable через <code>toSorted</code> або копію для React-стану. Знаю, що вбудований sort — стабільний TimSort за O(n log n), розумію нижню межу comparison sort і коли доречні radix / counting. Великі UI-списки мемоізую, а справді великі датасети сортую на бекенді — це частина роботи над рендер-перформансом».</span></div>`,
+        },
+      ],
+    },
+
     /* ============ Searching ============ */
     {
       id: 'searching',
