@@ -102,7 +102,10 @@
       "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\\\\n\" --max-time 90 http://localhost:5001/problems/palindrome-number -o /tmp/pn.html)",
       "Bash(curl -s -o /dev/null -w 'root: HTTP %{http_code}\\\\n' --max-time 30 https://cheat-hub.vercel.app/)",
       "Bash(curl -s --max-time 30 https://cheat-hub.vercel.app/)",
-      "Bash(curl -s --max-time 60 http://localhost:5001/problems/reverse-linked-list -o /tmp/rl.html)"
+      "Bash(curl -s --max-time 60 http://localhost:5001/problems/reverse-linked-list -o /tmp/rl.html)",
+      "Bash(curl -s -o /tmp/prod-qr.html -w 'quickref: HTTP %{http_code} %{size_download}b\\\\n' --max-time 40 https://cheat-hub-three.vercel.app/quickref/react)",
+      "Bash(curl -s --max-time 40 -o /tmp/p1.css https://cheat-hub-three.vercel.app/_next/static/chunks/0zz4qnyesz5z8.css)",
+      "Bash(curl -s --max-time 40 -o /tmp/p2.css https://cheat-hub-three.vercel.app/_next/static/chunks/1e0n14egb9bme.css)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-romansemak-GitHub-PET-leetCode/3990ce47-9239-4e71-ad95-1ecb39f9abed/scratchpad",
