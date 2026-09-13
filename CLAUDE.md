@@ -159,6 +159,8 @@ curl -X POST http://localhost:5001/api/run \
 
 ## Development Notes
 
+Course coverage audit (React JS, Sigma Software → cheatsheet sections + live code): `Docs/react-course-coverage.md`.
+
 ### Problem data pipeline (DB-less)
 
 The app reads problems from the static module `src/data/problems.ts`, **not** the
