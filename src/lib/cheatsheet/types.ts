@@ -114,24 +114,6 @@ export interface PracticeTask {
   language?: string // defaults to 'typescript'
 }
 
-/* ---------- Lifehacks (LeetCode cheatsheet) ---------- */
-
-export interface LifehackCategory {
-  id: string // 'strings', 'arrays', ...
-  title: string // 'Рядки'
-  emoji?: string
-}
-
-export interface Lifehack {
-  id: string // stable key, e.g. 'last-char-slice'
-  title: string // 'Останній символ рядка'
-  category: string // id from LifehackCategory
-  code: string // "str.slice(-1)"
-  language?: string // defaults to 'typescript'
-  note?: string // short explanation (may contain inline <code>)
-  tags?: string[] // ['slice', 'string'] — used for search
-}
-
 /* ---------- Prose topics (block model) ---------- */
 
 export type BlockTag = 'KEY' | 'NEW' | 'TIP'

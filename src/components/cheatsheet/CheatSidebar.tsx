@@ -29,8 +29,8 @@ interface SectionLink {
 
 // Sub-links of the active section, listed in the bottom block below the topic
 // list. The ⚡ Шпаргалка section owns every cheat sheet in the app
-// (CHEATSHEET_ENTRIES — migrated quickref boards plus the prose pages still at
-// their own URLs); every other topic lists only its own declared formats.
+// (CHEATSHEET_ENTRIES — one quickref board per topic under /quickref); every
+// other topic lists only its own declared formats.
 function sectionLinks(topic: TopicMeta): SectionLink[] {
   if (topic.slug === 'quickref') {
     return CHEATSHEET_ENTRIES.map((entry) => {
@@ -53,8 +53,8 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
   const { data } = useUserStore()
   const profileActive = pathname === '/profile'
 
-  // Cheat-sheet URLs sit under their owning topic (/git/cheatsheet, …) but
-  // belong to the ⚡ Шпаргалка section, so they must not light up that topic.
+  // Cheat-sheet URLs (/quickref/<slug>) belong to the ⚡ Шпаргалка section, so
+  // they must not light up the topic they cover.
   const cheatsheetActive = pathname.startsWith('/quickref') || CHEATSHEET_HREFS.has(pathname)
 
   const isTopicActive = (topic: TopicMeta) => {

@@ -1,7 +1,8 @@
 # Task 007: Мігрувати прозові cheatsheet-сторінки у єдиний quickref-хаб
 
 **Дата створення:** 2026-09-01  
-**Статус:** 📋 TODO → 🔄 IN_PROGRESS → ✅ DONE
+**Статус:** ✅ DONE  
+**Дата завершення:** 2026-09-13
 
 ---
 
@@ -34,49 +35,49 @@
 ## 📋 План виконання
 
 ### Крок 1: Аудит контенту та формату
-- [ ] Порівняти `QuickRefBlock[]` (quickref) з `TopicContent.sections` /
+- [x] Порівняти `QuickRefBlock[]` (quickref) з `TopicContent.sections` /
       `ContentBlock` (прозові) та `Lifehack[]` (leetcode).
-- [ ] Вирішити: (а) конвертувати прозовий контент у `QuickRefBlock[]`, чи
+- [x] Вирішити: (а) конвертувати прозовий контент у `QuickRefBlock[]`, чи
       (б) розширити `renderBlock` у `QuickRefTopicView`, щоб він умів рендерити
       прозові секції / lifehacks усередині masonry.
-- [ ] Визначити, що робити зі статус-маркерами прозових сторінок (у quickref їх
+- [x] Визначити, що робити зі статус-маркерами прозових сторінок (у quickref їх
       прибрали — тут або лишити тільки в `TopicPanel`, або прибрати теж).
 
 ### Крок 2: Розширити реєстр quickref
-- [ ] Додати нові slug у `QUICKREF_TOPICS` (`src/lib/cheatsheet/quickref.ts`).
-- [ ] Заповнити `QUICKREF_BLOCKS` для кожної нової теми (нові data-файли
+- [x] Додати нові slug у `QUICKREF_TOPICS` (`src/lib/cheatsheet/quickref.ts`).
+- [x] Заповнити `QUICKREF_BLOCKS` для кожної нової теми (нові data-файли
       `quickref-<topic>.ts` або адаптер з наявних `*-cheat.ts` / `lifehacks.ts`).
-- [ ] Оновити `src/lib/cheatsheet/quickrefKeys.ts` за потреби (ключі для
+- [x] Оновити `src/lib/cheatsheet/quickrefKeys.ts` за потреби (ключі для
       `stamp:new` / `contentManifest.generated.json`).
 
 ### Крок 3: Рендер і навігація
-- [ ] Переконатися, що `QuickRefTopicView` коректно рендерить усі нові типи
+- [x] Переконатися, що `QuickRefTopicView` коректно рендерить усі нові типи
       блоків (масонрі, діалоги коду, mermaid, grid тощо).
-- [ ] Таб-бар зверху автоматично підхопить нові теми з `QUICKREF_TOPICS` —
+- [x] Таб-бар зверху автоматично підхопить нові теми з `QUICKREF_TOPICS` —
       перевірити overflow/scroll при 6+ табах.
-- [ ] `src/components/cheatsheet/CheatSidebar.tsx` — прибрати формат-лінк
+- [x] `src/components/cheatsheet/CheatSidebar.tsx` — прибрати формат-лінк
       `cheatsheet` у мігрованих тем (щоб не було дубля зі старим URL).
 
 ### Крок 4: Маршрути та редіректи
-- [ ] `src/app/(hub)/quickref/[topic]/page.tsx` — `generateStaticParams`
+- [x] `src/app/(hub)/quickref/[topic]/page.tsx` — `generateStaticParams`
       підхопить нові теми автоматично; перевірити `notFound()` логіку.
-- [ ] Видалити / зредіректити старі сторінки:
+- [x] Видалити / зредіректити старі сторінки:
       `src/app/(hub)/{git,ai,architecture,fullstack,nextjs}/cheatsheet/page.tsx`,
       `src/app/(hub)/leetcode/cheatsheet/page.tsx` → `next.config.js` redirects
       або `redirect()` у самих page.tsx на `/quickref/<slug>`.
-- [ ] `src/app/sitemap.ts` — джерело вже `QUICKREF_TOPICS`; прибрати старі
+- [x] `src/app/sitemap.ts` — джерело вже `QUICKREF_TOPICS`; прибрати старі
       cheatsheet-URL, якщо додаються окремо.
-- [ ] `src/lib/cheatsheet/registry.ts` — прибрати `'cheatsheet'` з `formats`
+- [x] `src/lib/cheatsheet/registry.ts` — прибрати `'cheatsheet'` з `formats`
       мігрованих тем; за потреби скоригувати `formatHref`.
 
 ### Крок 5: Верифікація
-- [ ] `npm run dev` (5001) — кожна нова тема відкривається на `/quickref/<slug>`,
+- [x] `npm run dev` (5001) — кожна нова тема відкривається на `/quickref/<slug>`,
       таб-бар перемикає, старі URL редіректять.
-- [ ] `npm run build` — без помилок.
-- [ ] `npm run stamp:new -- --check` — маніфест узгоджений (запустити
+- [x] `npm run build` — без помилок.
+- [x] `npm run stamp:new -- --check` — маніфест узгоджений (запустити
       `npm run stamp:new` і закомітити, якщо додано нові одиниці контенту).
-- [ ] `npm run verify:approaches` (якщо зачіпали leetcode-контент).
-- [ ] Задокументувати результати нижче + оновити `CLAUDE.md` (розділ про
+- [x] `npm run verify:approaches` (якщо зачіпали leetcode-контент).
+- [x] Задокументувати результати нижче + оновити `CLAUDE.md` (розділ про
       quickref / cheatsheet pipeline).
 
 ---
@@ -101,7 +102,18 @@
 
 ## ✅ Результати
 
-[Заповнюється після виконання]
+- Усі 9 шпаргалок (react, javascript, angular, nextjs, leetcode, architecture,
+  fullstack, git, ai) рендеряться на `/quickref/<slug>` через `QuickRefTopicView`
+  зі спільним верхнім таб-баром; бічної панелі розділів немає.
+- Рішення кроку 1: контент **переписано вручну** в dense-картки
+  (`quickref-{nextjs,leetcode,architecture,fullstack,git,ai}.ts`), нових типів блоків
+  не додано; статус-маркери на шпаргалках не використовуються.
+- Старі `/<topic>/cheatsheet` видалено, 308-редіректи в `next.config.ts`.
+- Прибрано: експорти `*Cheat`, `fullstack-cheat.ts`, `lifehacks.ts`, `LifehacksView`,
+  `LifehackCard`, типи `Lifehack*`, варіант `cheat` у `ProseTopicView`; `stamp-new-content.mjs`
+  очищено; `highlight.ts` реєструє sql/json/ini.
+- Маніфест перештамповано (73 нові ключі), `--check` OK; `tsc` і `npm run build` OK;
+  усі 9 сторінок 200, старі URL → 308.
 
 ---
 

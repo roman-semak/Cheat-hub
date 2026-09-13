@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useMemo, useRef } from 'react'
-import { cn } from '@/lib/utils'
 import type { TopicContent, TopicMeta } from '@/lib/cheatsheet/types'
 import { ACCENT, formatHref } from '@/lib/cheatsheet/registry'
 import { breadcrumbJsonLd } from '@/lib/seo'
@@ -23,9 +22,9 @@ import { MobileSectionNav } from './MobileSectionNav'
 import { ContentBlocks } from './ContentBlocks'
 import { InterviewQuestionsBlock } from './InterviewQuestionsBlock'
 
-// prose/cheat/links share a `slug`, so the "new" tracking namespace is
-// suffixed for the non-primary variants to avoid key collisions.
-type ProseVariant = 'prose' | 'cheat' | 'links'
+// prose/links share a `slug`, so the "new" tracking namespace is suffixed for
+// the links variant to avoid key collisions.
+type ProseVariant = 'prose' | 'links'
 
 export function ProseTopicView({
   content,
@@ -38,15 +37,8 @@ export function ProseTopicView({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const accent = ACCENT[meta.accent]
-  const format =
-    variant === 'cheat' ? 'cheatsheet' : variant === 'links' ? 'links' : 'extended'
-  const path = formatHref(content.slug, format)
-  const ns =
-    variant === 'cheat'
-      ? `${content.slug}-cheat`
-      : variant === 'links'
-        ? `${content.slug}-links`
-        : content.slug
+  const path = formatHref(content.slug, variant === 'links' ? 'links' : 'extended')
+  const ns = variant === 'links' ? `${content.slug}-links` : content.slug
 
   // Kept independent of read/seen state so its identity is stable — otherwise
   // useReadTracking's effect would re-run on every status change, re-observing
@@ -94,7 +86,7 @@ export function ProseTopicView({
           { name: meta.title, path },
         ])}
       />
-      <div className={cn('flex h-screen', variant === 'cheat' && 'paper')}>
+      <div className="flex h-screen">
         <TopicPanel
         items={items}
         activeId={activeId}

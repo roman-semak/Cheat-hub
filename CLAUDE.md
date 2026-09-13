@@ -235,6 +235,14 @@ Located: `src/components/editor/CodeEditor.tsx`
 - Languages: JavaScript, TypeScript
 - Options: fontSize 13, minimap disabled, padding
 
+### Шпаргалки — `/quickref/<slug>`
+Every cheat sheet is a dense quickref board rendered by `QuickRefTopicView` (shared
+top tab bar, masonry cards, no section sidebar). Data lives in
+`src/lib/cheatsheet/quickref-<slug>.ts` (`QuickRefBlock[]`); tab order =
+`QUICKREF_TOPICS` in `quickref.ts`. The old `/<topic>/cheatsheet` URLs 308-redirect
+(`next.config.ts`). To add a sheet: new data file → register in `quickref.ts` →
+`npm run stamp:new`.
+
 ### Cheatsheet content: status marker (new / unread / read)
 Each trackable content unit (prose `TopicSection`, LeetCode section/task,
 `PracticeTask`, `Lifehack`, quickref block) carries one 3-state marker

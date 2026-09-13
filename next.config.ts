@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
     '@prisma/adapter-libsql',
     '@libsql/client',
   ],
+  // Old per-topic cheat sheets now live in the unified /quickref hub.
+  async redirects() {
+    return ['nextjs', 'leetcode', 'architecture', 'fullstack', 'git', 'ai'].map((slug) => ({
+      source: `/${slug}/cheatsheet`,
+      destination: `/quickref/${slug}`,
+      permanent: true,
+    }));
+  },
 };
 
 export default nextConfig;

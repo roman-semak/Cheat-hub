@@ -31,8 +31,8 @@ const OLD_DATE = '2020-01-01'
 const TODAY = new Date().toISOString().slice(0, 10)
 
 // Prose TopicContent exports rendered by ProseTopicView, with the namespace
-// used in both the manifest key and the userStore `seenNew` key. Cheat/links
-// variants get a suffix because they share a `slug` with the prose version.
+// used in both the manifest key and the userStore `seenNew` key. The links
+// variant gets a suffix because it shares a `slug` with the prose version.
 const PROSE_MODULES = [
   { file: 'react.ts', export: 'reactContent', ns: 'react' },
   { file: 'react-native.ts', export: 'reactNativeContent', ns: 'react-native' },
@@ -42,15 +42,10 @@ const PROSE_MODULES = [
   { file: 'javascript.ts', export: 'javascriptContent', ns: 'javascript' },
   { file: 'javascript.ts', export: 'javascriptLinks', ns: 'javascript-links' },
   { file: 'fullstack.ts', export: 'fullstackContent', ns: 'fullstack' },
-  { file: 'fullstack-cheat.ts', export: 'fullstackCheat', ns: 'fullstack-cheat' },
   { file: 'nextjs.ts', export: 'nextjsContent', ns: 'nextjs' },
-  { file: 'nextjs.ts', export: 'nextjsCheat', ns: 'nextjs-cheat' },
   { file: 'git.ts', export: 'gitContent', ns: 'git' },
-  { file: 'git.ts', export: 'gitCheat', ns: 'git-cheat' },
   { file: 'ai.ts', export: 'aiContent', ns: 'ai' },
-  { file: 'ai.ts', export: 'aiCheat', ns: 'ai-cheat' },
   { file: 'architecture.ts', export: 'architectureContent', ns: 'architecture' },
-  { file: 'architecture.ts', export: 'architectureCheat', ns: 'architecture-cheat' },
 ]
 
 async function tryImport(dir, file) {
@@ -85,12 +80,6 @@ async function enumerateKeys(dir) {
   const practice = await tryImport(dir, 'practiceTasks.ts')
   for (const task of practice?.practiceTasks ?? []) {
     if (task?.id) push(`practice:${task.id}`)
-  }
-
-  // Lifehacks
-  const life = await tryImport(dir, 'lifehacks.ts')
-  for (const hack of life?.lifehacks ?? []) {
-    if (hack?.id) push(`lifehack:${hack.id}`)
   }
 
   // QuickRef blocks (QUICKREF_BLOCKS only exists from the hub restructure onward)

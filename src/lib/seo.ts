@@ -94,7 +94,7 @@ const FORMAT_META_LABEL: Partial<Record<TopicFormat, string>> = {
   tasks: 'Практичні завдання',
 }
 
-/** Metadata for a registry-driven topic page (`/react`, `/git/cheatsheet`, …). */
+/** Metadata for a registry-driven topic page (`/react`, `/react/quiz`, …). */
 export function topicMetadata(slug: TopicSlug, format: TopicFormat): Metadata {
   const topic = getTopic(slug)
   if (!topic) return {}

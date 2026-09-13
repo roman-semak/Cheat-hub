@@ -264,8 +264,8 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Paper reading mode — the "Шпаргалка" views (QuickRef grids, the *-cheatsheet
-   prose, LeetCode lifehacks) render on a warm sepia sheet with serif body text
+   Paper reading mode — the "Шпаргалка" views (QuickRef grids under /quickref)
+   render on a warm sepia sheet with serif body text
    at a larger size, so the section reads like a printed page on an iPad propped
    behind the monitor. Scoped under .paper; the dark hub sidebar stays as the
    frame around the sheet. Purely visual — no logic/routing/data changes.
