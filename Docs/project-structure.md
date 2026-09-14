@@ -33,6 +33,7 @@ graph LR
   SB --> AI["🤖 AI · /ai"]
   SB --> IDE["🖥️ IDE · /ide"]
   SB --> QR["⚡ Шпаргалка · /quickref"]
+  SB --> DOCS["📐 Структура · /docs/project-structure"]
   SB --> PROF["👤 Профіль · /profile"]
 
   PR --> PROBLEMS["/problems — каталог 618 задач"]
@@ -54,7 +55,9 @@ graph LR
 ```
 
 Службові маршрути: `robots.ts`, `sitemap.ts`, `manifest.ts`, `opengraph-image.tsx`
-(глобальний і per-problem), `not-found.tsx`. Старі URL `/<slug>/cheatsheet` для
+(глобальний і per-problem), `not-found.tsx`. Документація в застосунку:
+`/docs/project-structure` рендерить цей файл (читає `Docs/project-structure.md` на білді,
+кнопка «Скопіювати MD» кладе весь markdown у буфер; noindex). Старі URL `/<slug>/cheatsheet` для
 nextjs/leetcode/architecture/fullstack/git/ai 308-редіректять на `/quickref/<slug>`
 (`next.config.ts`).
 
@@ -490,6 +493,7 @@ src/
 │   │   ├── leetcode/tasks/page.tsx                      # практичні завдання
 │   │   ├── problems/page.tsx                            # каталог задач
 │   │   ├── quickref/page.tsx · quickref/[topic]/page.tsx# шпаргалки
+│   │   ├── docs/project-structure/page.tsx              # ця сторінка (рендер Docs/*.md)
 │   │   └── profile/page.tsx
 │   ├── problems/layout.tsx · problems/[slug]/page.tsx   # редактор (без сайдбара) + OG image
 │   └── api/
@@ -503,6 +507,7 @@ src/
 │   ├── editor/       # CodeEditor (Monaco), TestResults
 │   ├── problems/     # ProblemsView, ProblemList, ProblemDescription, ProblemNavShell
 │   ├── profile/      # ProfilePanel
+│   ├── docs/         # CopyMarkdownButton
 │   ├── glass/        # GlassCard, GlassPanel, GlassNavbar (дизайн-система)
 │   ├── ui/           # Button, Badge, dialog (Radix)
 │   └── JsonLd.tsx
@@ -515,6 +520,7 @@ src/
 │   │   │                # useSectionHash, useMasonry
 │   │   ├── newContent.ts · contentManifest.generated.json           # маркер «нове»
 │   │   └── highlight.ts
+│   ├── docs/renderMarkdown.ts   # markdown-it + Mermaid-сегменти для /docs/*
 │   ├── auth.ts · db.ts · runner.ts · seo.ts · userData.ts · userStore.ts · utils.ts
 │   └── leetcode-shapes.ts
 └── data/

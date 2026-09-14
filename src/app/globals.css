@@ -255,6 +255,39 @@
   @apply mt-2 text-center text-xs text-slate-400;
 }
 
+/* Markdown docs pages (/docs/*): elements .cheat-prose doesn't cover because
+   cheat-sheet data never emits them (h1/h2, hr, ol, details, blockquote). */
+.md-doc h2 {
+  @apply mt-8 mb-4 text-xl font-bold text-slate-100;
+}
+.md-doc h3 {
+  @apply mt-8;
+}
+.md-doc hr {
+  @apply my-6 border-white/10;
+}
+.md-doc ol {
+  @apply my-2 ml-5 list-decimal text-sm text-slate-300;
+}
+.md-doc blockquote {
+  @apply my-3 border-l-2 border-indigo-400/50 pl-4 text-sm text-slate-400;
+}
+.md-doc details {
+  @apply my-2 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-1;
+}
+.md-doc details[open] {
+  @apply pb-3;
+}
+.md-doc summary {
+  @apply cursor-pointer select-none py-2 text-sm text-slate-200 hover:text-white;
+}
+.md-doc details ul {
+  @apply mt-1;
+}
+.md-doc pre code.hljs {
+  @apply bg-transparent p-0;
+}
+
 /* Interview tips */
 .cheat-prose .interview-tips {
   @apply my-3 rounded-xl border border-indigo-400/30 bg-indigo-500/5 p-4;

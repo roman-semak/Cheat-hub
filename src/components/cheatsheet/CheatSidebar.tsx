@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronLeft, ChevronRight, User } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FolderTree, User } from 'lucide-react'
 import {
   TOPICS,
   FORMAT_LABELS,
@@ -52,6 +52,7 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
   const pathname = usePathname()
   const { data } = useUserStore()
   const profileActive = pathname === '/profile'
+  const docsActive = pathname.startsWith('/docs')
 
   // Cheat-sheet URLs (/quickref/<slug>) belong to the ⚡ Шпаргалка section, so
   // they must not light up the topic they cover.
@@ -59,7 +60,7 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
 
   const isTopicActive = (topic: TopicMeta) => {
     if (topic.slug === 'quickref') return cheatsheetActive
-    if (cheatsheetActive) return false
+    if (cheatsheetActive || docsActive) return false
     if (pathname === `/${topic.slug}` || pathname.startsWith(`/${topic.slug}/`)) return true
     // A format can live outside the topic's own path (practice -> /problems),
     // so match its href and anything nested under it (/problems/two-sum).
@@ -165,8 +166,23 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
         </div>
       )}
 
-      {/* Profile link (local user) */}
+      {/* Project docs + profile link (local user) */}
       <div className="border-t border-white/10 px-2 py-2">
+        <Link
+          href="/docs/project-structure"
+          title="Структура проєкту"
+          className={cn(
+            'flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors',
+            docsActive
+              ? 'bg-white/10 text-white'
+              : 'text-slate-300 hover:bg-white/5 hover:text-white',
+          )}
+        >
+          <span className="w-5 shrink-0 text-center">
+            <FolderTree size={16} className="mx-auto" />
+          </span>
+          {!collapsed && <span className="truncate">Структура</span>}
+        </Link>
         <Link
           href="/profile"
           title="Профіль"
