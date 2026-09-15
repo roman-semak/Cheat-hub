@@ -3,6 +3,7 @@ import { CodeBlock } from './CodeBlock'
 import { MermaidBlock } from './MermaidBlock'
 import { LinksBlock } from './LinksBlock'
 import { FlashcardsBlock } from './FlashcardsBlock'
+import { TabsBlock } from './TabsBlock'
 
 // Renders the block model used by prose topics. Most prose is preserved as
 // sanitized HTML (styled by .cheat-prose); code blocks get the interactive
@@ -36,6 +37,8 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
             return <LinksBlock key={i} title={block.title} items={block.items} />
           case 'flashcards':
             return <FlashcardsBlock key={i} items={block.items} />
+          case 'tabs':
+            return <TabsBlock key={i} tabs={block.tabs} />
           default:
             return null
         }

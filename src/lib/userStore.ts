@@ -301,6 +301,20 @@ export function resetReadStateForKeys(keys: string[]) {
   })
 }
 
+// Clears both axes for one topic in a single store write: read markers
+// (green ✓, `readPrefix`) and dismissed "new" flags (red •, `seenPrefix`).
+export function resetTopicStatus(readPrefix: string, seenPrefix: string) {
+  update((d) => {
+    const readState = Object.fromEntries(
+      Object.entries(d.readState).filter(([key]) => !key.startsWith(readPrefix)),
+    )
+    const seenNew = Object.fromEntries(
+      Object.entries(d.seenNew).filter(([key]) => !key.startsWith(seenPrefix)),
+    ) as Record<string, true>
+    return { ...d, readState, seenNew }
+  })
+}
+
 // Clears every "read" marker across all topics. Leaves "new" markers
 // (seenNew), task progress and quizzes untouched.
 export function resetAllReadState() {

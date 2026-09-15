@@ -144,6 +144,7 @@ export type ContentBlock =
       items: { href: string; title: string; description: string }[]
     }
   | { kind: 'flashcards'; items: FlashcardItem[] }
+  | { kind: 'tabs'; tabs: { label: string; html: string }[] } // html styled by .cheat-prose
 
 export interface TopicSection {
   id: string // anchor / scroll-spy target
