@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react'
 import { type UserData, type SubmissionRecord, type ReadState, emptyData, normalize } from './userData'
+import { downloadTextFile } from './download'
 
 export type { ProgressStatus, SubmissionRecord, QuizProgress, ReadState, UserData } from './userData'
 export { normalize } from './userData'
@@ -378,18 +379,12 @@ export function resetData() {
 
 export function exportJson() {
   ensureLoaded()
-  const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
-    type: 'application/json',
-  })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
   const name = snapshot.username ? snapshot.username.replace(/\s+/g, '-') : 'data'
-  a.href = url
-  a.download = `cheat-hub-${name}.json`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+  downloadTextFile(
+    JSON.stringify(snapshot, null, 2),
+    `cheat-hub-${name}.json`,
+    'application/json',
+  )
 }
 
 export async function importJson(file: File): Promise<void> {

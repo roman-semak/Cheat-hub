@@ -18,6 +18,7 @@ import {
 import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
 import { Check, ChevronDown, RotateCcw, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { DownloadMarkdownButton } from './DownloadMarkdownButton'
 import { SectionResetButton } from './SectionResetButton'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
 import { MobileSectionNav } from './MobileSectionNav'
@@ -113,6 +114,15 @@ export function ProseTopicView({
               <p className="mt-2 max-w-2xl text-slate-400">{meta.blurb}</p>
             </div>
             <div className="flex shrink-0 flex-wrap items-center gap-1">
+              <DownloadMarkdownButton
+                filename={`cheat-hub-${ns}.md`}
+                title={`Завантажити «${meta.title}» як Markdown`}
+                prefetch={() => import('@/lib/cheatsheet/toMarkdown')}
+                build={async () => {
+                  const { topicToMarkdown } = await import('@/lib/cheatsheet/toMarkdown')
+                  return topicToMarkdown(content, meta, { path })
+                }}
+              />
               {hasRecent && (
                 <Button
                   onClick={markAllSeen}

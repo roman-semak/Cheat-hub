@@ -19,7 +19,8 @@
     "gen:testcases": "tsx scripts/generate-testcases.ts",
     "gen:solutions": "tsx scripts/generate-solutions.ts",
     "normalize:solutions": "tsx scripts/normalize-solutions.ts",
-    "verify:approaches": "tsx scripts/verify-approaches.ts"
+    "verify:approaches": "tsx scripts/verify-approaches.ts",
+    "export:md": "tsx scripts/export-markdown.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.8.1",
@@ -35,6 +36,7 @@
     "markdown-it": "^14.1.0",
     "mermaid": "^11.17.2",
     "next": "^16.2.9",
+    "node-html-parser": "^7.1.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sucrase": "^3.35.1",
@@ -49,7 +51,6 @@
     "autoprefixer": "^10.5.0",
     "eslint": "^9",
     "eslint-config-next": "^16.2.9",
-    "node-html-parser": "^7.1.0",
     "postcss": "^8.4.0",
     "prisma": "^5.20.0",
     "tailwindcss": "^3.4.0",

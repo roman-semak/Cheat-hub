@@ -1,5 +1,25 @@
 import type { QuickRefBlock } from './types'
 
+// QuickRefBlock is a structurally-discriminated union (no `kind` tag), so every
+// consumer has to duck-type it. Shared by QuickRefTopicView (which renders the
+// blocks) and toMarkdown (which serialises them) so the two can't disagree
+// about what a block is.
+export function isChipRow(block: QuickRefBlock): block is Extract<QuickRefBlock, { chips: string[] }> {
+  return 'chips' in block
+}
+
+export function isLifecycleBlock(
+  block: QuickRefBlock,
+): block is Extract<QuickRefBlock, { phases: unknown[] }> {
+  return 'phases' in block
+}
+
+export function isHooksCatalogBlock(
+  block: QuickRefBlock,
+): block is Extract<QuickRefBlock, { hooks: unknown[] }> {
+  return 'hooks' in block
+}
+
 // Stable-ish tracking key for one quick-reference block.
 //
 // QuickRef blocks have no authored `id` (they're rendered by array index), but

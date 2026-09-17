@@ -245,6 +245,26 @@ top tab bar, masonry cards, no section sidebar). Data lives in
 (`next.config.ts`). To add a sheet: new data file → register in `quickref.ts` →
 `npm run stamp:new`.
 
+### Markdown export — «Завантажити MD»
+Every prose topic (`ProseTopicView` header) and every quickref board
+(`QuickRefTopicView` toolbar) has a button that downloads the whole thing as one
+`.md` file. `src/lib/cheatsheet/toMarkdown.ts` is the serializer: prose is
+authored as raw HTML, so it converts that HTML (tables → GFM pipe tables, lists,
+`<pre>` with highlight spans → fenced code, and the `.cheat-prose` wrappers
+`.card`/`.grid2`/`.alert`/`.tag`/`.changelog`) via `node-html-parser`.
+
+- **Only import it through `await import()`** — a static import drags the parser
+  (~35 kB) into every topic page's initial chunk.
+- `<pre>` must be read via `rawText` → strip tags → decode entities, in that
+  order. `pre.text` decodes first, which turns an authored `&lt;h1&gt;` into a
+  real tag that the tag-strip then deletes — silent corruption of 76 samples.
+- QuickRef `term` / `hook` / `when` / `why` / `phase.*` are **plain text** on the
+  page; only `desc` and `chips` are HTML. Parsing the plain ones as HTML eats
+  `<T>` and `git clone <url>` with no error.
+- `npm run export:md` dumps all 21 topics/boards to `.md-export/` (gitignored)
+  through the same serializer the button calls, and prints a census of authoring
+  wrappers it has no rule for. Run it after touching the serializer.
+
 ### Cheatsheet content: status marker (new / unread / read)
 Each trackable content unit (prose `TopicSection`, LeetCode section/task,
 `PracticeTask`, `Lifehack`, quickref block) carries one 3-state marker

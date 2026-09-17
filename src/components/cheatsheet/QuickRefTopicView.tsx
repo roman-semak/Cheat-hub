@@ -7,6 +7,8 @@ import 'highlight.js/styles/github-dark.css'
 import type { QuickRefBlock, QuickRefEntry, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
 import { CHEATSHEET_ENTRIES } from '@/lib/cheatsheet/quickref'
+import { isChipRow, isHooksCatalogBlock, isLifecycleBlock } from '@/lib/cheatsheet/quickrefKeys'
+import { DownloadMarkdownButton } from './DownloadMarkdownButton'
 import { getTopic } from '@/lib/cheatsheet/registry'
 import { highlight } from '@/lib/cheatsheet/highlight'
 import { breadcrumbJsonLd } from '@/lib/seo'
@@ -30,22 +32,6 @@ import { StatusMarker } from './StatusMarker'
 import { cn } from '@/lib/utils'
 import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
 import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
-
-function isChipRow(block: QuickRefBlock): block is Extract<QuickRefBlock, { chips: string[] }> {
-  return 'chips' in block
-}
-
-function isLifecycleBlock(
-  block: QuickRefBlock,
-): block is Extract<QuickRefBlock, { phases: unknown[] }> {
-  return 'phases' in block
-}
-
-function isHooksCatalogBlock(
-  block: QuickRefBlock,
-): block is Extract<QuickRefBlock, { hooks: unknown[] }> {
-  return 'hooks' in block
-}
 
 function ChipList({ chips, className }: { chips: string[]; className?: string }) {
   return (
@@ -242,6 +228,16 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
       </nav>
 
       <div className="flex flex-wrap items-center justify-end gap-1 px-6 pt-4 md:px-10">
+        <DownloadMarkdownButton
+          size="sm"
+          filename={`cheat-hub-quickref-${meta.slug}.md`}
+          title={`Завантажити шпаргалку «${meta.title}» як Markdown`}
+          prefetch={() => import('@/lib/cheatsheet/toMarkdown')}
+          build={async () => {
+            const { quickRefToMarkdown } = await import('@/lib/cheatsheet/toMarkdown')
+            return quickRefToMarkdown(blocks, meta, { path: `/quickref/${meta.slug}` })
+          }}
+        />
         {hasRecent && (
           <>
             <Button

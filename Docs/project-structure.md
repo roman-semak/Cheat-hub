@@ -503,7 +503,8 @@ src/
 ├── components/
 │   ├── cheatsheet/   # HubShell, CheatSidebar, TopicHubCard, ProseTopicView, QuickRefTopicView,
 │   │                 # Quiz, PracticeTasksView, ContentBlocks, CodeBlock, MermaidBlock,
-│   │                 # FlashcardsBlock, InterviewQuestionsBlock, LinksBlock, StatusMarker, …
+│   │                 # FlashcardsBlock, InterviewQuestionsBlock, LinksBlock, StatusMarker,
+│   │                 # DownloadMarkdownButton, …
 │   ├── editor/       # CodeEditor (Monaco), TestResults
 │   ├── problems/     # ProblemsView, ProblemList, ProblemDescription, ProblemNavShell
 │   ├── profile/      # ProfilePanel
@@ -519,8 +520,10 @@ src/
 │   │   ├── use*.ts      # useContentStatus, useReadTracking, useNewContent, useScrollSpy,
 │   │   │                # useSectionHash, useMasonry
 │   │   ├── newContent.ts · contentManifest.generated.json           # маркер «нове»
+│   │   ├── toMarkdown.ts   # HTML-проза → Markdown (кнопка «Завантажити MD»); лише через await import()
 │   │   └── highlight.ts
 │   ├── docs/renderMarkdown.ts   # markdown-it + Mermaid-сегменти для /docs/*
+│   ├── download.ts   # downloadTextFile: Blob + <a download>
 │   ├── auth.ts · db.ts · runner.ts · seo.ts · userData.ts · userStore.ts · utils.ts
 │   └── leetcode-shapes.ts
 └── data/
@@ -528,7 +531,8 @@ src/
     ├── approaches.json              # підказки + рішення для попапу Solution
     └── testcases.generated.json     # тест-кейси
 scripts/          # import-leetcode, export-problems, merge-leetcode-catalog, generate-*,
-                  # normalize-solutions, verify-approaches, stamp-new-content, cheatsheet/ (одноразові парсери)
+                  # normalize-solutions, verify-approaches, stamp-new-content, export-markdown,
+                  # cheatsheet/ (одноразові парсери)
 prisma/           # schema.prisma (Problem, Submission, Progress, User), migrations, seed.ts, dev.db
 Tasks/            # журнал задач (task-NNN-*.md, archive/), скіл /task-manager
 Docs/             # цей файл, аудити курсів, нотатки (turso-vs-supabase, jsts, …)
@@ -551,6 +555,7 @@ Docs/             # цей файл, аудити курсів, нотатки (
 | Нормалізація TS → JS | `npm run normalize:solutions` | `approaches.json` |
 | Перевірка рішень прогоном тестів | `npm run verify:approaches` | non-zero exit при FAIL |
 | Штамп нового контенту | `npm run stamp:new` (`--check` у білді) | `contentManifest.generated.json` |
+| Дамп усіх розділів у Markdown | `npm run export:md` (перевірка серіалізатора) | `.md-export/*.md` (gitignored) |
 
 ---
 
