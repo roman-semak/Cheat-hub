@@ -1,7 +1,8 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { Check, RotateCcw, Sparkles } from 'lucide-react'
 import 'highlight.js/styles/github-dark.css'
 import type { QuickRefBlock, QuickRefEntry, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
@@ -17,6 +18,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { quickRefBlockKeys } from '@/lib/cheatsheet/quickrefKeys'
+import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import {
+  resetReadStateForTopic,
+  resetSeenForTopic,
+  resetTopicStatus,
+} from '@/lib/userStore'
+import { Button } from '@/components/ui/Button'
+import { StatusMarker } from './StatusMarker'
 import { cn } from '@/lib/utils'
 import { QuickRefLifecycleDiagram } from './QuickRefLifecycleDiagram'
 import { QuickRefHooksCatalog } from './QuickRefHooksCatalog'
@@ -185,6 +195,20 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
   const ids = useMemo(() => blocks.map((_, i) => String(i)), [blocks])
   const { buckets, itemRef } = useMasonry(ids, columnCount)
 
+  // One tracking key per board block — same derivation the manifest script uses,
+  // so the ✓ / • markers line up with `quickref:<slug>:<key>` in the manifest.
+  const blockKeys = useMemo(() => quickRefBlockKeys(blocks), [blocks])
+  const readPrefix = `quickref:${meta.slug}:`
+  const pairFor = useCallback(
+    (index: number) => sameKey(`quickref:${meta.slug}:${blockKeys[index]}`),
+    [meta.slug, blockKeys],
+  )
+  const pairs = useMemo(
+    () => blockKeys.map((_, i) => pairFor(i)),
+    [blockKeys, pairFor],
+  )
+  const { statusOf, cycle, hasRecent, markAllSeen } = useContentStatus(pairs)
+
   return (
     <div className="paper min-h-screen">
       <JsonLd
@@ -217,16 +241,85 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
         })}
       </nav>
 
+      <div className="flex flex-wrap items-center justify-end gap-1 px-6 pt-4 md:px-10">
+        {hasRecent && (
+          <>
+            <Button
+              onClick={markAllSeen}
+              variant="ghost"
+              size="sm"
+              className="inline-flex items-center gap-1.5 text-rose-300"
+            >
+              <Sparkles size={14} /> Позначити нове як переглянуте
+            </Button>
+            <Button
+              onClick={() => {
+                if (confirm(`Повернути червоні позначки «нове» в «${meta.title}»?`)) {
+                  resetSeenForTopic(readPrefix)
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              title="Повернути позначки «нове» (•) на цій шпаргалці"
+              className="inline-flex items-center gap-1.5 text-rose-300"
+            >
+              <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути •
+            </Button>
+          </>
+        )}
+        <Button
+          onClick={() => {
+            if (confirm(`Зняти всі зелені ✓ на шпаргалці «${meta.title}»?`)) {
+              resetReadStateForTopic(`quickref:${meta.slug}`)
+            }
+          }}
+          variant="ghost"
+          size="sm"
+          title="Зняти позначки прочитаного (✓) на цій шпаргалці"
+          className="inline-flex items-center gap-1.5 text-emerald-300"
+        >
+          <Check size={14} /> Скинути ✓
+        </Button>
+        <Button
+          onClick={() => {
+            if (confirm(`Скинути всі позначки (✓ і •) на шпаргалці «${meta.title}»?`)) {
+              resetTopicStatus(readPrefix, readPrefix)
+            }
+          }}
+          variant="ghost"
+          size="sm"
+          title="Зелені ✓ і червоні • на цій шпаргалці"
+          className="inline-flex items-center gap-1.5 text-red-300"
+        >
+          <RotateCcw size={14} /> Скинути все
+        </Button>
+      </div>
+
       <div className="px-6 py-6 md:px-10">
         <div className="flex items-start gap-3">
           {buckets.map((bucket, i) => (
             <div key={i} className="flex flex-1 flex-col gap-3">
               {bucket.map((id) => {
-                const block = blocks[Number(id)]
+                const index = Number(id)
+                const block = blocks[index]
                 if (!block) return null
+                const status = statusOf(pairFor(index))
                 return (
-                  <div key={id} ref={itemRef(id)}>
-                    {renderBlock(block)}
+                  <div key={id} ref={itemRef(id)} className="relative">
+                    <div
+                      className={cn(
+                        'rounded-lg',
+                        status === 'read' && 'ring-1 ring-emerald-500/25',
+                        status === 'new' && 'ring-1 ring-rose-500/30',
+                      )}
+                    >
+                      {renderBlock(block)}
+                    </div>
+                    <StatusMarker
+                      status={status}
+                      onCycle={() => cycle(pairFor(index))}
+                      className="absolute right-1 top-1 z-10 bg-slate-950/60"
+                    />
                   </div>
                 )
               })}

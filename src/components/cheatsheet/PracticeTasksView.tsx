@@ -7,7 +7,12 @@ import 'highlight.js/styles/github-dark.css'
 import type { PracticeTask, PracticeTopic } from '@/lib/cheatsheet/types'
 import { highlight } from '@/lib/cheatsheet/highlight'
 import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
-import { resetReadStateForKeys } from '@/lib/userStore'
+import {
+  resetReadStateForKeys,
+  resetReadStateForTopic,
+  resetSeenForTopic,
+  resetTopicStatus,
+} from '@/lib/userStore'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
 import { StatusMarker } from './StatusMarker'
@@ -128,15 +133,58 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
             className="w-full rounded-lg border border-white/10 bg-black/20 py-2.5 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-500 focus:border-orange-400/50 focus:outline-none"
           />
         </div>
-        {hasRecent && (
+        <div className="flex shrink-0 flex-wrap items-center gap-1">
+          {hasRecent && (
+            <Button
+              onClick={markAllSeen}
+              variant="ghost"
+              className="inline-flex items-center gap-2 text-rose-300"
+            >
+              <Sparkles size={16} /> Позначити нове як переглянуте
+            </Button>
+          )}
           <Button
-            onClick={markAllSeen}
+            onClick={() => {
+              if (confirm('Зняти всі зелені ✓ у практичних задачах?')) {
+                resetReadStateForTopic('practice')
+              }
+            }}
             variant="ghost"
-            className="inline-flex shrink-0 items-center gap-2 text-rose-300"
+            size="sm"
+            title="Зняти позначки прочитаного (✓) в усіх практичних задачах"
+            className="inline-flex items-center gap-1.5 text-emerald-300"
           >
-            <Sparkles size={16} /> Позначити нове як переглянуте
+            <Check size={14} /> Скинути ✓
           </Button>
-        )}
+          {hasRecent && (
+            <Button
+              onClick={() => {
+                if (confirm('Повернути червоні позначки «нове» в практичних задачах?')) {
+                  resetSeenForTopic('practice:')
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              title="Повернути позначки «нове» (•)"
+              className="inline-flex items-center gap-1.5 text-rose-300"
+            >
+              <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути •
+            </Button>
+          )}
+          <Button
+            onClick={() => {
+              if (confirm('Скинути всі позначки (✓ і •) у практичних задачах?')) {
+                resetTopicStatus('practice:', 'practice:')
+              }
+            }}
+            variant="ghost"
+            size="sm"
+            title="Зелені ✓ і червоні • в усіх практичних задачах"
+            className="inline-flex items-center gap-1.5 text-red-300"
+          >
+            <RotateCcw size={14} /> Скинути все
+          </Button>
+        </div>
         <div className="flex flex-wrap gap-1.5">
           {(['all', ...TOPICS] as const).map((t) => (
             <button
