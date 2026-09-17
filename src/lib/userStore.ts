@@ -197,8 +197,15 @@ function getSnapshot(): UserData {
   return snapshot
 }
 
+// Server/hydration snapshot. Must be the SAME reference on every call:
+// returning a fresh emptyData() makes useSyncExternalStore see a new value each
+// render ("The result of getServerSnapshot should be cached to avoid an
+// infinite loop"). Safe to share — every write builds a new object, nothing
+// mutates UserData in place.
+const serverSnapshot: UserData = emptyData()
+
 function getServerSnapshot(): UserData {
-  return emptyData()
+  return serverSnapshot
 }
 
 const serverSyncSnapshot: SyncSnapshot = { authUsername: null, syncState: 'idle', lastSyncedAt: '' }
