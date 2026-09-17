@@ -105,14 +105,127 @@ export const reactContent: TopicContent = {
     <div class="card"><h4>Webpack (вручну)</h4><p>Найпопулярніший бандлер 2015-2020. Бандлить <strong>увесь</strong> граф залежностей ще ДО старту dev-сервера — час холодного старту росте лінійно з розміром проєкту. Досі домінує в legacy-кодовій базі й Next.js Pages Router.</p></div>
   </div>
   <h3 class="topic">Сучасні інструменти — по одному <span class="tag tag-key">KEY</span></h3>
+`,
+        },
+        {
+          kind: 'tabs',
+          tabs: [
+            {
+              label: '⚡ Vite',
+              html: `<h4>Vite — Evan You (автор Vue), 2020</h4>
+  <p><strong>Рушій:</strong> dev — нативні ES-модулі + esbuild (Go) для pre-bundling залежностей; prod — Rollup (нові версії переходять на Rolldown — Rust-порт Rollup).</p>
+  <ul>
+    <li><strong>Dev:</strong> сервер стартує без бандлінгу. Браузер сам запитує <code>import</code>-и, Vite трансформує лише запитаний файл (JSX/TS → JS). Залежності з <code>node_modules</code> один раз пре-бандляться esbuild у кеш <code>node_modules/.vite</code>.</li>
+    <li><strong>HMR:</strong> інвалідовується лише змінений модуль і його межа (React Fast Refresh через <code>@vitejs/plugin-react</code>) — швидкість не залежить від розміру проєкту.</li>
+    <li><strong>Prod:</strong> Rollup — tree-shaking, code-splitting за динамічними <code>import()</code>, мінифікація, хешовані імена файлів.</li>
+  </ul>
   <div class="grid2">
-    <div class="card blue"><h4>Vite (Evan You, автор Vue)</h4><p>Dev — нативні ES-модулі напряму браузеру (0 бандлінгу для старту), esbuild лише для pre-bundling залежностей. Прод — Rollup. Стандарт для нових SPA-проєктів на 2024+.</p></div>
-    <div class="card green"><h4>Next.js (Vercel)</h4><p>Не просто бандлер — повноцінний фреймворк поверх React із роутингом/SSR/RSC (Block 6-7). Обирають, коли потрібен React + сервер-рендеринг з коробки, а не лише швидкий dev-сервер для SPA.</p></div>
-    <div class="card yellow"><h4>Turbopack (Vercel, Rust)</h4><p>Наступник Webpack від тієї ж команди, що робить Next.js — саме він працює під капотом <code>next dev</code>/<code>next build</code> у нових версіях Next.js. Inkremental-компіляція на рівні функцій, а не файлів.</p></div>
-    <div class="card"><h4>Rspack (ByteDance, Rust)</h4><p>Webpack-сумісний за API (той самий <code>webpack.config.js</code> здебільшого працює) — дає змогу мігрувати з Webpack на швидший рушій майже без переписування конфігурації.</p></div>
-    <div class="card blue"><h4>Parcel</h4><p>"Zero-config" бандлер — узагалі без конфіг-файлу для типового проєкту, автоматично визначає, що і як бандлити. Менш популярний за Vite сьогодні, але історично був першим "просто працює" інструментом.</p></div>
+    <div class="card green"><h4>Сильні сторони</h4><p>Миттєвий старт, мінімальна конфігурація, величезна екосистема плагінів (сумісна з Rollup), фундамент для Vitest, Remix/React Router v7, Astro, SvelteKit.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Dev і prod — різні збірники, тож рідкісні баги «працює в dev, ламається в build». Тисячі дрібних модулів на великому проєкті = водоспад запитів при першому завантаженні сторінки.</p></div>
   </div>
-  <div class="table-wrap">
+  <p><strong>Коли обирати:</strong> новий SPA / бібліотека компонентів / будь-який клієнтський React без потреби в SSR з коробки.</p>
+  <pre><code>// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: { alias: { '@': '/src' } },
+  server: { port: 5173, proxy: { '/api': 'http://localhost:3000' } },
+})</code></pre>
+  <div class="alert good"><span class="icon">💡</span><span>Env-змінні в клієнті — лише з префіксом <code>VITE_</code> і через <code>import.meta.env.VITE_API_URL</code>, а не <code>process.env</code>.</span></div>`,
+            },
+            {
+              label: '▲ Next.js',
+              html: `<h4>Next.js — Vercel, 2016</h4>
+  <p><strong>Що це:</strong> не бандлер, а <strong>фреймворк</strong> поверх React. Під капотом — Turbopack (за замовчуванням з Next.js 16; раніше Webpack) + SWC (Rust) для трансформації JS/TS.</p>
+  <ul>
+    <li><strong>Роутинг:</strong> файловий — App Router (<code>app/</code>, React Server Components, layouts, <code>loading.tsx</code>/<code>error.tsx</code>) або legacy Pages Router (<code>pages/</code>).</li>
+    <li><strong>Рендеринг:</strong> SSR, SSG, ISR, стрімінг, Server Actions — обирається на рівні сторінки/сегмента, а не для всього застосунку.</li>
+    <li><strong>Вбудовано:</strong> оптимізація зображень (<code>next/image</code>), шрифтів (<code>next/font</code>), middleware, API routes / Route Handlers.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>SEO і швидкий перший рендер з коробки, fullstack в одному репо, сильні конвенції для команди, першокласний деплой на Vercel.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Складніша ментальна модель (server vs client компоненти, кешування), прив'язка до конвенцій, self-hosting поза Vercel потребує більше налаштувань.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> потрібні SSR/SEO, публічні сторінки, fullstack-функціональність або єдиний стек клієнт + сервер.</p>
+  <pre><code>npx create-next-app@latest my-app   # TS, ESLint, Tailwind, App Router
+npm run dev                          # next dev (Turbopack)
+npm run build &amp;&amp; npm start           # production-збірка + сервер</code></pre>
+  <div class="alert good"><span class="icon">💡</span><span>Next.js — відповідь на питання «чим замінити CRA?» з боку React-команди: офіційна документація React рекомендує починати саме з фреймворку.</span></div>`,
+            },
+            {
+              label: '🚀 Turbopack',
+              html: `<h4>Turbopack — Vercel, 2022 (Rust)</h4>
+  <p><strong>Що це:</strong> наступник Webpack від Тобіаса Копперса (автора Webpack). Побудований на рушії інкрементальних обчислень <em>Turbo engine</em>.</p>
+  <ul>
+    <li><strong>Інкрементальність на рівні функцій:</strong> результат кожної внутрішньої операції кешується; при зміні файлу перераховується лише залежний від нього мінімум, а не файл чи чанк цілком.</li>
+    <li><strong>Lazy bundling:</strong> у dev збирається лише те, що реально запитала сторінка/роут.</li>
+    <li><strong>Статус:</strong> stable для <code>next dev</code> і <code>next build</code>; дефолтний бандлер у Next.js 16. Persistent-кеш на диску між запусками.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>Найшвидший HMR на великих Next.js-проєктах, підтримка більшості Webpack-loader'ів через <code>turbopack.rules</code>.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Фактично не існує окремо від Next.js; кастомні Webpack-плагіни (не loader'и) не підтримуються — міграція таких конфігів вимагає ручної роботи.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> ти вже на Next.js — ти вже його використовуєш. Окремо «обрати Turbopack» для не-Next проєкту поки не можна.</p>
+  <pre><code>// next.config.ts — підключення loader'а (напр. SVG як компонент)
+const nextConfig = {
+  turbopack: {
+    rules: {
+      '*.svg': { loaders: ['@svgr/webpack'], as: '*.js' },
+    },
+  },
+}
+export default nextConfig</code></pre>`,
+            },
+            {
+              label: '🦀 Rspack',
+              html: `<h4>Rspack — ByteDance, 2023 (Rust)</h4>
+  <p><strong>Що це:</strong> бандлер, сумісний з Webpack за API: той самий формат <code>config</code>, більшість loader'ів і популярних плагінів працюють без змін. Поверх нього — Rsbuild (zero-config обгортка, аналог Vite за DX).</p>
+  <ul>
+    <li><strong>Архітектура:</strong> ядро Webpack переписане на Rust з паралельною обробкою; вбудований SWC-loader замість <code>babel-loader</code>.</li>
+    <li><strong>Сумісність:</strong> <code>HtmlWebpackPlugin</code>, <code>css-loader</code>, Module Federation — працюють; частина плагінів має вбудовані Rust-аналоги (<code>rspack.HtmlRspackPlugin</code>).</li>
+    <li><strong>Швидкість:</strong> у 5–10 разів швидші build і HMR за Webpack на тих самих конфігах.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>Міграція великого legacy Webpack-проєкту «заміною пакета», Module Federation для мікрофронтендів, продакшн-перевірений у ByteDance.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Не 100% сумісність — плагіни, що лізуть у внутрішні хуки компілятора Webpack, можуть не працювати; екосистема молодша.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> великий Webpack-конфіг, який дорого переписувати під Vite, або мікрофронтенди на Module Federation.</p>
+  <pre><code>// rspack.config.js — майже 1:1 з webpack.config.js
+const rspack = require('@rspack/core')
+
+module.exports = {
+  entry: './src/main.tsx',
+  module: {
+    rules: [{ test: /\\.tsx?$/, loader: 'builtin:swc-loader' }],
+  },
+  plugins: [new rspack.HtmlRspackPlugin({ template: './index.html' })],
+}</code></pre>`,
+            },
+            {
+              label: '📦 Parcel',
+              html: `<h4>Parcel — Devon Govett, 2017 (v2 — частково на Rust, SWC)</h4>
+  <p><strong>Що це:</strong> «zero-config» бандлер: точка входу — будь-який файл (часто <code>index.html</code>), а Parcel сам знаходить залежності та потрібні трансформери.</p>
+  <ul>
+    <li><strong>Автоматика:</strong> JSX, TypeScript, CSS/SCSS, зображення — без конфігу; відсутні плагіни встановлюються автоматично при першому запуску.</li>
+    <li><strong>Кеш:</strong> агресивний кеш на диску (<code>.parcel-cache</code>), паралельна обробка у worker-потоках, SWC для JS.</li>
+    <li><strong>Налаштування:</strong> якщо все ж потрібно — <code>.parcelrc</code> (пайплайни трансформерів) і поле <code>targets</code> у <code>package.json</code>.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>Найнижчий поріг входу, чудово для прототипів, навчання та невеликих бібліотек (вбудована збірка бібліотек у кілька форматів).</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Менша спільнота і менше готових рішень, ніж у Vite; «магія» ускладнює дебаг нестандартних випадків.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> швидкий прототип чи демо, коли не хочеться думати про конфіг узагалі.</p>
+  <pre><code>npm i -D parcel
+npx parcel index.html          # dev-сервер з HMR на :1234
+npx parcel build index.html    # prod-збірка в dist/</code></pre>`,
+            },
+          ],
+        },
+        {
+          kind: 'paragraph',
+          html: `  <div class="table-wrap">
     <table>
       <tr><th>Інструмент</th><th>Тип</th><th>Швидкість dev-старту</th><th>Коли обирати</th></tr>
       <tr><td>Vite</td><td>Dev-сервер + Rollup</td><td>Дуже висока (ESM, без бандлінгу)</td><td>Новий SPA-проєкт за замовчуванням</td></tr>

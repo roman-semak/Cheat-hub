@@ -26,7 +26,7 @@ export function TopicPanel({
   accentBorder?: string
 }) {
   return (
-    <nav className="hidden h-full w-56 shrink-0 overflow-y-auto border-r border-white/10 py-3 lg:block">
+    <nav className="custom-scrollbar hidden h-full w-56 shrink-0 overflow-y-auto border-r border-white/10 py-3 [scrollbar-gutter:stable] lg:block">
       <ul className="flex flex-col">
         {items.map((item) => {
           const active = item.id === activeId
@@ -40,7 +40,7 @@ export function TopicPanel({
             <li key={item.id}>
               <div
                 className={cn(
-                  'flex w-full items-center gap-1 border-l-[3px] pr-1.5 text-[13px] transition-colors',
+                  'flex w-full items-center gap-1 border-l-[3px] pr-2 text-[13px] transition-colors',
                   active
                     ? cn('border-l-current', stateBg || 'bg-white/5', accentText, accentBorder)
                     : cn(

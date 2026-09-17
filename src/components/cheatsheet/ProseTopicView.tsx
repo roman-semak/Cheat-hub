@@ -12,9 +12,11 @@ import {
   resetReadStateForTopic,
   resetAllReadState,
   resetReadStateForKeys,
+  resetSeenForTopic,
+  resetTopicStatus,
 } from '@/lib/userStore'
 import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
-import { RotateCcw, Sparkles } from 'lucide-react'
+import { Check, ChevronDown, RotateCcw, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SectionResetButton } from './SectionResetButton'
 import { TopicPanel, TopicPanelItem } from './TopicPanel'
@@ -122,15 +124,41 @@ export function ProseTopicView({
               )}
               <Button
                 onClick={() => {
-                  if (confirm(`Скинути всі позначки прочитаного в «${meta.title}»?`)) {
+                  if (confirm(`Зняти всі зелені ✓ у «${meta.title}»?`)) {
                     resetReadStateForTopic(content.slug)
                   }
                 }}
                 variant="ghost"
-                title="Лише поточний топік"
+                title="Зняти позначки прочитаного (✓) у цьому топіку"
+                className="inline-flex items-center gap-2 text-emerald-300"
+              >
+                <Check size={16} /> Скинути ✓
+              </Button>
+              {hasRecent && (
+                <Button
+                  onClick={() => {
+                    if (confirm(`Повернути червоні позначки «нове» в «${meta.title}»?`)) {
+                      resetSeenForTopic(`${ns}:`)
+                    }
+                  }}
+                  variant="ghost"
+                  title="Повернути позначки «нове» (•) у цьому топіку"
+                  className="inline-flex items-center gap-2 text-rose-300"
+                >
+                  <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути •
+                </Button>
+              )}
+              <Button
+                onClick={() => {
+                  if (confirm(`Скинути всі позначки (✓ і •) в «${meta.title}»?`)) {
+                    resetTopicStatus(`${content.slug}:`, `${ns}:`)
+                  }
+                }}
+                variant="ghost"
+                title="Зелені ✓ і червоні • у цьому топіку"
                 className="inline-flex items-center gap-2 text-red-300"
               >
-                <RotateCcw size={16} /> Скинути прогрес
+                <RotateCcw size={16} /> Скинути все
               </Button>
               <Button
                 onClick={() => {
@@ -139,16 +167,19 @@ export function ProseTopicView({
                   }
                 }}
                 variant="ghost"
-                title="Усі топіки"
-                className="inline-flex items-center gap-2 text-red-300"
+                size="sm"
+                title="Позначки прочитаного в усіх топіках"
+                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-red-300"
               >
-                <RotateCcw size={16} /> Скинути все
+                <RotateCcw size={13} /> Усі топіки
               </Button>
             </div>
           </div>
         </header>
 
-        {content.sections.map((section) => (
+        {content.sections.map((section, i) => {
+          const next = content.sections[i + 1]
+          return (
           <section
             key={section.id}
             id={section.id}
@@ -170,10 +201,23 @@ export function ProseTopicView({
                   questions={section.interviewQuestions}
                 />
               )}
+              {next && (
+                <div className="mt-10 flex justify-center">
+                  <Button
+                    onClick={() => jump(next.id)}
+                    variant="outline"
+                    className="inline-flex max-w-full items-center gap-2"
+                  >
+                    <span className="truncate">Далі: {next.title}</span>
+                    <ChevronDown size={16} className="shrink-0" />
+                  </Button>
+                </div>
+              )}
               <div id={`${section.id}-end`} />
             </div>
           </section>
-        ))}
+          )
+        })}
 
         <div className="h-24" />
       </div>
