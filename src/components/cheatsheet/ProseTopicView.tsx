@@ -105,7 +105,7 @@ export function ProseTopicView({
       >
         <MobileSectionNav items={items} activeId={activeId} onJump={jump} />
 
-        <header className="border-b border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent px-6 py-8 md:px-10">
+        <header className="snap-start border-b border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent px-6 py-8 md:px-10">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-100">
