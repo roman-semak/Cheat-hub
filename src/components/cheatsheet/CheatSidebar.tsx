@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, FolderTree, User } from 'lucide-react'
@@ -14,6 +15,8 @@ import {
 import { CHEATSHEET_ENTRIES, CHEATSHEET_HREFS } from '@/lib/cheatsheet/quickref'
 import type { TopicMeta } from '@/lib/cheatsheet/types'
 import { useUserStore } from '@/lib/userStore'
+import { useAllTopicProgress } from '@/lib/cheatsheet/useTopicProgress'
+import { TopicProgressBar } from './TopicProgressBar'
 import { cn } from '@/lib/utils'
 
 interface CheatSidebarProps {
@@ -51,6 +54,16 @@ function sectionLinks(topic: TopicMeta): SectionLink[] {
 export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
   const pathname = usePathname()
   const { data } = useUserStore()
+  const progress = useAllTopicProgress()
+
+  // The store's server snapshot is empty, so the first paint computes 0% for
+  // every bar. Snap to the real width instead of sweeping 0→N on every load —
+  // same gate HubShell uses for its width transition.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true)
+  }, [])
   const profileActive = pathname === '/profile'
   const docsActive = pathname.startsWith('/docs')
 
@@ -106,13 +119,18 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
         <ul className="flex flex-col gap-1">
           {TOPICS.map((topic) => {
             const isActive = topic === activeTopic
+            const p = progress[topic.slug]
             return (
               <li key={topic.slug}>
                 <Link
                   href={topicHref(topic)}
-                  title={topic.title}
+                  title={
+                    p.total > 0
+                      ? `${topic.title} — прочитано ${p.read}/${p.total}`
+                      : topic.title
+                  }
                   className={cn(
-                    'flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors',
+                    'relative flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors',
                     isActive
                       ? 'bg-white/10 text-white'
                       : 'text-slate-300 hover:bg-white/5 hover:text-white',
@@ -124,6 +142,18 @@ export function CheatSidebar({ collapsed, onToggle }: CheatSidebarProps) {
                       {topic.title}
                     </span>
                   )}
+                  {/* Absolutely placed inside the row's bottom padding: keeps
+                      the row height unchanged and works on the 56px rail, where
+                      the bar is the only progress signal. */}
+                  <TopicProgressBar
+                    read={p.read}
+                    total={p.total}
+                    percent={p.percent}
+                    label={topic.title}
+                    collapsed={collapsed}
+                    animate={mounted}
+                    className="absolute inset-x-2 bottom-1"
+                  />
                 </Link>
               </li>
             )

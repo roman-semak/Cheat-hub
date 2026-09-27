@@ -243,7 +243,7 @@ top tab bar, masonry cards, no section sidebar). Data lives in
 `src/lib/cheatsheet/quickref-<slug>.ts` (`QuickRefBlock[]`); tab order =
 `QUICKREF_TOPICS` in `quickref.ts`. The old `/<topic>/cheatsheet` URLs 308-redirect
 (`next.config.ts`). To add a sheet: new data file → register in `quickref.ts` →
-`npm run stamp:new`.
+`npm run gen:counts`.
 
 ### Markdown export — «Завантажити MD»
 Every prose topic (`ProseTopicView` header) and every quickref board
@@ -265,16 +265,41 @@ authored as raw HTML, so it converts that HTML (tables → GFM pipe tables, list
   through the same serializer the button calls, and prints a census of authoring
   wrappers it has no rule for. Run it after touching the serializer.
 
-### Cheatsheet content: status marker (new / unread / read)
-Each trackable content unit (prose `TopicSection`, LeetCode section/task,
-`PracticeTask`, `Lifehack`, quickref block) carries one 3-state marker
-(`StatusMarker`, driven by `useContentStatus`): 🔴 new → ○ unread → ✓ read.
-After adding/renaming a unit, run `npm run stamp:new` to record its first-seen
-date in `src/lib/cheatsheet/contentManifest.generated.json` and commit it —
-units dated on/after `newSince` that the user hasn't dismissed show 🔴
-(`--check` fails the build if the manifest is stale). "new" clears only on
-click (scroll auto-read skips new sections); `read`/`seen` state lives in
-`UserData.readState` / `UserData.seenNew` (localStorage + `/api/sync`).
+### Cheatsheet content: status marker (unread / read / review)
+Each trackable unit (prose `TopicSection`, `PracticeTask`, quickref block)
+carries one 3-state marker (`StatusMarker`, driven by `useContentStatus`), and
+**all three states are the reader's own**: ○ unread → ✓ read → ● review
+(«повторити») → ○. Click cycles; there is no platform-driven state.
+
+State lives in `UserData.readState` as `'read' | 'review'` (absent = unread),
+keyed `${topicSlug}:${sectionId}` / `practice:<id>` / `quickref:<slug>:<key>`,
+persisted to localStorage + `/api/sync`.
+
+- Scroll auto-read uses `markReadIfUnset`, which only fills an EMPTY slot — it
+  can never overwrite a ● set by hand.
+- Per-topic resets are value-scoped: `resetReadStateForTopic` clears only ✓,
+  `resetReviewForTopic` only ●, `resetTopicStatus` both. Each button renders
+  only when it has something to clear (`hasRead` / `hasReview`).
+- `UserData.seenNew` is legacy and unused — preserved on load/save so existing
+  synced blobs round-trip, nothing reads or writes it.
+
+### Sidebar progress bars
+Every topic row in `CheatSidebar` carries a 2–3px bar showing the share of that
+topic's units marked ✓ (`TopicProgressBar` + `useAllTopicProgress`). ● does not
+count — it means "come back", not "done".
+
+- Denominators come from `src/lib/cheatsheet/contentCounts.generated.ts`
+  (`npm run gen:counts`, `-- --check` to detect staleness). **Run it after
+  adding or removing any trackable unit**, or the bars quietly cap below 100%.
+- That file exists because `CheatSidebar` is a client component in the hub
+  layout: importing the content modules there to count sections would drag
+  ~20k lines of HTML-in-strings into the shared client bundle on every route.
+  It carries numbers and key prefixes only — keep it that way.
+- The fill is a brand gradient, not `ACCENT[...].dot`: Tailwind's `content`
+  globs skip `src/lib/**`, so 10 of the 13 accent classes would be purged.
+- `leetcode` counts `practice:` tasks; LeetCode problems live in
+  `UserData.progress` and deliberately do not feed the bar. `quickref` sums all
+  9 boards into the ⚡ Шпаргалка row.
 
 ## Known Limitations
 

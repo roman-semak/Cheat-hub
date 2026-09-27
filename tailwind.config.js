@@ -10,6 +10,7 @@ module.exports = {
   // components, but `fuchsia` (Fullstack topic) is unique to the registry —
   // safelist it so the hub card / sidebar accent isn't purged.
   safelist: [
+    'text-fuchsia-300',
     'text-fuchsia-400',
     'hover:border-fuchsia-400/60',
     'ring-fuchsia-400/40',

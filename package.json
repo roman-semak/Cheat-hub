@@ -14,7 +14,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "node prisma/seed.ts",
-    "stamp:new": "tsx scripts/stamp-new-content.mjs",
+    "gen:counts": "tsx scripts/gen-content-counts.ts",
     "merge:leetcode": "tsx scripts/merge-leetcode-catalog.ts",
     "gen:testcases": "tsx scripts/generate-testcases.ts",
     "gen:solutions": "tsx scripts/generate-solutions.ts",
