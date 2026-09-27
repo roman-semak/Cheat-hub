@@ -118,8 +118,8 @@ URL формату: `practice` → `/problems`, `extended` → `/<slug>`, реш
 Кожна секція — `TopicSection` з `id` (якір), блоками контенту та попапом «Питання на
 співбесіді» (`interviewQuestions`). Посилання на секцію: `/<topic>#<section-id>`
 (той самий формат, що в [react-course-coverage.md](react-course-coverage.md)).
-Секції несуть 3-станий маркер new/unread/read (`StatusMarker`, `useContentStatus`);
-дата першої появи фіксується в `contentManifest.generated.json` через `npm run stamp:new`.
+Секції несуть 3-станий маркер ○ unread → ✓ read → ● «повторити» (`StatusMarker`,
+`useContentStatus`) — усі три стани ставить сам користувач.
 
 <details>
 <summary><b>🧠 Алгоритми</b> — <code>/algorithms</code> · 4 секції</summary>
@@ -467,7 +467,8 @@ URL формату: `practice` → `/problems`, `extended` → `/<slug>`, реш
   (акаунт створюється при першому логіні), Export JSON / Import JSON / скидання прогресу.
 - **`UserData`** (`src/lib/userData.ts`): `progress` (solved/attempted по slug задачі),
   `submissions`, `quizzes` (відповіді по quizId), `readState` (прочитані секції,
-  ключ `topic:sectionId`), `seenNew` (закриті маркери «нове»), `updatedAt`.
+  ключ `topic:sectionId`, значення `'read' | 'review'`), `seenNew` (legacy,
+  не використовується), `updatedAt`.
 - **Сховище** (`src/lib/userStore.ts`): localStorage + `useSyncExternalStore`;
   при логіні — pull з `GET /api/sync`, далі push із дебаунсом у `PUT /api/sync`
   (last-write-wins). Сесія — HMAC-cookie `cheatHubSession` (`src/lib/auth.ts`),
@@ -517,9 +518,8 @@ src/
 │   │   ├── registry.ts · types.ts · quickref.ts · quickrefKeys.ts   # реєстр розділів і типи
 │   │   ├── <topic>.ts ×11 · <topic>-quiz.ts ×5 · quickref-<slug>.ts ×9
 │   │   ├── leetcode.ts · practiceTasks.ts · practice/*.ts
-│   │   ├── use*.ts      # useContentStatus, useReadTracking, useNewContent, useScrollSpy,
+│   │   ├── use*.ts      # useContentStatus, useReadTracking, useScrollSpy,
 │   │   │                # useSectionHash, useMasonry
-│   │   ├── newContent.ts · contentManifest.generated.json           # маркер «нове»
 │   │   ├── toMarkdown.ts   # HTML-проза → Markdown (кнопка «Завантажити MD»); лише через await import()
 │   │   └── highlight.ts
 │   ├── docs/renderMarkdown.ts   # markdown-it + Mermaid-сегменти для /docs/*
@@ -531,7 +531,7 @@ src/
     ├── approaches.json              # підказки + рішення для попапу Solution
     └── testcases.generated.json     # тест-кейси
 scripts/          # import-leetcode, export-problems, merge-leetcode-catalog, generate-*,
-                  # normalize-solutions, verify-approaches, stamp-new-content, export-markdown,
+                  # normalize-solutions, verify-approaches, export-markdown,
                   # cheatsheet/ (одноразові парсери)
 prisma/           # schema.prisma (Problem, Submission, Progress, User), migrations, seed.ts, dev.db
 Tasks/            # журнал задач (task-NNN-*.md, archive/), скіл /task-manager
@@ -554,7 +554,6 @@ Docs/             # цей файл, аудити курсів, нотатки (
 | Генерація рішень (doocs → JS) | `npm run gen:solutions` | `src/data/approaches.json` |
 | Нормалізація TS → JS | `npm run normalize:solutions` | `approaches.json` |
 | Перевірка рішень прогоном тестів | `npm run verify:approaches` | non-zero exit при FAIL |
-| Штамп нового контенту | `npm run stamp:new` (`--check` у білді) | `contentManifest.generated.json` |
 | Дамп усіх розділів у Markdown | `npm run export:md` (перевірка серіалізатора) | `.md-export/*.md` (gitignored) |
 
 ---
@@ -565,8 +564,7 @@ Docs/             # цей файл, аудити курсів, нотатки (
 1. Додати slug у `TopicSlug` (`types.ts`) і запис у `TOPICS` (`registry.ts`).
 2. Створити `src/lib/cheatsheet/<slug>.ts` з `TopicContent` (кожна секція — з `interviewQuestions`, див. скіл `cheatsheet-interview-questions`).
 3. Створити `src/app/(hub)/<slug>/page.tsx` за зразком `react/page.tsx`.
-4. `npm run stamp:new`, закомітити маніфест.
 
-**Нова шпаргалка.** `quickref-<slug>.ts` → додати у `QUICKREF_TOPICS` і `QUICKREF_BLOCKS` (`quickref.ts`) → `npm run stamp:new`. Сторінка, таби, сайдбар і sitemap підхоплять автоматично.
+**Нова шпаргалка.** `quickref-<slug>.ts` → додати у `QUICKREF_TOPICS` і `QUICKREF_BLOCKS` (`quickref.ts`). Сторінка, таби, сайдбар і sitemap підхоплять автоматично.
 
 **Новий формат розділу (quiz/links).** Додати формат у `formats` розділу в `TOPICS`, файл даних (`<slug>-quiz.ts`) і `src/app/(hub)/<slug>/<format>/page.tsx`.
