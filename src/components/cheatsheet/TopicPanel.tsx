@@ -33,7 +33,7 @@ export function TopicPanel({
           const stateBg =
             item.status === 'read'
               ? 'bg-emerald-500/10'
-              : item.status === 'new'
+              : item.status === 'review'
                 ? 'bg-rose-500/10'
                 : ''
           return (

@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Check, RotateCcw, Sparkles } from 'lucide-react'
+import { Check, RotateCcw } from 'lucide-react'
 import 'highlight.js/styles/github-dark.css'
 import type { QuickRefBlock, QuickRefEntry, QuickRefGroup, TopicMeta } from '@/lib/cheatsheet/types'
 import { useColumnCount, useMasonry } from '@/lib/cheatsheet/useMasonry'
@@ -21,10 +21,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { quickRefBlockKeys } from '@/lib/cheatsheet/quickrefKeys'
-import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
 import {
   resetReadStateForTopic,
-  resetSeenForTopic,
+  resetReviewForTopic,
   resetTopicStatus,
 } from '@/lib/userStore'
 import { Button } from '@/components/ui/Button'
@@ -182,18 +182,14 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
   const { buckets, itemRef } = useMasonry(ids, columnCount)
 
   // One tracking key per board block — same derivation the manifest script uses,
-  // so the ✓ / • markers line up with `quickref:<slug>:<key>` in the manifest.
+  // so the ✓ / ● markers survive block reordering.
   const blockKeys = useMemo(() => quickRefBlockKeys(blocks), [blocks])
-  const readPrefix = `quickref:${meta.slug}:`
-  const pairFor = useCallback(
-    (index: number) => sameKey(`quickref:${meta.slug}:${blockKeys[index]}`),
+  const keyFor = useCallback(
+    (index: number) => `quickref:${meta.slug}:${blockKeys[index]}`,
     [meta.slug, blockKeys],
   )
-  const pairs = useMemo(
-    () => blockKeys.map((_, i) => pairFor(i)),
-    [blockKeys, pairFor],
-  )
-  const { statusOf, cycle, hasRecent, markAllSeen } = useContentStatus(pairs)
+  const keys = useMemo(() => blockKeys.map((_, i) => keyFor(i)), [blockKeys, keyFor])
+  const { statusOf, cycle, hasRead, hasReview } = useContentStatus(keys)
 
   return (
     <div className="paper min-h-screen">
@@ -238,57 +234,51 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
             return quickRefToMarkdown(blocks, meta, { path: `/quickref/${meta.slug}` })
           }}
         />
-        {hasRecent && (
-          <>
-            <Button
-              onClick={markAllSeen}
-              variant="ghost"
-              size="sm"
-              className="inline-flex items-center gap-1.5 text-rose-300"
-            >
-              <Sparkles size={14} /> Позначити нове як переглянуте
-            </Button>
-            <Button
-              onClick={() => {
-                if (confirm(`Повернути червоні позначки «нове» в «${meta.title}»?`)) {
-                  resetSeenForTopic(readPrefix)
-                }
-              }}
-              variant="ghost"
-              size="sm"
-              title="Повернути позначки «нове» (•) на цій шпаргалці"
-              className="inline-flex items-center gap-1.5 text-rose-300"
-            >
-              <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути •
-            </Button>
-          </>
+        {hasRead && (
+          <Button
+            onClick={() => {
+              if (confirm(`Зняти всі зелені ✓ на шпаргалці «${meta.title}»?`)) {
+                resetReadStateForTopic(`quickref:${meta.slug}`)
+              }
+            }}
+            variant="ghost"
+            size="sm"
+            title="Зняти позначки прочитаного (✓) на цій шпаргалці"
+            className="inline-flex items-center gap-1.5 text-emerald-300"
+          >
+            <Check size={14} /> Скинути ✓
+          </Button>
         )}
-        <Button
-          onClick={() => {
-            if (confirm(`Зняти всі зелені ✓ на шпаргалці «${meta.title}»?`)) {
-              resetReadStateForTopic(`quickref:${meta.slug}`)
-            }
-          }}
-          variant="ghost"
-          size="sm"
-          title="Зняти позначки прочитаного (✓) на цій шпаргалці"
-          className="inline-flex items-center gap-1.5 text-emerald-300"
-        >
-          <Check size={14} /> Скинути ✓
-        </Button>
-        <Button
-          onClick={() => {
-            if (confirm(`Скинути всі позначки (✓ і •) на шпаргалці «${meta.title}»?`)) {
-              resetTopicStatus(readPrefix, readPrefix)
-            }
-          }}
-          variant="ghost"
-          size="sm"
-          title="Зелені ✓ і червоні • на цій шпаргалці"
-          className="inline-flex items-center gap-1.5 text-red-300"
-        >
-          <RotateCcw size={14} /> Скинути все
-        </Button>
+        {hasReview && (
+          <Button
+            onClick={() => {
+              if (confirm(`Зняти всі червоні позначки «повторити» на шпаргалці «${meta.title}»?`)) {
+                resetReviewForTopic(`quickref:${meta.slug}`)
+              }
+            }}
+            variant="ghost"
+            size="sm"
+            title="Зняти позначки «повторити» (●) на цій шпаргалці"
+            className="inline-flex items-center gap-1.5 text-rose-300"
+          >
+            <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути ●
+          </Button>
+        )}
+        {(hasRead || hasReview) && (
+          <Button
+            onClick={() => {
+              if (confirm(`Скинути всі позначки (✓ і ●) на шпаргалці «${meta.title}»?`)) {
+                resetTopicStatus(`quickref:${meta.slug}:`)
+              }
+            }}
+            variant="ghost"
+            size="sm"
+            title="Зелені ✓ і червоні ● на цій шпаргалці"
+            className="inline-flex items-center gap-1.5 text-red-300"
+          >
+            <RotateCcw size={14} /> Скинути все
+          </Button>
+        )}
       </div>
 
       <div className="px-6 py-6 md:px-10">
@@ -299,21 +289,21 @@ export function QuickRefTopicView({ meta, blocks }: { meta: TopicMeta; blocks: Q
                 const index = Number(id)
                 const block = blocks[index]
                 if (!block) return null
-                const status = statusOf(pairFor(index))
+                const status = statusOf(keyFor(index))
                 return (
                   <div key={id} ref={itemRef(id)} className="relative">
                     <div
                       className={cn(
                         'rounded-lg',
                         status === 'read' && 'ring-1 ring-emerald-500/25',
-                        status === 'new' && 'ring-1 ring-rose-500/30',
+                        status === 'review' && 'ring-1 ring-rose-500/30',
                       )}
                     >
                       {renderBlock(block)}
                     </div>
                     <StatusMarker
                       status={status}
-                      onCycle={() => cycle(pairFor(index))}
+                      onCycle={() => cycle(keyFor(index))}
                       className="absolute right-1 top-1 z-10 bg-slate-950/60"
                     />
                   </div>

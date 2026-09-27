@@ -12,11 +12,11 @@ import {
   resetReadStateForTopic,
   resetAllReadState,
   resetReadStateForKeys,
-  resetSeenForTopic,
+  resetReviewForTopic,
   resetTopicStatus,
 } from '@/lib/userStore'
 import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
-import { Check, ChevronDown, RotateCcw, Sparkles } from 'lucide-react'
+import { Check, ChevronDown, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { DownloadMarkdownButton } from './DownloadMarkdownButton'
 import { SectionResetButton } from './SectionResetButton'
@@ -25,8 +25,8 @@ import { MobileSectionNav } from './MobileSectionNav'
 import { ContentBlocks } from './ContentBlocks'
 import { InterviewQuestionsBlock } from './InterviewQuestionsBlock'
 
-// prose/links share a `slug`, so the "new" tracking namespace is suffixed for
-// the links variant to avoid key collisions.
+// prose/links share a `slug`; the links variant only needs its own suffix for
+// the Markdown download filename — read state is shared with the prose page.
 type ProseVariant = 'prose' | 'links'
 
 export function ProseTopicView({
@@ -48,38 +48,30 @@ export function ProseTopicView({
   // already-visible sentinels.
   const ids = useMemo(() => content.sections.map((s) => s.id), [content.sections])
 
-  const pairFor = useCallback(
-    (id: string) => ({ newKey: `${ns}:${id}`, readKey: `${content.slug}:${id}` }),
-    [ns, content.slug],
-  )
-  const pairs = useMemo(
-    () => content.sections.map((s) => pairFor(s.id)),
-    [content.sections, pairFor],
-  )
-  const { statusOf, cycle, isRead, hasRecent, markAllSeen } = useContentStatus(pairs)
+  const keyFor = useCallback((id: string) => `${content.slug}:${id}`, [content.slug])
+  const keys = useMemo(() => ids.map(keyFor), [ids, keyFor])
+  const { statusOf, cycle, hasRead, hasReview } = useContentStatus(keys)
 
   const items: TopicPanelItem[] = useMemo(
     () =>
       content.sections.map((s) => ({
         id: s.id,
         label: s.title,
-        status: statusOf(pairFor(s.id)),
+        status: statusOf(keyFor(s.id)),
       })),
-    [content.sections, statusOf, pairFor],
+    [content.sections, statusOf, keyFor],
   )
   const activeId = useScrollSpy(ids, scrollRef)
-  const isNewId = useCallback(
-    (id: string) => statusOf(pairFor(id)) === 'new',
-    [statusOf, pairFor],
-  )
-  useReadTracking(content.slug, ids, scrollRef, isNewId)
+  // Scrolling past a section only fills an EMPTY slot (markReadIfUnset), so it
+  // can never overwrite a red "review" flag the reader set deliberately.
+  useReadTracking(content.slug, ids, scrollRef)
   useRestoreSectionScroll(ids, scrollRef)
   useSectionHashSync(activeId)
 
   const jump = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
-  const cycleStatus = (id: string) => cycle(pairFor(id))
+  const cycleStatus = (id: string) => cycle(keyFor(id))
 
   return (
     <>
@@ -123,53 +115,48 @@ export function ProseTopicView({
                   return topicToMarkdown(content, meta, { path })
                 }}
               />
-              {hasRecent && (
-                <Button
-                  onClick={markAllSeen}
-                  variant="ghost"
-                  className="inline-flex items-center gap-2 text-rose-300"
-                >
-                  <Sparkles size={16} /> Позначити нове як переглянуте
-                </Button>
-              )}
-              <Button
-                onClick={() => {
-                  if (confirm(`Зняти всі зелені ✓ у «${meta.title}»?`)) {
-                    resetReadStateForTopic(content.slug)
-                  }
-                }}
-                variant="ghost"
-                title="Зняти позначки прочитаного (✓) у цьому топіку"
-                className="inline-flex items-center gap-2 text-emerald-300"
-              >
-                <Check size={16} /> Скинути ✓
-              </Button>
-              {hasRecent && (
+              {hasRead && (
                 <Button
                   onClick={() => {
-                    if (confirm(`Повернути червоні позначки «нове» в «${meta.title}»?`)) {
-                      resetSeenForTopic(`${ns}:`)
+                    if (confirm(`Зняти всі зелені ✓ у «${meta.title}»?`)) {
+                      resetReadStateForTopic(content.slug)
                     }
                   }}
                   variant="ghost"
-                  title="Повернути позначки «нове» (•) у цьому топіку"
-                  className="inline-flex items-center gap-2 text-rose-300"
+                  title="Зняти позначки прочитаного (✓) у цьому топіку"
+                  className="inline-flex items-center gap-2 text-emerald-300"
                 >
-                  <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути •
+                  <Check size={16} /> Скинути ✓
                 </Button>
               )}
-              <Button
-                onClick={() => {
-                  if (confirm(`Скинути всі позначки (✓ і •) в «${meta.title}»?`)) {
-                    resetTopicStatus(`${content.slug}:`, `${ns}:`)
-                  }
-                }}
-                variant="ghost"
-                title="Зелені ✓ і червоні • у цьому топіку"
-                className="inline-flex items-center gap-2 text-red-300"
-              >
-                <RotateCcw size={16} /> Скинути все
-              </Button>
+              {hasReview && (
+                <Button
+                  onClick={() => {
+                    if (confirm(`Зняти всі червоні позначки «повторити» в «${meta.title}»?`)) {
+                      resetReviewForTopic(content.slug)
+                    }
+                  }}
+                  variant="ghost"
+                  title="Зняти позначки «повторити» (●) у цьому топіку"
+                  className="inline-flex items-center gap-2 text-rose-300"
+                >
+                  <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути ●
+                </Button>
+              )}
+              {(hasRead || hasReview) && (
+                <Button
+                  onClick={() => {
+                    if (confirm(`Скинути всі позначки (✓ і ●) в «${meta.title}»?`)) {
+                      resetTopicStatus(`${content.slug}:`)
+                    }
+                  }}
+                  variant="ghost"
+                  title="Зелені ✓ і червоні ● у цьому топіку"
+                  className="inline-flex items-center gap-2 text-red-300"
+                >
+                  <RotateCcw size={16} /> Скинути все
+                </Button>
+              )}
               <Button
                 onClick={() => {
                   if (confirm('Скинути позначки прочитаного в усіх топіках?')) {
@@ -199,7 +186,7 @@ export function ProseTopicView({
               <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-slate-100">
                 <span>{section.title}</span>
                 <SectionResetButton
-                  show={isRead(`${content.slug}:${section.id}`)}
+                  show={statusOf(keyFor(section.id)) !== 'unread'}
                   label={section.title}
                   onReset={() => resetReadStateForKeys([`${content.slug}:${section.id}`])}
                 />

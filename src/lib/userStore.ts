@@ -265,12 +265,14 @@ export function resetQuiz(quizId: string) {
   }))
 }
 
-// Toggles a cheatsheet subsection's read state: unread <-> read.
-// ("new" is a separate axis tracked in `seenNew`, not here.)
+// Cycles a cheatsheet unit's marker: unread → read → review → unread.
+// All three states are the user's own.
 export function cycleReadState(key: string) {
   update((d) => {
     const readState = { ...d.readState }
-    if (d.readState[key] === 'read') delete readState[key]
+    const current = d.readState[key]
+    if (current === 'read') readState[key] = 'review'
+    else if (current === 'review') delete readState[key]
     else readState[key] = 'read'
     return { ...d, readState }
   })
@@ -285,23 +287,34 @@ export function markReadIfUnset(key: string) {
   })
 }
 
-// Clears read state for every section of one topic, leaving other topics'
-// and quizzes' progress untouched.
+// Clears the green ✓ for every section of one topic. Red "review" flags
+// survive — they're a separate axis with their own reset.
 export function resetReadStateForTopic(topicSlug: string) {
   update((d) => {
     const prefix = `${topicSlug}:`
     const readState = Object.fromEntries(
-      Object.entries(d.readState).filter(([key]) => !key.startsWith(prefix)),
+      Object.entries(d.readState).filter(([key, v]) => !(key.startsWith(prefix) && v === 'read')),
     )
     return { ...d, readState }
   })
 }
 
-// Clears read state for an explicit list of keys (one section / group), in a
-// single store write. No-op if none of them are currently "read".
+// Clears the red "review" flags for one topic, leaving green ✓ alone.
+export function resetReviewForTopic(topicSlug: string) {
+  update((d) => {
+    const prefix = `${topicSlug}:`
+    const readState = Object.fromEntries(
+      Object.entries(d.readState).filter(([key, v]) => !(key.startsWith(prefix) && v === 'review')),
+    )
+    return { ...d, readState }
+  })
+}
+
+// Clears every marker for an explicit list of keys (one section / group), in
+// a single store write. No-op if none of them carry any state.
 export function resetReadStateForKeys(keys: string[]) {
   update((d) => {
-    const toClear = keys.filter((k) => d.readState[k] === 'read')
+    const toClear = keys.filter((k) => d.readState[k] !== undefined)
     if (toClear.length === 0) return d
     const readState = { ...d.readState }
     for (const k of toClear) delete readState[k]
@@ -309,67 +322,21 @@ export function resetReadStateForKeys(keys: string[]) {
   })
 }
 
-// Clears both axes for one topic in a single store write: read markers
-// (green ✓, `readPrefix`) and dismissed "new" flags (red •, `seenPrefix`).
-export function resetTopicStatus(readPrefix: string, seenPrefix: string) {
+// Clears every marker for one topic in a single store write — both green ✓
+// and red ● (any readState key under `prefix`).
+export function resetTopicStatus(prefix: string) {
   update((d) => {
     const readState = Object.fromEntries(
-      Object.entries(d.readState).filter(([key]) => !key.startsWith(readPrefix)),
+      Object.entries(d.readState).filter(([key]) => !key.startsWith(prefix)),
     )
-    const seenNew = Object.fromEntries(
-      Object.entries(d.seenNew).filter(([key]) => !key.startsWith(seenPrefix)),
-    ) as Record<string, true>
-    return { ...d, readState, seenNew }
+    return { ...d, readState }
   })
 }
 
-// Clears every "read" marker across all topics. Leaves "new" markers
-// (seenNew), task progress and quizzes untouched.
+// Clears every marker (✓ and ●) across all topics. Task progress and
+// quizzes are untouched.
 export function resetAllReadState() {
   update((d) => ({ ...d, readState: {} }))
-}
-
-// ---- "new content" marker (red •) ----
-
-// Dismiss the "new" marker for one content key. Idempotent.
-export function markSeen(key: string) {
-  update((d) => {
-    if (d.seenNew[key]) return d
-    return { ...d, seenNew: { ...d.seenNew, [key]: true as const } }
-  })
-}
-
-// Dismiss many keys in a single store write (e.g. "mark all new as seen"
-// for a topic). No-op if nothing changes.
-export function markSeenMany(keys: string[]) {
-  update((d) => {
-    const missing = keys.filter((k) => !d.seenNew[k])
-    if (missing.length === 0) return d
-    const seenNew = { ...d.seenNew }
-    for (const k of missing) seenNew[k] = true
-    return { ...d, seenNew }
-  })
-}
-
-// Re-arm the "new" marker for one key (toggle back on).
-export function unmarkSeen(key: string) {
-  update((d) => {
-    if (!d.seenNew[key]) return d
-    const seenNew = { ...d.seenNew }
-    delete seenNew[key]
-    return { ...d, seenNew }
-  })
-}
-
-// Clears the "seen" flags for every key of one namespace/topic
-// (prefix match, mirrors resetReadStateForTopic).
-export function resetSeenForTopic(prefix: string) {
-  update((d) => {
-    const seenNew = Object.fromEntries(
-      Object.entries(d.seenNew).filter(([key]) => !key.startsWith(prefix)),
-    ) as Record<string, true>
-    return { ...d, seenNew }
-  })
 }
 
 export function resetData() {
@@ -412,10 +379,6 @@ export function useUserStore() {
     resetQuiz,
     cycleReadState,
     markReadIfUnset,
-    markSeen,
-    markSeenMany,
-    unmarkSeen,
-    resetSeenForTopic,
     resetAllReadState,
     resetData,
     exportJson,

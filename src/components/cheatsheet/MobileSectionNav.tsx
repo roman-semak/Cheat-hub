@@ -27,7 +27,7 @@ export function MobileSectionNav({
       >
         {items.map((item) => {
           const prefix =
-            item.status === 'new' ? '🔴 ' : item.status === 'read' ? '✓ ' : ''
+            item.status === 'review' ? '🔴 ' : item.status === 'read' ? '✓ ' : ''
           const label = item.emoji ? `${item.emoji} ${item.label}` : item.label
           return (
             <option key={item.id} value={item.id}>

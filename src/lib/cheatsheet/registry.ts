@@ -2,6 +2,12 @@ import type { TopicMeta, TopicSlug, Accent } from './types'
 
 // Single source of truth for the topic list — drives both the hub cards and
 // the sidebar navigation. Adding a topic = one entry here + one data module.
+// Hand-maintained stamp for when the cheatsheet content last changed in a way
+// worth telling crawlers about. Used for <lastmod> on topic/quickref pages;
+// bump it when you add or substantially edit sections. (It replaces the
+// generatedAt field of the old content manifest.)
+export const CONTENT_UPDATED_AT = '2026-09-26'
+
 export const TOPICS: TopicMeta[] = [
   {
     slug: 'algorithms',

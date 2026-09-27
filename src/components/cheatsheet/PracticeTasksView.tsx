@@ -2,15 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Editor, { type Monaco } from '@monaco-editor/react'
-import { Search, Check, Copy, Eye, EyeOff, RotateCcw, Sparkles } from 'lucide-react'
+import { Search, Check, Copy, Eye, EyeOff, RotateCcw } from 'lucide-react'
 import 'highlight.js/styles/github-dark.css'
 import type { PracticeTask, PracticeTopic } from '@/lib/cheatsheet/types'
 import { highlight } from '@/lib/cheatsheet/highlight'
-import { useContentStatus, sameKey } from '@/lib/cheatsheet/useContentStatus'
+import { useContentStatus } from '@/lib/cheatsheet/useContentStatus'
 import {
   resetReadStateForKeys,
   resetReadStateForTopic,
-  resetSeenForTopic,
+  resetReviewForTopic,
   resetTopicStatus,
 } from '@/lib/userStore'
 import { GlassPanel } from '@/components/glass/GlassPanel'
@@ -103,18 +103,14 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
     [tasks, selectedId],
   )
 
-  const pairs = useMemo(() => tasks.map((t) => sameKey(`practice:${t.id}`)), [tasks])
-  const { statusOf, cycle, dismissNew, isRead, hasRecent, markAllSeen } =
-    useContentStatus(pairs)
+  const keys = useMemo(() => tasks.map((t) => `practice:${t.id}`), [tasks])
+  const { statusOf, cycle, hasRead, hasReview } = useContentStatus(keys)
 
   // Reset targets the whole topic, ignoring the level/search filter.
   const topicKeys = (t: PracticeTopic) =>
     tasks.filter((task) => task.topic === t).map((task) => `practice:${task.id}`)
 
-  const openTask = (id: string) => {
-    setSelectedId(id)
-    dismissNew(sameKey(`practice:${id}`)) // opening a task clears its "new" flag
-  }
+  const openTask = (id: string) => setSelectedId(id)
 
   return (
     <div className="flex flex-col gap-6">
@@ -134,56 +130,51 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
           />
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-1">
-          {hasRecent && (
-            <Button
-              onClick={markAllSeen}
-              variant="ghost"
-              className="inline-flex items-center gap-2 text-rose-300"
-            >
-              <Sparkles size={16} /> Позначити нове як переглянуте
-            </Button>
-          )}
-          <Button
-            onClick={() => {
-              if (confirm('Зняти всі зелені ✓ у практичних задачах?')) {
-                resetReadStateForTopic('practice')
-              }
-            }}
-            variant="ghost"
-            size="sm"
-            title="Зняти позначки прочитаного (✓) в усіх практичних задачах"
-            className="inline-flex items-center gap-1.5 text-emerald-300"
-          >
-            <Check size={14} /> Скинути ✓
-          </Button>
-          {hasRecent && (
+          {hasRead && (
             <Button
               onClick={() => {
-                if (confirm('Повернути червоні позначки «нове» в практичних задачах?')) {
-                  resetSeenForTopic('practice:')
+                if (confirm('Зняти всі зелені ✓ у практичних задачах?')) {
+                  resetReadStateForTopic('practice')
                 }
               }}
               variant="ghost"
               size="sm"
-              title="Повернути позначки «нове» (•)"
-              className="inline-flex items-center gap-1.5 text-rose-300"
+              title="Зняти позначки прочитаного (✓) в усіх практичних задачах"
+              className="inline-flex items-center gap-1.5 text-emerald-300"
             >
-              <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути •
+              <Check size={14} /> Скинути ✓
             </Button>
           )}
-          <Button
-            onClick={() => {
-              if (confirm('Скинути всі позначки (✓ і •) у практичних задачах?')) {
-                resetTopicStatus('practice:', 'practice:')
-              }
-            }}
-            variant="ghost"
-            size="sm"
-            title="Зелені ✓ і червоні • в усіх практичних задачах"
-            className="inline-flex items-center gap-1.5 text-red-300"
-          >
-            <RotateCcw size={14} /> Скинути все
-          </Button>
+          {hasReview && (
+            <Button
+              onClick={() => {
+                if (confirm('Зняти всі червоні позначки «повторити» в практичних задачах?')) {
+                  resetReviewForTopic('practice')
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              title="Зняти позначки «повторити» (●)"
+              className="inline-flex items-center gap-1.5 text-rose-300"
+            >
+              <span className="block h-2 w-2 rounded-full bg-rose-500" /> Скинути ●
+            </Button>
+          )}
+          {(hasRead || hasReview) && (
+            <Button
+              onClick={() => {
+                if (confirm('Скинути всі позначки (✓ і ●) у практичних задачах?')) {
+                  resetTopicStatus('practice:')
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              title="Зелені ✓ і червоні ● в усіх практичних задачах"
+              className="inline-flex items-center gap-1.5 text-red-300"
+            >
+              <RotateCcw size={14} /> Скинути все
+            </Button>
+          )}
         </div>
         <div className="flex flex-wrap gap-1.5">
           {(['all', ...TOPICS] as const).map((t) => (
@@ -215,7 +206,7 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
                   {group.topic} ({group.tasks.length})
                 </span>
                 <SectionResetButton
-                  show={topicKeys(group.topic).some(isRead)}
+                  show={topicKeys(group.topic).some((k) => statusOf(k) !== 'unread')}
                   label={group.topic}
                   onReset={() => resetReadStateForKeys(topicKeys(group.topic))}
                 />
@@ -225,8 +216,8 @@ export function PracticeTasksView({ tasks }: { tasks: PracticeTask[] }) {
                   <li key={task.id} className="flex items-stretch gap-1.5">
                     <div className="flex items-start pt-3">
                       <StatusMarker
-                        status={statusOf(sameKey(`practice:${task.id}`))}
-                        onCycle={() => cycle(sameKey(`practice:${task.id}`))}
+                        status={statusOf(`practice:${task.id}`)}
+                        onCycle={() => cycle(`practice:${task.id}`)}
                       />
                     </div>
                     <button

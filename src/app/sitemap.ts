@@ -1,12 +1,11 @@
 import { MetadataRoute } from 'next'
 import { problems } from '@/data/problems'
-import { TOPICS, formatHref } from '@/lib/cheatsheet/registry'
+import { TOPICS, formatHref, CONTENT_UPDATED_AT } from '@/lib/cheatsheet/registry'
 import { CHEATSHEET_ENTRIES } from '@/lib/cheatsheet/quickref'
 import { absoluteUrl, SITE_URL } from '@/lib/seo'
-import manifest from '@/lib/cheatsheet/contentManifest.generated.json'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const contentUpdatedAt = new Date(manifest.generatedAt)
+  const contentUpdatedAt = new Date(CONTENT_UPDATED_AT)
   const buildDate = new Date()
 
   // Cheat-sheet topic pages. `practice` maps to /problems (emitted once below);

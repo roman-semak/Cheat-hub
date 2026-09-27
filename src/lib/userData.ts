@@ -14,11 +14,12 @@ export interface QuizProgress {
   answers: Record<number, number>
 }
 
-// Cheatsheet subsection read state. 'read' = scrolled through or manually
-// confirmed; absent = unread. Keyed by `${topicSlug}:${sectionId}`.
-// Combined with `seenNew` this drives the 3-state marker: new → unread → read.
-// (The legacy 'review' value is migrated to 'read' on load — see normalizeReadState.)
-export type ReadState = 'read'
+// Cheatsheet subsection read state, keyed by `${topicSlug}:${sectionId}`.
+//   absent   — unread (grey ○)
+//   'read'   — scrolled through or manually confirmed (green ✓)
+//   'review' — the user flagged it to come back to (red ●)
+// These three drive the marker; the user owns all of them (StatusMarker).
+export type ReadState = 'read' | 'review'
 
 export interface UserData {
   username: string
@@ -26,10 +27,9 @@ export interface UserData {
   submissions: SubmissionRecord[]
   quizzes: Record<string, QuizProgress>
   readState: Record<string, ReadState>
-  // Set of "new content" keys the user has dismissed (the red • marker).
-  // Keyed the same way as `readState` for prose sections; namespaced
-  // (`practice:`, `leetcode:`, `lifehack:`, `quickref:`) for other surfaces.
-  // Presence = "I've seen this"; absence + a recent manifest date = still new.
+  // LEGACY: dismissals for the old platform-driven "new content" marker.
+  // Nothing reads this any more — red now means the user's own "review" flag
+  // (see ReadState). Kept so existing local/synced blobs round-trip unchanged.
   seenNew: Record<string, true>
   updatedAt: string
 }
@@ -64,8 +64,7 @@ function normalizeReadState(value: unknown): Record<string, ReadState> {
   if (!value || typeof value !== 'object') return {}
   const out: Record<string, ReadState> = {}
   for (const [key, v] of Object.entries(value as Record<string, unknown>)) {
-    // 'review' is legacy — fold it into 'read' (the user had already read it).
-    if (v === 'read' || v === 'review') out[key] = 'read'
+    if (v === 'read' || v === 'review') out[key] = v
   }
   return out
 }

@@ -3,22 +3,22 @@
 import { Check, Circle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// The unified per-content-unit marker. Three states in one control:
-//   new    — added to the platform recently, user hasn't acknowledged it (red •)
-//   unread — acknowledged / not new, not marked read (grey ○)
-//   read   — user marked it done, or scrolled past it (green ✓)
-// Click cycles new → unread → read → unread. "new" is only reachable from the
-// content manifest, never by clicking back.
-export type ContentStatus = 'new' | 'unread' | 'read'
+// The unified per-content-unit marker. Three states in one control, all of
+// them the user's own:
+//   unread — not touched yet (grey ○)
+//   read   — marked done, or scrolled past (green ✓)
+//   review — flagged to come back to (red ●)
+// Click cycles unread → read → review → unread, on any unit.
+export type ContentStatus = 'unread' | 'read' | 'review'
 
 const LABEL: Record<ContentStatus, string> = {
-  new: 'Нове на платформі — натисніть, щоб позначити переглянутим',
   unread: 'Позначити прочитаним',
-  read: 'Прочитано — натисніть, щоб зняти',
+  read: 'Прочитано — натисніть, щоб позначити «повторити»',
+  review: 'Повторити — натисніть, щоб зняти позначку',
 }
 
 function Icon({ status, className }: { status: ContentStatus; className?: string }) {
-  if (status === 'new') {
+  if (status === 'review') {
     return (
       <span
         className={cn(

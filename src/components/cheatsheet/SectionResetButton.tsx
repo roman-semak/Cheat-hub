@@ -3,8 +3,8 @@
 import { RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// Clears every green ✓ (read marker) for one section / group. Rendered inline
-// next to a section heading; hidden entirely when the section has nothing read.
+// Clears the marker (✓ or ●) for one section / group. Rendered inline next to
+// a section heading; hidden entirely when the section carries no marker.
 export function SectionResetButton({
   show,
   label,
@@ -23,10 +23,10 @@ export function SectionResetButton({
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
-        if (confirm(`Скинути позначки прочитаного в розділі «${label}»?`)) onReset()
+        if (confirm(`Скинути позначку розділу «${label}»?`)) onReset()
       }}
-      title="Зняти всі ✓ у цьому розділі"
-      aria-label={`Зняти всі позначки прочитаного в розділі «${label}»`}
+      title="Зняти позначку (✓ або ●) у цьому розділі"
+      aria-label={`Зняти позначку розділу «${label}»`}
       className={cn(
         'shrink-0 rounded p-1 text-slate-500 transition-colors hover:bg-white/10 hover:text-red-300',
         className,
