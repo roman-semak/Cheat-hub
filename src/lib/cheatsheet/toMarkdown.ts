@@ -227,7 +227,11 @@ function tidyInline(text: string): string {
 // Wrappers that exist purely for layout — the markdown keeps their children and
 // drops the box. Listed so `onUnknown` only fires for classes we haven't seen.
 const TRANSPARENT_CLASSES = new Set([
+  'card',
   'cards',
+  'grid',
+  'grid2',
+  'grid3',
   'list',
   'table-wrap',
   'red',
@@ -445,26 +449,6 @@ function alertBlock(el: HTMLElement, ctx: Ctx): string[] {
   return [blockquote(startsWithEmoji(body) ? body : `${icon} ${body}`)]
 }
 
-// Card grids have no Markdown equivalent, so they travel as container blocks
-// (`:::: grid2` / `::: card red`) that scripts/import-topic-markdown.ts turns
-// back into the same divs. Outer containers take more colons than inner ones,
-// following the markdown-it-container convention.
-const CARD_COLOURS = ['red', 'green', 'blue', 'yellow', 'purple', 'orange']
-
-function gridBlock(el: HTMLElement, ctx: Ctx): string[] {
-  const kind = classesOf(el).find((c) => /^grid[23]?$/.test(c)) ?? 'grid2'
-  const body = childBlocks(el, ctx).join('\n\n')
-  if (!body) return []
-  return [`:::: ${kind}\n\n${body}\n\n::::`]
-}
-
-function cardBlock(el: HTMLElement, ctx: Ctx): string[] {
-  const colour = classesOf(el).find((c) => CARD_COLOURS.includes(c))
-  const body = childBlocks(el, ctx).join('\n\n')
-  if (!body) return []
-  return [`::: card${colour ? ` ${colour}` : ''}\n\n${body}\n\n:::`]
-}
-
 function blockOf(el: HTMLElement, ctx: Ctx): string[] {
   const tag = tagOf(el)
 
@@ -500,8 +484,6 @@ function blockOf(el: HTMLElement, ctx: Ctx): string[] {
       break
   }
 
-  if (classesOf(el).some((c) => /^grid[23]?$/.test(c))) return gridBlock(el, ctx)
-  if (hasClass(el, 'card')) return cardBlock(el, ctx)
   if (hasClass(el, 'alert')) return alertBlock(el, ctx)
   if (hasClass(el, 'changelog')) return changelogBlock(el, ctx)
   if (hasClass(el, 'changelog-row')) {

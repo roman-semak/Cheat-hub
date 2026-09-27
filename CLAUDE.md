@@ -242,7 +242,8 @@ Every cheat sheet is a dense quickref board rendered by `QuickRefTopicView` (sha
 top tab bar, masonry cards, no section sidebar). Data lives in
 `src/lib/cheatsheet/quickref-<slug>.ts` (`QuickRefBlock[]`); tab order =
 `QUICKREF_TOPICS` in `quickref.ts`. The old `/<topic>/cheatsheet` URLs 308-redirect
-(`next.config.ts`). To add a sheet: new data file → register in `quickref.ts`.
+(`next.config.ts`). To add a sheet: new data file → register in `quickref.ts` →
+`npm run stamp:new`.
 
 ### Markdown export — «Завантажити MD»
 Every prose topic (`ProseTopicView` header) and every quickref board
@@ -264,61 +265,16 @@ authored as raw HTML, so it converts that HTML (tables → GFM pipe tables, list
   through the same serializer the button calls, and prints a census of authoring
   wrappers it has no rule for. Run it after touching the serializer.
 
-**Editing a topic as Markdown (round trip).** `npm run import:md -- <file.md>
-<slug>` (`scripts/import-topic-markdown.ts`) rewrites `src/lib/cheatsheet/<slug>.ts`
-from an exported-then-edited Markdown file, via `markdown-it` + a pass that
-re-applies the `.cheat-prose` classes (`h3.topic`, `.table-wrap`, `ul.list`,
-`.alert` tone from the leading emoji, `**[KEY]**` → `.tag` badges).
-
-- Section **ids are not in the Markdown**, so they are carried over from the
-  existing module by matching section titles. A title that doesn't match aborts
-  the import — ids are the `#anchor` and the key for the reader's ✓ / ● markers
-  (`${slug}:${sectionId}`), so silently regenerating them would break both.
-- **Card grids round-trip** through container blocks — the one structure
-  Markdown can't express on its own:
-
-  ```
-  :::: grid2
-  ::: card red
-  #### ❌ Наївний підхід
-  ```tsx
-  …
-  ```
-  :::
-  ::: card green
-  #### ✅ Правильно
-  :::
-  ::::
-  ```
-
-  Outer container takes more colons than inner (markdown-it-container
-  convention). `grid2` / `grid3`, card colours `red|green|blue|yellow|purple|orange`.
-  A fence inside a card stays inline `<pre>` instead of becoming its own
-  `code` block, matching how the cards were authored. Verified lossless: the
-  pre-rewrite react.ts (66 grids / 122 cards) survives export → import with
-  every grid and colour intact.
-- Still lossy: `tabs` and `links` blocks have no Markdown form and come back as
-  ordinary prose.
-- `--dry` reports what would be written without touching the file.
-
-### Cheatsheet content: status marker (unread / read / review)
-Each trackable unit (prose `TopicSection`, `PracticeTask`, quickref block)
-carries one 3-state marker (`StatusMarker`, driven by `useContentStatus`), and
-**all three states are the user's own**: ○ unread → ✓ read → ● review (червоне
-«повторити») → ○. Click cycles; there is no platform-driven state.
-
-State lives in `UserData.readState` as `'read' | 'review'` (absent = unread),
-keyed `${topicSlug}:${sectionId}` / `practice:<id>` / `quickref:<slug>:<key>`,
-persisted to localStorage + `/api/sync`.
-
-- Scroll auto-read uses `markReadIfUnset`, which only fills an EMPTY slot — it
-  can never overwrite a ● the reader set deliberately.
-- Per-topic resets are value-scoped: `resetReadStateForTopic` clears only ✓,
-  `resetReviewForTopic` only ●, `resetTopicStatus` both. Each button renders
-  only when it has something to clear (`hasRead` / `hasReview`), so a reset
-  control is never a no-op.
-- `UserData.seenNew` is legacy and unused — it is preserved on load/save so
-  existing synced blobs round-trip, nothing reads or writes it.
+### Cheatsheet content: status marker (new / unread / read)
+Each trackable content unit (prose `TopicSection`, LeetCode section/task,
+`PracticeTask`, `Lifehack`, quickref block) carries one 3-state marker
+(`StatusMarker`, driven by `useContentStatus`): 🔴 new → ○ unread → ✓ read.
+After adding/renaming a unit, run `npm run stamp:new` to record its first-seen
+date in `src/lib/cheatsheet/contentManifest.generated.json` and commit it —
+units dated on/after `newSince` that the user hasn't dismissed show 🔴
+(`--check` fails the build if the manifest is stale). "new" clears only on
+click (scroll auto-read skips new sections); `read`/`seen` state lives in
+`UserData.readState` / `UserData.seenNew` (localStorage + `/api/sync`).
 
 ## Known Limitations
 

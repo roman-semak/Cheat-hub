@@ -1,2247 +1,4997 @@
-// AUTO-GENERATED from a cleaned Markdown export.
-// Source: Tasks/cheat-hub-react-cleaned.md
-// Regenerate with: npx tsx scripts/import-topic-markdown.ts <file.md> react
-// Prose is sanitized HTML styled by .cheat-prose (globals.css).
+// React — методичка від основ до Senior.
+// Розширена версія (reactContent) + шпаргалка (reactCheat) поверх спільної
+// структури секцій. Формат контенту — TopicContent/ContentBlock (types.ts).
 import type { TopicContent } from './types'
 
 export const reactContent: TopicContent = {
-  "slug": "react",
-  "intro": [
+  slug: 'react',
+  intro: [
     {
-      "kind": "paragraph",
-      "html": "<p>Хуки, рендеринг, стан і патерни сучасного React — від основ до Senior.</p>\n<p>Гайд побудований як шлях від &quot;пишу перший компонент&quot; до &quot;поясню, чому він ре-рендерився&quot; на Senior-співбесіді. Блоки 0–1 — фундамент, 2–5 — поглиблений React, 6–8 — Next.js та найсвіжіше. Кожен розділ має практичні приклади й блок <strong>🎤 На співбесіді часто запитують</strong> — саме там питання, які реально ставлять.</p>"
-    }
+      kind: 'paragraph',
+      html: `<p>Гайд побудований як шлях від "пишу перший компонент" до "поясню, чому він ре-рендерився" на Senior-співбесіді. Блоки 0–1 — фундамент, 2–5 — поглиблений React, 6–8 — Next.js та найсвіжіше. Кожен розділ має практичні приклади й блок <strong>🎤 На співбесіді часто запитують</strong> — саме там питання, які реально ставлять.</p>`,
+    },
   ],
-  "sections": [
+  sections: [
+    /* ============================= BLOCK -1 — BIG PICTURE & TOOLING ============================= */
     {
-      "id": "history-versions",
-      "title": "📜 Історія версій React",
-      "blocks": [
+      id: 'history-versions',
+      title: '📜 Історія версій React',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<p><code>v0.3 · 2013</code> · <code>v15 · 2016</code> · <code>v16 · 2017</code> · <code>v16.8 · 2019</code> · <code>v17 · 2020</code> · <code>v18 · 2022</code> · <code>v19 · 2024 ✦</code></p>\n<p><strong>🕐 Історія</strong></p>\n<ul class=\"list\">\n<li><strong>2013</strong> — Open-source реліз (Facebook) — Virtual DOM як основна ідея, ще з домішками Flux</li>\n<li><strong>2015</strong> — React Native — той самий компонентний підхід для мобільних застосунків</li>\n<li><strong>2016 · v15</strong> — Останній реліз перед переписом реконсилера — стабільна, але синхронна модель рендерингу</li>\n<li><strong>2017 · v16</strong> — Fiber-архітектура (повний переписаний реконсилер), Fragments, Error Boundaries, Portals</li>\n<li><strong>2019 · v16.8</strong> — <strong>Hooks</strong> — useState/useEffect/... Функціональні компоненти отримують стан без класів</li>\n<li><strong>2020 · v17</strong> — &quot;No new features&quot; реліз — підготовка до поступових апгрейдів, новий JSX transform (без ручного <code>import React</code>)</li>\n<li><strong>2022 · v18</strong> — Concurrent rendering, automatic batching, <code>useTransition</code>/<code>useDeferredValue</code>, Suspense для data fetching, перші Server Components</li>\n<li><strong>2024 · v19 ✦</strong> — <strong>Поточна:</strong> Actions, <code>use()</code>, <code>useActionState</code>, <code>useOptimistic</code>, React Compiler (RC)</li>\n</ul>\n<p><strong>Головний вектор 2013 → 2024:</strong> від &quot;бібліотеки для рендерингу View у MVC&quot; → до власної рантайм-моделі з конкурентним рендерингом і серверними компонентами. Найбільший зсув для щоденної роботи — <strong>Hooks (2019)</strong>: класи перестали бути обов'язковими для стану/lifecycle (детально — розділ &quot;🏛️ Class vs Functional&quot; нижче).</p>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Що змінилось у переході від React 17 до React 18, і чому це переламний реліз?",
-          "answer": "React 18 ввів <strong>concurrent rendering</strong> як фундамент: <code>createRoot</code> замість <code>ReactDOM.render</code>, автоматичний <strong>batching</strong> усіх оновлень, нові хуки <code>useTransition</code>/<code>useDeferredValue</code>/<code>useId</code>, Suspense для SSR. До 18 усе рендерилось синхронно й блокуюче."
+          question: 'Що змінилось у переході від React 17 до React 18, і чому це вважається переламним релізом?',
+          answer: 'React 18 ввів <strong>concurrent rendering</strong> як фундамент: <code>createRoot</code> замість <code>ReactDOM.render</code>, автоматичний <strong>batching</strong> для всіх оновлень (не лише в React-обробниках), нові хуки <code>useTransition</code>/<code>useDeferredValue</code>/<code>useId</code>, та Suspense для data fetching на сервері (<code>renderToPipeableStream</code>). До 18 паралельний рендеринг був недоступний — усе рендерилось синхронно й блокуюче.',
         },
         {
-          "question": "Чим React 19 відрізняється концептуально від попередніх мажорних версій?",
-          "answer": "Зміщує фокус з клієнтських оптимізацій на <strong>full-stack модель</strong>: Actions (<code>useActionState</code>/<code>useFormStatus</code>/<code>useOptimistic</code>), стабільні Server Components/Functions, <code>use()</code> для читання проміс/контексту під час рендеру, <code>ref</code> як звичайний prop (без <code>forwardRef</code>)."
-        }
-      ]
+          question: 'Чим React 19 відрізняється концептуально від попередніх мажорних версій?',
+          answer: 'React 19 зміщує фокус з <em>клієнтських оптимізацій</em> на <strong>full-stack модель</strong>: Actions (<code>useActionState</code>, <code>useFormStatus</code>, <code>useOptimistic</code>) для форм і мутацій, стабільні Server Components/Server Functions, <code>use()</code> для читання проміс/контексту прямо під час рендеру, і відмову від <code>forwardRef</code> — <code>ref</code> тепер звичайний prop.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<div class="version-row">
+    <span class="ver ver-15">v0.3 · 2013</span>
+    <span class="ver ver-16">v15 · 2016</span>
+    <span class="ver ver-17">v16 · 2017</span>
+    <span class="ver ver-18">v16.8 · 2019</span>
+    <span class="ver ver-19">v17 · 2020</span>
+    <span class="ver ver-20">v18 · 2022</span>
+    <span class="ver ver-21">v19 · 2024 ✦</span>
+  </div>
+  <div class="changelog changelog-past">
+    <div class="changelog-title">🕐 Історія</div>
+    <div class="changelog-row"><span class="chver">2013</span><span class="changelog-text">Open-source реліз (Facebook) — Virtual DOM як основна ідея, ще з домішками Flux</span></div>
+    <div class="changelog-row"><span class="chver">2015</span><span class="changelog-text">React Native — той самий компонентний підхід для мобільних застосунків</span></div>
+    <div class="changelog-row"><span class="chver">2016 · v15</span><span class="changelog-text">Останній реліз перед переписом реконсилера — стабільна, але синхронна модель рендерингу</span></div>
+    <div class="changelog-row"><span class="chver">2017 · v16</span><span class="changelog-text">Fiber-архітектура (повний переписаний реконсилер), Fragments, Error Boundaries, Portals</span></div>
+    <div class="changelog-row"><span class="chver">2019 · v16.8</span><span class="changelog-text"><strong>Hooks</strong> — useState/useEffect/... Функціональні компоненти отримують стан без класів</span></div>
+    <div class="changelog-row"><span class="chver">2020 · v17</span><span class="changelog-text">"No new features" реліз — підготовка до поступових апгрейдів, новий JSX transform (без ручного <code>import React</code>)</span></div>
+    <div class="changelog-row"><span class="chver">2022 · v18</span><span class="changelog-text">Concurrent rendering, automatic batching, <code>useTransition</code>/<code>useDeferredValue</code>, Suspense для data fetching, перші Server Components</span></div>
+    <div class="changelog-row"><span class="chver">2024 · v19 ✦</span><span class="changelog-text"><strong>Поточна:</strong> Actions, <code>use()</code>, <code>useActionState</code>, <code>useOptimistic</code>, React Compiler (RC)</span></div>
+  </div>
+  <p><strong>Головний вектор 2013 → 2024:</strong> від "бібліотеки для рендерингу View у MVC" → до власної рантайм-моделі з конкурентним рендерингом і серверними компонентами. Найбільший зсув для щоденної роботи — <strong>Hooks (2019)</strong>: класи перестали бути обов'язковими для стану/lifecycle (детально — розділ "🏛️ Class vs Functional" нижче).</p>`,
+        },
+      ],
     },
     {
-      "id": "library-vs-framework",
-      "title": "📚 Бібліотека чи фреймворк? + Virtual DOM",
-      "blocks": [
+      id: 'library-vs-framework',
+      title: '📚 Бібліотека чи фреймворк? + Virtual DOM',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Чому React — бібліотека, а не фреймворк <span class=\"tag tag-key\">KEY</span></h3>\n<p>Ключова відмінність — <strong>хто кого викликає (inversion of control)</strong>. З фреймворком (Angular) твій код вбудовується у чужий &quot;скелет&quot;: фреймворк визначає структуру проєкту, routing, HTTP, forms, DI — і сам викликає твій код у визначених точках. З бібліотекою (React) — навпаки: <strong>ти сам вирішуєш архітектуру</strong> і викликаєш React там, де потрібен UI-рендеринг; router, HTTP-клієнт, state-менеджер — окремі бібліотеки, які ти підбираєш сам (Next.js/TanStack Router, TanStack Query, Zustand — усе це вибір, а не частина &quot;коробки&quot;).</p>"
+          question: 'Чому React офіційно позиціонують як бібліотеку, а не фреймворк, і які практичні наслідки цього для команди?',
+          answer: 'Бібліотека вирішує <strong>одну задачу</strong> — рендеринг UI за станом — і не нав\'язує роутинг, data fetching чи структуру проєкту. Наслідок: команда сама обирає роутер, стейт-менеджер, збірку — це гнучкість, але й ризик неузгоджених рішень між проєктами; тому великі команди часто стандартизують на фреймворку поверх React (Next.js) саме щоб закрити ці прогалини.',
         },
         {
-          "kind": "paragraph",
-          "html": "<div class=\"grid2\"><div class=\"card blue\"><h4>Framework (Angular)</h4>\n<p>&quot;Не дзвони нам, ми подзвонимо тобі&quot; — DI-контейнер, модулі, lifecycle hooks викликаються фреймворком за жорсткими правилами.</p></div><div class=\"card green\"><h4>Library (React)</h4>\n<p>Ти пишеш звичайний JS/TS-застосунок і <em>імпортуєш</em> React там, де потрібен декларативний UI. Решта архітектури — твій вибір.</p></div><div class=\":\"><div class=\"alert good\"><span class=\"icon\">✅</span><p> Практичний наслідок для співбесіди: &quot;React-екосистема&quot; (Next.js, React Router, TanStack) існує саме тому, що сам React навмисно не вирішує ці питання — на відміну від Angular, де вони вбудовані.</p></div>\n<h3 class=\"topic\">Virtual DOM — 30-секундна версія</h3>\n<p>Робота з реальним DOM напряму — повільна (reflow/repaint на кожну зміну). React будує легкий JS-опис UI (Virtual DOM), порівнює нову версію зі старою і застосовує до справжнього DOM лише мінімальний набір змін. <strong>Це вступ</strong> — повний механізм (Fiber, reconciliation, diffing-правила) — у розділі &quot;Reconciliation, Virtual DOM, Fiber&quot; нижче.</p></div></div>"
-        }
+          question: 'Що таке Virtual DOM і чи є він причиною того, що React швидкий?',
+          answer: 'Virtual DOM — це легковагове дерево JS-об\'єктів, що описує бажаний UI. Сам по собі він <strong>не є джерелом швидкодії</strong> — прямі DOM-операції можуть бути навіть швидшими за diffing. Реальна цінність VDOM — <em>декларативна модель програмування</em> (пишеш «який стан → який UI», а не послідовність мутацій) плюс можливість батчити та пріоритизувати оновлення перед застосуванням до реального DOM.',
+        },
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Чому React позиціонують як бібліотеку, а не фреймворк, і які практичні наслідки для команди?",
-          "answer": "Бібліотека вирішує одну задачу — рендеринг UI за станом — і не нав'язує роутинг, data fetching чи структуру. Наслідок: команда сама обирає стек (гнучкість, але й ризик неузгоджених рішень), тому великі команди часто стандартизують на фреймворку поверх React (Next.js)."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Чому React — бібліотека, а не фреймворк <span class="tag tag-key">KEY</span></h3>
+  <p>Ключова відмінність — <strong>хто кого викликає (inversion of control)</strong>. З фреймворком (Angular) твій код вбудовується у чужий "скелет": фреймворк визначає структуру проєкту, routing, HTTP, forms, DI — і сам викликає твій код у визначених точках. З бібліотекою (React) — навпаки: <strong>ти сам вирішуєш архітектуру</strong> і викликаєш React там, де потрібен UI-рендеринг; router, HTTP-клієнт, state-менеджер — окремі бібліотеки, які ти підбираєш сам (Next.js/TanStack Router, TanStack Query, Zustand — усе це вибір, а не частина "коробки").</p>
+  <div class="grid2">
+    <div class="card"><h4>Framework (Angular)</h4><p>"Не дзвони нам, ми подзвонимо тобі" — DI-контейнер, модулі, lifecycle hooks викликаються фреймворком за жорсткими правилами.</p></div>
+    <div class="card blue"><h4>Library (React)</h4><p>Ти пишеш звичайний JS/TS-застосунок і <em>імпортуєш</em> React там, де потрібен декларативний UI. Решта архітектури — твій вибір.</p></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Практичний наслідок для співбесіди: "React-екосистема" (Next.js, React Router, TanStack) існує саме тому, що сам React навмисно не вирішує ці питання — на відміну від Angular, де вони вбудовані.</span></div>
+  <h3 class="topic">Virtual DOM — 30-секундна версія</h3>
+  <p>Робота з реальним DOM напряму — повільна (reflow/repaint на кожну зміну). React будує легкий JS-опис UI (Virtual DOM), порівнює нову версію зі старою і застосовує до справжнього DOM лише мінімальний набір змін. <strong>Це вступ</strong> — повний механізм (Fiber, reconciliation, diffing-правила) — у розділі "Reconciliation, Virtual DOM, Fiber" нижче.</p>`,
         },
-        {
-          "question": "Що таке Virtual DOM і чи є він причиною швидкодії React?",
-          "answer": "Це легковагове дерево JS-об'єктів, що описує бажаний UI. Сам по собі <strong>не джерело швидкодії</strong> (прямі DOM-операції можуть бути швидшими) — реальна цінність у декларативній моделі («який стан → який UI») плюс можливості батчити й пріоритизувати оновлення."
-        }
-      ]
+      ],
     },
     {
-      "id": "tooling-vite",
-      "title": "🧰 Vite та інструменти збірки",
-      "blocks": [
+      id: 'tooling-vite',
+      title: '🧰 Vite та інструменти збірки',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Що таке Vite <span class=\"tag tag-key\">KEY</span></h3>\n<p>Dev-сервер + білд-інструмент. У розробці Vite віддає файли як нативні ES-модулі прямо браузеру (компілює/трансформує лише файл, який реально запитав браузер, через esbuild — миттєвий старт і HMR незалежно від розміру проєкту). Для продакшн-білда використовує Rollup — трясе дерево (tree-shaking), об'єднує чанки.</p>\n<h3 class=\"topic\">Хто був до Vite</h3>\n<p><span class=\"tag tag-pit\">LEGACY</span> <strong>Create React App (CRA)</strong> — офіційний starter від Meta (2016–2023, <strong>❌ deprecated</strong>). Webpack під капотом, схований від розробника; тонкого контролю нема без <code>eject</code>. <strong>Webpack (вручну)</strong> — найпопулярніший бандлер 2015–2020: бандлить <strong>увесь</strong> граф залежностей ДО старту dev-сервера, тому холодний старт росте лінійно з проєктом. Досі в legacy-базах і Next.js Pages Router.</p>\n<h3 class=\"topic\">⚡ Vite — детально</h3>\n<p><strong>Vite — Evan You (автор Vue), 2020.</strong> Рушій: dev — нативні ES-модулі + esbuild (Go) для pre-bundling залежностей; prod — Rollup (нові версії переходять на Rolldown — Rust-порт).</p>\n<ul class=\"list\">\n<li><strong>Dev:</strong> сервер стартує без бандлінгу. Браузер сам запитує <code>import</code>-и, Vite трансформує лише запитаний файл (JSX/TS → JS). Залежності з <code>node_modules</code> один раз пре-бандляться esbuild у кеш <code>node_modules/.vite</code>.</li>\n<li><strong>HMR:</strong> інвалідовується лише змінений модуль і його межа (React Fast Refresh через <code>@vitejs/plugin-react</code>) — швидкість не залежить від розміру проєкту.</li>\n<li><strong>Prod:</strong> Rollup — tree-shaking, code-splitting за <code>import()</code>, мінифікація, хешовані імена.</li>\n</ul>\n<p><strong>Сильні сторони:</strong> миттєвий старт, мінімальна конфігурація, величезна екосистема плагінів (сумісна з Rollup), фундамент для Vitest, Remix/React Router v7, Astro, SvelteKit.<br>\n<strong>Обмеження:</strong> dev і prod — різні збірники (рідкісні «працює в dev, ламається в build»); тисячі дрібних модулів = водоспад запитів при першому завантаженні.<br>\n<strong>Коли обирати:</strong> новий SPA / бібліотека компонентів / клієнтський React без потреби в SSR з коробки.</p>"
+          question: 'Чому індустрія масово перейшла з Create React App на Vite?',
+          answer: 'CRA використовував Webpack без code-splitting конфігурації з коробки й пересобирав весь бандл при кожній зміні — dev-старт і HMR деградували з ростом проєкту. Vite в dev-режимі не бандлить взагалі: віддає ES-модулі напряму браузеру через <code>esbuild</code> (написаний на Go, у 10-100x швидший за JS-бандлери), а для production-збірки використовує Rollup. CRA офіційно deprecated.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// vite.config.ts\nimport { defineConfig } from 'vite'\nimport react from '@vitejs/plugin-react'\n\nexport default defineConfig({\n  plugins: [react()],\n  resolve: { alias: { '@': '/src' } },\n  server: { port: 5173, proxy: { '/api': 'http://localhost:3000' } },\n})"
+          question: 'У чому різниця між dev-сервером Vite та production-збіркою з точки зору того, що виконує браузер?',
+          answer: 'У dev Vite віддає нативні ESM-модулі «як є» — трансформація (JSX, TS) відбувається on-demand через esbuild лише для файлів, які реально запитує браузер, тому холодний старт майже миттєвий незалежно від розміру проєкту. У production Vite перемикається на Rollup: tree-shaking, chunking, мінифікація — тобто dev і prod використовують <strong>різні збірники</strong>, а не один інструмент у двох режимах.',
         },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert\"><span class=\"icon\">💡</span><p> Env-змінні в клієнті — лише з префіксом <code>VITE_</code> і через <code>import.meta.env.VITE_API_URL</code>, а не <code>process.env</code>.</p></div>\n<h3 class=\"topic\">Решта інструментів — коротко</h3>\n<ul class=\"list\">\n<li><strong>▲ Next.js</strong> (Vercel, 2016) — не бандлер, а <strong>фреймворк</strong> поверх React: Turbopack (дефолт з Next.js 16) + SWC. Файловий роутинг (App/Pages Router), SSR/SSG/ISR/стрімінг/Server Actions на рівні сегмента, вбудовані <code>next/image</code>/<code>next/font</code>/middleware/API routes. Деталі — розділи &quot;Next.js&quot; нижче. Обирати: потрібні SSR/SEO, публічні сторінки, fullstack.</li>\n<li><strong>🚀 Turbopack</strong> (Vercel, 2022, Rust) — наступник Webpack від автора Webpack. Інкрементальність на рівні функцій (кешується результат кожної операції) + lazy bundling у dev + persistent-кеш. Stable для <code>next dev</code>/<code>next build</code>, дефолт у Next.js 16. Фактично не існує окремо від Next.js; кастомні Webpack-плагіни (не loader'и) не підтримуються.</li>\n<li><strong>🦀 Rspack</strong> (ByteDance, 2023, Rust) — Webpack-сумісний за API (той самий <code>config</code>, більшість loader'ів/плагінів). Ядро на Rust з паралелізмом, вбудований SWC-loader; Module Federation працює. У 5–10× швидше build/HMR. Обирати: великий Webpack-конфіг, який дорого переписувати, або мікрофронтенди. Обгортка zero-config — Rsbuild.</li>\n<li><strong>📦 Parcel</strong> (Devon Govett, 2017, v2 частково Rust/SWC) — «zero-config»: точка входу — будь-який файл, Parcel сам знаходить залежності й трансформери, ставить відсутні плагіни. Агресивний диск-кеш. Обирати: прототип/демо/навчання, без конфігу взагалі. Мінус: менша спільнота, «магія» ускладнює дебаг.</li>\n</ul>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Інструмент</th>\n<th>Тип</th>\n<th>Швидкість dev-старту</th>\n<th>Коли обирати</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Vite</td>\n<td>Dev-сервер + Rollup</td>\n<td>Дуже висока (ESM, без бандлінгу)</td>\n<td>Новий SPA-проєкт за замовчуванням</td>\n</tr>\n<tr>\n<td>Webpack</td>\n<td>Бандлер</td>\n<td>Низька на великих проєктах</td>\n<td>Legacy-підтримка, специфічні плагіни без аналогів</td>\n</tr>\n<tr>\n<td>CRA</td>\n<td>Starter (Webpack)</td>\n<td>Низька</td>\n<td>❌ Не обирати — deprecated</td>\n</tr>\n<tr>\n<td>Next.js</td>\n<td>Фреймворк (Turbopack всередині)</td>\n<td>Висока</td>\n<td>Потрібен SSR/RSC/роутинг з коробки</td>\n</tr>\n<tr>\n<td>Turbopack</td>\n<td>Бандлер (Rust)</td>\n<td>Найвища (функція-рівнева інкрементальність)</td>\n<td>Разом з Next.js; ще не для standalone поза ним</td>\n</tr>\n<tr>\n<td>Rspack</td>\n<td>Бандлер (Rust, Webpack-сумісний)</td>\n<td>Висока</td>\n<td>Міграція з великого Webpack-конфіга без переписування</td>\n</tr>\n<tr>\n<td>Parcel</td>\n<td>Бандлер (zero-config)</td>\n<td>Середня</td>\n<td>Малі проєкти/прототипи, де не хочеться писати конфіг</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Створення проєкту — покроково</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "bash",
-          "code": "npm create vite@latest my-app -- --template react-ts\ncd my-app\nnpm install\nnpm run dev          # dev-сервер з HMR, за замовчуванням localhost:5173\n\n# Структура після створення:\n# index.html          ← точка входу (НЕ в public/, на відміну від CRA!)\n# src/main.tsx         ← createRoot(...).render(<App />)\n# src/App.tsx\n# vite.config.ts       ← плагіни (@vitejs/plugin-react), aliases, dev-сервер"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Чому індустрія перейшла з CRA на Vite?",
-          "answer": "CRA (Webpack) пересобирав весь бандл при кожній зміні — dev-старт і HMR деградували з ростом проєкту. Vite в dev не бандлить взагалі (ES-модулі напряму через esbuild, у 10–100× швидший), а для prod використовує Rollup. CRA офіційно deprecated."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що таке Vite <span class="tag tag-key">KEY</span></h3>
+  <p>Dev-сервер + білд-інструмент. У розробці Vite віддає файли як нативні ES-модулі прямо браузеру (компілює/трансформує лише файл, який реально запитав браузер, через esbuild — миттєвий старт і HMR незалежно від розміру проєкту). Для продакшн-білда використовує Rollup — трясе дерево (tree-shaking), об'єднує чанки.</p>
+  <h3 class="topic">Хто був до Vite</h3>
+  <div class="grid2">
+    <div class="card red"><h4>Create React App (CRA)</h4><p>Офіційний starter від Meta (2016-2023, <strong>❌ deprecated</strong>). Webpack під капотом, повністю схований від розробника — зручно для старту, але жодного тонкого контролю над конфігурацією без <code>eject</code> (незворотній розрив "коробки").</p></div>
+    <div class="card"><h4>Webpack (вручну)</h4><p>Найпопулярніший бандлер 2015-2020. Бандлить <strong>увесь</strong> граф залежностей ще ДО старту dev-сервера — час холодного старту росте лінійно з розміром проєкту. Досі домінує в legacy-кодовій базі й Next.js Pages Router.</p></div>
+  </div>
+  <h3 class="topic">Сучасні інструменти — по одному <span class="tag tag-key">KEY</span></h3>
+`,
         },
         {
-          "question": "У чому різниця між dev-сервером Vite та prod-збіркою з точки зору браузера?",
-          "answer": "У dev браузер отримує нативні ESM «як є», трансформація on-demand через esbuild лише для запитаних файлів — миттєвий холодний старт. У prod Vite перемикається на Rollup (tree-shaking, chunking, мінифікація) — тобто dev і prod використовують <strong>різні збірники</strong>."
-        }
-      ]
+          kind: 'tabs',
+          tabs: [
+            {
+              label: '⚡ Vite',
+              html: `<h4>Vite — Evan You (автор Vue), 2020</h4>
+  <p><strong>Рушій:</strong> dev — нативні ES-модулі + esbuild (Go) для pre-bundling залежностей; prod — Rollup (нові версії переходять на Rolldown — Rust-порт Rollup).</p>
+  <ul>
+    <li><strong>Dev:</strong> сервер стартує без бандлінгу. Браузер сам запитує <code>import</code>-и, Vite трансформує лише запитаний файл (JSX/TS → JS). Залежності з <code>node_modules</code> один раз пре-бандляться esbuild у кеш <code>node_modules/.vite</code>.</li>
+    <li><strong>HMR:</strong> інвалідовується лише змінений модуль і його межа (React Fast Refresh через <code>@vitejs/plugin-react</code>) — швидкість не залежить від розміру проєкту.</li>
+    <li><strong>Prod:</strong> Rollup — tree-shaking, code-splitting за динамічними <code>import()</code>, мінифікація, хешовані імена файлів.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>Миттєвий старт, мінімальна конфігурація, величезна екосистема плагінів (сумісна з Rollup), фундамент для Vitest, Remix/React Router v7, Astro, SvelteKit.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Dev і prod — різні збірники, тож рідкісні баги «працює в dev, ламається в build». Тисячі дрібних модулів на великому проєкті = водоспад запитів при першому завантаженні сторінки.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> новий SPA / бібліотека компонентів / будь-який клієнтський React без потреби в SSR з коробки.</p>
+  <pre><code>// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: { alias: { '@': '/src' } },
+  server: { port: 5173, proxy: { '/api': 'http://localhost:3000' } },
+})</code></pre>
+  <div class="alert good"><span class="icon">💡</span><span>Env-змінні в клієнті — лише з префіксом <code>VITE_</code> і через <code>import.meta.env.VITE_API_URL</code>, а не <code>process.env</code>.</span></div>`,
+            },
+            {
+              label: '▲ Next.js',
+              html: `<h4>Next.js — Vercel, 2016</h4>
+  <p><strong>Що це:</strong> не бандлер, а <strong>фреймворк</strong> поверх React. Під капотом — Turbopack (за замовчуванням з Next.js 16; раніше Webpack) + SWC (Rust) для трансформації JS/TS.</p>
+  <ul>
+    <li><strong>Роутинг:</strong> файловий — App Router (<code>app/</code>, React Server Components, layouts, <code>loading.tsx</code>/<code>error.tsx</code>) або legacy Pages Router (<code>pages/</code>).</li>
+    <li><strong>Рендеринг:</strong> SSR, SSG, ISR, стрімінг, Server Actions — обирається на рівні сторінки/сегмента, а не для всього застосунку.</li>
+    <li><strong>Вбудовано:</strong> оптимізація зображень (<code>next/image</code>), шрифтів (<code>next/font</code>), middleware, API routes / Route Handlers.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>SEO і швидкий перший рендер з коробки, fullstack в одному репо, сильні конвенції для команди, першокласний деплой на Vercel.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Складніша ментальна модель (server vs client компоненти, кешування), прив'язка до конвенцій, self-hosting поза Vercel потребує більше налаштувань.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> потрібні SSR/SEO, публічні сторінки, fullstack-функціональність або єдиний стек клієнт + сервер.</p>
+  <pre><code>npx create-next-app@latest my-app   # TS, ESLint, Tailwind, App Router
+npm run dev                          # next dev (Turbopack)
+npm run build &amp;&amp; npm start           # production-збірка + сервер</code></pre>
+  <div class="alert good"><span class="icon">💡</span><span>Next.js — відповідь на питання «чим замінити CRA?» з боку React-команди: офіційна документація React рекомендує починати саме з фреймворку.</span></div>`,
+            },
+            {
+              label: '🚀 Turbopack',
+              html: `<h4>Turbopack — Vercel, 2022 (Rust)</h4>
+  <p><strong>Що це:</strong> наступник Webpack від Тобіаса Копперса (автора Webpack). Побудований на рушії інкрементальних обчислень <em>Turbo engine</em>.</p>
+  <ul>
+    <li><strong>Інкрементальність на рівні функцій:</strong> результат кожної внутрішньої операції кешується; при зміні файлу перераховується лише залежний від нього мінімум, а не файл чи чанк цілком.</li>
+    <li><strong>Lazy bundling:</strong> у dev збирається лише те, що реально запитала сторінка/роут.</li>
+    <li><strong>Статус:</strong> stable для <code>next dev</code> і <code>next build</code>; дефолтний бандлер у Next.js 16. Persistent-кеш на диску між запусками.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>Найшвидший HMR на великих Next.js-проєктах, підтримка більшості Webpack-loader'ів через <code>turbopack.rules</code>.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Фактично не існує окремо від Next.js; кастомні Webpack-плагіни (не loader'и) не підтримуються — міграція таких конфігів вимагає ручної роботи.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> ти вже на Next.js — ти вже його використовуєш. Окремо «обрати Turbopack» для не-Next проєкту поки не можна.</p>
+  <pre><code>// next.config.ts — підключення loader'а (напр. SVG як компонент)
+const nextConfig = {
+  turbopack: {
+    rules: {
+      '*.svg': { loaders: ['@svgr/webpack'], as: '*.js' },
+    },
+  },
+}
+export default nextConfig</code></pre>`,
+            },
+            {
+              label: '🦀 Rspack',
+              html: `<h4>Rspack — ByteDance, 2023 (Rust)</h4>
+  <p><strong>Що це:</strong> бандлер, сумісний з Webpack за API: той самий формат <code>config</code>, більшість loader'ів і популярних плагінів працюють без змін. Поверх нього — Rsbuild (zero-config обгортка, аналог Vite за DX).</p>
+  <ul>
+    <li><strong>Архітектура:</strong> ядро Webpack переписане на Rust з паралельною обробкою; вбудований SWC-loader замість <code>babel-loader</code>.</li>
+    <li><strong>Сумісність:</strong> <code>HtmlWebpackPlugin</code>, <code>css-loader</code>, Module Federation — працюють; частина плагінів має вбудовані Rust-аналоги (<code>rspack.HtmlRspackPlugin</code>).</li>
+    <li><strong>Швидкість:</strong> у 5–10 разів швидші build і HMR за Webpack на тих самих конфігах.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>Міграція великого legacy Webpack-проєкту «заміною пакета», Module Federation для мікрофронтендів, продакшн-перевірений у ByteDance.</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Не 100% сумісність — плагіни, що лізуть у внутрішні хуки компілятора Webpack, можуть не працювати; екосистема молодша.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> великий Webpack-конфіг, який дорого переписувати під Vite, або мікрофронтенди на Module Federation.</p>
+  <pre><code>// rspack.config.js — майже 1:1 з webpack.config.js
+const rspack = require('@rspack/core')
+
+module.exports = {
+  entry: './src/main.tsx',
+  module: {
+    rules: [{ test: /\\.tsx?$/, loader: 'builtin:swc-loader' }],
+  },
+  plugins: [new rspack.HtmlRspackPlugin({ template: './index.html' })],
+}</code></pre>`,
+            },
+            {
+              label: '📦 Parcel',
+              html: `<h4>Parcel — Devon Govett, 2017 (v2 — частково на Rust, SWC)</h4>
+  <p><strong>Що це:</strong> «zero-config» бандлер: точка входу — будь-який файл (часто <code>index.html</code>), а Parcel сам знаходить залежності та потрібні трансформери.</p>
+  <ul>
+    <li><strong>Автоматика:</strong> JSX, TypeScript, CSS/SCSS, зображення — без конфігу; відсутні плагіни встановлюються автоматично при першому запуску.</li>
+    <li><strong>Кеш:</strong> агресивний кеш на диску (<code>.parcel-cache</code>), паралельна обробка у worker-потоках, SWC для JS.</li>
+    <li><strong>Налаштування:</strong> якщо все ж потрібно — <code>.parcelrc</code> (пайплайни трансформерів) і поле <code>targets</code> у <code>package.json</code>.</li>
+  </ul>
+  <div class="grid2">
+    <div class="card green"><h4>Сильні сторони</h4><p>Найнижчий поріг входу, чудово для прототипів, навчання та невеликих бібліотек (вбудована збірка бібліотек у кілька форматів).</p></div>
+    <div class="card red"><h4>Обмеження</h4><p>Менша спільнота і менше готових рішень, ніж у Vite; «магія» ускладнює дебаг нестандартних випадків.</p></div>
+  </div>
+  <p><strong>Коли обирати:</strong> швидкий прототип чи демо, коли не хочеться думати про конфіг узагалі.</p>
+  <pre><code>npm i -D parcel
+npx parcel index.html          # dev-сервер з HMR на :1234
+npx parcel build index.html    # prod-збірка в dist/</code></pre>`,
+            },
+          ],
+        },
+        {
+          kind: 'paragraph',
+          html: `  <div class="table-wrap">
+    <table>
+      <tr><th>Інструмент</th><th>Тип</th><th>Швидкість dev-старту</th><th>Коли обирати</th></tr>
+      <tr><td>Vite</td><td>Dev-сервер + Rollup</td><td>Дуже висока (ESM, без бандлінгу)</td><td>Новий SPA-проєкт за замовчуванням</td></tr>
+      <tr><td>Webpack</td><td>Бандлер</td><td>Низька на великих проєктах</td><td>Legacy-підтримка, специфічні плагіни без аналогів</td></tr>
+      <tr><td>CRA</td><td>Starter (Webpack)</td><td>Низька</td><td>❌ Не обирати — deprecated</td></tr>
+      <tr><td>Next.js</td><td>Фреймворк (Turbopack всередині)</td><td>Висока</td><td>Потрібен SSR/RSC/роутинг з коробки</td></tr>
+      <tr><td>Turbopack</td><td>Бандлер (Rust)</td><td>Найвища (функція-рівнева інкрементальність)</td><td>Разом з Next.js; ще не для standalone-використання поза ним</td></tr>
+      <tr><td>Rspack</td><td>Бандлер (Rust, Webpack-сумісний)</td><td>Висока</td><td>Міграція з великого Webpack-конфіга без переписування</td></tr>
+      <tr><td>Parcel</td><td>Бандлер (zero-config)</td><td>Середня</td><td>Малі проєкти/прототипи, де не хочеться писати конфіг взагалі</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Створення проєкту — покроково</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'bash',
+          code: `npm create vite@latest my-app -- --template react-ts
+cd my-app
+npm install
+npm run dev          # dev-сервер з HMR, за замовчуванням localhost:5173
+
+# Структура після створення:
+# index.html          ← точка входу (НЕ в public/, на відміну від CRA!)
+# src/main.tsx         ← createRoot(...).render(<App />)
+# src/App.tsx
+# vite.config.ts       ← плагіни (@vitejs/plugin-react), aliases, dev-сервер`,
+        },
+      ],
     },
     {
-      "id": "tooling-vscode",
-      "title": "🖥️ React + VS Code",
-      "blocks": [
+      id: 'tooling-vscode',
+      title: '🖥️ React + VS Code',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Обов'язкові розширення <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Розширення</th>\n<th>Навіщо</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>ES7+ React/Redux/React-Native Snippets</strong></td>\n<td>Сніпети <code>rfc</code>/<code>rafce</code> — функціональний компонент за секунду (<code>rcc</code> — класовий, лише для легасі)</td>\n</tr>\n<tr>\n<td><strong>Prettier</strong></td>\n<td>Автоформатування — прибирає суперечки про стиль коду в команді</td>\n</tr>\n<tr>\n<td><strong>ESLint</strong></td>\n<td>Лінтинг у реальному часі (<code>eslint-plugin-react-hooks</code> ловить порушення Rules of Hooks до рантайму)</td>\n</tr>\n<tr>\n<td><strong>Auto Rename Tag</strong></td>\n<td>Перейменування відкриваючого JSX-тега автоматично перейменовує закриваючий</td>\n</tr>\n<tr>\n<td><strong>Tailwind CSS IntelliSense</strong></td>\n<td>Автодоповнення utility-класів + підсвітка кольорів (якщо проєкт на Tailwind)</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Що таке сніпет і абревіатури <span class=\"tag tag-key\">KEY</span></h3>\n<p>VS Code <strong>сніпет</strong> — текстовий префікс, що після <code>Tab</code>/<code>Enter</code> розгортається у заготовку коду з tab-stops. Розширення ES7+ додає React-сніпети:</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Префікс</th>\n<th>Розшифровка</th>\n<th>Що генерує</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>rfc</code></td>\n<td>React Functional Component</td>\n<td>Функціональний компонент, <code>export default function</code></td>\n</tr>\n<tr>\n<td><code>rafce</code></td>\n<td>React Arrow Function Component Export</td>\n<td>Те саме, але стрілкова функція з <code>export default</code> зверху</td>\n</tr>\n</tbody>\n</table></div>"
+          question: 'Які VS Code розширення чи налаштування ти вважаєш обов\'язковими для продуктивної роботи з React і чому саме вони?',
+          answer: 'Мінімум: ESLint + Prettier (з <code>eslint-plugin-react-hooks</code> — ловить порушення правил хуків ще до рантайму), TypeScript-плагін для type-checking у редакторі, і snippet/IntelliSense для JSX. <code>eslint-plugin-react-hooks</code> критичний саме тому, що порушення правил хуків (умовний виклик, виклик у циклі) — це баги, які не завжди падають одразу, а проявляються як плутанина у стані.',
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// rfc / rafce → генерує:\nexport default function ComponentName() {\n  return <div>ComponentName</div>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Корисні налаштування <code>settings.json</code></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "json",
-          "code": "{\n  \"editor.formatOnSave\": true,\n  \"editor.defaultFormatter\": \"esbenp.prettier-vscode\",\n  \"editor.codeActionsOnSave\": { \"source.fixAll.eslint\": \"explicit\" },\n  \"editor.quickSuggestions\": { \"strings\": true } // автодоповнення в className/JSX-атрибутах\n}"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Які VS Code розширення/налаштування ти вважаєш обов'язковими для React і чому?",
-          "answer": "ESLint + Prettier (з <code>eslint-plugin-react-hooks</code> — ловить порушення правил хуків до рантайму), TypeScript-плагін, snippet/IntelliSense для JSX. Плагін хуків критичний, бо умовний виклик хука — баг, що проявляється як плутанина у стані, а не одразу."
-        }
-      ]
+          kind: 'paragraph',
+          html: `<h3 class="topic">Обов'язкові розширення <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Розширення</th><th>Навіщо</th></tr>
+      <tr><td><strong>ES7+ React/Redux/React-Native Snippets</strong></td><td>Сніпети <code>rfc</code>/<code>rafce</code> — функціональний компонент за секунду (<code>rcc</code> — класовий, лише для легасі)</td></tr>
+      <tr><td><strong>Prettier</strong></td><td>Автоформатування — прибирає суперечки про стиль коду в команді</td></tr>
+      <tr><td><strong>ESLint</strong></td><td>Лінтинг у редакторі в реальному часі (правила Rules of Hooks — <code>eslint-plugin-react-hooks</code> ловить порушення до рантайму)</td></tr>
+      <tr><td><strong>Auto Rename Tag</strong></td><td>Перейменування відкриваючого JSX-тега автоматично перейменовує закриваючий</td></tr>
+      <tr><td><strong>Tailwind CSS IntelliSense</strong></td><td>Автодоповнення utility-класів + підсвітка кольорів (якщо проєкт на Tailwind)</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Що таке сніпет і що означають ці абревіатури <span class="tag tag-key">KEY</span></h3>
+  <p>VS Code <strong>сніпет</strong> — текстовий префікс, який після вводу й натискання <code>Tab</code>/<code>Enter</code> розгортається у заготовку коду з полями для заповнення (tab-stops). Розширення ES7+ Snippets додає готові React-сніпети:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Префікс</th><th>Розшифровка</th><th>Що генерує</th></tr>
+      <tr><td><code>rfc</code></td><td>React Functional Component</td><td>Функціональний компонент, <code>export default function</code></td></tr>
+      <tr><td><code>rafce</code></td><td>React Arrow Function Component Export</td><td>Те саме, але як стрілкова функція з <code>export default</code> одразу зверху</td></tr>
+    </table>
+  </div>
+  <h3 class="topic"><code>rfc</code> — приклад</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// rfc / rafce → генерує:
+export default function ComponentName() {
+  return <div>ComponentName</div>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Корисні налаштування <code>settings.json</code></h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          code: `{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "editor.quickSuggestions": { "strings": true } // автодоповнення в className/JSX-атрибутах
+}`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 0 — FUNDAMENTALS ============================= */
+    {
+      id: 'fundamentals-components-jsx',
+      title: '🧱 Компоненти та JSX',
+      interviewQuestions: [
+        {
+          question: 'JSX компілюється у виклики функцій — які саме, і чим це відрізняється у класичному та новому JSX-трансформі?',
+          answer: 'Класичний трансформ компілює <code>&lt;div /&gt;</code> у <code>React.createElement(\'div\', null)</code>, тому файл мусив імпортувати <code>React</code> навіть без прямого використання. Новий automatic JSX runtime (React 17+) компілює у виклик <code>jsx</code>/<code>jsxs</code> з <code>react/jsx-runtime</code>, який імпортується автоматично — звідси зникла потреба у <code>import React from \'react\'</code> лише заради JSX.',
+        },
+        {
+          question: 'Чому в React не можна повертати два JSX-елементи без обгортки, і які варіанти обгортки є найдешевшими?',
+          answer: 'JSX-вираз повинен резолвитись в один <code>React.createElement</code>-виклик (одне значення), тому кілька сусідніх елементів без спільного кореня — синтаксична помилка. Найдешевший варіант — <code>&lt;&gt;...&lt;/&gt;</code> (Fragment): не створює зайвого DOM-вузла й не впливає на CSS-селектори на кшталт <code>:nth-child</code>, на відміну від обгортки в <code>&lt;div&gt;</code>.',
+        },
+        {
+          question: `Чим element tree відрізняється від Fiber tree?`,
+          answer: `element tree перестворюється щорендеру (дешеві плейн-обʼєкти), Fiber tree персистентна і зберігає стан між рендерами — саме її React diff'ить.`,
+        },
+        {
+          question: `Чому <code>&lt;&gt;...&lt;/&gt;</code> іноді не підходить у <code>.map()</code>?`,
+          answer: `коротка форма не приймає <code>key</code>, а список без key ламає reconciliation (Block 1) — потрібен повний <code>&lt;React.Fragment key={...}&gt;</code>.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Компонент — це просто функція <span class="tag tag-key">KEY</span></h3>
+  <p>React-компонент — звичайна JS-функція, що приймає об'єкт <code>props</code> і повертає опис UI (JSX). Ім'я компонента <strong>завжди з великої літери</strong> — так React відрізняє компонент (<code>&lt;Button/&gt;</code>) від звичайного HTML-тега (<code>&lt;button/&gt;</code>).</p>
+  <div class="grid2">
+    <pre><span class="kw">function</span> <span class="fn">Greeting</span>({ name }: { name: <span class="type">string</span> }) {
+  <span class="kw">return</span> <span class="jsx">&lt;h1&gt;</span>Привіт, {name}!<span class="jsx">&lt;/h1&gt;</span>;
+}
+<span class="cmt">// Використання:</span>
+<span class="jsx">&lt;</span><span class="fn">Greeting</span> name=<span class="str">"Роман"</span> <span class="jsx">/&gt;</span></pre>
+    <pre><span class="cmt">// JSX — це НЕ HTML. Це синтаксичний цукор над:</span>
+React.<span class="fn">createElement</span>(
+  <span class="str">'h1'</span>,
+  <span class="kw">null</span>,
+  <span class="str">'Привіт, '</span>, name, <span class="str">'!'</span>
+);
+<span class="cmt">// createElement повертає плейн-обʼєкт (React element),</span>
+<span class="cmt">// не DOM-вузол. React будує з них дерево і сам малює DOM.</span></pre>
+  </div>
+  <h3 class="topic">JSX — правила <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Правило</th><th>Приклад</th></tr>
+      <tr><td>Один кореневий елемент</td><td><code>&lt;&gt;...&lt;/&gt;</code> (Fragment) якщо треба обгорнути кілька без зайвого <code>div</code></td></tr>
+      <tr><td><code>{'{ }'}</code> — вихід у JS-вираз</td><td><code>{'{'}user.name{'}'}</code>, <code>{'{'}items.map(...){'}'}</code> — тільки <em>вирази</em>, не <code>if</code>/<code>for</code> (statements)</td></tr>
+      <tr><td>Атрибути — camelCase</td><td><code>className</code> замість <code>class</code>, <code>onClick</code> замість <code>onclick</code></td></tr>
+      <tr><td>Кожен тег закритий</td><td><code>&lt;img /&gt;</code>, <code>&lt;br /&gt;</code> — самозакривні теги обов'язково з <code>/</code></td></tr>
+      <tr><td>Стилі — обʼєкт</td><td><code>style={{'{{'} color: 'red' {'}}'}}</code> — подвійні дужки: зовнішні JSX, внутрішні — обʼєкт</td></tr>
+    </table>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Умова "if" не працює в JSX напряму</strong> — <code>if</code> це statement, а всередині <code>{'{ }'}</code> можна лише вираз. Тому умовний рендеринг робиться через тернарник/<code>&amp;&amp;</code>/винесену змінну (детально — наступний розділ).</span></div>
+  <h3 class="topic">Навіщо взагалі JSX <span class="tag tag-key">KEY</span></h3>
+  <p>JSX створили, бо розмітка й логіка, що її генерує, нерозривно пов'язані — React обрав тримати їх <strong>разом в одному файлі</strong> (на відміну від класичного "розділення шаблону і логіки"), а не змушувати писати <code>React.createElement</code> вручну. Компілятор (Babel/SWC) перетворює JSX на виклики функції ще до рантайму — сам React ніколи "не бачить" JSX, лише результат.</p>
+  <h3 class="topic">Три дерева: Element tree → Fiber tree → DOM tree <span class="tag tag-key">KEY</span></h3>
+  <p>Це часто плутають на співбесіді, кажучи "Virtual DOM" про все одразу — насправді це <strong>три різні дерева</strong> з різним часом життя й різним призначенням.</p>
+  <div class="grid3">
+    <div class="card"><h4>1. Element tree</h4><p>Результат <code>createElement</code> (з JSX). Легкий плейн-обʼєкт. <strong>Перестворюється щорендеру заново</strong> — "Virtual DOM" у побутовому сенсі.</p></div>
+    <div class="card blue"><h4>2. Fiber tree</h4><p>Внутрішня структура React (Block 1). <strong>Персистентна</strong> — живе між рендерами, саме її React diff'ить і зберігає в ній стан хуків.</p></div>
+    <div class="card green"><h4>3. DOM tree</h4><p>Реальні браузерні вузли. Оновлюється мінімально, точково — лише те, що показав diff Fiber-дерева.</p></div>
+  </div>
+  <h3 class="topic">1. Element tree — детально</h3>
+  <p>Плейн-обʼєкт <code>{'{'} type, props, key, ref {'}'}</code> (точна форма — розділ "Virtual DOM" нижче, там же й приклад для конкретного JSX). Не має жодного методу, підписки чи посилання на попередній рендер — щойно React його прочитав і звірив з Fiber-деревом, він більше не потрібен і збирається garbage collector'ом.</p>
+  <h3 class="topic">2. Fiber tree — детально</h3>
+  <p>Персистентна структура з власними полями (<code>type</code>, <code>key</code>, <code>child</code>/<code>sibling</code>/<code>return</code>, <code>alternate</code>, <code>memoizedState</code>) — повна таблиця з поясненням кожного поля вже розібрана в розділі "Reconciliation, Virtual DOM, Fiber" нижче, тут лише важливо запамʼятати її роль у трійці: це <strong>єдине</strong> дерево з трьох, що памʼятає щось між рендерами.</p>
+  <h3 class="topic">3. DOM tree — детально, і звідки береться React DOM</h3>
+  <p>Останній крок — застосування diff'у до реальних <code>Node</code>-обʼєктів браузера (<code>appendChild</code>, <code>setAttribute</code>, <code>removeChild</code>). Цікавий сеньйорський нюанс: сам механізм diffing (пакет <code>react-reconciler</code>) — <strong>не знає нічого про DOM</strong>. Він рендерить у Fiber-дерево і викликає абстрактний "host config" — набір функцій "як створити вузол", "як його оновити", "як видалити". <code>react-dom</code> — лише одна реалізація цього host config (для браузера). Той самий reconciler з іншим host config дає <code>react-native</code> (host = нативні iOS/Android-вʼюхи) чи <code>react-three-fiber</code> (host = обʼєкти WebGL-сцени). DOM tree — не "фінальна мета" React у принципі, а лише той конкретний host, що використовує <code>react-dom</code>.</p>
+  <div class="alert good"><span class="icon">✅</span><span>Element tree відкидається й будується заново на кожен рендер (дешево — плейн-обʼєкти). Fiber tree — довгоживуча структура, яку React звіряє зі свіжим element tree, щоб порахувати мінімальний патч для конкретного host (DOM tree — лише один з можливих). Детально про Fiber — розділ "Reconciliation, Virtual DOM, Fiber" нижче.</span></div>
+  <h3 class="topic">Fragment — варіанти <span class="tag tag-key">KEY</span></h3>
+  <p>Компонент повинен повернути один кореневий вузол. Fragment дозволяє згрупувати кілька елементів <strong>без зайвого DOM-вузла</strong> (жодного <code>&lt;div&gt;</code> у результаті).</p>
+  <div class="grid2">
+    <pre><span class="cmt">// Коротка форма — найчастіша</span>
+<span class="kw">return</span> (
+  <span class="jsx">&lt;&gt;</span>
+    <span class="jsx">&lt;dt&gt;</span>{term}<span class="jsx">&lt;/dt&gt;</span>
+    <span class="jsx">&lt;dd&gt;</span>{description}<span class="jsx">&lt;/dd&gt;</span>
+  <span class="jsx">&lt;/&gt;</span>
+);
+<span class="cmt">// ⚠️ коротка форма НЕ приймає key — потрібна повна</span></pre>
+    <pre><span class="cmt">// Повна форма — коли потрібен key (у .map())</span>
+{items.<span class="fn">map</span>(item =&gt; (
+  <span class="jsx">&lt;React.Fragment</span> key={item.id}<span class="jsx">&gt;</span>
+    <span class="jsx">&lt;dt&gt;</span>{item.term}<span class="jsx">&lt;/dt&gt;</span>
+    <span class="jsx">&lt;dd&gt;</span>{item.description}<span class="jsx">&lt;/dd&gt;</span>
+  <span class="jsx">&lt;/React.Fragment&gt;</span>
+))}</pre>
+  </div>
+  `,
+        },
+      ],
     },
     {
-      "id": "fundamentals-components-jsx",
-      "title": "🧱 Компоненти та JSX",
-      "blocks": [
+      id: 'fundamentals-component-anatomy',
+      title: '🧩 Анатомія компонента: шаблон, стилі, зображення',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Компонент — це просто функція <span class=\"tag tag-key\">KEY</span></h3>\n<p>React-компонент — звичайна JS-функція, що приймає об'єкт <code>props</code> і повертає опис UI (JSX). Ім'я компонента <strong>завжди з великої літери</strong> — так React відрізняє компонент (<code>&lt;Button/&gt;</code>) від HTML-тега (<code>&lt;button/&gt;</code>).</p>"
+          question: 'Як організувати файлову структуру React-компонента (шаблон, стилі, зображення), щоб вона масштабувалась у великому проєкті?',
+          answer: 'Типовий підхід — колокація: <code>ComponentName/index.tsx</code> + <code>ComponentName.module.css</code> (або styled-файл) + асети поруч, а не в глобальних <code>/styles</code> чи <code>/assets</code>. Це знижує когнітивне навантаження (все, що стосується компонента, в одній папці) і спрощує видалення фічі — просто видаляєш папку без пошуку «осиротілих» файлів по всьому проєкту.',
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Greeting({ name }: { name: string }) {\n  return <h1>Привіт, {name}!</h1>;\n}\n// Використання:\n<Greeting name=\"Роман\" />"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// JSX — це НЕ HTML. Це синтаксичний цукор над:\nReact.createElement(\n  'h1',\n  null,\n  'Привіт, ', name, '!'\n);\n// createElement повертає плейн-обʼєкт (React element),\n// не DOM-вузол. React будує з них дерево і сам малює DOM."
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">JSX — правила <span class=\"tag tag-pit\">PITFALL</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Правило</th>\n<th>Приклад</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Один кореневий елемент</td>\n<td><code>&lt;&gt;...&lt;/&gt;</code> (Fragment) якщо треба обгорнути кілька без зайвого <code>div</code></td>\n</tr>\n<tr>\n<td><code>{'{ }'}</code> — вихід у JS-вираз</td>\n<td><code>{'{'}user.name{'}'}</code>, <code>{'{'}items.map(...){'}'}</code> — тільки <em>вирази</em>, не <code>if</code>/<code>for</code> (statements)</td>\n</tr>\n<tr>\n<td>Атрибути — camelCase</td>\n<td><code>className</code> замість <code>class</code>, <code>onClick</code> замість <code>onclick</code></td>\n</tr>\n<tr>\n<td>Кожен тег закритий</td>\n<td><code>&lt;img /&gt;</code>, <code>&lt;br /&gt;</code> — самозакривні теги обов'язково з <code>/</code></td>\n</tr>\n<tr>\n<td>Стилі — обʼєкт</td>\n<td><code>style={{'{{'} color: 'red' {'}}'}}</code> — подвійні дужки: зовнішні JSX, внутрішні — обʼєкт</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Умова &quot;if&quot; не працює в JSX напряму</strong> — <code>if</code> це statement, а всередині <code>{'{ }'}</code> можна лише вираз. Тому умовний рендеринг робиться через тернарник/<code>&amp;&amp;</code>/винесену змінну (детально — наступний розділ).</p></div>\n<h3 class=\"topic\">Навіщо взагалі JSX <span class=\"tag tag-key\">KEY</span></h3>\n<p>JSX створили, бо розмітка й логіка, що її генерує, нерозривно пов'язані — React обрав тримати їх <strong>разом в одному файлі</strong>, а не змушувати писати <code>React.createElement</code> вручну. Компілятор (Babel/SWC) перетворює JSX на виклики функції ще до рантайму — сам React ніколи &quot;не бачить&quot; JSX, лише результат.</p>\n<h3 class=\"topic\">Три дерева: Element tree → Fiber tree → DOM tree <span class=\"tag tag-key\">KEY</span></h3>\n<p>Це часто плутають, кажучи &quot;Virtual DOM&quot; про все одразу — насправді це <strong>три різні дерева</strong> з різним часом життя й призначенням.</p>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<pre><code class=\"language-tsx\">// Коротка форма — найчастіша\nreturn (\n  &lt;&gt;\n    &lt;dt&gt;{term}&lt;/dt&gt;\n    &lt;dd&gt;{description}&lt;/dd&gt;\n  &lt;/&gt;\n);\n// ⚠️ коротка форма НЕ приймає key — потрібна повна\n```tsx\n// Повна форма — коли потрібен key (у .map())\n{items.map(item =&gt; (\n  &lt;React.Fragment key={item.id}&gt;\n    &lt;dt&gt;{item.term}&lt;/dt&gt;\n    &lt;dd&gt;{item.description}&lt;/dd&gt;\n  &lt;/React.Fragment&gt;\n))}</code></pre><div class=\"grid3\"><div class=\"card blue\"><h4>1. Element tree</h4>\n<p>Результат <code>createElement</code> (з JSX). Легкий плейн-обʼєкт. <strong>Перестворюється щорендеру заново</strong> — &quot;Virtual DOM&quot; у побутовому сенсі.</p></div><div class=\"card yellow\"><h4>2. Fiber tree</h4>\n<p>Внутрішня структура React. <strong>Персистентна</strong> — живе між рендерами, саме її React diff'ить і зберігає в ній стан хуків.</p></div><div class=\"card green\"><h4>3. DOM tree</h4>\n<p>Реальні браузерні вузли. Оновлюється мінімально, точково — лише те, що показав diff Fiber-дерева.</p></div><pre><code></code></pre><div class=\":\"><p><strong>Element tree</strong> — плейн-обʼєкт <code>{'{'} type, props, key, ref {'}'}</code> (точна форма — розділ &quot;Virtual DOM&quot; нижче). Без методів/підписок; щойно React його звірив з Fiber-деревом — збирається GC.<br>\n<strong>Fiber tree</strong> — персистентна структура з полями (<code>type</code>, <code>key</code>, <code>child</code>/<code>sibling</code>/<code>return</code>, <code>alternate</code>, <code>memoizedState</code>) — повна таблиця в розділі &quot;Reconciliation, Virtual DOM, Fiber&quot; нижче; тут головне: це <strong>єдине</strong> дерево з трьох, що памʼятає щось між рендерами.<br>\n<strong>DOM tree</strong> — застосування diff'у до реальних <code>Node</code> (<code>appendChild</code>/<code>setAttribute</code>/…). Сеньйорський нюанс: <code>react-reconciler</code> <strong>не знає нічого про DOM</strong> — він рендерить у Fiber-дерево й викликає абстрактний &quot;host config&quot;. <code>react-dom</code> — лише одна реалізація (браузер); той самий reconciler з іншим host дає <code>react-native</code> чи <code>react-three-fiber</code>. DOM tree — лише один з можливих host'ів.</p>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Element tree відкидається й будується заново щорендеру (дешево — плейн-обʼєкти). Fiber tree — довгоживуча структура, яку React звіряє зі свіжим element tree, щоб порахувати мінімальний патч для конкретного host.</p></div>\n<h3 class=\"topic\">Fragment — варіанти <span class=\"tag tag-key\">KEY</span></h3>\n<p>Компонент повинен повернути один кореневий вузол. Fragment групує кілька елементів <strong>без зайвого DOM-вузла</strong>.</p>\n<pre><code></code></pre></div></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "JSX компілюється у виклики функцій — які саме, і чим це відрізняється у класичному та новому трансформі?",
-          "answer": "Класичний трансформ компілює <code>&lt;div /&gt;</code> у <code>React.createElement('div', null)</code> (файл мусив імпортувати <code>React</code>). Новий automatic runtime (React 17+) компілює у <code>jsx</code>/<code>jsxs</code> з <code>react/jsx-runtime</code>, що імпортується автоматично — звідси зникла потреба в <code>import React</code> заради JSX."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Мінімальний компонент end-to-end <span class="tag tag-key">KEY</span></h3>
+  <p>Реальний файл компонента зазвичай містить: імпорти (React — не обов'язково з новим JSX transform, типи, стилі, картинки), саму функцію-компонент, і <code>export</code>. Конвенція іменування файлу — збігається з іменем компонента (<code>UserCard.tsx</code> → <code>UserCard</code>).</p>`,
         },
         {
-          "question": "Чому не можна повертати два JSX-елементи без обгортки, і які обгортки найдешевші?",
-          "answer": "JSX-вираз має резолвитись в одне значення, тому сусідні елементи без кореня — синтаксична помилка. Найдешевше — <code>&lt;&gt;...&lt;/&gt;</code> (Fragment): не створює зайвого DOM-вузла й не впливає на <code>:nth-child</code>, на відміну від <code>&lt;div&gt;</code>."
+          kind: 'code',
+          language: 'tsx',
+          code: `// UserCard.tsx
+import type { FC } from 'react';
+import styles from './UserCard.module.css';   // CSS Modules — класи скоуплені локально
+import avatarFallback from './avatar-fallback.png'; // бандлер повертає URL, не бінарник
+
+interface UserCardProps {
+  name: string;
+  avatarUrl?: string;
+}
+
+export const UserCard: FC<UserCardProps> = ({ name, avatarUrl }) => {
+  return (
+    <div className={styles.card}>
+      <img
+        className={styles.avatar}
+        src={avatarUrl ?? avatarFallback}
+        alt={\`Аватар \${name}\`}
+      />
+      <span className={styles.name}>{name}</span>
+    </div>
+  );
+};`,
         },
         {
-          "question": "Чим element tree відрізняється від Fiber tree?",
-          "answer": "element tree перестворюється щорендеру (дешеві плейн-обʼєкти), Fiber tree персистентна і зберігає стан між рендерами — саме її React diff'ить."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що тут важливо <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Що</th><th>Чому саме так</th></tr>
+      <tr><td>Компонент повертає <strong>один</strong> JSX-вираз</td><td>Функція — рано чи пізно <code>return</code>, JSX-вираз — плейн-обʼєкт (Block вище)</td></tr>
+      <tr><td>Імпорт картинки <code>import img from './x.png'</code></td><td>Бандлер (Vite/Webpack) підміняє імпорт на URL до файлу в білді (з хешем для кешування) — не можна просто вказати рядковий шлях без імпорту, якщо файл не в <code>public/</code></td></tr>
+      <tr><td><code>CSS Modules</code> (<code>*.module.css</code>)</td><td>Класи локально скоуплені — <code>styles.card</code> компілюється в унікальний хеш-клас, немає конфліктів імен між компонентами</td></tr>
+      <tr><td><code>alt</code> на <code>&lt;img&gt;</code></td><td>Доступність — не стилістична забаганка, а вимога a11y-лінтерів</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Файли, що лежать у <code>public/</code> (Vite) — копіюються as-is, доступні по кореневому шляху (<code>/logo.png</code>) БЕЗ імпорту. Файли поруч з компонентом — завжди через <code>import</code>, щоб бандлер їх обробив (оптимізація, хешування, tree-shaking невикористаних).</span></div>
+  <h3 class="topic">Робота з картинками — повні правила <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Спосіб</th><th>Синтаксис</th><th>Що отримуєш</th></tr>
+      <tr><td>Статичний import</td><td><code>import img from './x.png'</code></td><td>Рядок-URL (з хешем у продакшн-білді)</td></tr>
+      <tr><td><code>public/</code></td><td><code>&lt;img src="/logo.png"&gt;</code></td><td>URL напряму, без обробки бандлером — файл переживає білд "як є"</td></tr>
+      <tr><td>SVG як URL</td><td><code>import icon from './icon.svg'</code></td><td>Рядок-URL — та сама поведінка, що й PNG/JPG</td></tr>
+      <tr><td>SVG як компонент (SVGR)</td><td><code>import { ReactComponent as Icon } from './icon.svg'</code></td><td>Готовий JSX-компонент — можна стилізувати <code>fill</code>/<code>stroke</code> через CSS/props, а не лише через <code>&lt;img&gt;</code></td></tr>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card blue"><h4>Інлайнінг маленьких зображень</h4><p>Бандлер (Vite/Webpack) автоматично конвертує <strong>дрібні</strong> файли (типово &lt;4KB) у base64 data-URI прямо всередині JS/CSS — жодного окремого мережевого запиту. Більші файли лишаються окремими файлами з власним URL і кешем.</p></div>
+    <div class="card red"><h4>⚠️ Динамічний шлях — пастка <span class="tag tag-pit">PITFALL</span></h4><pre style="font-size:10.5px"><span class="cmt">// ❌ НЕ працює — бандлер аналізує imports</span>
+<span class="cmt">// статично, рядок з name невідомий на build-time</span>
+<span class="kw">import</span> img <span class="kw">from</span> <span class="str">\`./images/\${name}.png\`</span>;
+
+<span class="cmt">// ✅ new URL — бандлер розуміє цей патерн</span>
+<span class="kw">const</span> src = <span class="kw">new</span> <span class="fn">URL</span>(
+  <span class="str">\`./images/\${name}.png\`</span>, import.meta.url
+).href;</pre></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>У Next.js для оптимізації зображень (lazy-loading, responsive <code>srcset</code>, автоформат WebP/AVIF) є спеціальний <code>&lt;Image&gt;</code> з <code>next/image</code> — вже згадувався в розділі "Performance Deep Dive" (Core Web Vitals, LCP) — це заміна звичайного <code>&lt;img&gt;</code>, а не альтернатива описаним вище способам імпорту.</span></div>`,
         },
-        {
-          "question": "Чому <code>&lt;&gt;...&lt;/&gt;</code> іноді не підходить у <code>.map()</code>?",
-          "answer": "Коротка форма не приймає <code>key</code>, а список без key ламає reconciliation — потрібен повний <code>&lt;React.Fragment key={...}&gt;</code>."
-        }
-      ]
+      ],
     },
     {
-      "id": "fundamentals-component-anatomy",
-      "title": "🧩 Анатомія компонента: шаблон, стилі, зображення",
-      "blocks": [
+      id: 'styling-approaches',
+      title: '🎨 Styled Components та Tailwind',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Мінімальний компонент end-to-end <span class=\"tag tag-key\">KEY</span></h3>\n<p>Реальний файл компонента містить: імпорти (React — не обов'язково з новим JSX transform, типи, стилі, картинки), функцію-компонент, <code>export</code>. Конвенція іменування файлу — збігається з іменем компонента.</p>"
+          question: 'Якіträde-off\'и між CSS-in-JS (Styled Components) та Tailwind у продакшн React-застосунку?',
+          answer: 'Styled Components дає повну ізоляцію стилів і динамічні значення на основі props, але додає рантайм-вартість (генерація класів під час рендеру, більший bundle, повільніший SSR без спеціальних налаштувань). Tailwind — це статичний CSS без рантайму: клас відомий на етапі збірки, PurgeCSS/JIT прибирає невикористане, тому продуктивність вища, але HTML стає «зашумленим» довгими рядками класів.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// UserCard.tsx\nimport type { FC } from 'react';\nimport styles from './UserCard.module.css';   // CSS Modules — класи скоуплені локально\nimport avatarFallback from './avatar-fallback.png'; // бандлер повертає URL, не бінарник\n\ninterface UserCardProps {\n  name: string;\n  avatarUrl?: string;\n}\n\nexport const UserCard: FC<UserCardProps> = ({ name, avatarUrl }) => {\n  return (\n    <div className={styles.card}>\n      <img\n        className={styles.avatar}\n        src={avatarUrl ?? avatarFallback}\n        alt={`Аватар ${name}`}\n      />\n      <span className={styles.name}>{name}</span>\n    </div>\n  );\n};"
+          question: 'Чому багато команд у 2024-2026 переходять від CSS-in-JS до zero-runtime рішень (Tailwind, vanilla-extract, CSS Modules)?',
+          answer: 'Основна причина — рантайм-вартість CSS-in-JS стає помітною на великих сторінках із багатьма динамічними стилями (кожен рендер може перегенеровувати класи/style-теги), а також гірша сумісність із React Server Components, де компонент не завжди виконується у браузері й не може покладатись на рантайм-бібліотеку для генерації стилів на льоту.',
         },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Що тут важливо <span class=\"tag tag-pit\">PITFALL</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Що</th>\n<th>Чому саме так</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Компонент повертає <strong>один</strong> JSX-вираз</td>\n<td>JSX-вираз — плейн-обʼєкт</td>\n</tr>\n<tr>\n<td>Імпорт картинки <code>import img from './x.png'</code></td>\n<td>Бандлер підміняє імпорт на URL до файлу в білді (з хешем) — рядковий шлях без імпорту працює лише з <code>public/</code></td>\n</tr>\n<tr>\n<td><code>CSS Modules</code> (<code>*.module.css</code>)</td>\n<td>Класи локально скоуплені — <code>styles.card</code> компілюється в унікальний хеш, без конфліктів імен</td>\n</tr>\n<tr>\n<td><code>alt</code> на <code>&lt;img&gt;</code></td>\n<td>Доступність — вимога a11y-лінтерів, не забаганка</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Файли в <code>public/</code> (Vite) копіюються as-is, доступні по кореневому шляху (<code>/logo.png</code>) БЕЗ імпорту. Файли поруч з компонентом — завжди через <code>import</code>, щоб бандлер їх обробив (оптимізація, хешування, tree-shaking).</p></div>\n<h3 class=\"topic\">Робота з картинками — повні правила <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Спосіб</th>\n<th>Синтаксис</th>\n<th>Що отримуєш</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Статичний import</td>\n<td><code>import img from './x.png'</code></td>\n<td>Рядок-URL (з хешем у prod)</td>\n</tr>\n<tr>\n<td><code>public/</code></td>\n<td><code>&lt;img src=&quot;/logo.png&quot;&gt;</code></td>\n<td>URL напряму, без обробки бандлером</td>\n</tr>\n<tr>\n<td>SVG як URL</td>\n<td><code>import icon from './icon.svg'</code></td>\n<td>Рядок-URL — як PNG/JPG</td>\n</tr>\n<tr>\n<td>SVG як компонент (SVGR)</td>\n<td><code>import { ReactComponent as Icon } from './icon.svg'</code></td>\n<td>JSX-компонент — стилізується <code>fill</code>/<code>stroke</code> через CSS/props</td>\n</tr>\n</tbody>\n</table></div>\n<p>Бандлер автоматично інлайнить <strong>дрібні</strong> файли (типово &lt;4KB) у base64 data-URI — без окремого запиту. Більші лишаються окремими файлами з власним URL і кешем.</p>\n<h4>⚠️ Динамічний шлях — пастка <span class=\"tag tag-pit\">PITFALL</span></h4>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ НЕ працює — бандлер аналізує imports\n// статично, рядок з name невідомий на build-time\nimport img from `./images/${name}.png`;\n\n// ✅ new URL — бандлер розуміє цей патерн\nconst src = new URL(\n  `./images/${name}.png`, import.meta.url\n).href;"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> У Next.js для оптимізації зображень (lazy-loading, responsive <code>srcset</code>, WebP/AVIF) є <code>&lt;Image&gt;</code> з <code>next/image</code> (згадувався в &quot;Performance Deep Dive&quot;) — заміна <code>&lt;img&gt;</code>, а не альтернатива способам імпорту вище.</p></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Як організувати файлову структуру React-компонента, щоб вона масштабувалась?",
-          "answer": "Колокація: <code>ComponentName/index.tsx</code> + <code>ComponentName.module.css</code> + асети поруч, а не в глобальних <code>/styles</code>/<code>/assets</code>. Знижує когнітивне навантаження і спрощує видалення фічі — видаляєш папку без пошуку «осиротілих» файлів."
-        }
-      ]
+          kind: 'paragraph',
+          html: `<h3 class="topic">styled-components — CSS-in-JS <span class="tag tag-key">KEY</span></h3>
+  <p>Стилі описуються прямо в JS через tagged template literals — компонент і його стилі живуть в одному файлі, стилі можуть залежати від <code>props</code>.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import styled from 'styled-components';
+
+const Button = styled.button<{ variant?: 'primary' | 'danger' }>\`
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: \${p => (p.variant === 'danger' ? '#ef4444' : '#6366f1')};
+  color: white;
+
+  &:hover { opacity: 0.9; }
+\`;
+
+// <Button variant="danger" onClick={onDelete}>Delete</Button>
+// Клас генерується на льоту, унікальний — конфліктів імен немає,
+// але це runtime-вартість: парсинг шаблонів + вставка <style> у DOM при mount`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Tailwind CSS — утилітарний підхід</h3>
+  <p>Замість написання CSS-правил — готові utility-класи прямо в <code>className</code>. Немає runtime-вартості (звичайний CSS-файл, згенерований на build-time) і немає проблеми іменування класів.</p>
+  <h3 class="topic">Підключення до React + Vite — покроково</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'bash',
+          code: `npm install tailwindcss @tailwindcss/vite`,
+        },
+        {
+          kind: 'code',
+          language: 'ts',
+          code: `// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});`,
+        },
+        {
+          kind: 'code',
+          language: 'css',
+          code: `/* src/index.css — один рядок замість окремого tailwind.config.js для базового кейсу */
+@import "tailwindcss";`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Готово — utility-класи одразу доступні
+export function Button({ children }: { children: React.ReactNode }) {
+  return (
+    <button className="rounded-md bg-indigo-600 px-4 py-2 text-white hover:opacity-90">
+      {children}
+    </button>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Коли що обрати</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>styled-components</th><th>Tailwind</th></tr>
+      <tr><td>Runtime вартість</td><td>Так — генерація стилів у браузері</td><td>Ні — звичайний CSS, згенерований на білді</td></tr>
+      <tr><td>Стилі, залежні від props</td><td>Природно (<code>\${p => ...}</code>)</td><td>Через умовну конкатенацію класів (<code>clsx</code>/<code>cn</code>)</td></tr>
+      <tr><td>Крива навчання</td><td>Звичайний CSS-синтаксис</td><td>Треба вивчити назви утиліт</td></tr>
+      <tr><td>Розмір бандла</td><td>Бібліотека + рантайм</td><td>Лише використані класи (purge на білді)</td></tr>
+    </table>
+  </div>`,
+        },
+      ],
     },
     {
-      "id": "styling-approaches",
-      "title": "🎨 Styled Components та Tailwind",
-      "blocks": [
+      id: 'animation-techniques',
+      title: '🎞️ Техніки анімації в React',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">styled-components — CSS-in-JS <span class=\"tag tag-key\">KEY</span></h3>\n<p>Стилі описуються прямо в JS через tagged template literals — компонент і стилі в одному файлі, стилі можуть залежати від <code>props</code>.</p>"
+          question: 'Чому анімація властивостей <code>transform</code>/<code>opacity</code> вважається "дешевою" для браузера, а анімація <code>width</code>/<code>top</code>/<code>margin</code> — "дорогою"?',
+          answer: 'Зміна <code>width</code>, <code>top</code>, <code>margin</code> запускає <strong>layout (reflow)</strong> — браузер має перерахувати геометрію всього піддерева й часто сторінки, потім перемалювати (<strong>paint</strong>), потім скомпонувати шари (<strong>composite</strong>) — три важкі стадії на кожен кадр. <code>transform</code> і <code>opacity</code> можна обробити лише на стадії <strong>composite</strong>, часто на GPU, без layout/paint — тому саме ці дві властивості рекомендують для 60fps-анімацій (напр. замість <code>left</code> для руху — <code>transform: translateX()</code>).',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import styled from 'styled-components';\n\nconst Button = styled.button<{ variant?: 'primary' | 'danger' }>`\n  padding: 8px 16px;\n  border-radius: 6px;\n  background: ${p => (p.variant === 'danger' ? '#ef4444' : '#6366f1')};\n  color: white;\n\n  &:hover { opacity: 0.9; }\n`;\n\n// <Button variant=\"danger\" onClick={onDelete}>Delete</Button>\n// Клас генерується на льоту, унікальний — конфліктів немає,\n// але це runtime-вартість: парсинг шаблонів + вставка <style> при mount"
+          question: 'У чому різниця в підходах між CSS-анімацією/transition і бібліотекою на кшталт Framer Motion, і коли CSS вже недостатньо?',
+          answer: 'CSS <code>transition</code>/<code>@keyframes</code> — декларативні й дешеві, ідеальні для простих переходів стану (hover, fade, показати/сховати), не потребують JS-рантайму. Але CSS не вміє: анімувати між анмаунтом/маунтом компонента (елемент зникає з DOM миттєво, transition не встигає відпрацювати), координувати анімацію кількох елементів (layout-анімації, spring-фізика, drag), чи реагувати на React-стан складнішим способом (перерваний/реверсований перехід). Framer Motion додає JS-рантайм саме для цих сценаріїв: <code>AnimatePresence</code> тримає елемент у DOM до завершення exit-анімації, <code>layout</code> проп анімує зміну позиції/розміру автоматично.',
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Tailwind CSS — утилітарний підхід</h3>\n<p>Замість написання CSS-правил — готові utility-класи прямо в <code>className</code>. Немає runtime-вартості (звичайний CSS, згенерований на build-time) і немає проблеми іменування класів.</p>"
+          question: 'Що таке FLIP-техніка анімації, і яку проблему вона вирішує там, де звичайний CSS transition безсилий?',
+          answer: 'FLIP (First, Last, Invert, Play) вирішує анімацію зміни <em>позиції/розміру через layout-зміну</em> (напр. картка переміщується в іншу колонку списку) — властивості на кшталт "позиція в грід-лейауті" взагалі не анімуються через CSS transition. Техніка: зняти позицію <strong>до</strong> зміни (First) і <strong>після</strong> (Last), інвертувати різницю через <code>transform</code> так, щоб елемент візуально лишився на старому місці (Invert), а тоді прибрати transform, дозволивши браузеру доанімувати перехід уже дешевим <code>transform</code> (Play) — саме на цій ідеї побудований <code>layout</code>-проп Framer Motion.',
         },
-        {
-          "kind": "code",
-          "language": "bash",
-          "code": "npm install tailwindcss @tailwindcss/vite"
-        },
-        {
-          "kind": "code",
-          "language": "ts",
-          "code": "// vite.config.ts\nimport { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\nimport tailwindcss from '@tailwindcss/vite';\n\nexport default defineConfig({\n  plugins: [react(), tailwindcss()],\n});"
-        },
-        {
-          "kind": "code",
-          "language": "css",
-          "code": "/* src/index.css — один рядок замість окремого tailwind.config.js для базового кейсу */\n@import \"tailwindcss\";"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "export function Button({ children }: { children: React.ReactNode }) {\n  return (\n    <button className=\"rounded-md bg-indigo-600 px-4 py-2 text-white hover:opacity-90\">\n      {children}\n    </button>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Коли що обрати</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th></th>\n<th>styled-components</th>\n<th>Tailwind</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Runtime вартість</td>\n<td>Так — генерація стилів у браузері</td>\n<td>Ні — звичайний CSS, згенерований на білді</td>\n</tr>\n<tr>\n<td>Стилі, залежні від props</td>\n<td>Природно (<code>${p =&gt; ...}</code>)</td>\n<td>Через умовну конкатенацію класів (<code>clsx</code>/<code>cn</code>)</td>\n</tr>\n<tr>\n<td>Крива навчання</td>\n<td>Звичайний CSS-синтаксис</td>\n<td>Треба вивчити назви утиліт</td>\n</tr>\n<tr>\n<td>Розмір бандла</td>\n<td>Бібліотека + рантайм</td>\n<td>Лише використані класи (purge на білді)</td>\n</tr>\n</tbody>\n</table></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Які trade-off'и між CSS-in-JS та Tailwind у продакшн-застосунку?",
-          "answer": "Styled Components дає повну ізоляцію стилів і динаміку на props, але додає рантайм-вартість (генерація класів під рендер, більший bundle, повільніший SSR). Tailwind — статичний CSS без рантайму: клас відомий на збірці, purge прибирає невикористане; продуктивність вища, але HTML «зашумлений» довгими класами."
+          kind: 'paragraph',
+          html: `<h3 class="topic">CSS transition / @keyframes — базовий рівень <span class="tag tag-key">KEY</span></h3>
+  <p>Найдешевший спосіб анімувати: декларативно, без JS-рантайму, браузер сам інтерполює кадри. <code>transition</code> — для переходу між двома станами (напр. hover); <code>@keyframes</code> + <code>animation</code> — для послідовності кроків або нескінченних циклів (спінер, пульсація).</p>`,
         },
         {
-          "question": "Чому у 2024–2026 переходять від CSS-in-JS до zero-runtime (Tailwind, vanilla-extract, CSS Modules)?",
-          "answer": "Рантайм-вартість CSS-in-JS помітна на великих сторінках з динамічними стилями (кожен рендер може перегенеровувати класи/style-теги), плюс гірша сумісність із RSC, де компонент не завжди виконується в браузері й не може покладатись на рантайм-генерацію стилів."
-        }
-      ]
+          kind: 'code',
+          language: 'tsx',
+          code: `// Тільки transform/opacity — щоб анімація йшла на compositor-шарі, повз layout/paint
+function FadeInButton() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        transform: hovered ? 'scale(1.05)' : 'scale(1)',
+        transition: 'transform 150ms ease-out',
+      }}
+    >
+      Hover me
+    </button>
+  );
+}
+
+/* @keyframes у CSS-файлі/CSS Modules — для нескінченних/багатокрокових анімацій */
+/* .spinner { animation: spin 1s linear infinite; }
+   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } */`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Framer Motion — коли CSS не вистачає</h3>
+  <p>Декларативний API поверх Web Animations: <code>&lt;motion.div&gt;</code> замість звичайного тега, анімовані пропи <code>initial</code>/<code>animate</code>/<code>exit</code>. Головна перевага над голим CSS — <strong>анімація виходу</strong> (компонент встигає доанімуватись перед тим, як React його реально видалить з DOM) і <strong>layout-анімації</strong> (зміна позиції/розміру між рендерами анімується автоматично).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { motion, AnimatePresence } from 'framer-motion';
+
+function Toast({ message, onClose }: { message: string; onClose(): void }) {
+  return (
+    <AnimatePresence>
+      {message && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}       // AnimatePresence чекає завершення exit
+          transition={{ duration: 0.2 }}       // перш ніж React реально видалить елемент
+        >
+          {message}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// layout-анімація "з коробки" — переміщення картки між колонками
+// <motion.div layout>{card}</motion.div> — Framer сам порахує FLIP-трансформацію`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Коли що обрати</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>CSS transition/keyframes</th><th>Framer Motion</th></tr>
+      <tr><td>Простий hover/fade/показати-сховати</td><td>✅ Достатньо, 0 залежностей</td><td>Надлишково</td></tr>
+      <tr><td>Анімація виходу (exit) при анмаунті</td><td>❌ Не працює — DOM-вузол зникає миттєво</td><td>✅ <code>AnimatePresence</code></td></tr>
+      <tr><td>Layout-анімація (зміна позиції/розміру)</td><td>❌ Потребує ручного FLIP</td><td>✅ <code>layout</code> проп</td></tr>
+      <tr><td>Drag / spring-фізика / жести</td><td>❌</td><td>✅ вбудовано</td></tr>
+      <tr><td>Розмір бандла</td><td>0 KB</td><td>+30-40 KB (gzip)</td></tr>
+    </table>
+  </div>`,
+        },
+      ],
     },
     {
-      "id": "animation-techniques",
-      "title": "🎞️ Техніки анімації в React",
-      "blocks": [
+      id: 'fundamentals-props-state',
+      title: '📦 Props, State та події',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">CSS transition / @keyframes — базовий рівень <span class=\"tag tag-key\">KEY</span></h3>\n<p>Найдешевший спосіб анімувати: декларативно, без JS-рантайму. <code>transition</code> — для переходу між двома станами (hover); <code>@keyframes</code> + <code>animation</code> — для послідовності кроків або нескінченних циклів (спінер, пульсація).</p>"
+          question: 'У чому фундаментальна різниця між props і state, і чому змішування цих понять — типова помилка джуна?',
+          answer: '<code>props</code> — це вхідні дані, які компонент отримує ззовні і <strong>не може змінювати сам</strong> (однонаправлений потік даних); <code>state</code> — внутрішні дані, якими компонент керує сам через <code>useState</code>/<code>useReducer</code>, і зміна яких викликає ре-рендер. Типова помилка — копіювати prop у local state (<code>useState(props.value)</code>) «про всяк випадок», що розриває синхронізацію з батьківським компонентом при подальших оновленнях prop.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Тільки transform/opacity — щоб анімація йшла на compositor-шарі, повз layout/paint\nfunction FadeInButton() {\n  const [hovered, setHovered] = useState(false);\n  return (\n    <button\n      onMouseEnter={() => setHovered(true)}\n      onMouseLeave={() => setHovered(false)}\n      style={{\n        transform: hovered ? 'scale(1.05)' : 'scale(1)',\n        transition: 'transform 150ms ease-out',\n      }}\n    >\n      Hover me\n    </button>\n  );\n}\n\n/* @keyframes у CSS-файлі — для нескінченних/багатокрокових анімацій */\n/* .spinner { animation: spin 1s linear infinite; }\n   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } */"
+          question: 'Чому <code>onClick={handleClick()}</code> — це баг, а <code>onClick={handleClick}</code> — правильний варіант?',
+          answer: '<code>onClick={handleClick()}</code> викликає функцію одразу під час рендеру і передає обробнику <em>результат</em> виклику (часто <code>undefined</code>), а не саму функцію — тобто клік ніколи не спрацює так, як очікувалось, а <code>handleClick</code> виконається на кожному рендері. Правильно передавати посилання на функцію: <code>onClick={handleClick}</code>, або стрілкову функцію <code>onClick={() => handleClick(arg)}</code>, якщо потрібні аргументи.',
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Framer Motion — коли CSS не вистачає</h3>\n<p>Декларативний API поверх Web Animations: <code>&lt;motion.div&gt;</code> замість тега, пропи <code>initial</code>/<code>animate</code>/<code>exit</code>. Головна перевага над CSS — <strong>анімація виходу</strong> (компонент доанімовується перед реальним видаленням з DOM) і <strong>layout-анімації</strong> (зміна позиції/розміру анімується автоматично через FLIP).</p>"
+          question: `Чому <code>console.log(count)</code> одразу після <code>setCount</code> показує старе значення?`,
+          answer: `setState асинхронний відносно поточної функції — планує рендер, не мутує змінну зараз.`,
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { motion, AnimatePresence } from 'framer-motion';\n\nfunction Toast({ message, onClose }: { message: string; onClose(): void }) {\n  return (\n    <AnimatePresence>\n      {message && (\n        <motion.div\n          initial={{ opacity: 0, y: -20 }}\n          animate={{ opacity: 1, y: 0 }}\n          exit={{ opacity: 0, y: -20 }}       // AnimatePresence чекає завершення exit\n          transition={{ duration: 0.2 }}       // перш ніж React реально видалить елемент\n        >\n          {message}\n        </motion.div>\n      )}\n    </AnimatePresence>\n  );\n}\n\n// layout-анімація \"з коробки\": <motion.div layout>{card}</motion.div>"
+          question: `Чим props відрізняються від state?`,
+          answer: `props — ззовні, read-only, дитина не міняє; state — внутрішній, змінюваний через свій setter.`,
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Коли що обрати</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th></th>\n<th>CSS transition/keyframes</th>\n<th>Framer Motion</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Простий hover/fade/показати-сховати</td>\n<td>✅ Достатньо, 0 залежностей</td>\n<td>Надлишково</td>\n</tr>\n<tr>\n<td>Анімація виходу (exit) при анмаунті</td>\n<td>❌ Не працює — DOM-вузол зникає миттєво</td>\n<td>✅ <code>AnimatePresence</code></td>\n</tr>\n<tr>\n<td>Layout-анімація (зміна позиції/розміру)</td>\n<td>❌ Потребує ручного FLIP</td>\n<td>✅ <code>layout</code> проп</td>\n</tr>\n<tr>\n<td>Drag / spring-фізика / жести</td>\n<td>❌</td>\n<td>✅ вбудовано</td>\n</tr>\n<tr>\n<td>Розмір бандла</td>\n<td>0 KB</td>\n<td>+30-40 KB (gzip)</td>\n</tr>\n</tbody>\n</table></div>"
-        }
+          question: `Навіщо потрібен <code>children</code>?`,
+          answer: `композиція — компонент-обгортка не знає вміст, просто рендерить те, що передали.`,
+        },
+        {
+          question: 'Що таке PropTypes, і чому в TypeScript-проєкті вони практично не потрібні?',
+          answer: 'PropTypes — рантайм-перевірка типів props у чистому JavaScript (до TS/замість нього): у dev-режимі React виводить попередження в консоль, якщо переданий проп не відповідає оголошеній формі. Головна відмінність від TypeScript — PropTypes перевіряє <strong>під час виконання</strong> (ловить помилку лише коли компонент реально відрендерився з неправильним пропом), тоді як TS перевіряє <strong>під час компіляції</strong>, до запуску коду, і додатково дає автодоповнення в IDE. У TS-проєкті типи props оголошуються інтерфейсом, і PropTypes стає зайвим подвійним джерелом правди.',
+        },
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Чому анімація <code>transform</code>/<code>opacity</code> «дешева», а <code>width</code>/<code>top</code>/<code>margin</code> — «дорога»?",
-          "answer": "<code>width</code>/<code>top</code>/<code>margin</code> запускають <strong>layout (reflow)</strong> → <strong>paint</strong> → <strong>composite</strong> — три важкі стадії на кадр. <code>transform</code>/<code>opacity</code> обробляються лише на стадії <strong>composite</strong>, часто на GPU, без layout/paint — тому саме їх рекомендують для 60fps (напр. <code>transform: translateX()</code> замість <code>left</code>)."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Props — однонаправлений потік даних <span class="tag tag-key">KEY</span></h3>
+  <p>Дані рухаються <strong>тільки згори вниз</strong>: батько передає props дитині, дитина не може напряму змінити props батька (вони <em>read-only</em>). Щоб дитина "повідомила" щось наверх — батько передає їй callback-функцію як проп.</p>
+  <div class="grid2">
+    <pre><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Counter</span> value={count}
+    onIncrement={() =&gt; <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>)} <span class="jsx">/&gt;</span>;
+}</pre>
+    <pre><span class="kw">function</span> <span class="fn">Counter</span>({ value, onIncrement }: Props) {
+  <span class="cmt">// value — тільки читання, onIncrement — "канал наверх"</span>
+  <span class="kw">return</span> <span class="jsx">&lt;button</span> onClick={onIncrement}<span class="jsx">&gt;</span>{value}<span class="jsx">&lt;/button&gt;</span>;
+}</pre>
+  </div>
+  <h3 class="topic"><code>children</code> — особливий проп</h3>
+  <pre><span class="kw">function</span> <span class="fn">Card</span>({ children }: { children: React.ReactNode }) {
+  <span class="kw">return</span> <span class="jsx">&lt;div</span> className=<span class="str">"card"</span><span class="jsx">&gt;</span>{children}<span class="jsx">&lt;/div&gt;</span>;
+}
+<span class="cmt">// &lt;Card&gt;&lt;p&gt;будь-який JSX&lt;/p&gt;&lt;/Card&gt; — children = &lt;p&gt;...&lt;/p&gt;</span>
+<span class="cmt">// Це основа композиції (Block 5) — компонент не знає, ЩО всередині,</span>
+<span class="cmt">// лише "де" — так пишуться Layout/Modal/Card без жорсткої залежності від вмісту.</span></pre>
+  <h3 class="topic">useState — локальний стан <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <pre><span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+<span class="cmt">// count — поточне значення (read-only знімок)</span>
+<span class="cmt">// setCount — єдиний спосіб його змінити</span>
+<span class="fn">setCount</span>(count + <span class="num">1</span>);      <span class="cmt">// "постав нове значення"</span>
+<span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>);  <span class="cmt">// функціональна форма — безпечна</span>
+                              <span class="cmt">// при кількох апдейтах підряд</span></pre>
+    <pre><span class="cmt">// Виклик setState планує РЕ-РЕНДЕР, не мутує змінну одразу.</span>
+<span class="kw">function</span> <span class="fn">onClick</span>() {
+  <span class="fn">setCount</span>(count + <span class="num">1</span>);
+  console.<span class="fn">log</span>(count); <span class="cmt">// ❗ старе значення — рендер ще не стався</span>
+}
+<span class="cmt">// Це не "баг" — це модель: render функція завжди бачить</span>
+<span class="cmt">// стан ЦЬОГО рендеру (детальніше — closures, Block 1/2)</span></pre>
+  </div>
+  <h3 class="topic">Stateful vs Stateless <span class="tag tag-key">KEY</span></h3>
+  <p>Компонент <strong>stateful</strong> — має власний <code>useState</code>/<code>useReducer</code> усередині, "пам'ятає" щось між рендерами. Компонент <strong>stateless</strong> — чиста функція від <code>props</code>: однакові пропи завжди дають однаковий вивід, немає внутрішньої памʼяті. До хуків (до 2019) такий компонент називали <strong>"stateless functional component" (SFC)</strong> — термін лишився в старих статтях; сьогодні "функціональний компонент" вже не означає автоматично "без стану".</p>
+  <div class="grid2">
+    <div class="card blue"><h4>Stateless</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Avatar</span>({ url, alt }: Props) {
+  <span class="cmt">// нічого не памʼятає між рендерами —</span>
+  <span class="cmt">// весь вивід залежить тільки від props</span>
+  <span class="kw">return</span> <span class="jsx">&lt;img</span> src={url} alt={alt} <span class="jsx">/&gt;</span>;
+}</pre></div>
+    <div class="card green"><h4>Stateful</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Avatar</span>({ url, alt }: Props) {
+  <span class="kw">const</span> [loaded, setLoaded] = <span class="fn">useState</span>(<span class="kw">false</span>);
+  <span class="cmt">// власна памʼять — чи вже завантажилось зображення</span>
+  <span class="kw">return</span> <span class="jsx">&lt;img</span> src={url} alt={alt}
+    onLoad={() =&gt; <span class="fn">setLoaded</span>(<span class="kw">true</span>)} <span class="jsx">/&gt;</span>;
+}</pre></div>
+  </div>
+  <h3 class="topic">Контрольований input</h3>
+  <pre><span class="kw">const</span> [text, setText] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="jsx">&lt;input</span> value={text} onChange={e =&gt; <span class="fn">setText</span>(e.target.value)} <span class="jsx">/&gt;</span>
+<span class="cmt">// value з React-стану = React "керує" тим, що показано в полі —</span>
+<span class="cmt">// це і є "controlled". Без value — DOM сам тримає своє значення (uncontrolled).</span></pre>
+  <h3 class="topic">PropTypes — легасі перевірка типів <span class="tag tag-pit">LEGACY</span></h3>
+  <p>До поширення TypeScript пакет <code>prop-types</code> був стандартним способом валідувати форму props <strong>у рантаймі</strong>: React у dev-режимі порівнював реальні props із заявленою "схемою" й друкував попередження в консоль при невідповідності (напр. <code>required</code>-проп не передали, або передали рядок замість числа). Сьогодні в TS-проєкті цю роль повністю виконує компілятор — PropTypes лишається лише в легасі JS-кодовій базі без TypeScript.</p>`,
         },
         {
-          "question": "Чим підхід CSS-анімації відрізняється від Framer Motion, і коли CSS вже недостатньо?",
-          "answer": "CSS <code>transition</code>/<code>@keyframes</code> — декларативні, дешеві, ідеальні для простих переходів стану, без JS-рантайму. Але CSS не вміє анімувати анмаунт (елемент зникає миттєво), координувати кілька елементів (layout/spring/drag) чи реверсувати перехід — для цього Framer додає JS-рантайм (<code>AnimatePresence</code>, <code>layout</code> проп)."
+          kind: 'code',
+          language: 'jsx',
+          caption: 'PropTypes — рантайм (JS без TS) vs TS-інтерфейс — компайл-тайм',
+          code: `// PropTypes (JavaScript, без TypeScript)
+import PropTypes from 'prop-types';
+
+function UserCard({ name, age, onSelect }) {
+  return <div onClick={onSelect}>{name} ({age})</div>;
+}
+
+UserCard.propTypes = {
+  name: PropTypes.string.isRequired,
+  age: PropTypes.number,          // не required — може бути undefined
+  onSelect: PropTypes.func,
+};
+// Невідповідність ловиться лише коли компонент РЕАЛЬНО відрендериться
+// з неправильним пропом — попередження в консолі, не помилка збірки
+
+// TypeScript — той самий контракт, але compile-time
+interface UserCardProps {
+  name: string;
+  age?: number;
+  onSelect?: () => void;
+}
+function UserCard({ name, age, onSelect }: UserCardProps) { /* ... */ }
+// Помилка типу підсвічується в IDE ДО запуску, ще й з автодоповненням`,
         },
-        {
-          "question": "Що таке FLIP-техніка і яку проблему вона вирішує?",
-          "answer": "FLIP (First, Last, Invert, Play) анімує зміну <em>позиції/розміру через layout</em> (напр. картка переїжджає в іншу колонку), яку CSS transition не бере: зняти позицію до (First) і після (Last), інвертувати різницю через <code>transform</code> (Invert), прибрати transform і дати браузеру доанімувати дешевим <code>transform</code> (Play). На цій ідеї побудований <code>layout</code>-проп Framer Motion."
-        }
-      ]
+      ],
     },
     {
-      "id": "fundamentals-props-state",
-      "title": "📦 Props, State та події",
-      "blocks": [
+      id: 'jsx-synthetic-events',
+      title: '⚡ SyntheticEvent та делегування подій',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Props — однонаправлений потік даних <span class=\"tag tag-key\">KEY</span></h3>\n<p>Дані рухаються <strong>тільки згори вниз</strong>: батько передає props дитині, дитина не може напряму змінити props батька (вони <em>read-only</em>). Щоб дитина &quot;повідомила&quot; щось наверх — батько передає їй callback як проп.</p>"
+          question: 'Що таке SyntheticEvent у React, і навіщо React обгортає нативні DOM-події замість того, щоб передавати їх напряму?',
+          answer: '<code>SyntheticEvent</code> — легка крос-браузерна обгортка над нативною DOM-подією з <strong>однаковим API в усіх браузерах</strong> (навіть там, де нативні події історично відрізнялись). React обгортає події з двох причин: узгодженість API незалежно від браузера, і продуктивність — усі обробники подій реєструються не на кожному DOM-вузлі окремо, а через <strong>один</strong> слухач на корені дерева (делегування), який React сам маршрутизує до потрібного обробника через синтетичну систему подій.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Parent() {\n  const [count, setCount] = useState(0);\n  return <Counter value={count}\n    onIncrement={() => setCount(c => c + 1)} />;\n}"
+          question: 'Як влаштоване делегування подій у React (на які вузли реально вішаються нативні <code>addEventListener</code>), і чим це відрізняється від наївного підходу "обробник на кожен елемент"?',
+          answer: 'React (з версії 17+) реєструє <strong>один</strong> нативний слухач на кореневому DOM-контейнері застосунку (раніше — на <code>document</code>) для кожного типу події, а не окремий слухач на кожному елементі з <code>onClick</code>. Коли подія спливає до кореня, React визначає, який віртуальний "обробник" мав спрацювати, за допомогою внутрішньої мапи фібер-дерева, і викликає відповідний колбек. Це різко дешевше при великій кількості інтерактивних елементів (список із 1000 кнопок = 1 нативний слухач, а не 1000) і дозволяє коректно працювати з динамічно доданими/видаленими елементами без ручного пере-підписування.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Counter({ value, onIncrement }: Props) {\n  // value — тільки читання, onIncrement — \"канал наверх\"\n  return <button onClick={onIncrement}>{value}</button>;\n}"
+          question: 'Чому <code>event.stopPropagation()</code> усередині React-обробника не завжди зупиняє спливання нативної DOM-події так, як очікує розробник, що змішує React-обробники з ручним <code>addEventListener</code>?',
+          answer: 'React обробляє свою внутрішню (синтетичну) систему спливання окремо від нативного DOM-дерева. <code>stopPropagation()</code> на <code>SyntheticEvent</code> зупиняє спливання <strong>всередині React-делегування</strong> (інші React-обробники вище по дереву не викличуться), але подія вже могла встигнути дійти до кореневого нативного слухача чи до сторонніх обробників, підписаних напряму через <code>addEventListener</code> поза React — тому в проєктах, де React-код співіснує з нативним/сторонніми бібліотеками на тому ж DOM-дереві, це джерело неочевидних багів.',
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\"><code>children</code> — особливий проп</h3>"
+          question: 'У чому різниця між <code>preventDefault()</code> і <code>stopPropagation()</code>, і що (не) робить <code>return false</code> з React-обробника?',
+          answer: '<code>preventDefault()</code> скасовує дефолтну дію браузера для події (перезавантаження при submit, перехід по посиланню, галочка чекбокса), але не чіпає спливання. <code>stopPropagation()</code> навпаки — зупиняє спливання до батьківських обробників, але дефолтну дію браузера не скасовує. Це ортогональні речі: потрібні обидва ефекти — викликай обидва методи. <code>return false</code> у React (на відміну від inline-хендлерів чи jQuery) не робить нічого з цього — це просто повернене значення, яке React ігнорує.',
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Card({ children }: { children: React.ReactNode }) {\n  return <div className=\"card\">{children}</div>;\n}\n// <Card><p>будь-який JSX</p></Card> — children = <p>...</p>\n// Це основа композиції — компонент не знає, ЩО всередині, лише \"де\"."
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">useState — локальний стан <span class=\"tag tag-key\">KEY</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const [count, setCount] = useState(0);\n// count — поточне значення (read-only знімок)\n// setCount — єдиний спосіб його змінити\nsetCount(count + 1);      // \"постав нове значення\"\nsetCount(c => c + 1);  // функціональна форма — безпечна при кількох апдейтах підряд"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Виклик setState планує РЕ-РЕНДЕР, не мутує змінну одразу.\nfunction onClick() {\n  setCount(count + 1);\n  console.log(count); // ❗ старе значення — рендер ще не стався\n}\n// Це не \"баг\" — це модель: render функція завжди бачить\n// стан ЦЬОГО рендеру (детальніше — closures)"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Stateful vs Stateless <span class=\"tag tag-key\">KEY</span></h3>\n<p>Компонент <strong>stateful</strong> — має власний <code>useState</code>/<code>useReducer</code>, &quot;пам'ятає&quot; щось між рендерами. <strong>stateless</strong> — чиста функція від <code>props</code>: однакові пропи → однаковий вивід, без внутрішньої памʼяті. До хуків такий компонент називали <strong>&quot;stateless functional component&quot; (SFC)</strong> — термін лишився в старих статтях; сьогодні &quot;функціональний компонент&quot; вже не означає &quot;без стану&quot;.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Stateless — нічого не памʼятає між рендерами\nfunction Avatar({ url, alt }: Props) {\n  return <img src={url} alt={alt} />;\n}\n// Stateful — власна памʼять (чи завантажилось зображення)\nfunction Avatar({ url, alt }: Props) {\n  const [loaded, setLoaded] = useState(false);\n  return <img src={url} alt={alt} onLoad={() => setLoaded(true)} />;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Контрольований input</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const [text, setText] = useState('');\n<input value={text} onChange={e => setText(e.target.value)} />\n// value з React-стану = React \"керує\" полем — це \"controlled\".\n// Без value — DOM сам тримає своє значення (uncontrolled)."
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">PropTypes — легасі перевірка типів <span class=\"tag tag-pit\">LEGACY</span></h3>\n<p>До TypeScript пакет <code>prop-types</code> був стандартним способом валідувати форму props <strong>у рантаймі</strong>: React у dev порівнював реальні props зі &quot;схемою&quot; й друкував попередження при невідповідності. Сьогодні в TS-проєкті цю роль виконує компілятор — PropTypes лишається лише в легасі JS-базі без TS.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "jsx",
-          "code": "// PropTypes (JavaScript, без TypeScript)\nimport PropTypes from 'prop-types';\n\nfunction UserCard({ name, age, onSelect }) {\n  return <div onClick={onSelect}>{name} ({age})</div>;\n}\n\nUserCard.propTypes = {\n  name: PropTypes.string.isRequired,\n  age: PropTypes.number,          // не required — може бути undefined\n  onSelect: PropTypes.func,\n};\n// Невідповідність ловиться лише коли компонент РЕАЛЬНО відрендериться\n\n// TypeScript — той самий контракт, але compile-time\ninterface UserCardProps {\n  name: string;\n  age?: number;\n  onSelect?: () => void;\n}\nfunction UserCard({ name, age, onSelect }: UserCardProps) { /* ... */ }"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "У чому фундаментальна різниця між props і state, і чому їх змішування — типова помилка?",
-          "answer": "<code>props</code> — вхідні дані ззовні, які компонент <strong>не може змінювати сам</strong>; <code>state</code> — внутрішні дані, якими він керує через <code>useState</code>/<code>useReducer</code>, і зміна яких викликає ре-рендер. Типова помилка — копіювати prop у local state (<code>useState(props.value)</code>), що розриває синхронізацію з батьком при подальших оновленнях prop."
+          kind: 'paragraph',
+          html: `<h3 class="topic">SyntheticEvent — крос-браузерна обгортка <span class="tag tag-key">KEY</span></h3>
+  <p>Кожен обробник у JSX (<code>onClick</code>, <code>onChange</code>, ...) отримує не нативну <code>Event</code>, а <code>SyntheticEvent</code> — обгортку з тим самим API (<code>target</code>, <code>preventDefault()</code>, <code>stopPropagation()</code>), але однаковою поведінкою в усіх браузерах. Доступ до нативної події — через <code>event.nativeEvent</code>, якщо справді потрібно.</p>`,
         },
         {
-          "question": "Чому <code>onClick={handleClick()}</code> — баг, а <code>onClick={handleClick}</code> — правильно?",
-          "answer": "<code>onClick={handleClick()}</code> викликає функцію під час рендеру й передає обробнику <em>результат</em> (часто <code>undefined</code>), а <code>handleClick</code> виконується щорендеру. Правильно — посилання: <code>onClick={handleClick}</code> або <code>onClick={() =&gt; handleClick(arg)}</code> для аргументів."
+          kind: 'code',
+          language: 'tsx',
+          code: `function SearchInput() {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log(e.target.value);      // SyntheticEvent API — однаково в кожному браузері
+    console.log(e.nativeEvent);       // справжня DOM-подія, якщо потрібна
+  }
+  return <input onChange={handleChange} />;
+}`,
         },
         {
-          "question": "Чому <code>console.log(count)</code> одразу після <code>setCount</code> показує старе значення?",
-          "answer": "setState асинхронний відносно поточної функції — планує рендер, не мутує змінну зараз."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Делегування подій — один слухач замість тисячі</h3>
+  <p>React не вішає окремий нативний <code>addEventListener</code> на кожен елемент з <code>onClick</code>. Замість цього — <strong>один</strong> слухач на кореневому контейнері застосунку на кожен тип події; коли подія спливає туди, React сам визначає (через фібер-дерево), який компонент мав її обробити, і викликає відповідний колбек.</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Наївний підхід</h4><p>1000 елементів з <code>onclick</code> у ванільному JS = 1000 нативних слухачів у пам'яті, кожен окремо треба знімати при видаленні елемента.</p></div>
+    <div class="card green"><h4>✅ React-делегування</h4><p>1000 елементів з <code>onClick</code> = 1 нативний слухач на корені; React сам маршрутизує подію до правильного колбека, елементи можна вільно додавати/видаляти без ручного (де)реєстрування слухачів.</p></div>
+  </div>
+  <h3 class="topic">stopPropagation — пастка на межі React/DOM <span class="tag tag-pit">PITFALL</span></h3>
+  <p><code>e.stopPropagation()</code> зупиняє спливання лише <strong>всередині React</strong>-делегування. Якщо на тому ж DOM-дереві є сторонній <code>addEventListener</code>, підключений напряму (не через React), він усе одно може отримати подію — React-делегування й нативне DOM-спливання це окремі механізми.</p>
+  <h3 class="topic">preventDefault() vs stopPropagation() <span class="tag tag-key">KEY</span></h3>
+  <p>Два незалежні методи події, які часто плутають — вони роблять зовсім різне і не замінюють одне одного.</p>
+  <div class="grid2">
+    <div class="card blue"><h4><code>preventDefault()</code></h4><p>Скасовує <strong>дефолтну дію браузера</strong> для цієї події: submit форми (перезавантаження сторінки), перехід по <code>&lt;a href&gt;</code>, встановлення галочки в чекбоксі, контекстне меню на <code>contextmenu</code>. <strong>Не</strong> впливає на спливання — батьківські обробники все одно спрацюють.</p></div>
+    <div class="card green"><h4><code>stopPropagation()</code></h4><p>Зупиняє <strong>подальше спливання</strong> події по дереву — обробники на батьківських елементах не викличуться. <strong>Не</strong> скасовує дефолтну дію браузера: форма з <code>onSubmit</code>, у якому лише <code>stopPropagation()</code>, усе одно перезавантажить сторінку.</p></div>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Потрібні обидва ефекти одразу — виклич обидва методи. У React <code>return false</code> з обробника (на відміну від старого jQuery) <strong>не</strong> робить ні того, ні іншого.</span></div>`,
         },
-        {
-          "question": "Чим props відрізняються від state?",
-          "answer": "props — ззовні, read-only, дитина не міняє; state — внутрішній, змінюваний через свій setter."
-        },
-        {
-          "question": "Навіщо потрібен <code>children</code>?",
-          "answer": "Композиція — компонент-обгортка не знає вміст, просто рендерить те, що передали."
-        },
-        {
-          "question": "Що таке PropTypes і чому в TS-проєкті вони не потрібні?",
-          "answer": "PropTypes — рантайм-перевірка типів props у чистому JS: у dev React виводить попередження при невідповідності. TS перевіряє <strong>під час компіляції</strong> (до запуску) + дає автодоповнення в IDE, тому в TS-проєкті типи оголошуються інтерфейсом, а PropTypes стає зайвим подвійним джерелом правди."
-        }
-      ]
+      ],
     },
     {
-      "id": "jsx-synthetic-events",
-      "title": "⚡ SyntheticEvent та делегування подій",
-      "blocks": [
+      id: 'fundamentals-lists-conditionals',
+      title: '🔁 Списки, умовний рендеринг, форми',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">SyntheticEvent — крос-браузерна обгортка <span class=\"tag tag-key\">KEY</span></h3>\n<p>Кожен обробник у JSX (<code>onClick</code>, <code>onChange</code>, ...) отримує не нативну <code>Event</code>, а <code>SyntheticEvent</code> — обгортку з тим самим API (<code>target</code>, <code>preventDefault()</code>, <code>stopPropagation()</code>), але однаковою поведінкою в усіх браузерах. Доступ до нативної події — через <code>event.nativeEvent</code>.</p>"
+          question: 'Чому не можна використовувати індекс масиву як <code>key</code> у динамічних списках, і коли це все ж прийнятно?',
+          answer: '<code>key</code> — це те, за чим React ідентифікує, який елемент відповідає якому DOM-вузлу між рендерами. Якщо список змінює порядок, додає/видаляє елементи посередині, а <code>key</code> — це індекс, React може «переплутати» елементи: стан (наприклад, значення <code>&lt;input&gt;</code>) залишиться прив\'язаним до позиції, а не до логічного елемента. Індекс прийнятний лише для статичних, незмінних списків без вставки/видалення/сортування.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function SearchInput() {\n  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {\n    console.log(e.target.value);      // SyntheticEvent API — однаково в кожному браузері\n    console.log(e.nativeEvent);       // справжня DOM-подія, якщо потрібна\n  }\n  return <input onChange={handleChange} />;\n}"
+          question: 'Які проблеми може створити рендер великих списків без віртуалізації, і як їх діагностувати?',
+          answer: 'Рендер тисяч DOM-вузлів одразу збільшує час первинного рендеру, споживання пам\'яті та вартість кожного наступного reconciliation-проходу (навіть якщо змінився один елемент, React усе одно проходить по всьому дереву при перевірці). Діагностика — React DevTools Profiler покаже аномально довгий commit; рішення — віртуалізація (<code>react-window</code>/<code>@tanstack/react-virtual</code>), що рендерить лише видимі елементи.',
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Делегування подій — один слухач замість тисячі</h3>\n<p>React не вішає окремий <code>addEventListener</code> на кожен елемент з <code>onClick</code>. Замість цього — <strong>один</strong> слухач на кореневому контейнері на кожен тип події; коли подія спливає туди, React через фібер-дерево визначає, який компонент мав її обробити, і викликає колбек. 1000 елементів з <code>onClick</code> = 1 нативний слухач; елементи можна вільно додавати/видаляти без ручного (де)реєстрування.</p>\n<h3 class=\"topic\">stopPropagation — пастка на межі React/DOM <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p><code>e.stopPropagation()</code> зупиняє спливання лише <strong>всередині React</strong>-делегування. Сторонній <code>addEventListener</code>, підключений напряму, усе одно може отримати подію — React-делегування й нативне DOM-спливання це окремі механізми.</p>\n<h3 class=\"topic\">preventDefault() vs stopPropagation() <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><code>preventDefault()</code> — скасовує <strong>дефолтну дію браузера</strong> (submit, перехід по <code>&lt;a href&gt;</code>, галочка чекбокса). <strong>Не</strong> впливає на спливання.</li>\n<li><code>stopPropagation()</code> — зупиняє <strong>подальше спливання</strong> по дереву. <strong>Не</strong> скасовує дефолтну дію.</li>\n</ul>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Потрібні обидва ефекти — виклич обидва методи. У React <code>return false</code> з обробника (на відміну від jQuery) <strong>не</strong> робить ні того, ні іншого.</p></div>"
-        }
+          question: `Чому не можна <code>key={Math.random()}</code>?`,
+          answer: `новий key щорендеру = React вважає елемент новим щоразу — знищує й пересоздає DOM-вузол, втрачає стан/фокус.`,
+        },
+        {
+          question: `Що виведе <code>{'{'}0 &amp;&amp; &lt;Badge/&gt;{'}'}</code>?`,
+          answer: `"0" в DOM — типова пастка з fallback-through значеннями в JSX.`,
+        },
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Що таке SyntheticEvent і навіщо React обгортає нативні події?",
-          "answer": "Легка крос-браузерна обгортка над DOM-подією з <strong>однаковим API в усіх браузерах</strong>. Причини: узгодженість API незалежно від браузера + продуктивність — усі обробники реєструються через <strong>один</strong> слухач на корені (делегування), який React сам маршрутизує."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Умовний рендеринг</h3>
+  <div class="grid3">
+    <div class="card"><h4>Тернарник</h4><pre style="font-size:10.5px">{isLoggedIn
+  ? <span class="jsx">&lt;Dashboard /&gt;</span>
+  : <span class="jsx">&lt;Login /&gt;</span>}</pre></div>
+    <div class="card blue"><h4>&amp;&amp; — показати або нічого</h4><pre style="font-size:10.5px">{unreadCount &gt; <span class="num">0</span> &amp;&amp;
+  <span class="jsx">&lt;Badge count={unreadCount} /&gt;</span>}</pre></div>
+    <div class="card yellow"><h4>Рання early-return</h4><pre style="font-size:10.5px"><span class="kw">if</span> (loading) <span class="kw">return</span> <span class="jsx">&lt;Spinner /&gt;</span>;
+<span class="kw">return</span> <span class="jsx">&lt;Content /&gt;</span>;</pre></div>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Пастка <code>&amp;&amp;</code> з числом:</strong> <code>{'{'}count &amp;&amp; &lt;Badge/&gt;{'}'}</code> — якщо <code>count === 0</code>, у DOM виведеться <strong>"0"</strong> (falsy, але не boolean), а не "нічого". Фікс: <code>count &gt; 0 &amp;&amp; ...</code> або <code>Boolean(count) &amp;&amp; ...</code>.</span></div>
+  <h3 class="topic">Списки та <code>key</code> <span class="tag tag-key">KEY</span></h3>
+  <pre><span class="jsx">&lt;ul&gt;</span>
+  {users.<span class="fn">map</span>(user =&gt; (
+    <span class="jsx">&lt;li</span> key={user.id}<span class="jsx">&gt;</span>{user.name}<span class="jsx">&lt;/li&gt;</span>
+  ))}
+<span class="jsx">&lt;/ul&gt;</span>
+<span class="cmt">// key — стабільний ідентифікатор, за яким React зіставляє елементи</span>
+<span class="cmt">// між рендерами. Без key (або key={index}) — баги при вставці/видаленні</span>
+<span class="cmt">// посередині списку. Повне пояснення "чому саме" — Block 1 (Reconciliation).</span></pre>
+  <h3 class="topic"><code>key</code> поза списками — скидання стану <span class="tag tag-key">KEY</span></h3>
+  <p>Зміна <code>key</code> на компоненті каже React: це «інший» екземпляр — старий демонтується (з усім станом, ефектами, незакоммічені інпути), новий монтується з нуля. Це найчистіший спосіб «перезапустити» піддерево при зміні сутності — без <code>useEffect</code>, що вручну скидає кожне поле.</p>
+  <pre><span class="cmt">// Профіль перемикається — форму треба скинути під нового користувача</span>
+<span class="jsx">&lt;ProfileForm</span> key={userId} userId={userId} <span class="jsx">/&gt;</span>
+<span class="cmt">// userId змінився → стара форма демонтована, нова — з чистим станом</span></pre>
+  <h3 class="topic">Форма — базовий приклад</h3>
+  <pre><span class="kw">function</span> <span class="fn">LoginForm</span>() {
+  <span class="kw">const</span> [email, setEmail] = <span class="fn">useState</span>(<span class="str">''</span>);
+
+  <span class="kw">function</span> <span class="fn">handleSubmit</span>(e: React.FormEvent) {
+    e.<span class="fn">preventDefault</span>();    <span class="cmt">// без цього — full page reload</span>
+    <span class="fn">login</span>(email);
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;form</span> onSubmit={handleSubmit}<span class="jsx">&gt;</span>
+      <span class="jsx">&lt;input</span> value={email} onChange={e =&gt; <span class="fn">setEmail</span>(e.target.value)} <span class="jsx">/&gt;</span>
+      <span class="jsx">&lt;button</span> type=<span class="str">"submit"</span><span class="jsx">&gt;</span>Увійти<span class="jsx">&lt;/button&gt;</span>
+    <span class="jsx">&lt;/form&gt;</span>
+  );
+}</pre>
+  `,
+        },
+      ],
+    },
+    /* ============================= BLOCK 1 — REACT INTERNALS ============================= */
+    {
+      id: 'internals-reconciliation',
+      title: '🌳 Reconciliation, Virtual DOM, Fiber',
+      interviewQuestions: [
+        {
+          question: 'Поясни своїми словами, що таке Fiber і навіщо React відмовився від старого stack-реконсилятора.',
+          answer: 'Fiber — це переписаний у React 16 алгоритм узгодження, де кожен елемент дерева представлений вузлом (fiber) з посиланнями на батька/дитину/сусіда, що дозволяє <strong>перервати й відновити</strong> роботу узгодження по частинах, замість синхронного рекурсивного проходу «до кінця», який блокував головний потік. Це фундамент для concurrent-фіч: React може призупинити низькопріоритетний рендер заради термінового (наприклад, введення тексту).',
         },
         {
-          "question": "Як влаштоване делегування подій у React (куди вішаються нативні слухачі)?",
-          "answer": "React (17+) реєструє <strong>один</strong> нативний слухач на кореневому DOM-контейнері (раніше — на <code>document</code>) на кожен тип події. При спливанні до кореня React через мапу фібер-дерева визначає потрібний колбек. Дешевше при багатьох елементах (1000 кнопок = 1 слухач) і працює з динамічно доданими елементами без пере-підписування."
+          question: 'Чим diffing-алгоритм React відрізняється від «класичного» алгоритму порівняння дерев, і чому це компроміс, а не ідеальне рішення?',
+          answer: 'Класичний tree-diff має складність O(n³); React використовує евристичний O(n)-алгоритм із двома припущеннями: (1) елементи різного типу дають різні дерева (просто розбирає старе й будує нове), (2) <code>key</code> підказує стабільність елементів у списку. Це компроміс — швидко для типових UI-патернів, але може давати неоптимальні (хоч і коректні) результати, якщо структура дерева змінюється нетипово.',
         },
         {
-          "question": "Чому <code>stopPropagation()</code> не завжди зупиняє нативне спливання при змішуванні з <code>addEventListener</code>?",
-          "answer": "React обробляє свою синтетичну систему окремо від нативного DOM. <code>stopPropagation()</code> зупиняє спливання <strong>всередині React-делегування</strong>, але подія могла дійти до кореневого нативного слухача чи до сторонніх обробників, підписаних напряму — звідси неочевидні баги при співіснуванні React і нативного коду."
+          question: 'Чи можна сказати, що Virtual DOM завжди швидший за пряму роботу з реальним DOM? Обґрунтуй.',
+          answer: 'Ні. Для поодиноких точкових мутацій пряма робота з DOM може бути швидшою — VDOM додає накладні витрати на створення об\'єктів і diffing. Перевага VDOM проявляється при <em>множинних, складно скоординованих</em> оновленнях: React батчить їх в один прохід і застосовує мінімальний набір реальних DOM-операцій, замість того щоб розробнику вручну відстежувати, що саме змінилось.',
         },
         {
-          "question": "Різниця між <code>preventDefault()</code> і <code>stopPropagation()</code>, і що робить <code>return false</code>?",
-          "answer": "<code>preventDefault()</code> скасовує дефолтну дію браузера, не чіпає спливання; <code>stopPropagation()</code> навпаки. Ортогональні — потрібні обидва, викликай обидва. <code>return false</code> у React (на відміну від jQuery) не робить нічого з цього."
-        }
-      ]
+          question: `Що таке Virtual DOM насправді?`,
+          answer: `не технологія прискорення сама по собі — це JS-структура даних, що дозволяє порахувати мінімальний diff перед тим, як чіпати повільний реальний DOM.`,
+        },
+        {
+          question: `Virtual DOM завжди швидший за прямі DOM-операції?`,
+          answer: `ні, точковий vanilla-JS може обігнати React в мікробенчмарку; реальна вигода — батчинг і декларативність, не сира швидкість.`,
+        },
+        {
+          question: `Чому diffing — O(n), а не точний O(n³) edit distance?`,
+          answer: `React жертвує рідкісними edge-кейсами (переїзд піддерева між рівнями) заради швидкості, порівнюючи лише в межах одного рівня.`,
+        },
+        {
+          question: `Чим небезпечний <code>key={index}</code>?`,
+          answer: `конкретний приклад з інпутами/чекбоксами, що "перестрибують" значення при реордері.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Virtual DOM — зачем <span class="tag tag-key">KEY</span></h3>
+  <p>Пряма робота з реальним DOM повільна (reflow/repaint). React будує легкий JS-опис дерева UI (<strong>Virtual DOM</strong> — дерево React-елементів з <code>createElement</code>), порівнює нову версію зі старою (<strong>diffing</strong>) і застосовує до справжнього DOM тільки мінімальний набір змін (<strong>reconciliation</strong>).</p>
+  <h3 class="topic">Що це насправді за структура даних</h3>
+  <p>Virtual DOM — не "тіньова копія DOM", а звичайнісінький плейн-обʼєкт JS. Ось що реально повертає <code>createElement</code>:</p>
+  <div class="grid2">
+    <pre><span class="jsx">&lt;div</span> className=<span class="str">"card"</span><span class="jsx">&gt;</span>
+  <span class="jsx">&lt;span&gt;</span>Привіт<span class="jsx">&lt;/span&gt;</span>
+<span class="jsx">&lt;/div&gt;</span></pre>
+    <pre><span class="cmt">// createElement('div', {className:'card'}, ...) поверне:</span>
+{
+  type: <span class="str">'div'</span>,
+  key: <span class="kw">null</span>,
+  ref: <span class="kw">null</span>,
+  props: {
+    className: <span class="str">'card'</span>,
+    children: { type: <span class="str">'span'</span>, props: { children: <span class="str">'Привіт'</span> } }
+  }
+}
+<span class="cmt">// Просто дані. Жодного звʼязку з реальним DOM API.</span></pre>
+  </div>
+  <h3 class="topic">Diffing — евристика O(n), не оптимальний алгоритм <span class="tag tag-key">KEY</span></h3>
+  <p>Математично точний "мінімальний edit distance" між двома деревами — задача <strong>O(n³)</strong>, непридатна для UI, що оновлюється щокадру. React свідомо йде на компроміс — евристичний алгоритм <strong>O(n)</strong> на двох припущеннях:</p>
+  <div class="grid2">
+    <div class="card"><h4>1. Порівняння лише на одному рівні</h4><p>React ніколи не шукає, чи "переїхало" піддерево в інше місце дерева (інший рівень вкладеності) — порівнює тільки елементи на тій самій позиції в тій самій батьківській ноді.</p></div>
+    <div class="card blue"><h4>2. Різний тип → повний ремаунт</h4><p>Замість намагатись "адаптувати" <code>&lt;div&gt;</code> під <code>&lt;span&gt;</code> — простіше й швидше знести піддерево й побудувати заново (те саме правило, що нижче в таблиці diffing).</p></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Це <strong>не недолік</strong> — свідомий trade-off: рідкісні edge-кейси (напр. піддерево реально "переїхало" на інший рівень і втрачає стан там, де могло б зберегтись) обмінюються на швидкість, достатню для 60 fps на реальних UI. Саме тому й існують правила <code>key</code> і "різний тип = ремаунт" нижче — вони прямий наслідок цих двох припущень, а не довільні вимоги.</span></div>
+  <h3 class="topic">Поширена помилка: "Virtual DOM = завжди швидше" <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Virtual DOM <strong>не</strong> швидший за прямі DOM-операції сам по собі — акуратно написаний vanilla-JS скрипт, що точково міняє 3 потрібні вузли, обжене React у мікробенчмарку: React все одно спершу будує element tree, диффить, і лише потім чіпає DOM — це додаткова робота, не її відсутність. Реальна вигода — у <strong>батчингу</strong>: замість "20 змін стану → 20 прямих DOM-мутацій", React збирає їх в одну діф-фазу → один мінімальний патч, плюс декларативний код без ручного відстеження "що вже змінено в DOM" програмістом.</p>
+  <h3 class="topic">Правила diffing-алгоритму</h3>
+  <div class="grid2">
+    <div class="card"><h4>Різний тип елемента</h4><p>Було <code>&lt;div&gt;</code>, стало <code>&lt;span&gt;</code> (або компонент → інший компонент) — React <strong>знищує старе піддерево повністю</strong> й будує нове з нуля (стан втрачається, unmount → mount).</p></div>
+    <div class="card blue"><h4>Однаковий тип</h4><p>Той самий тег/компонент — React <strong>перевикористовує</strong> DOM-вузол/instance, оновлює лише змінені атрибути/props. Стан зберігається.</p></div>
+  </div>
+  <h3 class="topic"><code>key</code> у списках — чому саме <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Без <code>key</code> React зіставляє елементи списку <strong>за позицією</strong>. Вставка/видалення елемента посередині зсуває всі наступні позиції — React думає, що змінився контент кожного елемента після точки вставки, а не що додався один новий. З <code>index</code> як key — та сама проблема (index теж "позиція").</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ key={index}: інпути "стрибають"</h4><pre style="font-size:10.5px">list = [A, B, C], keys = [0,1,2]
+<span class="cmt">// видалили A (з інпутом-значенням "A-text")</span>
+list = [B, C],   keys = [0,1]
+<span class="cmt">// React: "елемент з key=0 змінив контент з A на B"</span>
+<span class="cmt">// → перевикористовує DOM-вузол B, а не видаляє вузол A</span>
+<span class="cmt">// значення інпуту "A-text" лишається — тепер під B!</span></pre></div>
+    <div class="card green"><h4>✅ key={item.id}: коректно</h4><pre style="font-size:10.5px">keys = [idA, idB, idC]
+<span class="cmt">// видалили A → keys = [idB, idC]</span>
+<span class="cmt">// React бачить: вузла з key=idA більше немає → unmount саме його</span>
+<span class="cmt">// вузли idB/idC — той самий key → перевикористані як є</span></pre></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span><code>key={index}</code> прийнятний, <strong>лише</strong> якщо список статичний (ніколи не сортується/фільтрується/не змінює порядок) і без стану в елементах.</span></div>
+  `,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Fiber-архітектура <span class="tag tag-key">KEY</span></h3>
+  <p>Fiber (з React 16) — переписаний reconciler. Кожному React-елементу відповідає <strong>Fiber-вузол</strong> — обʼєкт з інформацією про компонент, його props/state і, головне, <strong>звʼязками</strong> (child/sibling/return, як однозв'язний список замість рекурсивного стека викликів). Це дозволяє React <strong>переривати</strong> роботу з рендерингу, віддавати керування браузеру (щоб не блокувати анімації/інпут) і продовжувати пізніше — чого не міг старий рекурсивний "Stack reconciler".</p>
+  <div class="grid2">
+    <div class="card"><h4>До Fiber (React ≤15)</h4><p>Reconciliation — синхронний рекурсивний прохід всього дерева. Великий апдейт блокує main thread цілком, поки не завершиться.</p></div>
+    <div class="card blue"><h4>З Fiber (React 16+)</h4><p>Робота розбита на одиниці (fiber units). React може зупинитись між ними, дати браузеру обробити подію/анімацію, і продовжити — основа для Concurrent features (<code>useTransition</code> та ін., Block 2).</p></div>
+  </div>
+  <h3 class="topic">Fiber Tree vs DOM Tree — що саме несе Fiber-вузол <span class="tag tag-key">KEY</span></h3>
+  <p>DOM-вузол — "тупий" опис розмітки (тег, атрибути, діти). Fiber-вузол — набагато товстіший обʼєкт: окрім опису UI, він несе <strong>бухгалтерію самого React</strong> — з чого й видно, чому React не може просто "ходити по DOM" і мусить тримати власне дерево.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Поле Fiber-вузла</th><th>Навіщо</th><th>Є в DOM-вузлі?</th></tr>
+      <tr><td><code>type</code></td><td>Тег ('div') або посилання на функцію-компонент</td><td>Частково (tagName)</td></tr>
+      <tr><td><code>key</code></td><td>Ідентичність елемента в списку між рендерами</td><td>❌ Немає</td></tr>
+      <tr><td><code>child / sibling / return</code></td><td>Звʼязки дерева як однозв'язний список — дозволяють обхід без рекурсії, переривний</td><td>❌ DOM використовує інше внутрішнє представлення обходу</td></tr>
+      <tr><td><code>alternate</code></td><td>Посилання на Fiber-вузол <strong>попереднього</strong> рендеру — звідси й diffing (порівняння "current" і "work-in-progress" дерев)</td><td>❌ Немає поняття "попередній стан"</td></tr>
+      <tr><td><code>memoizedState</code></td><td>Зв'язний список станів усіх хуків цього компонента (по черзі виклику!)</td><td>❌ Немає</td></tr>
+      <tr><td><code>pendingProps / memoizedProps</code></td><td>Нові пропи (ще не застосовані) vs застосовані на минулому рендері — основа diff</td><td>❌ Немає</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Саме <code>memoizedState</code> — причина, чому <strong>порядок виклику хуків має бути стабільним</strong> (Rules of Hooks): React зіставляє хуки з їхніми значеннями за позицією у зв'язному списку Fiber-вузла, а не за іменем змінної.</span></div>`,
+        },
+      ],
     },
     {
-      "id": "fundamentals-lists-conditionals",
-      "title": "🔁 Списки, умовний рендеринг, форми",
-      "blocks": [
+      id: 'internals-render-commit',
+      title: '🎬 Render vs Commit фази',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Умовний рендеринг</h3>"
+          question: 'Чим фаза Render відрізняється від фази Commit, і чому це розділення важливе для розуміння побічних ефектів?',
+          answer: 'Render-фаза — це виклик функцій компонентів і побудова нового Fiber-дерева; вона <strong>може бути перервана</strong> React\'ом (concurrent mode) і не повинна мати побічних ефектів (мутації, запити) — тому компонент може викликатись кілька разів за один логічний рендер. Commit-фаза — застосування змін до реального DOM і виклик <code>useLayoutEffect</code>/<code>useEffect</code>; вона синхронна й не переривається.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "{isLoggedIn ? <Dashboard /> : <Login />}       // тернарник\n{unreadCount > 0 && <Badge count={unreadCount} />}   // && — показати або нічого\nif (loading) return <Spinner />; return <Content />; // рання early-return"
+          question: 'Чому <code>useEffect</code> вважається безпечним місцем для побічних ефектів, а безпосередньо тіло компонента — ні?',
+          answer: 'Тіло компонента виконується під час Render-фази, яка може бути перервана, повторена або відкинута React\'ом (наприклад, при Suspense чи concurrent-переривання) — побічний ефект там міг би виконатись кілька разів або на «викинутому» результаті. <code>useEffect</code> гарантовано запускається лише після Commit, коли DOM вже оновлено, тобто рівно один раз на реально застосований рендер.',
         },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Пастка <code>&amp;&amp;</code> з числом:</strong> <code>{'{'}count &amp;&amp; &lt;Badge/&gt;{'}'}</code> — якщо <code>count === 0</code>, у DOM виведеться <strong>&quot;0&quot;</strong> (falsy, але не boolean). Фікс: <code>count &gt; 0 &amp;&amp; ...</code> або <code>Boolean(count) &amp;&amp; ...</code>.</p></div>\n<h3 class=\"topic\">Списки та <code>key</code> <span class=\"tag tag-key\">KEY</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "<ul>\n  {users.map(user => (\n    <li key={user.id}>{user.name}</li>\n  ))}\n</ul>\n// key — стабільний ідентифікатор, за яким React зіставляє елементи\n// між рендерами. Без key (або key={index}) — баги при вставці/видаленні\n// посередині списку. Повне пояснення — розділ Reconciliation нижче."
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\"><code>key</code> поза списками — скидання стану <span class=\"tag tag-key\">KEY</span></h3>\n<p>Зміна <code>key</code> на компоненті каже React: це «інший» екземпляр — старий демонтується (з усім станом/ефектами), новий монтується з нуля. Найчистіший спосіб «перезапустити» піддерево при зміні сутності — без <code>useEffect</code>, що вручну скидає кожне поле.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Профіль перемикається — форму треба скинути під нового користувача\n<ProfileForm key={userId} userId={userId} />\n// userId змінився → стара форма демонтована, нова — з чистим станом"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Форма — базовий приклад</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function LoginForm() {\n  const [email, setEmail] = useState('');\n\n  function handleSubmit(e: React.FormEvent) {\n    e.preventDefault();    // без цього — full page reload\n    login(email);\n  }\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input value={email} onChange={e => setEmail(e.target.value)} />\n      <button type=\"submit\">Увійти</button>\n    </form>\n  );\n}"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Чому не можна індекс масиву як <code>key</code> у динамічних списках, і коли це прийнятно?",
-          "answer": "<code>key</code> — те, за чим React ідентифікує, який елемент відповідає якому DOM-вузлу між рендерами. Якщо список змінює порядок чи додає/видаляє елементи посередині, а <code>key</code> — індекс, стан (напр. значення <code>&lt;input&gt;</code>) лишається прив'язаним до позиції, а не до логічного елемента. Індекс прийнятний лише для статичних незмінних списків."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Дві фази роботи React <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>1. Render (Reconciliation)</h4>
+      <p>React викликає тіла компонентів, будує work-in-progress Fiber-дерево, рахує diff. <strong>Можна переривати</strong> (Concurrent Mode) і навіть <strong>відкидати</strong> без наслідків.</p>
+      <p style="margin-top:8px"><strong>Має бути чистою функцією:</strong> без мутацій зовнішнього стану, без side-effects (fetch, підписки, ручні DOM-мутації) — саме тому вони заборонені прямо в тілі компонента.</p>
+    </div>
+    <div class="card blue"><h4>2. Commit</h4>
+      <p>React застосовує пораховані зміни до реального DOM. <strong>Синхронна</strong>, не переривається. Тут виконуються: DOM-мутації, оновлення <code>refs</code>, <code>useLayoutEffect</code> (синхронно, до paint), а після paint — <code>useEffect</code> (асинхронно).</p>
+    </div>
+  </div>
+  <h3 class="topic">Чому side-effects заборонені в render <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="grid2">
+    <pre><span class="cmt">// ❌ side-effect прямо в render</span>
+<span class="kw">function</span> <span class="fn">Profile</span>({ userId }) {
+  <span class="fn">fetch</span>(<span class="str">'/api/user/'</span> + userId); <span class="cmt">// !!!</span>
+  <span class="kw">return</span> <span class="jsx">&lt;div&gt;</span>...<span class="jsx">&lt;/div&gt;</span>;
+}
+<span class="cmt">// render може викликатись кілька разів на один</span>
+<span class="cmt">// "логічний" рендер (StrictMode, Concurrent-переривання,</span>
+<span class="cmt">// відкинутий і перерахований рендер) — fetch піде зайвий раз</span></pre>
+    <pre><span class="cmt">// ✅ side-effect у commit-фазі, через useEffect</span>
+<span class="kw">function</span> <span class="fn">Profile</span>({ userId }) {
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="fn">fetch</span>(<span class="str">'/api/user/'</span> + userId);
+  }, [userId]);   <span class="cmt">// гарантовано один раз на реальний commit</span>
+  <span class="kw">return</span> <span class="jsx">&lt;div&gt;</span>...<span class="jsx">&lt;/div&gt;</span>;
+}</pre>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Render-фазу React може почати, перервати (віддати пріоритет терміновішому оновленню) і почати заново — <strong>work-in-progress рендер, що не дійшов до commit, ніколи не показується користувачу</strong> і його наслідки (side-effects) не повинні бути видимими ззовні.</span></div>`,
         },
-        {
-          "question": "Які проблеми дає рендер великих списків без віртуалізації і як їх діагностувати?",
-          "answer": "Тисячі DOM-вузлів одразу збільшують час первинного рендеру, памʼять і вартість кожного reconciliation-проходу. Діагностика — Profiler покаже довгий commit; рішення — віртуалізація (<code>react-window</code>/<code>@tanstack/react-virtual</code>), що рендерить лише видимі елементи."
-        },
-        {
-          "question": "Чому не можна <code>key={Math.random()}</code>?",
-          "answer": "Новий key щорендеру = React вважає елемент новим щоразу — знищує й пересоздає DOM-вузол, втрачає стан/фокус."
-        },
-        {
-          "question": "Що виведе <code>{'{'}0 &amp;&amp; &lt;Badge/&gt;{'}'}</code>?",
-          "answer": "&quot;0&quot; в DOM — типова пастка з fallback-through значеннями в JSX."
-        }
-      ]
+      ],
     },
     {
-      "id": "internals-reconciliation",
-      "title": "🌳 Reconciliation, Virtual DOM, Fiber",
-      "blocks": [
+      id: 'internals-rerenders-batching',
+      title: '⚡ Automatic Batching (React 18)',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Virtual DOM — навіщо <span class=\"tag tag-key\">KEY</span></h3>\n<p>Пряма робота з реальним DOM повільна (reflow/repaint). React будує легкий JS-опис дерева UI (<strong>Virtual DOM</strong> — дерево елементів з <code>createElement</code>), порівнює нову версію зі старою (<strong>diffing</strong>) і застосовує до DOM тільки мінімальний набір змін (<strong>reconciliation</strong>).</p>\n<h3 class=\"topic\">Що це насправді за структура даних</h3>\n<p>Virtual DOM — не &quot;тіньова копія DOM&quot;, а звичайний плейн-обʼєкт JS. Ось що повертає <code>createElement</code>:</p>"
+          question: 'Що таке batching, і чим автоматичний batching у React 18 відрізняється від того, що було в React 17?',
+          answer: 'Batching — об\'єднання кількох викликів <code>setState</code> в один ре-рендер замість окремого ре-рендеру на кожен виклик. У React 17 batching працював лише всередині React-обробників подій; у <code>setTimeout</code>, промісах чи нативних обробниках кожен <code>setState</code> викликав окремий рендер. React 18 з <code>createRoot</code> робить batching <strong>автоматичним усюди</strong>, незалежно від контексту виклику.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "<div className=\"card\">\n  <span>Привіт</span>\n</div>"
+          question: 'Як вимкнути batching для конкретного оновлення і навіщо це буває треба?',
+          answer: '<code>flushSync(() =&gt; setX(...))</code> з <code>react-dom</code> змушує React синхронно відрендерити й закомітити результат одразу після виклику. Потрібно рідко — типово коли наступний рядок коду має прочитати вже оновлений DOM (виміряти позицію, сфокусувати щойно показаний елемент). У 99% випадків batching бажаний, тож <code>flushSync</code> — виняток, не інструмент за замовчуванням.',
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// createElement('div', {className:'card'}, ...) поверне:\n{\n  type: 'div',\n  key: null,\n  ref: null,\n  props: {\n    className: 'card',\n    children: { type: 'span', props: { children: 'Привіт' } }\n  }\n}\n// Просто дані. Жодного звʼязку з реальним DOM API."
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Diffing — евристика O(n), не оптимальний алгоритм <span class=\"tag tag-key\">KEY</span></h3>\n<p>Точний &quot;мінімальний edit distance&quot; між деревами — <strong>O(n³)</strong>, непридатний для UI. React свідомо йде на компроміс — евристичний <strong>O(n)</strong> на двох припущеннях:</p>\n<ol>\n<li><strong>Порівняння лише на одному рівні</strong> — React ніколи не шукає, чи &quot;переїхало&quot; піддерево в інше місце дерева; порівнює тільки елементи на тій самій позиції в тій самій батьківській ноді.</li>\n<li><strong>Різний тип → повний ремаунт</strong> — замість &quot;адаптувати&quot; <code>&lt;div&gt;</code> під <code>&lt;span&gt;</code>, простіше знести піддерево й побудувати заново.</li>\n</ol>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Це <strong>не недолік</strong>, а свідомий trade-off: рідкісні edge-кейси обмінюються на швидкість для 60 fps. Правила <code>key</code> і &quot;різний тип = ремаунт&quot; нижче — прямий наслідок цих двох припущень.</p></div>\n<h3 class=\"topic\">Поширена помилка: &quot;Virtual DOM = завжди швидше&quot; <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>Virtual DOM <strong>не</strong> швидший за прямі DOM-операції сам по собі — акуратний vanilla-JS, що точково міняє 3 вузли, обжене React у мікробенчмарку. Реальна вигода — у <strong>батчингу</strong>: замість &quot;20 змін стану → 20 DOM-мутацій&quot;, React збирає їх в одну діф-фазу → один мінімальний патч, плюс декларативний код без ручного відстеження &quot;що вже змінено&quot;.</p>\n<h3 class=\"topic\">Правила diffing-алгоритму</h3>\n<ul class=\"list\">\n<li><strong>Різний тип елемента</strong> — було <code>&lt;div&gt;</code>, стало <code>&lt;span&gt;</code> (або компонент → інший) — React <strong>знищує старе піддерево повністю</strong> й будує нове (стан втрачається).</li>\n<li><strong>Однаковий тип</strong> — той самий тег/компонент — React <strong>перевикористовує</strong> DOM-вузол, оновлює лише змінені атрибути. Стан зберігається.</li>\n</ul>\n<h3 class=\"topic\"><code>key</code> у списках — чому саме <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>Без <code>key</code> React зіставляє елементи <strong>за позицією</strong>. Вставка/видалення посередині зсуває наступні позиції — React думає, що змінився контент кожного елемента після точки вставки. З <code>index</code> як key — та сама проблема.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ key={index}: інпути \"стрибають\"\nlist = [A, B, C], keys = [0,1,2]\n// видалили A (з інпутом \"A-text\") → list = [B, C], keys = [0,1]\n// React: \"елемент key=0 змінив контент з A на B\" → перевикористовує вузол\n// значення інпуту \"A-text\" лишається — тепер під B!\n\n// ✅ key={item.id}: коректно\nkeys = [idA, idB, idC] → видалили A → keys = [idB, idC]\n// React бачить: вузла key=idA більше немає → unmount саме його; решта — як є"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> <code>key={index}</code> прийнятний <strong>лише</strong> якщо список статичний (не сортується/фільтрується) і без стану в елементах.</p></div>\n<h3 class=\"topic\">Fiber-архітектура <span class=\"tag tag-key\">KEY</span></h3>\n<p>Fiber (з React 16) — переписаний reconciler. Кожному елементу відповідає <strong>Fiber-вузол</strong> — обʼєкт з інформацією про компонент, props/state і, головне, <strong>звʼязками</strong> (child/sibling/return, як однозв'язний список замість рекурсивного стека). Це дозволяє React <strong>переривати</strong> рендеринг, віддавати керування браузеру (щоб не блокувати анімації/інпут) і продовжувати пізніше — чого не міг старий рекурсивний Stack reconciler.</p>\n<ul class=\"list\">\n<li><strong>До Fiber (React ≤15):</strong> синхронний рекурсивний прохід усього дерева; великий апдейт блокує main thread цілком.</li>\n<li><strong>З Fiber (React 16+):</strong> робота розбита на одиниці; React може зупинитись між ними, дати браузеру обробити подію, продовжити — основа Concurrent features.</li>\n</ul>\n<h3 class=\"topic\">Fiber Tree vs DOM Tree — що несе Fiber-вузол <span class=\"tag tag-key\">KEY</span></h3>\n<p>DOM-вузол — &quot;тупий&quot; опис розмітки. Fiber-вузол несе <strong>бухгалтерію React</strong>:</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Поле Fiber-вузла</th>\n<th>Навіщо</th>\n<th>Є в DOM?</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>type</code></td>\n<td>Тег ('div') або посилання на функцію-компонент</td>\n<td>Частково (tagName)</td>\n</tr>\n<tr>\n<td><code>key</code></td>\n<td>Ідентичність елемента в списку між рендерами</td>\n<td>❌</td>\n</tr>\n<tr>\n<td><code>child / sibling / return</code></td>\n<td>Звʼязки дерева як однозв'язний список — обхід без рекурсії, переривний</td>\n<td>❌</td>\n</tr>\n<tr>\n<td><code>alternate</code></td>\n<td>Посилання на Fiber попереднього рендеру — звідси diffing (current vs work-in-progress)</td>\n<td>❌</td>\n</tr>\n<tr>\n<td><code>memoizedState</code></td>\n<td>Зв'язний список станів усіх хуків (по черзі виклику!)</td>\n<td>❌</td>\n</tr>\n<tr>\n<td><code>pendingProps / memoizedProps</code></td>\n<td>Нові пропи vs застосовані на минулому рендері — основа diff</td>\n<td>❌</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Саме <code>memoizedState</code> — причина, чому <strong>порядок виклику хуків має бути стабільним</strong> (Rules of Hooks): React зіставляє хуки за позицією у зв'язному списку, а не за іменем змінної.</p></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Що таке Fiber і навіщо React відмовився від stack-реконсилятора?",
-          "answer": "Fiber (React 16) — reconciler, де кожен елемент представлений вузлом з посиланнями на батька/дитину/сусіда, що дозволяє <strong>перервати й відновити</strong> узгодження по частинах замість синхронного рекурсивного проходу, який блокував main thread. Це фундамент concurrent-фіч (пріоритети рендеру)."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Automatic Batching <span class="tag tag-new">React 18</span></h3>
+  <p>Batching — об'єднання кількох викликів <code>setState</code> в межах одного тику в <strong>один</strong> ре-рендер. React 17 батчив лише всередині своїх обробників подій; у <code>setTimeout</code>, промісах і нативних слухачах кожен <code>setState</code> давав окремий рендер. React 18 (<code>createRoot</code>) батчить <strong>скрізь</strong>, незалежно від контексту виклику.</p>
+  <p style="font-size:12.5px;opacity:.75">Що саме тригерить ре-рендер (власний state, батько, Context, <code>useReducer</code>) і як поводиться <code>&lt;StrictMode&gt;</code> — розділ «🔄 Життєвий цикл і події компонента» нижче.</p>`,
         },
         {
-          "question": "Чим diffing React відрізняється від класичного tree-diff, і чому це компроміс?",
-          "answer": "Класичний — O(n³); React — евристичний O(n) з двома припущеннями: (1) елементи різного типу дають різні дерева, (2) <code>key</code> підказує стабільність у списку. Швидко для типових UI, але може давати неоптимальні (хоч і коректні) результати при нетиповій зміні структури."
+          kind: 'code',
+          language: 'tsx',
+          code: `// React 17: батчинг тільки в React event handlers
+// React 18: батчинг СКРІЗЬ (setTimeout, fetch/promise, native event listeners)
+setTimeout(() => {
+  setCount(c => c + 1);      // React 18: ОДИН ре-рендер на обидва апдейти
+  setName('Roman');           // React 17: ДВА окремих ре-рендери
+}, 0);
+
+// Явно вимкнути батчинг (рідко потрібно) — flushSync()
+import { flushSync } from 'react-dom';
+flushSync(() => {
+  setOpen(true);          // React синхронно рендерить + комітить тут
+});
+tooltipRef.current.scrollIntoView();  // ← DOM уже оновлений, можна міряти/скролити`,
         },
         {
-          "question": "Чи Virtual DOM завжди швидший за прямий DOM?",
-          "answer": "Ні. Для поодиноких точкових мутацій прямий DOM може бути швидшим — VDOM додає накладні на створення об'єктів і diffing. Перевага — при <em>множинних</em> оновленнях: React батчить їх в один прохід і застосовує мінімальний набір DOM-операцій."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Bailout — коли ре-рендеру не буде взагалі</h3>
+  <p>Якщо <code>setState</code> отримує значення, рівне поточному за <code>Object.is</code>, React може «вийти» ще до рендеру дочірніх компонентів (<em>bailout</em>). Але сам компонент один раз усе одно викликається — тому <code>setState</code> у тілі рендеру без умови = нескінченний цикл, навіть якщо значення однакове.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Batching стосується і React 19 Actions / <code>use()</code>: кілька <code>setState</code> у межах одного transition чи в async-екшені після <code>await</code> так само групуються в один ре-рендер. <code>flushSync</code> лишається винятком «мені потрібен DOM негайно», а не інструментом за замовчуванням.</span></div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 2 — HOOKS DEEP DIVE ============================= */
+    {
+      id: 'hooks-why',
+      title: '🪝 Хуки: навіщо і правила',
+      interviewQuestions: [
+        {
+          question: 'Яку конкретну проблему класових компонентів вирішили хуки, окрім «менше boilerplate»?',
+          answer: 'Головна проблема — <strong>logic reuse</strong>: у класах повторно використати stateful-логіку (підписка на подію, таймер, fetch) між компонентами можна було лише через HOC або render props, що призводило до «wrapper hell» і ускладнювало трасування, звідки приходять props. Хуки дозволяють винести таку логіку в звичайну функцію (custom hook) і композювати без додаткових шарів у дереві компонентів.',
         },
         {
-          "question": "Що таке Virtual DOM насправді?",
-          "answer": "Не технологія прискорення, а JS-структура даних, що дозволяє порахувати мінімальний diff перед тим, як чіпати повільний реальний DOM."
+          question: 'Чим виклик custom hook принципово відрізняється від виклику звичайної функції-утиліти?',
+          answer: 'Custom hook має доступ до <strong>персистентного слоту памʼяті</strong> поточного Fiber-вузла — він може всередині викликати <code>useState</code>/<code>useEffect</code>/<code>useRef</code>, і ці значення переживають рендери саме цього компонента. Звичайна функція такої памʼяті не має: кожен виклик стартує з нуля. Саме тому хук можна викликати лише з тіла компонента чи іншого хука і лише на верхньому рівні — його ідентичність визначається порядковою позицією виклику, а не імʼям.',
         },
         {
-          "question": "Чому diffing — O(n), а не точний O(n³)?",
-          "answer": "React жертвує рідкісними edge-кейсами (переїзд піддерева між рівнями) заради швидкості, порівнюючи лише в межах одного рівня."
+          question: 'Чому хуки не можна викликати всередині умов, циклів чи вкладених функцій?',
+          answer: 'React відстежує стан хуків не за іменем, а за <strong>порядком виклику</strong> в кожному рендері (внутрішньо — пов\'язаний список на fiber-вузлі). Якщо виклик хука обумовлений (наприклад, <code>if (cond) useState()</code>), порядок може відрізнятись між рендерами, і React прив\'яже стан не до того хука — це не варнінг, а реальна десинхронізація стану.',
         },
         {
-          "question": "Чим небезпечний <code>key={index}</code>?",
-          "answer": "Конкретний приклад з інпутами/чекбоксами, що &quot;перестрибують&quot; значення при реордері (див. вище)."
-        }
-      ]
+          question: 'Як обійти ситуацію, коли за бізнес-логікою хук потрібно викликати «умовно» (наприклад, лише для одного з варіантів UI)?',
+          answer: 'Хук викликається завжди, безумовно, а <em>умовною</em> робиться логіка всередині нього або використання результату: наприклад, завжди викликати <code>useEffect</code>, але саму підписку/запит обгорнути в <code>if</code> усередині callback\'а; або розбити компонент на два (умовний рендер компонента-обгортки, а не умовний виклик хука).',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Проблема до хуків (React &lt;16.8, 2019) <span class="tag tag-key">KEY</span></h3>
+  <p>Класи були єдиним способом дати компоненту стан і lifecycle. Це створювало дві конкретні болі:</p>
+  <div class="grid2">
+    <div class="card red"><h4>1. Перевикористання stateful-логіки — лише через "wrapper hell"</h4><p>Хотів переюзати логіку (підписка, debounce, auth-check) в кількох компонентах — доводилось обгортати компонент у HOC або render-props (Block 5, розділ "Patterns"). Кожна така обгортка — ще один рівень у дереві React DevTools, ще один шар пропів, що "просвічують" крізь усі обгортки.</p></div>
+    <div class="card red"><h4>2. Логіка розкидана по методах, а не по фічах</h4><p>Один lifecycle-метод містив код кількох незвʼязаних речей (fetch, аналітика, підписка), а той самий "fetch"-код доводилось дублювати в методі оновлення — коротка мапа класового API на хуки в розділі "🏛️ Class vs Functional" нижче.</p></div>
+  </div>
+  <p><strong>Хуки (React 16.8, 2019)</strong> вирішили обидві: логіку можна винести у звичайну функцію (custom hook, розділ нижче) без жодної обгортки в дереві компонентів, і повʼязаний код (state + effect для нього) живе поруч в одному місці, а не розкиданий по lifecycle-методах.</p>
+  <h3 class="topic">Звідки назва "hook"</h3>
+  <p>Функція "чіпляється" (hooks into) за внутрішній механізм React — стан і lifecycle компонента — ззовні, без класової ієрархії. Це не метафора з DOM чи подіями браузера, а буквально "гачок" у React-рантайм.</p>
+  <h3 class="topic">Хук vs звичайна функція — принципова різниця <span class="tag tag-key">KEY</span></h3>
+  <p>Хук — не просто "функція, яку можна викликати". У хука є доступ до <strong>персистентного слоту памʼяті</strong>, привʼязаного до конкретного Fiber-вузла (<code>memoizedState</code> — зв'язний список, розділ "Reconciliation, Virtual DOM, Fiber" вище), який <strong>переживає</strong> кожен наступний рендер саме цього компонента. Звичайна функція, викликана двічі, не має такої памʼяті — кожен виклик стартує "з нуля", без звʼязку з попереднім.</p>
+  <div class="grid2">
+    <div class="card blue"><h4>Звичайна функція</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>;  <span class="cmt">// живе, поки живе замикання,</span>
+  <span class="kw">return</span> () =&gt; ++count;  <span class="cmt">// не привʼязано до Fiber-вузла</span>
+}
+<span class="cmt">// Викликана в тілі компонента — count скидається щорендеру,</span>
+<span class="cmt">// бо немає звʼязку з конкретним "місцем" у Fiber-дереві</span></pre></div>
+    <div class="card green"><h4>useState — хук</h4><pre style="font-size:10.5px"><span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+<span class="cmt">// значення живе в memoizedState ЦЬОГО Fiber-вузла,</span>
+<span class="cmt">// React повертає його на кожному наступному рендері —</span>
+<span class="cmt">// саме тому це можливо ЛИШЕ у функції-компоненті/хуку,</span>
+<span class="cmt">// що React викликає й відстежує сам (детально — наступний розділ)</span></pre></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Це і є відповідь на "чим хук відрізняється від функції": хук отримує доступ до React-рантайму (конкретно — до слоту в Fiber-дереві поточного компонента), звичайна функція — ні. Саме тому хуки не можна "просто взяти й викликати" будь-де — звідси <strong>Правила хуків</strong> нижче.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Два правила хуків <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>1. Лише на верхньому рівні</h4><p>Ніколи всередині <code>if</code>/циклів/вкладених функцій/<code>try-catch</code>/після раннього <code>return</code>. Хуки викликаються в <strong>однаковому порядку на кожному рендері</strong>.</p></div>
+    <div class="card blue"><h4>2. Лише з React-функцій</h4><p>Функції-компоненти або інші custom hooks. Ніколи — зі звичайних JS-функцій, методів класу, чи колбека, визначеного поза компонентом.</p></div>
+  </div>
+  <h3 class="topic">Чому саме так — звʼязок з Fiber <span class="tag tag-pit">PITFALL</span></h3>
+  <p>React зіставляє хуки між рендерами <strong>за позицією виклику</strong> у зв'язному списку <code>memoizedState</code> Fiber-вузла — не за іменем змінної (див. «Хук vs звичайна функція» вище). Умовний виклик хука зсуває позицію <strong>усіх наступних</strong> хуків у тому ж компоненті — і React підставляє їм чужі значення.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// ❌ ЗЛАМАНО — умовний виклик хука
+function Profile({ userId }: Props) {
+  if (userId) {
+    const [name, setName] = useState('');   // хук #1 — умовний!
+  }
+  const [loading, setLoading] = useState(false); // хук #2 (або #1, залежно від userId!)
+
+  // Рендер 1 (userId є): порядок хуків = [name, loading]
+  // Рендер 2 (userId стало falsy): порядок хуків = [loading]
+  // React бере значення зі слоту #1 для "loading" — це насправді старе значення "name"!
+  // Результат: loading несподівано містить рядок замість boolean, стан "поїхав"
+}
+
+// ✅ ПРАВИЛЬНО — хук завжди викликається, умова йде ВСЕРЕДИНУ
+function Profile({ userId }: Props) {
+  const [name, setName] = useState('');       // завжди хук #1
+  const [loading, setLoading] = useState(false); // завжди хук #2
+
+  useEffect(() => {
+    if (!userId) return;      // умова всередині ефекту, не навколо хука
+    fetchName(userId).then(setName);
+  }, [userId]);
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">✅</span><span>Ловиться до рантайму: <code>eslint-plugin-react-hooks</code> (правило <code>rules-of-hooks</code>) — вже в рекомендованому наборі розширення ES7+ Snippets (розділ "React + VS Code" вище). Друге правило того ж плагіна, <code>exhaustive-deps</code>, стежить за коректністю dependency-масивів <code>useEffect</code>/<code>useMemo</code>/<code>useCallback</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>React Compiler (розділ "React 19 / майбутнє" вище) автоматизує мемоізацію, але <strong>не скасовує</strong> ці два правила — виклик хука досі мусить бути передбачуваним і на верхньому рівні, компілятор аналізує код статично й не "зрозуміє" динамічний порядок хуків.</span></div>
+  `,
+        },
+      ],
     },
     {
-      "id": "internals-render-commit",
-      "title": "🎬 Render vs Commit фази",
-      "blocks": [
+      id: 'hooks-usestate-patterns',
+      title: '🔢 useState: оновлювачі та ініціалізація',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Дві фази роботи React <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><strong>1. Render (Reconciliation):</strong> React викликає тіла компонентів, будує work-in-progress Fiber-дерево, рахує diff. <strong>Можна переривати</strong> й <strong>відкидати</strong> без наслідків. <strong>Має бути чистою функцією</strong> — без мутацій зовнішнього стану, без side-effects (fetch, підписки, ручні DOM-мутації).</li>\n<li><strong>2. Commit:</strong> React застосовує зміни до реального DOM. <strong>Синхронна</strong>, не переривається. Тут: DOM-мутації, оновлення <code>refs</code>, <code>useLayoutEffect</code> (синхронно, до paint), а після paint — <code>useEffect</code> (асинхронно).</li>\n</ul>\n<h3 class=\"topic\">Чому side-effects заборонені в render <span class=\"tag tag-pit\">PITFALL</span></h3>"
+          question: 'Коли <code>setX(x + 1)</code> і <code>setX(v => v + 1)</code> дають різний результат?',
+          answer: 'Коли за один цикл потрібно кілька оновлень поспіль або оновлення відбувається із замикання (таймер, проміс, обробник події, що вже "бачить" застарілий <code>x</code>). <code>setX(x + 1)</code> двічі поспіль дасть <code>+1</code>: обидва виклики читають той самий <code>x</code> з поточного рендеру. <code>setX(v => v + 1)</code> двічі дасть <code>+2</code>: React передає в апдейтер найсвіжіше значення з черги.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ side-effect прямо в render\nfunction Profile({ userId }) {\n  fetch('/api/user/' + userId); // !!! render може викликатись кілька разів\n  return <div>...</div>;        // (StrictMode, Concurrent-переривання) — fetch зайвий раз\n}\n\n// ✅ side-effect у commit-фазі, через useEffect\nfunction Profile({ userId }) {\n  useEffect(() => { fetch('/api/user/' + userId); }, [userId]);\n  return <div>...</div>;   // гарантовано один раз на реальний commit\n}"
+          question: 'Чим <code>useState(() => init())</code> відрізняється від <code>useState(init())</code>?',
+          answer: '<code>useState(init())</code> викликає <code>init()</code> на <strong>кожному</strong> рендері й одразу відкидає результат після першого — марна робота, а якщо це читання <code>localStorage</code> чи важкий розрахунок, то ще й помітна. <code>useState(() => init())</code> (lazy initializer) React викликає рівно один раз, при монтуванні.',
         },
         {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Render-фазу React може почати, перервати й почати заново — work-in-progress рендер, що не дійшов до commit, ніколи не показується користувачу, і його side-effects не повинні бути видимими ззовні.</p></div>"
-        }
+          question: 'Чому <code>console.log(x)</code> одразу після <code>setX(...)</code> друкує старе значення?',
+          answer: 'Змінна <code>x</code> — це <strong>знімок</strong> стану для конкретного рендеру, вона незмінна до кінця цього рендеру. <code>setX</code> не мутує <code>x</code>, а планує наступний рендер з новим значенням. Нове значення побачиш лише як нову змінну <code>x</code> у тілі наступного рендеру.',
+        },
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Чим Render відрізняється від Commit, і чому це важливо для побічних ефектів?",
-          "answer": "Render — виклик функцій компонентів і побудова Fiber-дерева; <strong>може бути перервана</strong> й не повинна мати side-effects (компонент може викликатись кілька разів за один логічний рендер). Commit — застосування до DOM + <code>useLayoutEffect</code>/<code>useEffect</code>; синхронна, не переривається."
+          kind: 'paragraph',
+          html: `<h3 class="topic">State — це знімок, не «жива» змінна <span class="tag tag-key">KEY</span></h3>
+  <p>У межах одного рендеру значення зі <code>useState</code> заморожене. Усі замикання, створені під час цього рендеру (обробники, ефекти, таймери), «бачать» саме це значення — навіть якщо викликаються пізніше. Це не баг, а модель: рендер — чиста функція від пропів і знімка стану.</p>`,
         },
         {
-          "question": "Чому <code>useEffect</code> безпечний для side-effects, а тіло компонента — ні?",
-          "answer": "Тіло виконується в Render-фазі, яку React може перервати/повторити/відкинути — side-effect там міг би виконатись кілька разів або на «викинутому» результаті. <code>useEffect</code> запускається лише після Commit, рівно один раз на реально застосований рендер."
-        }
-      ]
+          kind: 'code',
+          language: 'tsx',
+          code: `// 1. Функціональний оновлювач — обовʼязковий при кількох апдейтах / в async
+function Counter() {
+  const [n, setN] = useState(0);
+  function addThree() {
+    setN(n + 1);        // усі три читають n === 0
+    setN(n + 1);        // → підсумок: 1
+    setN(n + 1);
+    // setN(v => v + 1) тричі → підсумок: 3
+  }
+  useEffect(() => {
+    const id = setInterval(() => setN(v => v + 1), 1000); // ✅ не залежить від n
+    return () => clearInterval(id);
+  }, []);              // порожній масив — бо оновлювач не читає n напряму
+}
+
+// 2. Lazy initializer — важкий старт рахується один раз
+const [tree, setTree] = useState(() => parseHugeJSON(raw));   // не parseHugeJSON(raw)
+
+// 3. Обʼєкт у state — заміна, не мутація
+setForm(f => ({ ...f, email: value }));   // ✅ новий обʼєкт
+// form.email = value; setForm(form);     // ❌ той самий референс → рендер не спрацює`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Кілька <code>useState</code> vs один обʼєкт vs <code>useReducer</code></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Ситуація</th><th>Вибір</th></tr>
+      <tr><td>Незалежні поля, що змінюються окремо</td><td>кілька <code>useState</code> — простіше, не треба спред щоразу</td></tr>
+      <tr><td>Поля завжди змінюються разом (напр. <code>{x, y}</code> позиція)</td><td>один <code>useState</code>-обʼєкт</td></tr>
+      <tr><td>Наступний стан залежить від попереднього, багато типів переходів</td><td><code>useReducer</code> — переходи в одному місці, легше тестувати (розділ «🔄 Життєвий цикл і події компонента»)</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Правило: якщо в <code>onChange</code> ти читаєш поточний стан, щоб порахувати наступний — майже завжди має бути оновлювач-функція. <code>exhaustive-deps</code> тоді ще й прибирає стан із масивів залежностей <code>useEffect</code>/<code>useCallback</code>.</span></div>`,
+        },
+      ],
     },
     {
-      "id": "internals-rerenders-batching",
-      "title": "⚡ Automatic Batching (React 18)",
-      "blocks": [
+      id: 'hooks-catalog-full',
+      title: '📋 Повний каталог хуків',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Automatic Batching <span class=\"tag tag-new\">React 18</span></h3>\n<p>Batching — об'єднання кількох <code>setState</code> в межах одного тику в <strong>один</strong> ре-рендер. React 17 батчив лише всередині обробників подій; у <code>setTimeout</code>, промісах, нативних слухачах кожен <code>setState</code> давав окремий рендер. React 18 (<code>createRoot</code>) батчить <strong>скрізь</strong>.</p>\n<p>Що тригерить ре-рендер (власний state, батько, Context, <code>useReducer</code>) і як поводиться <code>&lt;StrictMode&gt;</code> — розділ «🔄 Життєвий цикл і події компонента» нижче.</p>"
+          question: 'Які React-хуки ти б виділив як такі, що рідко потрібні у звичайному продуктовому коді, і чому вони взагалі існують?',
+          answer: '<code>useImperativeHandle</code>, <code>useDebugValue</code>, <code>useId</code>, <code>useSyncExternalStore</code> — нішеві. <code>useImperativeHandle</code> потрібен для контрольованого імперативного API компонента (кастомний input-wrapper з методом <code>.focus()</code>); <code>useSyncExternalStore</code> — коректний спосіб підписатись на зовнішнє (поза-React) сховище стану без tearing у concurrent-режимі — на ньому побудовані бібліотеки на кшталт Zustand.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// React 17: батчинг тільки в React event handlers\n// React 18: батчинг СКРІЗЬ (setTimeout, fetch/promise, native event listeners)\nsetTimeout(() => {\n  setCount(c => c + 1);      // React 18: ОДИН ре-рендер на обидва апдейти\n  setName('Roman');           // React 17: ДВА окремих ре-рендери\n}, 0);\n\n// Явно вимкнути батчинг (рідко) — flushSync()\nimport { flushSync } from 'react-dom';\nflushSync(() => { setOpen(true); });  // React синхронно рендерить + комітить тут\ntooltipRef.current.scrollIntoView();  // ← DOM уже оновлений"
+          question: 'Чому підписку на зовнішнє джерело краще робити через <code>useSyncExternalStore</code>, а не через <code>useEffect</code> + <code>useState</code>?',
+          answer: 'Ручний <code>useEffect</code> підписується <strong>після</strong> paint — між першим рендером і спрацюванням ефекту компонент показує застаріле значення, а в concurrent-режимі різні частини дерева можуть відрендеритись з різними значеннями одного джерела (tearing). <code>useSyncExternalStore</code> читає <code>getSnapshot</code> синхронно під час рендеру й гарантує, що весь рендер бачить одне узгоджене значення; плюс має окремий <code>getServerSnapshot</code> для SSR.',
         },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Bailout — коли ре-рендеру не буде</h3>\n<p>Якщо <code>setState</code> отримує значення, рівне поточному за <code>Object.is</code>, React може «вийти» ще до рендеру дочірніх (<em>bailout</em>). Але сам компонент один раз усе одно викликається — тому <code>setState</code> у тілі рендеру без умови = нескінченний цикл, навіть якщо значення однакове.</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Batching стосується і React 19 Actions / <code>use()</code>: кілька <code>setState</code> у межах transition чи в async-екшені після <code>await</code> так само групуються. <code>flushSync</code> — виняток «мені потрібен DOM негайно», не інструмент за замовчуванням.</p></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Що таке batching і чим автоматичний batching у React 18 відрізняється від React 17?",
-          "answer": "Batching — об'єднання кількох <code>setState</code> в один ре-рендер. React 17 батчив лише в обробниках подій; у <code>setTimeout</code>/промісах/нативних обробниках — окремий рендер на кожен. React 18 з <code>createRoot</code> робить batching <strong>автоматичним усюди</strong>."
+          kind: 'paragraph',
+          html: `<p>Мапа всіх хуків React за категоріями. Ті, що мають детальний розбір в інших розділах (useEffect, useLayoutEffect, useReducer, StrictMode — «🔄 Життєвий цикл і події компонента»; useMemo/useCallback — «🧠 Мемоізація та референсна стабільність»; useRef — «🎯 useRef — детально»; useTransition/useDeferredValue — «useTransition / useDeferredValue»), тут — коротким рядком з переходом. Решта — <strong>лише тут</strong>, повністю.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Хук</th><th>Категорія</th><th>З якої версії</th><th>Навіщо</th><th>Edge case</th></tr>
+      <tr><td><code>useState</code></td><td>State</td><td>16.8</td><td>Локальний стан, незалежні прості значення</td><td>Lazy initializer — <code>useState(() =&gt; expensive())</code>, інакше <code>expensive()</code> виконується щорендеру, навіть якщо результат використано лише при mount</td></tr>
+      <tr><td><code>useReducer</code></td><td>State</td><td>16.8</td><td>Складний повʼязаний state, явні action-переходи</td><td>Детально — «🔄 Життєвий цикл і події компонента» (є свій lazy-init нюанс)</td></tr>
+      <tr><td><code>useEffect</code></td><td>Effect</td><td>16.8</td><td>Side-effects після paint (fetch, підписки)</td><td>Детально — «🔄 Життєвий цикл і події компонента» (stale closures, cleanup)</td></tr>
+      <tr><td><code>useLayoutEffect</code></td><td>Effect</td><td>16.8</td><td>Синхронно до paint — читання layout</td><td>Детально — «🔄 Життєвий цикл і події компонента»</td></tr>
+      <tr><td><code>useInsertionEffect</code></td><td>Effect</td><td>18</td><td>Вставка <code>&lt;style&gt;</code> ДО useLayoutEffect — лише для CSS-in-JS бібліотек (styled-components, розділ "Styling" вище)</td><td>Не для прикладного коду — немає доступу до refs, призначений виключно авторам бібліотек стилізації</td></tr>
+      <tr><td><code>useRef</code></td><td>Ref</td><td>16.8</td><td>DOM-ref / мутабельне значення без ре-рендеру</td><td>Детально — розділ "🎯 useRef — детально"</td></tr>
+      <tr><td><code>useImperativeHandle</code></td><td>Ref</td><td>16.8</td><td>Кастомізує, що саме батько бачить через <code>ref</code> на дочірній компонент (у парі з <code>forwardRef</code> або React 19 <code>ref</code>-як-проп)</td><td>Легко зловживати — імперативний API (<code>focus()</code>, <code>reset()</code>) в React мусить лишатись винятком, не звичкою; 95% кейсів вирішуються звичайним потоком props/state</td></tr>
+      <tr><td><code>useMemo</code></td><td>Performance</td><td>16.8</td><td>Кешує дороге обчислення / стабільний референс</td><td>Детально — «🧠 Мемоізація та референсна стабільність» (не гарантія!)</td></tr>
+      <tr><td><code>useCallback</code></td><td>Performance</td><td>16.8</td><td>Кешує референс функції</td><td>Детально — «🧠 Мемоізація та референсна стабільність»</td></tr>
+      <tr><td><code>useContext</code></td><td>Context</td><td>16.8</td><td>Читає значення найближчого Provider вище по дереву</td><td>Компонент, що споживає Context, ре-рендериться на <strong>будь-яку</strong> зміну value провайдера — навіть якщо реально використовує лише одне поле з обʼєкта value (детально — розділ "Межі стану та Context")</td></tr>
+      <tr><td><code>useTransition</code></td><td>Concurrent</td><td>18</td><td>Неурочна дія (функція-апдейт)</td><td>Детально — розділ "useTransition / useDeferredValue"</td></tr>
+      <tr><td><code>useDeferredValue</code></td><td>Concurrent</td><td>18</td><td>Неурочне значення (ззовні)</td><td>Детально — розділ "useTransition / useDeferredValue"</td></tr>
+      <tr><td><code>useId</code></td><td>Misc</td><td>18</td><td>Унікальний id, стабільний між сервером і клієнтом — для <code>&lt;label htmlFor&gt;</code>/ARIA-атрибутів</td><td><code>Math.random()</code>/лічильник у модулі для генерації id ламається при SSR — сервер і клієнт рахують по-різному → hydration mismatch (розділ "Next.js: рендер-моделі"). <code>useId</code> гарантовано однаковий на сервері й клієнті</td></tr>
+      <tr><td><code>useSyncExternalStore</code></td><td>Misc</td><td>18</td><td>Коректна підписка на зовнішнє джерело стану поза React (браузерні API, стан-менеджери)</td><td>Це те, на чому <strong>всередині</strong> побудований Zustand-хук (розділ "Zustand" вище) — гарантує коректність під час concurrent-рендерингу (tearing-safe), на відміну від ручного <code>useEffect</code> + <code>useState</code> для підписки</td></tr>
+      <tr><td><code>useDebugValue</code></td><td>Misc</td><td>16.8</td><td>Підписує custom hook міткою в React DevTools (розділ вище)</td><td>Працює лише в custom hooks, ефекту в звичайному компоненті не має — суто DX для авторів бібліотек хуків</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Нішеві хуки — мінімальний робочий приклад</h3>`,
         },
         {
-          "question": "Як вимкнути batching і навіщо?",
-          "answer": "<code>flushSync(() =&gt; setX(...))</code> з <code>react-dom</code> синхронно рендерить і комітить одразу. Потрібно рідко — коли наступний рядок має прочитати вже оновлений DOM (виміряти позицію, сфокусувати щойно показаний елемент). У 99% випадків batching бажаний."
-        }
-      ]
+          kind: 'code',
+          language: 'tsx',
+          code: `// useId — стабільний id для звʼязки label ↔ input (і для aria-*)
+function Field({ label }: { label: string }) {
+  const id = useId();
+  return <><label htmlFor={id}>{label}</label><input id={id} /></>;
+  // ❌ не для ключів списку — id один на компонент, не на елемент
+}
+
+// useSyncExternalStore — підписка на джерело поза React без tearing.
+// Приклад: чи онлайн браузер
+function useOnlineStatus() {
+  return useSyncExternalStore(
+    (cb) => {
+      window.addEventListener('online', cb);
+      window.addEventListener('offline', cb);
+      return () => {
+        window.removeEventListener('online', cb);
+        window.removeEventListener('offline', cb);
+      };
+    },
+    () => navigator.onLine,          // getSnapshot (клієнт)
+    () => true,                      // getServerSnapshot (SSR)
+  );
+}
+
+// useDebugValue — мітка custom hook у DevTools
+function useUser(id: string) {
+  const user = /* ... */;
+  useDebugValue(user ? user.name : 'loading');
+  return user;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span><code>useImperativeHandle</code> — окремий приклад у розділі «🎯 useRef — детально». <code>useInsertionEffect</code> у прикладному коді не викликають — це API для авторів CSS-in-JS.</span></div>`,
+        },
+      ],
     },
     {
-      "id": "hooks-why",
-      "title": "🪝 Хуки: навіщо і правила",
-      "blocks": [
+      id: 'memoization-concept',
+      title: '🧠 Мемоізація та референсна стабільність',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Проблема до хуків (React &lt;16.8, 2019) <span class=\"tag tag-key\">KEY</span></h3>\n<p>Класи були єдиним способом дати компоненту стан і lifecycle. Дві болі:</p>\n<ol>\n<li><strong>Перевикористання stateful-логіки — лише через &quot;wrapper hell&quot;:</strong> переюзати логіку (підписка, debounce, auth-check) можна було лише через HOC/render-props — кожна обгортка додавала рівень у дереві й шар пропів.</li>\n<li><strong>Логіка розкидана по методах, а не по фічах:</strong> один lifecycle-метод містив код кількох незвʼязаних речей, а той самий &quot;fetch&quot;-код дублювався в методі оновлення.</li>\n</ol>\n<p><strong>Хуки (React 16.8)</strong> вирішили обидві: логіку можна винести у звичайну функцію (custom hook) без обгортки в дереві, і повʼязаний код (state + effect) живе поруч.</p>\n<h3 class=\"topic\">Звідки назва &quot;hook&quot;</h3>\n<p>Функція &quot;чіпляється&quot; (hooks into) за внутрішній механізм React — стан і lifecycle — ззовні, без класової ієрархії. Буквально &quot;гачок&quot; у React-рантайм.</p>\n<h3 class=\"topic\">Хук vs звичайна функція — принципова різниця <span class=\"tag tag-key\">KEY</span></h3>\n<p>У хука є доступ до <strong>персистентного слоту памʼяті</strong>, привʼязаного до конкретного Fiber-вузла (<code>memoizedState</code> — зв'язний список), який <strong>переживає</strong> кожен рендер саме цього компонента. Звичайна функція, викликана двічі, стартує &quot;з нуля&quot;.</p>"
+          question: 'Поясни мемоізацію як загальну техніку (без React), а потім покажи, чому useMemo, useCallback і React.memo — це насправді одна й та сама ідея.',
+          answer: 'Мемоізація — кешування результату обчислення за ключем вхідних даних: наступний виклик з тим самим ключем повертає кеш замість повторного обчислення (памʼять в обмін на швидкість). У React ця сама схема застосована до трьох різних "одиниць": <code>useMemo</code> кешує значення (ключ — deps-масив), <code>useCallback</code> кешує посилання на функцію (той самий useMemo під капотом), <code>React.memo</code> кешує РЕЗУЛЬТАТ РЕНДЕРУ компонента (ключ — props). В усіх трьох: ключ порівнюється через Object.is/поверхнево, зміна ключа = інвалідація кешу.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function makeCounter() {\n  let count = 0;         // живе, поки живе замикання, не привʼязано до Fiber\n  return () => ++count;\n}\n// Викликана в тілі компонента — count скидається щорендеру\n\nconst [count, setCount] = useState(0);\n// значення живе в memoizedState ЦЬОГО Fiber-вузла, React повертає\n// його на кожному рендері — можливо ЛИШЕ у функції-компоненті/хуку"
+          question: 'Fiber-поле memoizedState теж називається "мемоізація" — це та сама техніка, що useMemo?',
+          answer: 'Ні, і це поширена плутанина через збіг слова. memoizedState — просто "слот останнього відомого значення" хука в Fiber-вузлі, без ключа й без інвалідації за замовчуванням. useMemo/useCallback/React.memo — справжній кеш-за-ключем із чіткою умовою скидання (зміна deps/props). Схожа за назвою, але окрема від них річ — Next.js Request Memoization, навпаки, це саме кешування-за-ключем (дедуплікація однакових fetch у межах одного рендеру за URL+опціями як ключем).',
         },
         {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> Хук отримує доступ до React-рантайму (слоту в Fiber-дереві), звичайна функція — ні. Тому хуки не можна &quot;просто викликати&quot; будь-де — звідси <strong>Правила хуків</strong>.</p></div>\n<h3 class=\"topic\">Два правила хуків <span class=\"tag tag-key\">KEY</span></h3>\n<ol>\n<li><strong>Лише на верхньому рівні</strong> — ніколи всередині <code>if</code>/циклів/вкладених функцій/<code>try-catch</code>/після раннього <code>return</code>. Хуки викликаються в <strong>однаковому порядку на кожному рендері</strong>.</li>\n<li><strong>Лише з React-функцій</strong> — компоненти або custom hooks. Ніколи зі звичайних JS-функцій, методів класу чи колбека поза компонентом.</li>\n</ol>\n<h3 class=\"topic\">Чому саме так — звʼязок з Fiber <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>React зіставляє хуки між рендерами <strong>за позицією виклику</strong> у зв'язному списку <code>memoizedState</code> — не за іменем змінної. Умовний виклик хука зсуває позицію <strong>усіх наступних</strong> хуків — React підставляє їм чужі значення.</p>"
+          question: 'Коли <code>React.memo</code> реально допомагає, а коли лише додає накладні витрати без користі?',
+          answer: '<code>React.memo</code> корисний для «важких» компонентів (дорогий рендер), чиї props стабільні між рендерами батька частіше, ніж змінюються. Якщо компонент дешевий у рендері або props (особливо об\'єкти/функції/масиви) створюються заново щоразу — <code>memo</code> лише додає витрати на поверхневе порівняння props без жодної економії, бо порівняння все одно «провалиться» і рендер відбудеться.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ ЗЛАМАНО — умовний виклик хука\nfunction Profile({ userId }: Props) {\n  if (userId) {\n    const [name, setName] = useState('');   // хук #1 — умовний!\n  }\n  const [loading, setLoading] = useState(false); // хук #2 (або #1, залежно від userId!)\n  // Рендер 1 (userId є): порядок = [name, loading]\n  // Рендер 2 (userId falsy): порядок = [loading] → loading бере слот name — стан \"поїхав\"\n}\n\n// ✅ ПРАВИЛЬНО — хук завжди викликається, умова ВСЕРЕДИНІ\nfunction Profile({ userId }: Props) {\n  const [name, setName] = useState('');       // завжди хук #1\n  const [loading, setLoading] = useState(false); // завжди хук #2\n  useEffect(() => {\n    if (!userId) return;      // умова всередині ефекту, не навколо хука\n    fetchName(userId).then(setName);\n  }, [userId]);\n}"
+          question: '<code>memo</code> не допоміг — з чого почнеш дебаг?',
+          answer: 'Спершу <strong>виміряти</strong>, не гадати: React DevTools Profiler → «Why did this render?» назве причину (<code>props changed</code> / <code>hooks changed</code> / <code>parent rendered</code>). Найчастіша причина — <strong>новий референс пропу</strong> щорендеру батька (інлайновий <code>{}</code> / стрілка), який провалює поверхневе порівняння <code>memo</code>. Далі — стабілізувати той проп через <code>useMemo</code>/<code>useCallback</code> або підняти його вище, щоб не створювався в тілі батька.',
         },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> Ловиться до рантайму: <code>eslint-plugin-react-hooks</code> (правило <code>rules-of-hooks</code>). Друге правило того ж плагіна, <code>exhaustive-deps</code>, стежить за коректністю dependency-масивів.</p></div>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> React Compiler автоматизує мемоізацію, але <strong>не скасовує</strong> ці два правила — виклик хука досі мусить бути передбачуваним і на верхньому рівні.</p></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Яку проблему класів вирішили хуки, окрім «менше boilerplate»?",
-          "answer": "<strong>Logic reuse:</strong> у класах переюзати stateful-логіку можна було лише через HOC/render props → «wrapper hell» і заплутане джерело props. Хуки виносять логіку в custom hook і композують без додаткових шарів у дереві."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що таке мемоізація — загальна техніка <span class="tag tag-key">KEY</span></h3>
+  <p>Мемоізація — не React-специфічна концепція, а класична техніка з CS: <strong>кешуй результат обчислення, ключем — його вхідні дані</strong>. Наступного разу з тими самими вхідними даними — поверни збережений результат замість повторного обчислення. Плата — памʼять під кеш; вигода — заощаджений CPU. Ось мінімальна реалізація поза React (класичне питання на співбесіді — написати самому):</p>`,
         },
         {
-          "question": "Чим виклик custom hook відрізняється від виклику функції-утиліти?",
-          "answer": "Custom hook має доступ до <strong>персистентного слоту памʼяті</strong> поточного Fiber-вузла — може всередині викликати <code>useState</code>/<code>useEffect</code>, і значення переживають рендери. Звичайна функція стартує з нуля. Тому хук викликається лише з тіла компонента/хука й на верхньому рівні — ідентичність визначається позицією виклику."
+          kind: 'code',
+          language: 'tsx',
+          code: `function memoize<Args extends unknown[], R>(fn: (...args: Args) => R) {
+  const cache = new Map<string, R>();
+
+  return (...args: Args): R => {
+    const key = JSON.stringify(args);       // ключ кешу — вхідні дані
+    if (cache.has(key)) return cache.get(key)!;  // є в кеші — не рахуємо заново
+
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+
+const slowSquare = (n: number) => { /* важке обчислення */ return n * n; };
+const fastSquare = memoize(slowSquare);
+fastSquare(5); // рахує
+fastSquare(5); // з кешу, миттєво — той самий "ключ" (5)`,
         },
         {
-          "question": "Чому хуки не можна викликати в умовах/циклах/вкладених функціях?",
-          "answer": "React відстежує хуки за <strong>порядком виклику</strong>, а не за іменем (внутрішньо — зв'язний список на fiber-вузлі). Умовний виклик зсуває порядок між рендерами й прив'язує стан не до того хука — це реальна десинхронізація, не варнінг."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Одна ідея, три "одиниці" кешування в React <span class="tag tag-key">KEY</span></h3>
+  <p>Побачивши схему вище, легко впізнати її ще тричі — <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code> НЕ три окремі концепції для зазубрювання, а <strong>та сама</strong> схема "кеш за ключем", застосована до різних речей:</p>
+  <div class="grid3">
+    <div class="card"><h4>useMemo</h4><p>Кешує <strong>значення</strong>. Ключ — deps-масив. <code>useMemo(fn, deps)</code> ≈ <code>memoize(fn)</code> з ключем <code>deps</code>.</p></div>
+    <div class="card blue"><h4>useCallback</h4><p>Кешує <strong>посилання на функцію</strong> — окремий випадок useMemo (<code>useCallback(fn, deps)</code> ≈ <code>useMemo(() =&gt; fn, deps)</code>).</p></div>
+    <div class="card green"><h4>React.memo</h4><p>Кешує <strong>результат рендеру компонента</strong>. Ключ — props. "Аргументи" (props) ті самі → пропускаємо повторний виклик функції-компонента, як і в memoize().</p></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Елемент схеми "кеш за ключем"</th><th>У React</th></tr>
+      <tr><td>Ключ кешу</td><td>Deps-масив (useMemo/useCallback) або props (React.memo)</td></tr>
+      <tr><td>Порівняння ключа</td><td><code>Object.is</code> по кожному елементу (не глибоке порівняння!)</td></tr>
+      <tr><td>Інвалідація кешу</td><td>Ключ змінився → перерахувати/перерендерити; не змінився → віддати кеш</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Це і є "єдина концепція": щойно зрозуміло <code>memoize()</code> вище, <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code> — не три різні API для завчання, а один патерн, застосований до значення, функції й компонента відповідно.</span></div>
+  <h3 class="topic">Не плутати зі схожими словами <span class="tag tag-pit">PITFALL</span></h3>
+  <p><code>memoizedState</code> у Fiber-вузлі (розділ "Reconciliation, Virtual DOM, Fiber" вище) — <strong>не</strong> ця техніка: це просто слот "останнє відоме значення хука", без ключа й без умови інвалідації. А от Next.js <strong>Request Memoization</strong> (розділ "Next.js App Router" нижче) — навпаки, СПРАВЖНІЙ приклад тієї самої схеми: дедуплікація однакових <code>fetch</code>-викликів у межах одного рендеру, де ключ — URL + опції запиту.</p>
+  <p>React Compiler (розділ "React 19 / майбутнє") автоматизує застосування саме цієї схеми — розставляє мемоізацію за тебе, не змінюючи самої ідеї. <code>useRef</code> — стабільний контейнер, але <strong>не</strong> кеш-за-ключем: окремий розділ "🎯 useRef — детально" нижче.</p>`,
         },
         {
-          "question": "Як обійти ситуацію, коли хук «умовно» потрібен?",
-          "answer": "Хук викликається завжди, безумовно, а <em>умовною</em> робиться логіка всередині: напр. завжди <code>useEffect</code>, але підписку/запит обгорнути в <code>if</code>; або розбити компонент на два (умовний рендер обгортки, а не умовний виклик хука)."
-        }
-      ]
+          kind: 'paragraph',
+          html: `<h3 class="topic">useMemo / useCallback — коли реально треба <span class="tag tag-pit">PITFALL</span></h3>
+  <p><code>useMemo(fn, deps)</code> кешує <strong>значення</strong> <code>fn()</code>; <code>useCallback(fn, deps)</code> кешує саму <strong>функцію</strong>. Обидва не безкоштовні — порівняння <code>deps</code> і зберігання кешу теж коштує. Виправдані, коли: (а) обчислення справді важке, або (б) стабільність референсу критична — проп до <code>React.memo</code>-компонента чи залежність іншого хука. Інакше — складність без вимірної користі, тож спершу профілюй (розділ "Performance Deep Dive").</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useMemo — підказка, не гарантія <span class="tag tag-pit">PITFALL</span>:</strong> React офіційно залишає за собою право <strong>відкинути</strong> закешоване значення й порахувати заново (наприклад, щоб звільнити память) навіть якщо залежності не змінились. Код <strong>не повинен покладатись</strong> на useMemo для коректності (напр. мутація об'єкта всередині обчислення "бо воно виконається лише раз") — лише для продуктивності. Якщо потрібна гарантія "виконати рівно раз" — <code>useRef</code> з лінивою ініціалізацією (розділ "🎯 useRef — детально") або <code>useEffect</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>useCallback не "чинить" сам себе <span class="tag tag-pit">PITFALL</span>:</strong> референс функції лишається стабільним, лише якщо стабільні ВСІ значення в її dependency array. Якщо один з deps — новий обʼєкт/масив щорендеру (див. «Референсна стабільність» нижче), <code>useCallback</code> все одно поверне нову функцію — сама наявність <code>useCallback</code> нічого не гарантує без стабільності залежностей.</span></div>
+  <h3 class="topic">React.memo — коли працює, коли ні <span class="tag tag-key">KEY</span></h3>
+  <p><code>React.memo</code> — та сама схема "кеш за ключем", тільки ключ — <strong>props компонента</strong>. Порівнює пропи <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий обʼєкт/масив/функція на кожен рендер батька (референс завжди інший). Можна передати власний компаратор — рідко потрібно і легко зламати непомітно.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const Row = React.memo(
+  function Row({ item, onSelect }: RowProps) {
+    return <li onClick={() => onSelect(item.id)}>{item.title}</li>;
+  },
+  (prev, next) => prev.item.id === next.item.id && prev.item.title === next.item.title,
+  // кастомний компаратор — true = "пропи рівні, скіпнути рендер"
+  // ⚠️ якщо забудеш порівняти якийсь проп — компонент застрягне зі старими даними
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Референсна стабільність — головна причина, чому memo "не працює" <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Новий референс щорендеру</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={{ color: <span class="str">'red'</span> }}  <span class="cmt">// новий {} щоразу</span>
+    onSelect={(id) =&gt; <span class="fn">doSomething</span>(id)} <span class="cmt">// нова функція щоразу</span>
+  <span class="jsx">/&gt;</span>;               <span class="cmt">// memo(Row) все одно ре-рендериться</span>
+}</pre></div>
+    <div class="card green"><h4>✅ Стабілізовано useMemo/useCallback</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [n, setN] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">const</span> style = <span class="fn">useMemo</span>(() =&gt; ({ color: <span class="str">'red'</span> }), []);
+  <span class="kw">const</span> onSelect = <span class="fn">useCallback</span>((id) =&gt; <span class="fn">doSomething</span>(id), []);
+  <span class="kw">return</span> <span class="jsx">&lt;</span><span class="fn">Row</span> style={style} onSelect={onSelect} <span class="jsx">/&gt;</span>;
+}</pre></div>
+  </div>
+  <h3 class="topic">Як саме ре-рендериться дерево — покроковий приклад <span class="tag tag-key">KEY</span></h3>
+  <p>Дерево з трьох рівнів: <code>Parent</code> тримає <code>useState</code>, рендерить <code>Child</code>, той рендерить <code>Grandchild</code>. Жоден проп між ними реально не змінюється — лише <code>Parent</code> оновлює свій власний стан.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Parent() {
+  const [count, setCount] = useState(0);
+  return (
+    <>
+      <button onClick={() => setCount(c => c + 1)}>{count}</button>
+      <Child label="static" />                 {/* проп НЕ змінюється */}
+    </>
+  );
+}
+function Child({ label }: { label: string }) {
+  return <Grandchild label={label} />;          {/* проп НЕ змінюється */}
+}
+function Grandchild({ label }: { label: string }) {
+  return <span>{label}</span>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="grid2">
+    <div class="card red"><h4>❌ Без memo — усі три рендеряться</h4>
+      <p>Клік по кнопці → <code>setCount</code> → <code>Parent</code> ре-рендериться (власний state — тригер #1, розділ «Життєвий цикл і події компонента» нижче). <strong>За замовчуванням React рендерить усе піддерево під ним</strong> — <code>Child</code> рендериться (тригер "ре-рендер батька"), і оскільки <code>Child</code> сам повертає <code>&lt;Grandchild&gt;</code> у своєму тілі, <code>Grandchild</code> рендериться теж. Три рендери на клік, хоча <code>label</code> ніде не змінився.</p>
+    </div>
+    <div class="card green"><h4>✅ memo(Child) зупиняє каскад на першому кордоні</h4>
+      <p>Обгорни лише <code>Child</code> в <code>React.memo</code>. При кліку: <code>Parent</code> рендериться (не уникнути — власний state), <code>Child</code> отримує ре-рендер-запит від батька, але <code>React.memo</code> порівнює його пропи (<code>label="static"</code> — не змінився) і <strong>каже React: "not rendering"</strong>. Оскільки сам <code>Child</code> не виконався — <code>Grandchild</code> усередині нього <strong>взагалі не викликається</strong>, каскад зупинився на межі.</p>
+    </div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span><code>memo</code> — це <strong>межа (boundary)</strong>, а не глобальний перемикач: він зупиняє поширення ре-рендеру рівно в тому місці дерева, де стоїть, і не потребує обгортати кожен компонент — досить поставити його перед "важким" піддеревом, яке не залежить від того, що змінюється вище.</span></div>
+  <p style="font-size:12.5px;opacity:.75">Як знайти зайвий ре-рендер на практиці (Profiler, "Why did this render?") — розділи "Performance Deep Dive" та "React DevTools як Senior" нижче.</p>`,
+        },
+      ],
     },
     {
-      "id": "hooks-usestate-patterns",
-      "title": "🔢 useState: оновлювачі та ініціалізація",
-      "blocks": [
+      id: 'hooks-deep-dive',
+      title: '🔄 Життєвий цикл і події компонента',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">State — це знімок, не «жива» змінна <span class=\"tag tag-key\">KEY</span></h3>\n<p>У межах одного рендеру значення зі <code>useState</code> заморожене. Усі замикання цього рендеру (обробники, ефекти, таймери) «бачать» саме це значення. Це модель: рендер — чиста функція від пропів і знімка стану.</p>"
+          question: 'Як зіставити <code>componentDidMount</code>, <code>componentDidUpdate</code> і <code>componentWillUnmount</code> з <code>useEffect</code>?',
+          answer: 'Один <code>useEffect(fn, [])</code> покриває <code>componentDidMount</code> (запускається раз після монтування) + <code>componentWillUnmount</code> (функція, повернута з <code>fn</code>, — cleanup). <code>useEffect(fn, [dep])</code> покриває <code>componentDidUpdate</code>, але з відмінністю: ефект запускається і після <em>монтування</em> теж, тоді як <code>componentDidUpdate</code> — лише після оновлень. Головна зміна мислення: не «в яку фазу», а «від яких значень залежить».',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// 1. Функціональний оновлювач — обовʼязковий при кількох апдейтах / в async\nfunction Counter() {\n  const [n, setN] = useState(0);\n  function addThree() {\n    setN(n + 1); setN(n + 1); setN(n + 1);  // усі три читають n===0 → підсумок: 1\n    // setN(v => v + 1) тричі → підсумок: 3\n  }\n  useEffect(() => {\n    const id = setInterval(() => setN(v => v + 1), 1000); // ✅ не залежить від n\n    return () => clearInterval(id);\n  }, []);              // порожній масив — бо оновлювач не читає n напряму\n}\n\n// 2. Lazy initializer — важкий старт рахується один раз\nconst [tree, setTree] = useState(() => parseHugeJSON(raw));   // не parseHugeJSON(raw)\n\n// 3. Обʼєкт у state — заміна, не мутація\nsetForm(f => ({ ...f, email: value }));   // ✅ новий обʼєкт\n// form.email = value; setForm(form);     // ❌ той самий референс → рендер не спрацює"
+          question: 'Назви причини, з яких компонент ре-рендериться.',
+          answer: 'Чотири: (1) змінився власний <code>state</code>; (2) ре-рендернувся батько — дитина рендериться теж, навіть якщо її пропи не змінились (доки не стоїть <code>React.memo</code>); (3) змінилось значення <code>Context</code>, яке компонент споживає; (4) <code>useReducer</code> dispatch — навіть тим самим значенням (на відміну від <code>useState</code> тим самим значенням, де React бейлить через <code>Object.is</code>). Зміна пропу сама по собі не окремий пункт — вона діє через (2).',
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Кілька <code>useState</code> vs один обʼєкт vs <code>useReducer</code></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Ситуація</th>\n<th>Вибір</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Незалежні поля, що змінюються окремо</td>\n<td>кілька <code>useState</code> — простіше</td>\n</tr>\n<tr>\n<td>Поля завжди змінюються разом (напр. <code>{x, y}</code>)</td>\n<td>один <code>useState</code>-обʼєкт</td>\n</tr>\n<tr>\n<td>Наступний стан залежить від попереднього, багато переходів</td>\n<td><code>useReducer</code> — переходи в одному місці, легше тестувати</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Правило: якщо в <code>onChange</code> ти читаєш поточний стан, щоб порахувати наступний — майже завжди має бути оновлювач-функція.</p></div>"
-        }
+          question: 'Навіщо потрібен <code>&lt;StrictMode&gt;</code> і чому в ньому компоненти рендеряться / монтуються двічі в dev?',
+          answer: 'StrictMode навмисно подвоює виклик тіла компонента, ініціалізаторів <code>useState</code>/<code>useReducer</code> і mount-фазу ефектів (mount → unmount → mount) — щоб виявити неідемпотентність у рендері та ефекти без cleanup ще в розробці. Це саме те, що ламається в concurrent-режимі прода. У production подвоєння немає.',
+        },
+        {
+          question: 'Що таке stale closure у <code>useEffect</code> і як його уникнути?',
+          answer: 'Колбек ефекту «замикає» значення пропсів/стейту на момент свого створення. Якщо ефект запустився один раз (<code>[]</code>), а всередині є <code>setInterval</code>/підписка, що читає <code>count</code> — вона назавжди бачитиме <code>count</code> з першого рендеру. Виходи: <strong>функціональний апдейт</strong> (<code>setCount(c =&gt; c + 1)</code>), додати значення в <code>deps</code> (ефект перезапуститься з актуальним замиканням — не забути cleanup), або тримати «живе» значення в <code>useRef</code> і читати <code>ref.current</code>.',
+        },
+        {
+          question: 'Навіщо <code>AbortController</code> в ефекті, якщо вже є прапорець <code>active</code>?',
+          answer: '<code>active</code>-guard лише <em>ігнорує</em> застарілу відповідь — сам запит усе одно доходить до сервера, тримає з\'єднання й може впертись у rate-limit. <code>controller.abort()</code> реально <strong>рве мережевий запит</strong>, звільняє слот у пулі з\'єднань і зупиняє парсинг тіла. На швидких перемиканнях (autocomplete, пагінація) це відчутно економить трафік і навантаження на бекенд.',
+        },
+        {
+          question: 'Що не так з <code>useEffect(async () =&gt; { … })</code>?',
+          answer: '<code>async</code>-стрілка завжди повертає <strong>Promise</strong>, а React очікує від колбека ефекту або <code>undefined</code>, або cleanup-функцію — Promise він cleanup-ом трактувати не вміє (буде ворнінг, cleanup не спрацює). Правильно: оголосити <code>async</code>-функцію <strong>всередині</strong> ефекту й одразу викликати її, а сам колбек лишити синхронним і повернути з нього справжній cleanup (<code>AbortController.abort()</code>).',
+        },
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Коли <code>setX(x + 1)</code> і <code>setX(v =&gt; v + 1)</code> дають різний результат?",
-          "answer": "Коли за один цикл потрібно кілька оновлень поспіль або оновлення йде із замикання (таймер, проміс). <code>setX(x + 1)</code> двічі → <code>+1</code> (обидва читають той самий <code>x</code>); <code>setX(v =&gt; v + 1)</code> двічі → <code>+2</code> (React передає найсвіжіше значення з черги)."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Три фази життя компонента <span class="tag tag-key">KEY</span></h3>
+  <p>Кожен компонент проходить: <strong>Mount</strong> (перше створення й вставка в DOM) → <strong>Update</strong> (повторюється на кожен ре-рендер: зміна props / state / context) → <strong>Unmount</strong> (видалення з DOM). Класові компоненти виражали це явними методами (<code>componentDidMount</code> тощо — розділ «🏛️ Class vs Functional» нижче); функціональні — через <code>useEffect</code> і порядок виконання самого тіла функції. Нижче — кожна подія покроково.</p>`,
         },
         {
-          "question": "Чим <code>useState(() =&gt; init())</code> відрізняється від <code>useState(init())</code>?",
-          "answer": "<code>useState(init())</code> викликає <code>init()</code> на <strong>кожному</strong> рендері й одразу відкидає результат — марна робота. <code>useState(() =&gt; init())</code> (lazy) React викликає рівно раз, при монтуванні."
+          kind: 'mermaid',
+          caption:
+            'Три стани життя: Mount (один раз) → Update (цикл — повторюється на кожну зміну props / state / context) → Unmount (один раз).',
+          code: `flowchart LR
+  S["Компонент<br/>оголошено в JSX"] --> MOUNT["🟢 MOUNT<br/>перший рендер +<br/>вставка у DOM"]
+  MOUNT --> UPDATE["🔵 UPDATE<br/>ре-рендер на зміну<br/>props / state / context"]
+  UPDATE -->|"знову змінилось"| UPDATE
+  UPDATE --> UNMOUNT["🔴 UNMOUNT<br/>прибрано з DOM +<br/>cleanup ефектів"]
+  MOUNT -->|"прибрано одразу"| UNMOUNT`,
         },
         {
-          "question": "Чому <code>console.log(x)</code> одразу після <code>setX</code> друкує старе значення?",
-          "answer": "<code>x</code> — <strong>знімок</strong> стану для конкретного рендеру, незмінний до його кінця. <code>setX</code> не мутує <code>x</code>, а планує наступний рендер. Нове значення — лише як нова змінна <code>x</code> у наступному рендері."
-        }
-      ]
+          kind: 'mermaid',
+          caption:
+            'Що саме виконується на кожному кроці у функціональному компоненті. Тіло функції = render-фаза (чиста, без side-effects); усе інше робить React у commit-фазі. Побічні ефекти живуть лише в useEffect — бо render-фазу React може перервати чи повторити (розділ «Render vs Commit фази» вище).',
+          code: `flowchart TB
+  subgraph MOUNT["🟢 MOUNT — один раз"]
+    M1["Виклик тіла функції<br/>render-фаза: чиста, повертає JSX"] --> M2["React комітить DOM<br/>+ присвоює refs"]
+    M2 --> M3["useLayoutEffect<br/>синхронно, ДО paint"]
+    M3 --> M4["🖌️ Браузер малює екран"]
+    M4 --> M5["useEffect<br/>асинхронно, ПІСЛЯ paint"]
+  end
+  subgraph UPDATE["🔵 UPDATE — на кожну зміну props / state / context"]
+    U1["Повторний виклик тіла функції"] --> U2["React диффить і комітить<br/>лише те, що змінилось"]
+    U2 --> U3["Залежності useEffect змінились?<br/>ТАК → cleanup старого ефекту, потім новий запуск<br/>НІ → ефект пропускається"]
+  end
+  subgraph UNMOUNT["🔴 UNMOUNT — один раз"]
+    X1["React прибирає вузол з DOM"] --> X2["Запуск УСІХ cleanup-функцій<br/>return з useEffect / useLayoutEffect"]
+  end
+  M5 --> U1
+  U3 -->|"знову змінились props / state"| U1
+  U3 --> X1`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">🧭</span><span>Як читати діаграму: <strong>тіло функції викликається на кожній фазі Mount і Update</strong> — це і є функціональний аналог <code>render()</code>. А <strong>коли</strong> спрацює ефект, вирішує масив залежностей: <code>useEffect(fn, [])</code> = лише Mount + Unmount; <code>useEffect(fn, [dep])</code> = Mount + кожен Update, де змінився <code>dep</code>; <code>useEffect(fn)</code> без масиву = після кожного рендеру. Чому side-effects заборонені прямо в тілі — розділ «🎬 Render vs Commit фази» вище.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">1. MOUNT — що відбувається за першим разом</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Крок</th><th>Що робить React</th></tr>
+    <tr><td>Виклик тіла функції</td><td>render-фаза — чиста, повертає JSX; тут <strong>не можна</strong> робити side-effects</td></tr>
+    <tr><td>Commit у DOM</td><td>React вставляє вузли, присвоює <code>ref.current</code></td></tr>
+    <tr><td><code>useLayoutEffect</code></td><td>синхронно, <strong>ДО</strong> paint — для читання layout / синхронних правок DOM без візуального «флешу»</td></tr>
+    <tr><td>🖌️ Paint</td><td>браузер малює екран</td></tr>
+    <tr><td><code>useEffect</code></td><td>асинхронно, <strong>ПІСЛЯ</strong> paint — fetch, підписки, аналітика (95% випадків)</td></tr>
+  </table></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">2. RE-RENDER — 4 тригери <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap"><table>
+    <tr><th>Тригер</th><th>Деталь</th></tr>
+    <tr><td>Власний <code>state</code></td><td><code>setState</code> тим самим значенням → React <strong>бейлить</strong> (пропускає ре-рендер, <code>Object.is</code>-порівняння)</td></tr>
+    <tr><td>Ре-рендер батька</td><td>дитина рендериться <strong>теж</strong>, навіть якщо її пропи не змінились — доки не стоїть <code>React.memo</code> (розділ «🧠 Мемоізація та референсна стабільність» вище)</td></tr>
+    <tr><td>Зміна <code>Context</code></td><td>усі споживачі провайдера ре-рендеряться на будь-яку зміну <code>value</code> (розділ «🧭 Межі стану та Context»)</td></tr>
+    <tr><td><code>useReducer</code> dispatch</td><td>тригерить рендер <strong>навіть тим самим значенням</strong> — на відміну від <code>useState</code></td></tr>
+  </table></div>
+  <p style="font-size:12.5px;opacity:.75">Кілька <code>setState</code> в одному тику зливаються в один ре-рендер (batching) — розділ «⚡ Automatic Batching» вище.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useReducer vs useState — коли який</h3><div class="grid2">
+    <pre><span class="cmt">// useState — незалежні прості значення</span>
+<span class="kw">const</span> [name, setName] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">false</span>);</pre>
+    <pre><span class="cmt">// useReducer — повʼязаний складний state,</span>
+<span class="cmt">// перехід між станами через явні action-и</span>
+<span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, {
+  data: <span class="kw">null</span>, loading: <span class="kw">false</span>, error: <span class="kw">null</span>
+});
+<span class="fn">dispatch</span>({ type: <span class="str">'FETCH_START'</span> });
+<span class="fn">dispatch</span>({ type: <span class="str">'FETCH_SUCCESS'</span>, payload: data });</pre>
+  </div>
+  <h3 class="topic">useReducer — третій аргумент, lazy init</h3>
+  <pre><span class="cmt">// Як і useState(() => expensive()), useReducer має lazy-варіант —</span>
+<span class="cmt">// третій аргумент "init" застосовується до initialArg лише ОДИН раз при mount</span>
+<span class="kw">function</span> <span class="fn">init</span>(initialCount: <span class="type">number</span>) {
+  <span class="kw">return</span> { count: initialCount, history: [] };  <span class="cmt">// дороге обчислення initial-стану</span>
+}
+<span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, initialCount, init);
+<span class="cmt">// без цього довелось би рахувати початковий стан щорендеру назовні хука</span></pre>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">3. Зміна залежностей ефекту <span class="tag tag-key">KEY</span></h3>
+  <p>Коли значення в <code>deps</code> змінилось: React спершу викликає <strong>cleanup попереднього</strong> запуску, потім запускає ефект <strong>наново</strong> з актуальним замиканням. Якщо <code>deps</code> не змінились — ефект пропускається цілком. Порівняння — <code>Object.is</code> по кожному елементу (поверхнево): новий обʼєкт/масив/функція щорендеру «змінює» залежність, навіть якщо логічно значення те саме — типова причина зайвих запусків і нескінченних циклів.</p>
+  <div class="grid2">
+    <pre><span class="cmt">// Lifecycle-аналогія:</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="cmt">// componentDidMount + componentDidUpdate</span>
+  <span class="kw">return</span> () =&gt; { <span class="cmt">/* componentWillUnmount */</span> };
+}, [dep]);        <span class="cmt">// [] = лише mount/unmount</span>
+                  <span class="cmt">// без масиву = кожен рендер</span>
+                  <span class="cmt">// [dep] = при зміні dep</span></pre>
+    <pre><span class="cmt">// Stale closure bug!</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() =&gt; {
+    <span class="fn">setCount</span>(count + <span class="num">1</span>);  <span class="cmt">// ❌ stale count=0 назавжди</span>
+  }, <span class="num">1000</span>);
+  <span class="kw">return</span> () =&gt; <span class="fn">clearInterval</span>(id);
+}, []);
+
+<span class="cmt">// ✅ Функціональний апдейт — не залежить від closure</span>
+<span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>);</pre>
+  </div>
+  <p style="font-size:12.5px;opacity:.75">Ще один обхід stale closure — «живе» значення в <code>useRef</code> (розділ «🎯 useRef — детально» нижче). Лінтер <code>exhaustive-deps</code> з <code>eslint-plugin-react-hooks</code> стежить за повнотою масиву.</p>
+  <h3 class="topic">useLayoutEffect vs useEffect</h3><div class="grid2">
+    <div class="card red"><h4>useEffect (асинхронний)</h4><p>Виконується <strong>після</strong> paint. Не блокує браузер. 95% випадків (fetch, підписки, аналітика).</p></div>
+    <div class="card yellow"><h4>useLayoutEffect (синхронний)</h4><p>Виконується <strong>до</strong> paint, одразу після DOM-мутацій. Для читання layout/dimensions і синхронних правок DOM — уникнути візуального «флешу».</p></div>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">4. useEffect cleanup — механізм <span class="tag tag-key">KEY</span></h3>
+  <p>Cleanup — це функція, яку <strong>повертає</strong> колбек <code>useEffect</code>. React кличе її <strong>перед кожним наступним запуском</strong> ефекту і <strong>при розмонтуванні</strong> компонента — щоб прибрати все, що ефект «відкрив».</p>
+  <p style="margin-top:6px"><strong>Коли cleanup спрацьовує:</strong></p>
+  <ul>
+    <li>перед повторним запуском ефекту — коли змінилась залежність із <code>deps</code>;</li>
+    <li>при unmount компонента;</li>
+    <li>у dev зі <code>&lt;StrictMode&gt;</code> — додатково після першого «пробного» mount (тому й видно <code>mount → unmount → mount</code>).</li>
+  </ul>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Setup (що ефект відкрив)</th><th>Cleanup (що повернути)</th></tr>
+      <tr><td><code>setInterval</code> / <code>setTimeout</code></td><td><code>clearInterval</code> / <code>clearTimeout</code></td></tr>
+      <tr><td><code>addEventListener</code></td><td><code>removeEventListener</code> — <strong>та сама функція!</strong></td></tr>
+      <tr><td><code>fetch</code> / async-запит</td><td><code>AbortController.abort()</code></td></tr>
+      <tr><td><code>WebSocket</code> / subscription</td><td><code>.close()</code> / <code>unsubscribe()</code></td></tr>
+      <tr><td>Observer (Intersection / Resize / Mutation)</td><td><code>.disconnect()</code></td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Event listener — та сама референція в add і remove',
+          code: `useEffect(() => {
+  const onResize = () => setWidth(window.innerWidth);
+  window.addEventListener('resize', onResize);
+  return () => window.removeEventListener('resize', onResize);
+}, []);
+// removeEventListener мусить отримати ТУ САМУ функцію, що й add —
+// тому оголошуй onResize усередині ефекту, не інлайном у двох місцях.`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Async fetch — race-condition guard + AbortController',
+          code: `useEffect(() => {
+  const controller = new AbortController();
+  fetch(url, { signal: controller.signal })
+    .then(r => r.json())
+    .then(setData)
+    .catch(e => { if (e.name !== 'AbortError') throw e; }); // ігнор скасування
+  return () => controller.abort();  // скасувати при зміні url / unmount
+}, [url]);
+
+// Альтернатива без abort — прапорець-guard (запит усе одно доходить):
+useEffect(() => {
+  let active = true;
+  fetchData().then(d => { if (active) setData(d); });
+  return () => { active = false; };  // ігнорувати stale-відповідь
+}, [url]);`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Subscription — WebSocket / RxJS / Centrifugo',
+          code: `useEffect(() => {
+  const sub = channel.subscribe(onMessage);
+  return () => sub.unsubscribe();
+}, [channel]);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span><strong>Типові помилки cleanup <span class="tag tag-pit">PITFALL</span>:</strong>
+  <ul style="margin:4px 0 0">
+    <li><strong>Порожній cleanup там, де потрібен</strong> — забув <code>return</code> → витік слухача/інтервалу на кожен re-run ефекту.</li>
+    <li><strong>Async-функція прямо в <code>useEffect</code></strong> — <code>useEffect(async () =&gt; …)</code> повертає Promise, а не cleanup. Оголошуй <code>async</code> усередині, ефект лишай синхронним.</li>
+    <li><strong>Різні референції в add/remove</strong> — інлайнова стрілка в обох місцях → <code>removeEventListener</code> не спрацює.</li>
+    <li><strong>Оновлення стану після unmount</strong> — <code>AbortController</code> або <code>active</code>-guard знімають це.</li>
+  </ul></span></div>
+  <p style="font-size:12.5px;opacity:.75">Повний приклад <code>fetch</code> + <code>AbortController</code> з автентифікацією — розділ «🌐 Fetch, axios та автентифікація на клієнті» нижче; мапінг cleanup ↔ <code>componentWillUnmount</code> — «🏛️ Class vs Functional» нижче.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">5. UNMOUNT</h3>
+  <p>React прибирає вузол з DOM і запускає <strong>всі</strong> cleanup-функції, повернуті з <code>useEffect</code> / <code>useLayoutEffect</code> цього компонента (і його піддерева). Після цього посилання на компонент можна відпускати — таймери зупинені, слухачі зняті, підписки закриті, запити скасовані.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">6. &lt;StrictMode&gt; — подвійний виклик лише в dev <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Що це:</strong> runtime-перемикач ЛИШЕ для development-збірки. Навмисно ДВІЧІ викликає тіло компонента, ініціалізатори <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> і (React 18+) mount-фазу ефектів — <code>mount → unmount → mount</code>. <strong>Навіщо:</strong> викрити нечисті компоненти й ефекти без cleanup ще в розробці, поки легко пофіксити. Це той самий сценарій, що React виконує в concurrent-режимі прода — тому баг, який StrictMode показує в dev, там стане реальним.</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>У продакшн-білді нічого не подвоюється.</strong> Правильна реакція на подвійний <code>mount</code>/<code>fetch</code> у dev — не «прибрати <code>&lt;StrictMode&gt;</code>», а зробити ефект <strong>ідемпотентним</strong>: cleanup, який лишає рівно один активний слухач / інтервал / підписку, і <code>AbortController</code> для запитів. Забутий cleanup → після двох <code>mount</code> без <code>unmount</code> між ними отримаєш два інтервали / дубльовані підписки.</span></div>
+  <p>Обгортається <strong>один раз, навколо кореня застосунку</strong>: у Vite/CRA — навколо <code>&lt;App /&gt;</code> у точці входу; у Next.js App Router увімкнено <strong>за замовчуванням</strong> (<code>reactStrictMode: true</code>).</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Подвоюється не лише сам ефект</strong> — будь-який <code>console.log</code> у тілі компонента чи в <code>useEffect</code> виведеться <strong>двічі поспіль</strong>. Це не баг логування — так само подвоюється весь код у цих точках.</span></div>
+  <h3 class="topic">StrictMode (React) vs <code>'use strict'</code> (JavaScript) — не плутати <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th><code>&lt;React.StrictMode&gt;</code></th><th><code>'use strict'</code></th></tr>
+      <tr><td>Що це</td><td>React-компонент (JSX-обгортка)</td><td>Директива мови JavaScript</td></tr>
+      <tr><td>Хто виконує</td><td>React runtime</td><td>JS-рушій (V8 та ін.)</td></tr>
+      <tr><td>Діє де</td><td>Лише в development-збірці</td><td>Завжди — dev і прод однаково</td></tr>
+      <tr><td>Що робить</td><td>Подвоює рендер/ефекти, щоб виявити нечистоту</td><td>Забороняє небезпечні конструкції, робить деякі мовчазні помилки винятками</td></tr>
+      <tr><td>Стосунок один до одного</td><td colspan="2">Жодного — випадковий збіг слова "strict". <code>'use strict'</code> і так увімкнений автоматично в ES-модулях незалежно від StrictMode-компонента.</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Counter() {
+  console.log('render');           // dev + StrictMode: виведе ДВІЧІ підряд
+
+  useEffect(() => {
+    console.log('mount');          // dev: mount → unmount → mount (теж двічі)
+    return () => console.log('unmount');
+  }, []);
+
+  return <div />;
+}
+
+// Виявляє ефекти БЕЗ cleanup — без StrictMode такий баг непомітний у dev,
+// але в concurrent-рендерингу прода дає подвійні підписки/запити:
+useEffect(() => {
+  const id = setInterval(tick, 1000); // ❌ немає clearInterval → StrictMode покаже "2 інтервали"
+}, []);
+
+useEffect(() => {
+  const id = setInterval(tick, 1000);
+  return () => clearInterval(id);     // ✅ cleanup — StrictMode проходить чисто
+}, []);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<p style="font-size:12.5px;opacity:.75">Як це саме виглядало в класових методах (<code>componentDidMount</code>/<code>DidUpdate</code>/<code>WillUnmount</code>) і повна мапа метод → хук — розділ «🏛️ Class vs Functional» нижче.</p>`,
+        },
+      ],
     },
     {
-      "id": "hooks-catalog-full",
-      "title": "📋 Повний каталог хуків",
-      "blocks": [
+      id: 'hooks-useref',
+      title: '🎯 useRef — детально',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<p>Мапа всіх хуків за категоріями. Ті, що мають детальний розбір в інших розділах (useEffect/useLayoutEffect/useReducer/StrictMode — «🔄 Життєвий цикл»; useMemo/useCallback — «🧠 Мемоізація»; useRef — «🎯 useRef»; useTransition/useDeferredValue — свій розділ), тут — коротким рядком з переходом.</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Хук</th>\n<th>Категорія</th>\n<th>З версії</th>\n<th>Навіщо</th>\n<th>Edge case</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>useState</code></td>\n<td>State</td>\n<td>16.8</td>\n<td>Локальний стан, незалежні прості значення</td>\n<td>Lazy initializer — <code>useState(() =&gt; expensive())</code></td>\n</tr>\n<tr>\n<td><code>useReducer</code></td>\n<td>State</td>\n<td>16.8</td>\n<td>Складний повʼязаний state, явні action-переходи</td>\n<td>Детально — «🔄 Життєвий цикл» (свій lazy-init)</td>\n</tr>\n<tr>\n<td><code>useEffect</code></td>\n<td>Effect</td>\n<td>16.8</td>\n<td>Side-effects після paint (fetch, підписки)</td>\n<td>Детально — «🔄 Життєвий цикл» (stale closures, cleanup)</td>\n</tr>\n<tr>\n<td><code>useLayoutEffect</code></td>\n<td>Effect</td>\n<td>16.8</td>\n<td>Синхронно до paint — читання layout</td>\n<td>Детально — «🔄 Життєвий цикл»</td>\n</tr>\n<tr>\n<td><code>useInsertionEffect</code></td>\n<td>Effect</td>\n<td>18</td>\n<td>Вставка <code>&lt;style&gt;</code> ДО useLayoutEffect — для CSS-in-JS бібліотек</td>\n<td>Не для прикладного коду — немає доступу до refs</td>\n</tr>\n<tr>\n<td><code>useRef</code></td>\n<td>Ref</td>\n<td>16.8</td>\n<td>DOM-ref / мутабельне значення без ре-рендеру</td>\n<td>Детально — «🎯 useRef»</td>\n</tr>\n<tr>\n<td><code>useImperativeHandle</code></td>\n<td>Ref</td>\n<td>16.8</td>\n<td>Кастомізує, що батько бачить через <code>ref</code> (з <code>forwardRef</code> або React 19 <code>ref</code>-проп)</td>\n<td>Легко зловживати — імперативний API має лишатись винятком</td>\n</tr>\n<tr>\n<td><code>useMemo</code></td>\n<td>Performance</td>\n<td>16.8</td>\n<td>Кешує дороге обчислення / стабільний референс</td>\n<td>Детально — «🧠 Мемоізація» (не гарантія!)</td>\n</tr>\n<tr>\n<td><code>useCallback</code></td>\n<td>Performance</td>\n<td>16.8</td>\n<td>Кешує референс функції</td>\n<td>Детально — «🧠 Мемоізація»</td>\n</tr>\n<tr>\n<td><code>useContext</code></td>\n<td>Context</td>\n<td>16.8</td>\n<td>Читає значення найближчого Provider</td>\n<td>Ре-рендер на <strong>будь-яку</strong> зміну value провайдера (розділ &quot;Межі стану та Context&quot;)</td>\n</tr>\n<tr>\n<td><code>useTransition</code></td>\n<td>Concurrent</td>\n<td>18</td>\n<td>Неурочна дія (функція-апдейт)</td>\n<td>Детально — «useTransition / useDeferredValue»</td>\n</tr>\n<tr>\n<td><code>useDeferredValue</code></td>\n<td>Concurrent</td>\n<td>18</td>\n<td>Неурочне значення (ззовні)</td>\n<td>Детально — «useTransition / useDeferredValue»</td>\n</tr>\n<tr>\n<td><code>useId</code></td>\n<td>Misc</td>\n<td>18</td>\n<td>Унікальний id, стабільний між сервером і клієнтом</td>\n<td><code>Math.random()</code>/лічильник ламається при SSR (hydration mismatch); <code>useId</code> однаковий на сервері й клієнті</td>\n</tr>\n<tr>\n<td><code>useSyncExternalStore</code></td>\n<td>Misc</td>\n<td>18</td>\n<td>Коректна підписка на зовнішнє джерело стану поза React</td>\n<td>На ньому побудований Zustand; tearing-safe у concurrent, на відміну від <code>useEffect</code>+<code>useState</code></td>\n</tr>\n<tr>\n<td><code>useDebugValue</code></td>\n<td>Misc</td>\n<td>16.8</td>\n<td>Мітка custom hook у React DevTools</td>\n<td>Працює лише в custom hooks — суто DX</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Нішеві хуки — мінімальний приклад</h3>"
+          question: 'У чому головна відмінність <code>useRef</code> від <code>useState</code>?',
+          answer:
+            '<code>useRef</code> повертає мутабельний контейнер <code>{ current }</code>, зміна якого <strong>синхронна й «тиха»</strong> — не планує ре-рендер, нове значення видно одразу в тому самому тику. <code>useState</code> оновлюється <strong>асинхронно</strong> (значення в поточному рендері «заморожене» до наступного) і <strong>тригерить ре-рендер</strong>. Правило вибору: якщо значення впливає на те, що бачить користувач — <code>useState</code>; якщо воно живе «поза UI» (id таймера, попереднє значення, DOM-вузол) — <code>useRef</code>.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// useId — стабільний id для звʼязки label ↔ input (і для aria-*)\nfunction Field({ label }: { label: string }) {\n  const id = useId();\n  return <><label htmlFor={id}>{label}</label><input id={id} /></>;\n  // ❌ не для ключів списку — id один на компонент, не на елемент\n}\n\n// useSyncExternalStore — підписка на джерело поза React без tearing\nfunction useOnlineStatus() {\n  return useSyncExternalStore(\n    (cb) => {\n      window.addEventListener('online', cb);\n      window.addEventListener('offline', cb);\n      return () => {\n        window.removeEventListener('online', cb);\n        window.removeEventListener('offline', cb);\n      };\n    },\n    () => navigator.onLine,          // getSnapshot (клієнт)\n    () => true,                      // getServerSnapshot (SSR)\n  );\n}\n\n// useDebugValue — мітка custom hook у DevTools\nfunction useUser(id: string) {\n  const user = /* ... */;\n  useDebugValue(user ? user.name : 'loading');\n  return user;\n}"
+          question: 'Чому не можна читати/писати <code>.current</code> під час рендеру, і який єдиний виняток?',
+          answer:
+            'Рендер має бути <strong>чистою функцією</strong> пропсів і стейту. Мутація ref у тілі компонента робить результат рендеру залежним від побічного ефекту — це ламається в Concurrent Mode та StrictMode, де React може викликати тіло компонента двічі, перервати чи відкинути рендер. Читати/писати <code>.current</code> треба в <code>useEffect</code> або обробниках подій. Єдиний припустимий виняток — <strong>лінива ініціалізація</strong>: <code>if (ref.current === null) ref.current = createOnce()</code>, бо вона ідемпотентна й виконується фактично один раз.',
         },
         {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <code>useImperativeHandle</code> — приклад у «🎯 useRef». <code>useInsertionEffect</code> у прикладному коді не викликають — це API для авторів CSS-in-JS.</p></div>"
-        }
+          question: 'Що не так з <code>useRef(new ExpensiveThing())</code> і як ініціалізувати важкий об\'єкт один раз?',
+          answer:
+            'Аргумент <code>useRef(...)</code> обчислюється на <strong>кожному рендері</strong> — <code>new ExpensiveThing()</code> створюватиметься щоразу, хоча використається лише перший результат (решта одразу відкидається). Правильно: <code>const ref = useRef(null)</code> і нижче <code>if (ref.current === null) ref.current = new ExpensiveThing()</code> — конструктор виконається рівно раз.',
+        },
+        {
+          question: 'Як <code>useRef</code> рятує від stale closure при порожньому масиві залежностей?',
+          answer:
+            'Колбек, створений один раз (<code>[]</code> deps), назавжди замикається на значеннях першого рендеру. <code>ref</code> — це <strong>той самий об\'єкт</strong> на всіх рендерах; якщо на кожному рендері оновлювати <code>ref.current = value</code>, то читання <code>ref.current</code> усередині «застряглого» колбека дає актуальне значення без перепідписки. На відміну від <strong>функціонального апдейту</strong> (<code>setX(x =&gt; …)</code>) чи <strong>додавання в deps</strong> (перезапуск ефекту з новим замиканням), ref не перезапускає ефект і не тригерить ре-рендер — але й не є реактивним, тож не годиться, коли на зміну значення треба саме зреагувати.',
+        },
+        {
+          question: 'useRef чи useMemo для стабільного мутабельного значення на весь час життя компонента?',
+          answer:
+            '<code>useRef</code>. <code>useMemo(() =&gt; obj, deps)</code> призначений для <strong>похідних значень</strong> і React офіційно може відкинути його кеш будь-коли — покладатись на нього для «створити рівно раз» не можна. <code>useRef</code> гарантує один і той самий <code>.current</code> назавжди й дозволяє його мутувати. <code>useMemo</code> доречний, коли значення <em>обчислюється</em> з інших і має перераховуватись при їх зміні.',
+        },
+        {
+          question: 'Чому не можна навісити <code>ref</code> на функціональний компонент напряму і що змінилось у React 19?',
+          answer:
+            'До React 19 <code>ref</code> — не звичайний prop: React перехоплює його, і функціональний компонент його просто не отримує. Щоб пробросити <code>ref</code> до внутрішнього DOM-вузла, компонент треба обгорнути в <code>forwardRef((props, ref) =&gt; …)</code>. У <strong>React 19</strong> <code>ref</code> став звичайним пропом — його можна приймати як <code>props.ref</code>, і <code>forwardRef</code> більше не обов\'язковий.',
+        },
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Які хуки рідко потрібні у продуктовому коді і чому існують?",
-          "answer": "<code>useImperativeHandle</code>, <code>useDebugValue</code>, <code>useId</code>, <code>useSyncExternalStore</code>. Перший — для контрольованого імперативного API (<code>.focus()</code> на кастомному wrapper'і); <code>useSyncExternalStore</code> — коректна підписка на поза-React сховище без tearing у concurrent (на ньому побудований Zustand)."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що це та базова механіка <span class="tag tag-key">KEY</span></h3>
+  <p><code>useRef</code> — хук, що повертає <strong>мутабельний контейнер</strong> <code>{ current: value }</code>, який зберігається між рендерами й <strong>не викликає ре-рендер</strong> при зміні. Два головні застосування: доступ до DOM-вузлів і зберігання значень, що мають пережити рендери, але не впливати на UI.</p>
+  <pre><span class="kw">const</span> ref = <span class="fn">useRef</span>(initialValue);
+ref.current;            <span class="cmt">// читання</span>
+ref.current = newValue; <span class="cmt">// запис — НЕ тригерить ре-рендер</span></pre>
+  <p><code>useRef(x)</code> повертає <strong>той самий об'єкт</strong> на кожному рендері. Змінюєш <code>.current</code> — значення живе далі, але React про це «не знає» й не перемальовує компонент.</p>`,
         },
         {
-          "question": "Чому підписку на зовнішнє джерело краще через <code>useSyncExternalStore</code>, а не <code>useEffect</code>+<code>useState</code>?",
-          "answer": "Ручний <code>useEffect</code> підписується <strong>після</strong> paint — між рендером і ефектом видно застаріле значення, а в concurrent різні частини дерева можуть відрендеритись з різними значеннями (tearing). <code>useSyncExternalStore</code> читає <code>getSnapshot</code> синхронно під рендер (весь рендер бачить одне значення) + має <code>getServerSnapshot</code> для SSR."
-        }
-      ]
+          kind: 'mermaid',
+          caption:
+            'Головна різниця: setState ставить оновлення в чергу й запускає ре-рендер; запис у ref.current відбувається синхронно й тихо — React про нього не дізнається.',
+          code: `flowchart LR
+  A["setState(x)"] --> B["React ставить<br/>оновлення в чергу"]
+  B --> C["🔵 Ре-рендер<br/>наступний рендер бачить x"]
+  C --> D["🖼️ UI оновлено"]
+  E["ref.current = x"] --> F["🔴 Значення змінено<br/>синхронно, одразу"]
+  F --> G["UI НЕ оновлюється<br/>React не знає про зміну"]`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useRef vs useState <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>&nbsp;</th><th>useState</th><th>useRef</th></tr>
+      <tr><td>Зміна тригерить ре-рендер</td><td>✅ так</td><td>❌ ні</td></tr>
+      <tr><td>Зберігається між рендерами</td><td>✅ так</td><td>✅ так</td></tr>
+      <tr><td>Оновлення</td><td>асинхронне (наступний рендер)</td><td>синхронне (одразу)</td></tr>
+      <tr><td>Читання в тому ж тику</td><td>старе значення</td><td>нове значення</td></tr>
+      <tr><td>Для чого</td><td>дані, що впливають на UI</td><td>дані «поза» UI, DOM-посилання</td></tr>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card red"><h4>state — «заморожений» до наступного рендеру</h4><pre style="font-size:10.5px"><span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+<span class="fn">setCount</span>(<span class="num">5</span>);
+<span class="fn">console</span>.<span class="fn">log</span>(count); <span class="cmt">// 0 — оновиться лише в наступному рендері</span></pre></div>
+    <div class="card green"><h4>ref — синхронно, але тихо</h4><pre style="font-size:10.5px"><span class="kw">const</span> countRef = <span class="fn">useRef</span>(<span class="num">0</span>);
+countRef.current = <span class="num">5</span>;
+<span class="fn">console</span>.<span class="fn">log</span>(countRef.current); <span class="cmt">// 5 — синхронно; UI при цьому не оновиться</span></pre></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Застосування 1 — імперативний доступ до DOM',
+          code: `function Input() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();   // імперативний доступ до DOM
+  }, []);
+
+  return <input ref={inputRef} />;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<p><strong>Типові кейси:</strong> <code>focus()</code>, <code>scrollIntoView()</code>, вимірювання (<code>getBoundingClientRect</code>), інтеграція з не-React бібліотеками (canvas, відеоплеєри, чарти, карти).</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>ref</code> на елементі = <code>null</code> до монтування. Звертайся до <code>.current</code> в <code>useEffect</code> / обробниках подій, <strong>не під час рендеру</strong>.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Застосування 2 — значення, що переживають рендери (id таймера, попереднє значення)',
+          code: `// id інтервалу — треба зберегти для cleanup, але UI від нього не залежить
+const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+useEffect(() => {
+  timerRef.current = setInterval(tick, 1000);
+  return () => { if (timerRef.current) clearInterval(timerRef.current); };
+}, []);
+
+// попереднє значення prop / state
+function usePrevious<T>(value: T) {
+  const ref = useRef<T>();
+  useEffect(() => { ref.current = value; });  // оновлюємо ПІСЛЯ рендеру
+  return ref.current;                          // повертаємо старе
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Застосування 3 — обхід stale closure: ref завжди читає актуальне значення',
+          code: `function Chat() {
+  const [messages, setMessages] = useState<Msg[]>([]);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;   // тримаємо ref свіжим на кожному рендері
+
+  useEffect(() => {
+    socket.on('event', () => {
+      // messagesRef.current — завжди актуальний, на відміну від
+      // messages, замкнутого на значенні першого рендеру
+      console.log(messagesRef.current.length);
+    });
+    return () => socket.off('event');
+  }, []);   // порожні deps, але через ref бачимо свіже значення
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<p>Колбек із порожнім <code>deps</code> замикається на значеннях першого рендеру назавжди (<strong>stale closure</strong>). <code>ref.current</code> — той самий об'єкт на всіх рендерах, тож читання <code>ref.current</code> усередині такого колбека дає завжди актуальне значення без перепідписки. Мінус: ref <strong>не реактивний</strong> — на саму зміну значення так не зреагуєш, лише прочитаєш свіже при наступному виклику колбека.</p>
+  <p style="font-size:12.5px;opacity:.75">Механіка замикань — розділ "Functions, Closures &amp; Scope" у топіку JavaScript; stale closure в <code>useEffect</code> та інші виходи (функціональний апдейт, deps) — розділ «🔄 Життєвий цикл і події компонента» вище.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Критичні правила <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Не читай / не пиши <code>.current</code> під час рендеру.</strong> Рендер має бути чистим. Мутація ref у тілі компонента робить його непередбачуваним для React (Concurrent Mode, StrictMode). Виняток — лінива ініціалізація (нижче). Усе інше — в <code>useEffect</code> або обробниках подій.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Зміна ref не оновлює UI.</strong> Якщо змінив <code>.current</code> і чекаєш перемальовування — це помилка вибору: тобі потрібен <code>useState</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Не роби ref «тіньовим станом»</strong> для даних, що впливають на рендер — компонент показуватиме застарілі дані, доки якийсь ІНШИЙ стан не змусить його перерендеритись; UI розсинхронізується з даними.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Лінива ініціалізація важкого значення',
+          code: `// ❌ useRef(new ExpensiveThing()) — аргумент обчислюється на КОЖНОМУ рендері
+//    (результат після першого просто відкидається) — даремна робота
+
+// ✅ ініціалізуй умовно — конструктор виконається рівно раз
+const ref = useRef<ExpensiveThing | null>(null);
+if (ref.current === null) {
+  ref.current = new ExpensiveThing();
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">forwardRef — ref на власний компонент</h3>
+  <p>Не можна навісити <code>ref</code> на функціональний компонент напряму — до React 19 потрібен <code>forwardRef</code>, щоб пробросити його всередину до DOM-вузла:</p>
+  <pre><span class="kw">const</span> Input = <span class="fn">forwardRef</span>((props, ref) =&gt; &lt;<span class="fn">input</span> ref={ref} {...props} /&gt;);
+<span class="cmt">// тепер &lt;Input ref={myRef} /&gt; працює</span></pre>
+  <div class="alert good"><span class="icon">✅</span><span><span class="tag tag-new">React 19</span> <code>ref</code> можна передавати як звичайний prop — <code>forwardRef</code> більше не обов'язковий. Кастомізація того, що саме бачить батько через <code>ref</code> — <code>useImperativeHandle</code> (каталог хуків вище; детальніше — розділ "React 19 / майбутнє").</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">useRef vs useMemo — щоб не плутати</h3>
+  <div class="grid2">
+    <div class="card blue"><h4>useMemo(() =&gt; obj, deps)</h4><p>Перераховує при зміні <code>deps</code>. Для <strong>похідних значень</strong> — кешоване обчислення, що залежить від входів. Кеш React може відкинути — не гарантія.</p></div>
+    <div class="card green"><h4>useRef(obj)</h4><p><strong>Ніколи</strong> не перераховує сам. Чистий контейнер зі стабільним <code>.current</code> на весь час життя компонента.</p></div>
+  </div>
+  <p>Для стабільного mutable-значення на весь час життя — <code>useRef</code>; для кешованого обчислення, що залежить від входів — <code>useMemo</code>.</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Ключова фраза для співбесіди:</strong> <code>useRef</code> — мутабельний контейнер <code>{ current }</code>, стабільний між рендерами, зміна якого не тригерить ре-рендер. Два застосування: імперативний доступ до DOM (через атрибут <code>ref</code>) і зберігання значень поза циклом рендеру — id таймерів, попередні значення, обхід stale closure. Головна відмінність від state: ref оновлюється синхронно й тихо, state — асинхронно й із перемальовуванням. Не читати/писати <code>.current</code> під час рендеру (крім лінивої ініціалізації) — рендер має лишатись чистим.</span></div>`,
+        },
+      ],
     },
     {
-      "id": "memoization-concept",
-      "title": "🧠 Мемоізація та референсна стабільність",
-      "blocks": [
+      id: 'hooks-concurrent',
+      title: '⚡ useTransition / useDeferredValue',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Що таке мемоізація — загальна техніка <span class=\"tag tag-key\">KEY</span></h3>\n<p>Мемоізація — класична техніка з CS: <strong>кешуй результат обчислення, ключем — його вхідні дані</strong>. Наступного разу з тими самими вхідними даними — поверни збережений результат. Плата — памʼять; вигода — CPU. Мінімальна реалізація (класичне питання — написати самому):</p>"
+          question: 'Яку конкретну UX-проблему вирішує <code>useTransition</code>, і чим він відрізняється від звичайного дебаунсу?',
+          answer: '<code>useTransition</code> позначає оновлення стану як <strong>низькопріоритетне</strong>: React рендерить його у фоні, не блокуючи термінові оновлення (введення тексту, клік), і за потреби перериває незавершений низькопріоритетний рендер новішим. На відміну від дебаунсу, який просто <em>відкладає</em> виконання на таймер, transition дозволяє терміновим оновленням «обганяти» перерваний рендер миттєво, без штучної затримки.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function memoize<Args extends unknown[], R>(fn: (...args: Args) => R) {\n  const cache = new Map<string, R>();\n  return (...args: Args): R => {\n    const key = JSON.stringify(args);       // ключ кешу — вхідні дані\n    if (cache.has(key)) return cache.get(key)!;\n    const result = fn(...args);\n    cache.set(key, result);\n    return result;\n  };\n}\nconst fastSquare = memoize((n: number) => n * n);\nfastSquare(5); // рахує\nfastSquare(5); // з кешу, миттєво — той самий \"ключ\" (5)"
+          question: 'Коли варто використовувати <code>useDeferredValue</code> замість <code>useTransition</code>?',
+          answer: '<code>useTransition</code> застосовують, коли ти <strong>ініціюєш</strong> оновлення стану (керуєш setState). <code>useDeferredValue</code> застосовують, коли значення приходить <strong>ззовні</strong> (проп, контекст) і ти не керуєш моментом його зміни — наприклад, важкий список результатів пошуку, де сам текстовий інпут має лишатись миттєво чутливим, а рендер списку може відставати на кадр.',
         },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Одна ідея, три &quot;одиниці&quot; кешування в React <span class=\"tag tag-key\">KEY</span></h3>\n<p><code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code> — НЕ три окремі концепції, а <strong>та сама</strong> схема &quot;кеш за ключем&quot;:</p>\n<ul class=\"list\">\n<li><strong>useMemo</strong> — кешує <strong>значення</strong>. Ключ — deps-масив. <code>useMemo(fn, deps)</code> ≈ <code>memoize(fn)</code> з ключем <code>deps</code>.</li>\n<li><strong>useCallback</strong> — кешує <strong>посилання на функцію</strong> — окремий випадок useMemo (<code>useCallback(fn, deps)</code> ≈ <code>useMemo(() =&gt; fn, deps)</code>).</li>\n<li><strong>React.memo</strong> — кешує <strong>результат рендеру компонента</strong>. Ключ — props.</li>\n</ul>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Елемент схеми &quot;кеш за ключем&quot;</th>\n<th>У React</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Ключ кешу</td>\n<td>Deps-масив (useMemo/useCallback) або props (React.memo)</td>\n</tr>\n<tr>\n<td>Порівняння ключа</td>\n<td><code>Object.is</code> по кожному елементу (не глибоке!)</td>\n</tr>\n<tr>\n<td>Інвалідація</td>\n<td>Ключ змінився → перерахувати; не змінився → віддати кеш</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Не плутати зі схожими словами <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p><code>memoizedState</code> у Fiber-вузлі — <strong>не</strong> ця техніка: це слот &quot;останнє відоме значення хука&quot;, без ключа й інвалідації. А Next.js <strong>Request Memoization</strong> — навпаки, справжній приклад цієї схеми (дедуплікація однакових <code>fetch</code> у межах одного рендеру, ключ — URL+опції). React Compiler автоматизує застосування цієї схеми. <code>useRef</code> — стабільний контейнер, але <strong>не</strong> кеш-за-ключем.</p>\n<h3 class=\"topic\">useMemo / useCallback — коли реально треба <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p><code>useMemo(fn, deps)</code> кешує <strong>значення</strong> <code>fn()</code>; <code>useCallback(fn, deps)</code> — саму <strong>функцію</strong>. Обидва не безкоштовні (порівняння <code>deps</code> + зберігання кешу коштує). Виправдані, коли: (а) обчислення справді важке, або (б) стабільність референсу критична — проп до <code>React.memo</code>-компонента чи залежність іншого хука. Інакше — складність без користі; спершу профілюй.</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>useMemo — підказка, не гарантія [PITFALL]:</strong> React залишає за собою право <strong>відкинути</strong> закешоване значення й порахувати заново (напр. звільнити память). Код <strong>не повинен покладатись</strong> на useMemo для коректності — лише для продуктивності. Потрібна гарантія &quot;рівно раз&quot; — <code>useRef</code> з лінивою ініціалізацією або <code>useEffect</code>.</p></div>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>useCallback не «чинить» сам себе [PITFALL]:</strong> референс стабільний, лише якщо стабільні ВСІ значення в dependency array. Якщо один з deps — новий обʼєкт/масив щорендеру, <code>useCallback</code> поверне нову функцію.</p></div>\n<h3 class=\"topic\">React.memo — коли працює, коли ні <span class=\"tag tag-key\">KEY</span></h3>\n<p>Та сама схема &quot;кеш за ключем&quot;, ключ — <strong>props</strong>. Порівнює <strong>поверхнево</strong> (<code>Object.is</code> по кожному ключу) і скіпає ре-рендер, якщо всі рівні. Не рятує, якщо проп — новий обʼєкт/масив/функція на кожен рендер батька. Можна передати власний компаратор — рідко потрібно і легко зламати.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const Row = React.memo(\n  function Row({ item, onSelect }: RowProps) {\n    return <li onClick={() => onSelect(item.id)}>{item.title}</li>;\n  },\n  (prev, next) => prev.item.id === next.item.id && prev.item.title === next.item.title,\n  // кастомний компаратор — true = \"пропи рівні, скіпнути рендер\"\n  // ⚠️ забудеш порівняти якийсь проп — компонент застрягне зі старими даними\n);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Референсна стабільність — головна причина, чому memo &quot;не працює&quot; <span class=\"tag tag-pit\">PITFALL</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ Новий референс щорендеру\nfunction Parent() {\n  const [n, setN] = useState(0);\n  return <Row style={{ color: 'red' }}  // новий {} щоразу\n    onSelect={(id) => doSomething(id)} // нова функція щоразу\n  />;               // memo(Row) все одно ре-рендериться\n}\n\n// ✅ Стабілізовано useMemo/useCallback\nfunction Parent() {\n  const [n, setN] = useState(0);\n  const style = useMemo(() => ({ color: 'red' }), []);\n  const onSelect = useCallback((id) => doSomething(id), []);\n  return <Row style={style} onSelect={onSelect} />;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Як саме ре-рендериться дерево — покроковий приклад <span class=\"tag tag-key\">KEY</span></h3>\n<p>Дерево з трьох рівнів: <code>Parent</code> (тримає <code>useState</code>) → <code>Child</code> → <code>Grandchild</code>. Жоден проп не змінюється — лише <code>Parent</code> оновлює власний стан.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Parent() {\n  const [count, setCount] = useState(0);\n  return (\n    <>\n      <button onClick={() => setCount(c => c + 1)}>{count}</button>\n      <Child label=\"static\" />                 {/* проп НЕ змінюється */}\n    </>\n  );\n}\nfunction Child({ label }: { label: string }) { return <Grandchild label={label} />; }\nfunction Grandchild({ label }: { label: string }) { return <span>{label}</span>; }"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<ul class=\"list\">\n<li><strong>❌ Без memo:</strong> клік → <code>setCount</code> → <code>Parent</code> ре-рендериться → <strong>за замовчуванням React рендерить усе піддерево</strong> → <code>Child</code> рендериться → всередині повертає <code>&lt;Grandchild&gt;</code> → <code>Grandchild</code> теж. Три рендери на клік, хоча <code>label</code> не змінився.</li>\n<li><strong>✅ memo(Child):</strong> при кліку <code>Parent</code> рендериться (власний state), <code>Child</code> отримує ре-рендер-запит, але <code>React.memo</code> бачить <code>label=&quot;static&quot;</code> не змінився → <strong>&quot;not rendering&quot;</strong>. Оскільки <code>Child</code> не виконався — <code>Grandchild</code> <strong>взагалі не викликається</strong>, каскад зупинився на межі.</li>\n</ul>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <code>memo</code> — <strong>межа (boundary)</strong>, а не глобальний перемикач: зупиняє поширення ре-рендеру в тому місці дерева, де стоїть. Досить поставити перед &quot;важким&quot; піддеревом, яке не залежить від того, що змінюється вище.</p></div>\n<p>Як знайти зайвий ре-рендер (Profiler, &quot;Why did this render?&quot;) — розділи &quot;Performance Deep Dive&quot; та &quot;React DevTools як Senior&quot; нижче.</p>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Поясни мемоізацію (без React), і чому useMemo/useCallback/React.memo — одна ідея.",
-          "answer": "Мемоізація — кешування результату за ключем вхідних даних (памʼять в обмін на швидкість). У React ця схема застосована до трьох «одиниць»: <code>useMemo</code> кешує значення (ключ — deps), <code>useCallback</code> — посилання на функцію (той самий useMemo), <code>React.memo</code> — результат рендеру (ключ — props). В усіх трьох ключ порівнюється через Object.is/поверхнево."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Concurrent features <span class="tag tag-new">React 18</span></h3>
+  <p>Обидва хуки позначають частину оновлення як <strong>неурочну (non-urgent)</strong> — React рендерить її з нижчим пріоритетом і може перервати заради урочнішого оновлення (наприклад, наступного натискання клавіші). Це і є практичне застосування Fiber-переривності (Block 1).</p><div class="grid2">
+    <pre><span class="cmt">// useTransition — для ДІЙ (функцій)</span>
+<span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();
+
+<span class="fn">startTransition</span>(() =&gt; {
+  <span class="fn">setFiltered</span>(items.<span class="fn">filter</span>(i =&gt; i.includes(q)));
+});
+<span class="cmt">// Urgent: сам input оновлюється відразу</span>
+<span class="cmt">// Non-urgent: важкий filter — deferred, isPending=true поки триває</span></pre>
+    <pre><span class="cmt">// useDeferredValue — для ЗНАЧЕНЬ</span>
+<span class="kw">const</span> [query, setQuery] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="kw">const</span> deferredQuery = <span class="fn">useDeferredValue</span>(query);
+
+<span class="cmt">// deferredQuery оновлюється, коли React має час</span>
+<span class="cmt">// query — миттєво (input лишається responsive)</span>
+<span class="jsx">&lt;</span><span class="fn">SearchResults</span> query={deferredQuery} <span class="jsx">/&gt;</span></pre>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Різниця у виборі: є функція, яку викликаєш сам (сеттер) → <code>useTransition</code>. Є готове значення (проп ззовні, не контролюєш сеттер) → <code>useDeferredValue</code>.</span></div>`,
         },
         {
-          "question": "Fiber-поле memoizedState — це та сама техніка, що useMemo?",
-          "answer": "Ні. memoizedState — &quot;слот останнього значення&quot; хука, без ключа й інвалідації. useMemo/useCallback/React.memo — справжній кеш-за-ключем з умовою скидання (зміна deps/props). Схожа за назвою, але окрема — як і Next.js Request Memoization, що навпаки є справжнім кешем-за-ключем."
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Повний патерн: миттєвий інпут + низькопріоритетний важкий список',
+          code: `function Search({ allItems }: { allItems: Item[] }) {
+  const [query, setQuery] = useState('');
+  const [isPending, startTransition] = useTransition();
+
+  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setQuery(e.target.value);           // urgent — інпут оновлюється негайно
+    startTransition(() => {
+      // низькопріоритетно: якщо користувач друкує далі,
+      // React викине цей рендер і почне новий
+      setResults(filterExpensive(allItems, e.target.value));
+    });
+  }
+
+  return (
+    <>
+      <input value={query} onChange={onChange} />
+      <ul style={{ opacity: isPending ? 0.6 : 1 }}>{/* ... */}</ul>
+    </>
+  );
+}
+
+// Той самий результат без окремого state — useDeferredValue:
+function Search({ allItems }: { allItems: Item[] }) {
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
+  const results = useMemo(
+    () => filterExpensive(allItems, deferredQuery),  // рахується на "відстаючому" значенні
+    [allItems, deferredQuery],
+  );
+  const isStale = query !== deferredQuery;
+  return <>{/* input керується query, список — results */}</>;
+}`,
         },
         {
-          "question": "Коли <code>React.memo</code> реально допомагає, а коли лише додає витрати?",
-          "answer": "Корисний для «важких» компонентів зі стабільними props. Якщо компонент дешевий або props (об'єкти/функції/масиви) створюються заново щоразу — <code>memo</code> лише додає витрати на поверхневе порівняння, бо воно все одно «провалиться»."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Чому це не дебаунс <span class="tag tag-key">KEY</span></h3>
+  <p>Дебаунс <em>відкладає</em> роботу на фіксований таймер — навіть якщо процесор вільний, ти чекаєш умовні 300 мс. Transition роботу <strong>не відкладає</strong>: React починає рендер одразу, але з правом перервати його, щойно прилетить урочніше оновлення (наступна клавіша). На швидкій машині список оновиться майже миттєво, на повільній — плавно деградує, без магічної константи.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>startTransition</code> має містити <strong>синхронний</strong> <code>setState</code>. <code>await</code> усередині «розриває» transition — оновлення після нього вже урочне. Для async-роботи в React 19 <code>useTransition</code> приймає async-функцію (Actions, розділ «✨ React 19 / майбутнє»). І transition не робить сам <code>filterExpensive</code>/fetch швидшим — лише знижує пріоритет рендеру результату.</span></div>`,
         },
-        {
-          "question": "<code>memo</code> не допоміг — з чого почнеш дебаг?",
-          "answer": "Спершу <strong>виміряти</strong>: Profiler → «Why did this render?» назве причину (<code>props changed</code>/<code>hooks changed</code>/<code>parent rendered</code>). Найчастіше — <strong>новий референс пропу</strong> щорендеру (інлайновий <code>{}</code>/стрілка), що провалює поверхневе порівняння. Далі — стабілізувати проп через <code>useMemo</code>/<code>useCallback</code> або підняти вище."
-        }
-      ]
+      ],
     },
     {
-      "id": "hooks-deep-dive",
-      "title": "🔄 Життєвий цикл і події компонента",
-      "blocks": [
+      id: 'hooks-custom',
+      title: '🧵 Custom Hooks',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Три фази життя компонента <span class=\"tag tag-key\">KEY</span></h3>\n<p>Кожен компонент проходить: <strong>Mount</strong> (перше створення й вставка в DOM) → <strong>Update</strong> (на кожен ре-рендер: зміна props/state/context) → <strong>Unmount</strong> (видалення з DOM). Класи виражали це методами (<code>componentDidMount</code> тощо); функціональні — через <code>useEffect</code> і порядок виконання тіла функції.</p>"
+          question: 'За яким принципом варто виносити логіку у custom hook, а не залишати її в компоненті?',
+          answer: 'Custom hook виправданий, коли stateful-логіка (підписка, таймер, fetch, синхронізація з зовнішнім джерелом) <strong>повторюється в кількох компонентах</strong> або коли вона достатньо самодостатня, щоб її можна було протестувати й іменувати окремо від UI. Якщо логіка використовується один раз і тісно пов\'язана з конкретним рендером — виносити її заради «чистоти» без реальної причини — це зайва абстракція.',
         },
         {
-          "kind": "mermaid",
-          "code": "flowchart LR\n  S[\"Компонент<br/>оголошено в JSX\"] --> MOUNT[\"🟢 MOUNT<br/>перший рендер +<br/>вставка у DOM\"]\n  MOUNT --> UPDATE[\"🔵 UPDATE<br/>ре-рендер на зміну<br/>props / state / context\"]\n  UPDATE -->|\"знову змінилось\"| UPDATE\n  UPDATE --> UNMOUNT[\"🔴 UNMOUNT<br/>прибрано з DOM +<br/>cleanup ефектів\"]\n  MOUNT -->|\"прибрано одразу\"| UNMOUNT"
+          question: 'Чи custom hook створює власний, ізольований стан для кожного компонента, який його викликає?',
+          answer: 'Так. Кожен виклик custom hook у різних компонентах (або навіть у різних інстансах одного компонента) отримує <strong>власну, незалежну</strong> копію стану, бо хук — це просто функція, яка під капотом викликає <code>useState</code>/<code>useEffect</code> у контексті поточного fiber-рендеру; спільного сховища між викликами немає, на відміну від, наприклад, синглтон-стору.',
         },
-        {
-          "kind": "paragraph",
-          "html": "<p><strong>Тіло функції = render-фаза (чиста, без side-effects); усе інше робить React у commit-фазі. Побічні ефекти живуть лише в useEffect.</strong></p>"
-        },
-        {
-          "kind": "mermaid",
-          "code": "flowchart TB\n  subgraph MOUNT[\"🟢 MOUNT — один раз\"]\n    M1[\"Виклик тіла функції<br/>render-фаза: чиста, повертає JSX\"] --> M2[\"React комітить DOM<br/>+ присвоює refs\"]\n    M2 --> M3[\"useLayoutEffect<br/>синхронно, ДО paint\"]\n    M3 --> M4[\"🖌️ Браузер малює екран\"]\n    M4 --> M5[\"useEffect<br/>асинхронно, ПІСЛЯ paint\"]\n  end\n  subgraph UPDATE[\"🔵 UPDATE — на кожну зміну props / state / context\"]\n    U1[\"Повторний виклик тіла функції\"] --> U2[\"React диффить і комітить<br/>лише те, що змінилось\"]\n    U2 --> U3[\"Залежності useEffect змінились?<br/>ТАК → cleanup старого ефекту, потім новий запуск<br/>НІ → ефект пропускається\"]\n  end\n  subgraph UNMOUNT[\"🔴 UNMOUNT — один раз\"]\n    X1[\"React прибирає вузол з DOM\"] --> X2[\"Запуск УСІХ cleanup-функцій<br/>return з useEffect / useLayoutEffect\"]\n  end\n  M5 --> U1\n  U3 -->|\"знову змінились props / state\"| U1\n  U3 --> X1"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert\"><span class=\"icon\">🧭</span><p> Як читати діаграму: <strong>тіло функції викликається на кожній фазі Mount і Update</strong> — функціональний аналог <code>render()</code>. А <strong>коли</strong> спрацює ефект, вирішує масив залежностей: <code>useEffect(fn, [])</code> = лише Mount + Unmount; <code>useEffect(fn, [dep])</code> = Mount + кожен Update, де змінився <code>dep</code>; <code>useEffect(fn)</code> без масиву = після кожного рендеру.</p></div>\n<h3 class=\"topic\">1. MOUNT — що відбувається за першим разом</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Крок</th>\n<th>Що робить React</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Виклик тіла функції</td>\n<td>render-фаза — чиста, повертає JSX; тут <strong>не можна</strong> side-effects</td>\n</tr>\n<tr>\n<td>Commit у DOM</td>\n<td>React вставляє вузли, присвоює <code>ref.current</code></td>\n</tr>\n<tr>\n<td><code>useLayoutEffect</code></td>\n<td>синхронно, <strong>ДО</strong> paint — читання layout / синхронні правки DOM без «флешу»</td>\n</tr>\n<tr>\n<td>🖌️ Paint</td>\n<td>браузер малює екран</td>\n</tr>\n<tr>\n<td><code>useEffect</code></td>\n<td>асинхронно, <strong>ПІСЛЯ</strong> paint — fetch, підписки, аналітика (95% випадків)</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">2. RE-RENDER — 4 тригери <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Тригер</th>\n<th>Деталь</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Власний <code>state</code></td>\n<td><code>setState</code> тим самим значенням → React <strong>бейлить</strong> (<code>Object.is</code>)</td>\n</tr>\n<tr>\n<td>Ре-рендер батька</td>\n<td>дитина рендериться <strong>теж</strong>, навіть якщо пропи не змінились — доки не стоїть <code>React.memo</code></td>\n</tr>\n<tr>\n<td>Зміна <code>Context</code></td>\n<td>усі споживачі провайдера ре-рендеряться на будь-яку зміну <code>value</code></td>\n</tr>\n<tr>\n<td><code>useReducer</code> dispatch</td>\n<td>тригерить рендер <strong>навіть тим самим значенням</strong> — на відміну від <code>useState</code></td>\n</tr>\n</tbody>\n</table></div>\n<p>Кілька <code>setState</code> в одному тику зливаються в один ре-рендер (batching) — розділ «⚡ Automatic Batching».</p>\n<h3 class=\"topic\">useReducer vs useState — коли який</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// useState — незалежні прості значення\nconst [name, setName] = useState('');\nconst [loading, setLoading] = useState(false);\n\n// useReducer — повʼязаний складний state, переходи через явні action-и\nconst [state, dispatch] = useReducer(reducer, { data: null, loading: false, error: null });\ndispatch({ type: 'FETCH_START' });\ndispatch({ type: 'FETCH_SUCCESS', payload: data });"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// useReducer має lazy-варіант — третій аргумент \"init\" застосовується до initialArg раз при mount\nfunction init(initialCount: number) {\n  return { count: initialCount, history: [] };  // дороге обчислення initial-стану\n}\nconst [state, dispatch] = useReducer(reducer, initialCount, init);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">3. Зміна залежностей ефекту <span class=\"tag tag-key\">KEY</span></h3>\n<p>Коли значення в <code>deps</code> змінилось: React спершу викликає <strong>cleanup попереднього</strong> запуску, потім запускає ефект <strong>наново</strong> з актуальним замиканням. Якщо <code>deps</code> не змінились — ефект пропускається. Порівняння — <code>Object.is</code> (поверхнево): новий обʼєкт/масив/функція щорендеру «змінює» залежність — типова причина зайвих запусків і нескінченних циклів.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Lifecycle-аналогія:\nuseEffect(() => {\n  // componentDidMount + componentDidUpdate\n  return () => { /* componentWillUnmount */ };\n}, [dep]);        // [] = mount/unmount; без масиву = кожен рендер; [dep] = при зміні dep\n\n// Stale closure bug!\nuseEffect(() => {\n  const id = setInterval(() => {\n    setCount(count + 1);  // ❌ stale count=0 назавжди\n  }, 1000);\n  return () => clearInterval(id);\n}, []);\n// ✅ Функціональний апдейт — не залежить від closure\nsetCount(c => c + 1);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<p>Ще один обхід stale closure — «живе» значення в <code>useRef</code> (розділ «🎯 useRef»). Лінтер <code>exhaustive-deps</code> стежить за повнотою масиву.</p>\n<h3 class=\"topic\">useLayoutEffect vs useEffect</h3>\n<ul class=\"list\">\n<li><strong>useEffect (асинхронний)</strong> — після paint. Не блокує браузер. 95% випадків (fetch, підписки, аналітика).</li>\n<li><strong>useLayoutEffect (синхронний)</strong> — до paint, одразу після DOM-мутацій. Для читання layout/dimensions і синхронних правок DOM — уникнути візуального «флешу».</li>\n</ul>\n<h3 class=\"topic\">4. useEffect cleanup — механізм <span class=\"tag tag-key\">KEY</span></h3>\n<p>Cleanup — функція, яку <strong>повертає</strong> колбек <code>useEffect</code>. React кличе її <strong>перед кожним наступним запуском</strong> ефекту і <strong>при розмонтуванні</strong> — щоб прибрати все, що ефект «відкрив».</p>\n<p><strong>Коли cleanup спрацьовує:</strong> перед повторним запуском (змінилась залежність); при unmount; у dev зі <code>&lt;StrictMode&gt;</code> — додатково після першого «пробного» mount.</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Setup (що ефект відкрив)</th>\n<th>Cleanup (що повернути)</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>setInterval</code> / <code>setTimeout</code></td>\n<td><code>clearInterval</code> / <code>clearTimeout</code></td>\n</tr>\n<tr>\n<td><code>addEventListener</code></td>\n<td><code>removeEventListener</code> — <strong>та сама функція!</strong></td>\n</tr>\n<tr>\n<td><code>fetch</code> / async-запит</td>\n<td><code>AbortController.abort()</code></td>\n</tr>\n<tr>\n<td><code>WebSocket</code> / subscription</td>\n<td><code>.close()</code> / <code>unsubscribe()</code></td>\n</tr>\n<tr>\n<td>Observer (Intersection / Resize / Mutation)</td>\n<td><code>.disconnect()</code></td>\n</tr>\n</tbody>\n</table></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Event listener — та сама референція в add і remove\nuseEffect(() => {\n  const onResize = () => setWidth(window.innerWidth);\n  window.addEventListener('resize', onResize);\n  return () => window.removeEventListener('resize', onResize);\n}, []);\n\n// Async fetch — race-condition guard + AbortController\nuseEffect(() => {\n  const controller = new AbortController();\n  fetch(url, { signal: controller.signal })\n    .then(r => r.json())\n    .then(setData)\n    .catch(e => { if (e.name !== 'AbortError') throw e; }); // ігнор скасування\n  return () => controller.abort();  // скасувати при зміні url / unmount\n}, [url]);\n\n// Альтернатива без abort — прапорець-guard (запит усе одно доходить):\nuseEffect(() => {\n  let active = true;\n  fetchData().then(d => { if (active) setData(d); });\n  return () => { active = false; };  // ігнорувати stale-відповідь\n}, [url]);\n\n// Subscription — WebSocket / RxJS / Centrifugo\nuseEffect(() => {\n  const sub = channel.subscribe(onMessage);\n  return () => sub.unsubscribe();\n}, [channel]);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Типові помилки cleanup [PITFALL]:</strong> порожній cleanup там, де потрібен (витік слухача/інтервалу); <code>useEffect(async () =&gt; …)</code> повертає Promise, а не cleanup (оголошуй <code>async</code> усередині, ефект лишай синхронним); різні референції в add/remove; оновлення стану після unmount (знімається <code>AbortController</code>/<code>active</code>-guard).</p></div>\n<p>Повний приклад <code>fetch</code> + <code>AbortController</code> з автентифікацією — розділ «🌐 Fetch, axios...»; мапінг cleanup ↔ <code>componentWillUnmount</code> — «🏛️ Class vs Functional».</p>\n<h3 class=\"topic\">5. UNMOUNT</h3>\n<p>React прибирає вузол з DOM і запускає <strong>всі</strong> cleanup-функції з <code>useEffect</code>/<code>useLayoutEffect</code> цього компонента (і піддерева). Після цього таймери зупинені, слухачі зняті, підписки закриті, запити скасовані.</p>\n<h3 class=\"topic\">6. &lt;StrictMode&gt; — подвійний виклик лише в dev <span class=\"tag tag-key\">KEY</span></h3>\n<p>Runtime-перемикач ЛИШЕ для dev-збірки. Навмисно ДВІЧІ викликає тіло компонента, ініціалізатори <code>useState</code>/<code>useMemo</code>/<code>useReducer</code> і (React 18+) mount-фазу ефектів — <code>mount → unmount → mount</code>. <strong>Навіщо:</strong> викрити нечисті компоненти й ефекти без cleanup у розробці. Це той самий сценарій, що React виконує в concurrent-режимі прода.</p>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>У продакшн-білді нічого не подвоюється.</strong> Правильна реакція на подвійний <code>mount</code>/<code>fetch</code> у dev — не «прибрати <code>&lt;StrictMode&gt;</code>», а зробити ефект <strong>ідемпотентним</strong>: cleanup + <code>AbortController</code>. Забутий cleanup → після двох <code>mount</code> без <code>unmount</code> отримаєш два інтервали / дубльовані підписки.</p></div>\n<p>Обгортається <strong>один раз, навколо кореня</strong> (у Vite/CRA — навколо <code>&lt;App /&gt;</code>; у Next.js App Router увімкнено за замовчуванням).</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Подвоюється не лише ефект — будь-який <code>console.log</code> у тілі компонента/ефекті виведеться <strong>двічі</strong>.</p></div>\n<h3 class=\"topic\">StrictMode (React) vs <code>'use strict'</code> (JavaScript) — не плутати <span class=\"tag tag-pit\">PITFALL</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th></th>\n<th><code>&lt;React.StrictMode&gt;</code></th>\n<th><code>'use strict'</code></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Що це</td>\n<td>React-компонент (JSX-обгортка)</td>\n<td>Директива мови JavaScript</td>\n</tr>\n<tr>\n<td>Хто виконує</td>\n<td>React runtime</td>\n<td>JS-рушій (V8 та ін.)</td>\n</tr>\n<tr>\n<td>Діє де</td>\n<td>Лише в dev-збірці</td>\n<td>Завжди — dev і прод однаково</td>\n</tr>\n<tr>\n<td>Що робить</td>\n<td>Подвоює рендер/ефекти, щоб виявити нечистоту</td>\n<td>Забороняє небезпечні конструкції, робить мовчазні помилки винятками</td>\n</tr>\n<tr>\n<td>Стосунок</td>\n<td>Жодного — випадковий збіг слова &quot;strict&quot;. <code>'use strict'</code> і так увімкнений в ES-модулях.</td>\n<td></td>\n</tr>\n</tbody>\n</table></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Counter() {\n  console.log('render');           // dev + StrictMode: ДВІЧІ підряд\n  useEffect(() => {\n    console.log('mount');          // dev: mount → unmount → mount\n    return () => console.log('unmount');\n  }, []);\n  return <div />;\n}\n\n// Виявляє ефекти БЕЗ cleanup:\nuseEffect(() => { const id = setInterval(tick, 1000); }, []);          // ❌ StrictMode: \"2 інтервали\"\nuseEffect(() => { const id = setInterval(tick, 1000); return () => clearInterval(id); }, []); // ✅"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<p>Як це виглядало в класових методах і повна мапа метод → хук — розділ «🏛️ Class vs Functional».</p>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Як зіставити <code>componentDidMount</code>/<code>componentDidUpdate</code>/<code>componentWillUnmount</code> з <code>useEffect</code>?",
-          "answer": "Один <code>useEffect(fn, [])</code> = <code>componentDidMount</code> + <code>componentWillUnmount</code> (cleanup). <code>useEffect(fn, [dep])</code> покриває <code>componentDidUpdate</code>, але запускається і після <em>монтування</em> теж. Головна зміна мислення: не «в яку фазу», а «від яких значень залежить»."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Custom Hooks <span class="tag tag-key">KEY</span></h3>
+  <p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і підпорядковується тим самим правилам хуків (не в умовах/циклах/вкладених функціях, розділ «🪝 Хуки: навіщо і правила» вище). Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — компонент, що її використовує, лишається "тупим" (тонкий шар рендеру).</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Префікс <code>use</code> — не стиль, а вимога.</strong> Саме за ним <code>eslint-plugin-react-hooks</code> розпізнає функцію як хук і застосовує до неї Rules of Hooks-лінтинг. Назви функцію без цього префікса — і лінтер більше не перевірить порядок викликів усередині, навіть якщо вона викликає інші хуки.</span></div>
+  <div class="grid2">
+    <div class="card"><h4>useDebouncedValue</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useDebouncedValue</span>&lt;T&gt;(value: T, ms = <span class="num">300</span>) {
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value);
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> id = <span class="fn">setTimeout</span>(() =&gt; <span class="fn">setDebounced</span>(value), ms);
+    <span class="kw">return</span> () =&gt; <span class="fn">clearTimeout</span>(id);
+  }, [value, ms]);
+  <span class="kw">return</span> debounced;
+}</pre></div>
+    <div class="card blue"><h4>useObservable (RxJS у хуку) — Sigma-тема</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useObservable</span>&lt;T&gt;(source$: Observable&lt;T&gt;, initial: T) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(initial);
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> sub = source$.<span class="fn">subscribe</span>(setValue);
+    <span class="kw">return</span> () =&gt; sub.<span class="fn">unsubscribe</span>();  <span class="cmt">// cleanup — обовʼязково!</span>
+  }, [source$]);
+  <span class="kw">return</span> value;
+}
+<span class="cmt">// presence$, debouncedSearch$ і т.п. стають звичайним React-значенням</span></pre></div>
+  </div>
+  <h3 class="topic">Ще приклади — найчастіші custom hooks у реальних проєктах</h3>
+  <div class="grid2">
+    <div class="card"><h4>usePrevious</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">usePrevious</span>&lt;T&gt;(value: T) {
+  <span class="kw">const</span> ref = <span class="fn">useRef</span>&lt;T&gt;();
+  <span class="fn">useEffect</span>(() =&gt; {
+    ref.current = value;      <span class="cmt">// записується ПІСЛЯ рендеру,</span>
+  });                         <span class="cmt">// тому під час рендеру ref.current — ще старе значення</span>
+  <span class="kw">return</span> ref.current;   <span class="cmt">// "значення з минулого рендеру"</span>
+}
+<span class="cmt">// const prevCount = usePrevious(count);</span>
+<span class="cmt">// if (count !== prevCount) { ... } — порівняння з минулим рендером</span></pre></div>
+    <div class="card blue"><h4>useLocalStorage</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useLocalStorage</span>&lt;T&gt;(key: <span class="type">string</span>, initial: T) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>&lt;T&gt;(() =&gt; {
+    <span class="kw">if</span> (<span class="kw">typeof</span> window === <span class="str">'undefined'</span>) <span class="kw">return</span> initial; <span class="cmt">// SSR guard!</span>
+    <span class="kw">const</span> saved = localStorage.<span class="fn">getItem</span>(key);
+    <span class="kw">return</span> saved ? JSON.<span class="fn">parse</span>(saved) : initial;
+  });
+  <span class="fn">useEffect</span>(() =&gt; {
+    localStorage.<span class="fn">setItem</span>(key, JSON.<span class="fn">stringify</span>(value));
+  }, [key, value]);
+  <span class="kw">return</span> [value, setValue] <span class="kw">as const</span>;
+}</pre></div>
+    <div class="card green"><h4>useOnClickOutside</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useOnClickOutside</span>(
+  ref: RefObject&lt;HTMLElement&gt;, handler: () =&gt; <span class="type">void</span>
+) {
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> <span class="fn">listener</span> = (e: MouseEvent) =&gt; {
+      <span class="kw">if</span> (!ref.current?.<span class="fn">contains</span>(e.target <span class="kw">as</span> Node)) handler();
+    };
+    document.<span class="fn">addEventListener</span>(<span class="str">'mousedown'</span>, listener);
+    <span class="kw">return</span> () =&gt; document.<span class="fn">removeEventListener</span>(<span class="str">'mousedown'</span>, listener); <span class="cmt">// без cleanup — memory leak на кожен mount/unmount</span>
+  }, [ref, handler]);
+}</pre></div>
+    <div class="card yellow"><h4>useMediaQuery</h4><pre style="font-size:10.5px"><span class="kw">function</span> <span class="fn">useMediaQuery</span>(query: <span class="type">string</span>) {
+  <span class="kw">return</span> <span class="fn">useSyncExternalStore</span>(
+    onChange =&gt; {
+      <span class="kw">const</span> mql = <span class="fn">matchMedia</span>(query);
+      mql.<span class="fn">addEventListener</span>(<span class="str">'change'</span>, onChange);
+      <span class="kw">return</span> () =&gt; mql.<span class="fn">removeEventListener</span>(<span class="str">'change'</span>, onChange);
+    },
+    () =&gt; <span class="fn">matchMedia</span>(query).matches   <span class="cmt">// getSnapshot</span>
+  );
+  <span class="cmt">// useSyncExternalStore, а не useEffect+useState — коректно</span>
+  <span class="cmt">// під concurrent-рендерингом (каталог хуків вище)</span>
+}</pre></div>
+  </div>
+  <h3 class="topic">Плюси й мінуси</h3>
+  <div class="grid2">
+    <div class="card green"><h4>✅ Плюси</h4><p>Перевикористання логіки без жодної обгортки в дереві компонентів (на відміну від HOC, розділ «🪝 Хуки: навіщо і правила» вище). Логіка тестується ізольовано (<code>renderHook</code> з testing-library). Композиція — custom hook може викликати інші custom hooks.</p></div>
+    <div class="card red"><h4>❌ Мінуси / edge cases</h4><p><strong>Stale closures</strong> всередині самого хука — та сама проблема, що й у звичайному <code>useEffect</code> (розділ «🔄 Життєвий цикл і події компонента»), просто захована на рівень абстракції глибше — легше не помітити. <strong>Нестабільний референс, що повертається</strong> — якщо хук повертає новий обʼєкт/масив/функцію щовиклику (навіть без зміни даних), кожен компонент-споживач отримує "змінений" проп щорендеру — ламає <code>memo</code>/dep-array у споживача (розділ «🧠 Мемоізація та референсна стабільність») так само, як і звичайний нестабільний проп.</p></div>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Custom hook — не про "перевикористання UI" (для цього компоненти), а про <strong>перевикористання stateful-логіки</strong>. Кожен виклик хука в різних компонентах створює <em>ізольований</em> стан — вони не діляться значенням між собою.</span></div>`,
         },
-        {
-          "question": "Назви причини ре-рендеру.",
-          "answer": "Чотири: (1) власний <code>state</code>; (2) ре-рендер батька (дитина рендериться теж, доки не стоїть <code>memo</code>); (3) зміна <code>Context</code>, який споживає; (4) <code>useReducer</code> dispatch навіть тим самим значенням. Зміна пропу — не окремий пункт, діє через (2)."
-        },
-        {
-          "question": "Навіщо <code>&lt;StrictMode&gt;</code> і чому компоненти монтуються двічі в dev?",
-          "answer": "Навмисно подвоює виклик тіла, ініціалізаторів і mount-фазу ефектів (mount→unmount→mount) — щоб виявити неідемпотентність рендеру й ефекти без cleanup. Це те, що ламається в concurrent-режимі прода. У production подвоєння немає."
-        },
-        {
-          "question": "Що таке stale closure у <code>useEffect</code> і як уникнути?",
-          "answer": "Колбек «замикає» значення на момент створення. Якщо ефект запустився раз (<code>[]</code>) і всередині <code>setInterval</code> читає <code>count</code> — назавжди бачить <code>count</code> з першого рендеру. Виходи: функціональний апдейт (<code>setCount(c =&gt; c+1)</code>), додати в <code>deps</code> (перезапуск з актуальним замиканням, не забути cleanup), або «живе» значення в <code>useRef</code>."
-        },
-        {
-          "question": "Навіщо <code>AbortController</code>, якщо є прапорець <code>active</code>?",
-          "answer": "<code>active</code>-guard лише <em>ігнорує</em> застарілу відповідь — запит усе одно доходить до сервера. <code>controller.abort()</code> реально <strong>рве мережевий запит</strong>, звільняє слот у пулі й зупиняє парсинг тіла. На швидких перемиканнях (autocomplete) відчутно економить трафік."
-        },
-        {
-          "question": "Що не так з <code>useEffect(async () =&gt; { … })</code>?",
-          "answer": "<code>async</code>-стрілка завжди повертає <strong>Promise</strong>, а React очікує <code>undefined</code> або cleanup-функцію — Promise cleanup-ом не трактується (ворнінг, cleanup не спрацює). Правильно: оголосити <code>async</code>-функцію <strong>всередині</strong> й викликати, а колбек лишити синхронним і повернути справжній cleanup."
-        }
-      ]
+      ],
     },
     {
-      "id": "hooks-useref",
-      "title": "🎯 useRef — детально",
-      "blocks": [
+      id: 'lifecycle-class-vs-functional',
+      title: '🏛️ Class vs Functional',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Що це та базова механіка <span class=\"tag tag-key\">KEY</span></h3>\n<p><code>useRef</code> — хук, що повертає <strong>мутабельний контейнер</strong> <code>{ current: value }</code>, який зберігається між рендерами й <strong>не викликає ре-рендер</strong> при зміні. Два застосування: доступ до DOM-вузлів і зберігання значень, що мають пережити рендери, але не впливати на UI.</p>"
+          question: 'Чому один <code>useEffect(fn, [dep])</code> кращий за пару lifecycle-методів, які він замінює?',
+          answer: 'Логіку «зробити X при першому рендері і при зміні <code>dep</code>» в класі доводилось писати <strong>двічі</strong> — у <code>componentDidMount</code> і в <code>componentDidUpdate</code> з ручним звірянням <code>prevProps</code>. Один <code>useEffect(fn, [dep])</code> покриває обидва випадки декларативно: React сам вирішує «mount чи update», код не дублюється, а без ручного порівняння немає й ризику нескінченного циклу оновлень.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const ref = useRef(initialValue);\nref.current;            // читання\nref.current = newValue; // запис — НЕ тригерить ре-рендер"
+          question: 'Що з lifecycle досі не має повноцінного хук-еквівалента?',
+          answer: '<code>componentDidCatch</code> / <code>getDerivedStateFromError</code> — механізм Error Boundary. Ловити помилки рендеру піддерева досі можна лише класовим компонентом (або обгорткою <code>react-error-boundary</code>); хука для цього немає — деталі в розділі «🧩 Patterns».',
         },
         {
-          "kind": "paragraph",
-          "html": "<p><code>useRef(x)</code> повертає <strong>той самий об'єкт</strong> на кожному рендері. Змінюєш <code>.current</code> — значення живе далі, але React про це «не знає».</p>"
+          question: 'Навіщо взагалі знати класовий API, якщо нові компоненти на ньому не пишуть?',
+          answer: 'Лише щоб читати легасі-код і розуміти співрозмовника на співбесіді. Весь класовий lifecycle зводиться до короткої мапи на хуки (нижче); нового коду на класах не пишуть — єдиний виняток це самі Error Boundary.',
         },
-        {
-          "kind": "mermaid",
-          "code": "flowchart LR\n  A[\"setState(x)\"] --> B[\"React ставить<br/>оновлення в чергу\"]\n  B --> C[\"🔵 Ре-рендер<br/>наступний рендер бачить x\"]\n  C --> D[\"🖼️ UI оновлено\"]\n  E[\"ref.current = x\"] --> F[\"🔴 Значення змінено<br/>синхронно, одразу\"]\n  F --> G[\"UI НЕ оновлюється<br/>React не знає про зміну\"]"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">useRef vs useState <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th></th>\n<th>useState</th>\n<th>useRef</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Зміна тригерить ре-рендер</td>\n<td>✅ так</td>\n<td>❌ ні</td>\n</tr>\n<tr>\n<td>Зберігається між рендерами</td>\n<td>✅ так</td>\n<td>✅ так</td>\n</tr>\n<tr>\n<td>Оновлення</td>\n<td>асинхронне (наступний рендер)</td>\n<td>синхронне (одразу)</td>\n</tr>\n<tr>\n<td>Читання в тому ж тику</td>\n<td>старе значення</td>\n<td>нове значення</td>\n</tr>\n<tr>\n<td>Для чого</td>\n<td>дані, що впливають на UI</td>\n<td>дані «поза» UI, DOM-посилання</td>\n</tr>\n</tbody>\n</table></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const [count, setCount] = useState(0);\nsetCount(5); console.log(count); // 0 — оновиться лише в наступному рендері\n\nconst countRef = useRef(0);\ncountRef.current = 5; console.log(countRef.current); // 5 — синхронно; UI не оновиться"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<p><strong>Застосування 1 — імперативний доступ до DOM</strong></p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Input() {\n  const inputRef = useRef<HTMLInputElement>(null);\n  useEffect(() => { inputRef.current?.focus(); }, []);   // імперативний доступ до DOM\n  return <input ref={inputRef} />;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<p>Типові кейси: <code>focus()</code>, <code>scrollIntoView()</code>, <code>getBoundingClientRect</code>, інтеграція з не-React бібліотеками (canvas, відеоплеєри, чарти, карти).</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <code>ref</code> на елементі = <code>null</code> до монтування. Звертайся до <code>.current</code> в <code>useEffect</code>/обробниках, <strong>не під час рендеру</strong>.</p></div>\n<p><strong>Застосування 2 — значення, що переживають рендери</strong></p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// id інтервалу — треба зберегти для cleanup, але UI від нього не залежить\nconst timerRef = useRef<ReturnType<typeof setInterval> | null>(null);\nuseEffect(() => {\n  timerRef.current = setInterval(tick, 1000);\n  return () => { if (timerRef.current) clearInterval(timerRef.current); };\n}, []);\n\n// попереднє значення prop / state\nfunction usePrevious<T>(value: T) {\n  const ref = useRef<T>();\n  useEffect(() => { ref.current = value; });  // оновлюємо ПІСЛЯ рендеру\n  return ref.current;                          // повертаємо старе\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<p><strong>Застосування 3 — обхід stale closure: ref завжди читає актуальне значення</strong></p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Chat() {\n  const [messages, setMessages] = useState<Msg[]>([]);\n  const messagesRef = useRef(messages);\n  messagesRef.current = messages;   // тримаємо ref свіжим на кожному рендері\n  useEffect(() => {\n    socket.on('event', () => {\n      console.log(messagesRef.current.length); // завжди актуальний\n    });\n    return () => socket.off('event');\n  }, []);   // порожні deps, але через ref бачимо свіже значення\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<p>Колбек із порожнім <code>deps</code> замикається на значеннях першого рендеру (<strong>stale closure</strong>). <code>ref.current</code> — той самий об'єкт на всіх рендерах, тож читання дає завжди актуальне значення без перепідписки. Мінус: ref <strong>не реактивний</strong> — на саму зміну так не зреагуєш, лише прочитаєш свіже при наступному виклику.</p>\n<h3 class=\"topic\">Критичні правила <span class=\"tag tag-pit\">PITFALL</span></h3>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Не читай / не пиши <code>.current</code> під час рендеру.</strong> Рендер має бути чистим. Мутація ref у тілі робить його непередбачуваним (Concurrent Mode, StrictMode). Виняток — лінива ініціалізація. Усе інше — в <code>useEffect</code>/обробниках.</p></div>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Зміна ref не оновлює UI.</strong> Якщо чекаєш перемальовування — тобі потрібен <code>useState</code>.</p></div>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Не роби ref «тіньовим станом»</strong> для даних, що впливають на рендер — UI розсинхронізується з даними до наступного ре-рендеру.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Лінива ініціалізація важкого значення\n// ❌ useRef(new ExpensiveThing()) — аргумент обчислюється на КОЖНОМУ рендері\n// ✅ ініціалізуй умовно — конструктор виконається рівно раз\nconst ref = useRef<ExpensiveThing | null>(null);\nif (ref.current === null) {\n  ref.current = new ExpensiveThing();\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">forwardRef — ref на власний компонент</h3>\n<p>Не можна навісити <code>ref</code> на функціональний компонент напряму — до React 19 потрібен <code>forwardRef</code>:</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const Input = forwardRef((props, ref) => <input ref={ref} {...props} />);\n// тепер <Input ref={myRef} /> працює"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> <span class=\"tag tag-new\">React 19</span> <code>ref</code> можна передавати як звичайний prop — <code>forwardRef</code> більше не обов'язковий. Кастомізація того, що батько бачить через <code>ref</code> — <code>useImperativeHandle</code>.</p></div>\n<h3 class=\"topic\">useRef vs useMemo — щоб не плутати</h3>\n<ul class=\"list\">\n<li><strong>useMemo(() =&gt; obj, deps)</strong> — перераховує при зміні <code>deps</code>. Для <strong>похідних значень</strong>. Кеш React може відкинути — не гарантія.</li>\n<li><strong>useRef(obj)</strong> — <strong>ніколи</strong> не перераховує. Чистий контейнер зі стабільним <code>.current</code> на весь час життя.</li>\n</ul>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>Ключова фраза для співбесіди:</strong> <code>useRef</code> — мутабельний контейнер <code>{ current }</code>, стабільний між рендерами, зміна якого не тригерить ре-рендер. Два застосування: імперативний доступ до DOM і зберігання значень поза циклом рендеру (id таймерів, попередні значення, обхід stale closure). Головна відмінність від state: ref оновлюється синхронно й тихо. Не читати/писати <code>.current</code> під час рендеру (крім лінивої ініціалізації).</p></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "У чому головна відмінність <code>useRef</code> від <code>useState</code>?",
-          "answer": "<code>useRef</code> повертає мутабельний контейнер <code>{ current }</code>, зміна якого <strong>синхронна й «тиха»</strong> — не планує ре-рендер, нове значення видно одразу. <code>useState</code> оновлюється <strong>асинхронно</strong> й <strong>тригерить ре-рендер</strong>. Правило: значення впливає на UI — <code>useState</code>; живе «поза UI» (id таймера, попереднє значення, DOM-вузол) — <code>useRef</code>."
+          kind: 'paragraph',
+          html: `<p style="font-size:12.5px;opacity:.75">Фази життя, події, cleanup і StrictMode — розділ «🔄 Життєвий цикл і події компонента» вище. Тут лише <strong>історична довідка</strong>: класові компоненти сьогодні не пишуть (виняток — Error Boundary), але легасі-код з ними ще трапляється.</p>
+  <h3 class="topic">Класовий lifecycle → хук <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Класовий метод</th><th>Хук-еквівалент</th></tr>
+      <tr><td><code>constructor</code> (ініціалізація state)</td><td><code>useState(initial)</code> / <code>useState(() => initial)</code></td></tr>
+      <tr><td><code>render</code></td><td>тіло функціонального компонента (так само має бути чистим)</td></tr>
+      <tr><td><code>componentDidMount</code></td><td><code>useEffect(fn, [])</code></td></tr>
+      <tr><td><code>componentDidUpdate</code></td><td><code>useEffect(fn, [dep])</code></td></tr>
+      <tr><td><code>componentWillUnmount</code></td><td>return-функція з <code>useEffect</code></td></tr>
+      <tr><td><code>shouldComponentUpdate</code></td><td><code>React.memo</code> (розділ «🧠 Мемоізація та референсна стабільність»)</td></tr>
+      <tr><td><code>this.state</code> з кількох полів</td><td>кілька <code>useState</code> або один <code>useReducer</code></td></tr>
+      <tr><td><code>componentDidCatch</code> / <code>getDerivedStateFromError</code></td><td>— хука немає; Error Boundary лишається класовим</td></tr>
+    </table>
+  </div>`,
         },
         {
-          "question": "Чому не можна читати/писати <code>.current</code> під час рендеру, і єдиний виняток?",
-          "answer": "Рендер має бути <strong>чистою функцією</strong> — мутація ref у тілі ламається в Concurrent Mode/StrictMode. Читати/писати треба в <code>useEffect</code>/обробниках. Виняток — <strong>лінива ініціалізація</strong> (<code>if (ref.current === null) ref.current = createOnce()</code>), бо вона ідемпотентна."
+          kind: 'code',
+          language: 'tsx',
+          code: `// Те, для чого в класі були constructor + componentDidMount +
+// componentDidUpdate(prevProps) з ручним звірянням prevProps.userId:
+function UserProfile({ userId }: Props) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchUser(userId, controller.signal).then(setUser);
+    return () => controller.abort();      // <- componentWillUnmount
+  }, [userId]);                            // <- mount + update на зміну userId в одному
+
+  return <div>{user?.name}</div>;
+}`,
         },
         {
-          "question": "Що не так з <code>useRef(new ExpensiveThing())</code> і як ініціалізувати важкий об'єкт раз?",
-          "answer": "Аргумент обчислюється на <strong>кожному</strong> рендері (решта результатів відкидається). Правильно: <code>const ref = useRef(null)</code> + <code>if (ref.current === null) ref.current = new ExpensiveThing()</code>."
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">✅</span><span>Головна практична перевага — <code>componentDidMount</code>/<code>componentDidUpdate</code> у класі часто дублювали той самий код, бо логіку «зробити X при mount і при зміні Y» писали двічі. Один <code>useEffect(fn, [dep])</code> покриває обидва випадки за визначенням залежностей.</span></div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 3 — PERFORMANCE ============================= */
+    {
+      id: 'performance-deep-dive',
+      title: '🚀 Performance Deep Dive',
+      interviewQuestions: [
+        {
+          question: 'Які інструменти чи техніки ти використаєш, щоб знайти реальну причину зайвих ре-рендерів у великому додатку, а не гадати?',
+          answer: 'React DevTools Profiler з увімкненим «Highlight updates» покаже, які компоненти й чому ре-рендерились (порівняння props/state/hooks у деталях коміту); для продакшн-профілювання — <code>&lt;Profiler&gt;</code> API з колбеком <code>onRender</code>. Гадати за симптомами («здається, тут щось повільне») — типова помилка джуна, тоді як сеньйор спершу вимірює.',
         },
         {
-          "question": "Як <code>useRef</code> рятує від stale closure при порожньому deps?",
-          "answer": "<code>ref</code> — <strong>той самий об'єкт</strong> на всіх рендерах; оновлюючи <code>ref.current = value</code> щорендеру, читання всередині «застряглого» колбека дає актуальне значення без перепідписки. На відміну від функціонального апдейту чи deps, ref не перезапускає ефект і не тригерить ре-рендер — але й не реактивний."
+          question: 'Коли <code>React.lazy</code> + <code>Suspense</code> справді дає виграш, а коли лише плодить водоспади завантаження?',
+          answer: 'Виграш — коли відкладений код <strong>справді важкий і не потрібен на першому екрані</strong>: окремі маршрути, модалки, рідко відкриті панелі, важкі залежності (редактор, чарти). Шкода — коли дробиш на дрібні чанки те, що майже завжди потрібне одразу: браузер робить окремі запити послідовно (waterfall), і сумарно виходить повільніше за один бандл. Межу розділу став на природних кордонах навігації/взаємодії, а не «на кожен компонент».',
         },
         {
-          "question": "useRef чи useMemo для стабільного мутабельного значення на весь час життя?",
-          "answer": "<code>useRef</code>. <code>useMemo</code> — для <strong>похідних значень</strong>, і React може відкинути його кеш будь-коли. <code>useRef</code> гарантує один <code>.current</code> назавжди й дозволяє мутувати."
+          question: 'Коли virtualization справді потрібна?',
+          answer: 'Коли в DOM одночасно опиняються <strong>сотні–тисячі</strong> вузлів (довгі списки, таблиці, стрічки) — тоді рендер і layout стають вузьким місцем. Для 20–50 елементів <code>react-window</code>/<code>react-virtual</code> — зайва складність (втрата нативного пошуку по сторінці, складніший a11y, «стрибки» при швидкому скролі), яка не окупається.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p style="font-size:12.5px;opacity:.75"><code>React.memo</code>, референсна стабільність і покроковий каскад ре-рендеру — розділ «🧠 Мемоізація та референсна стабільність» (Block 2). Тут — <strong>як виміряти</strong> й окремі техніки: профілювання, code splitting, віртуалізація, Core Web Vitals.</p>
+  <h3 class="topic">Профілювання — React DevTools Profiler <span class="tag tag-key">KEY</span></h3>
+  <p>Вкладка <strong>Profiler</strong>: запиши взаємодію → <strong>Flamegraph</strong> показує, які компоненти рендерились і скільки це коштувало; <strong>Ranked</strong> сортує за тривалістю. Клік на компонент → секція <strong>"Why did this render?"</strong> (треба увімкнути в налаштуваннях) називає точну причину: hook changed, props changed, parent rendered.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Робочий процес на співбесіді/у реальності: спершу <strong>профілюй</strong>, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація, яка додає складність без гарантованого ефекту. Повний воркфлоу «виявити → виміряти → діагностувати → перевірити» — розділ «React DevTools як Senior» нижче.</span></div>`,
         },
         {
-          "question": "Чому не можна навісити <code>ref</code> на функціональний компонент і що змінилось у React 19?",
-          "answer": "До React 19 <code>ref</code> — не звичайний prop: React перехоплює його. Щоб пробросити до DOM-вузла — <code>forwardRef((props, ref) =&gt; …)</code>. У React 19 <code>ref</code> став звичайним пропом (<code>props.ref</code>), <code>forwardRef</code> більше не обов'язковий."
-        }
-      ]
+          kind: 'code',
+          language: 'tsx',
+          code: `// Code splitting — React.lazy + Suspense
+const Settings = React.lazy(() => import('./Settings'));
+
+function App() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      {showSettings && <Settings />}   {/* JS-чанк вантажиться лише тут */}
+    </Suspense>
+  );
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// List virtualization — react-window: рендеримо тільки видимі рядки
+import { FixedSizeList } from 'react-window';
+
+function BigList({ items }: { items: Item[] }) {
+  return (
+    <FixedSizeList height={600} width="100%" itemCount={items.length} itemSize={40}>
+      {({ index, style }) => <div style={style}>{items[index].title}</div>}
+    </FixedSizeList>
+  );
+}
+// 10 000 <div> у DOM vs ~20 видимих — критично для довгих списків/таблиць`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Core Web Vitals</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Метрика</th><th>Що міряє</th><th>Типовий винуватець</th><th>Що робить frontend</th></tr>
+      <tr><td><strong>LCP</strong></td><td>Час до відмальовки найбільшого елементу</td><td>Важке hero-зображення, повільний сервер, render-blocking JS</td><td><code>next/image</code> priority, преконект, code splitting, SSR/SSG замість CSR</td></tr>
+      <tr><td><strong>CLS</strong></td><td>Візуальна "стрибучість" макету</td><td>Зображення/реклама без розмірів, шрифт FOUT</td><td><code>width/height</code> на медіа, <code>next/font</code> (без layout shift), skeleton замість пустого блоку</td></tr>
+      <tr><td><strong>INP</strong></td><td>Затримка відгуку на взаємодію (замінив FID)</td><td>Важкі синхронні обробники, великий JS bundle, довгі рендери</td><td><code>useTransition</code>, дебаунс, розбиття важкої роботи, memo/virtualization</td></tr>
+    </table>
+  </div>
+  `,
+        },
+      ],
     },
     {
-      "id": "hooks-concurrent",
-      "title": "⚡ useTransition / useDeferredValue",
-      "blocks": [
+      id: 'react-devtools',
+      title: '🔍 React DevTools як Senior',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Concurrent features <span class=\"tag tag-new\">React 18</span></h3>\n<p>Обидва хуки позначають частину оновлення як <strong>неурочну (non-urgent)</strong> — React рендерить її з нижчим пріоритетом і може перервати заради урочнішого оновлення (наступного натискання клавіші). Практичне застосування Fiber-переривності.</p>"
+          question: 'Що конкретно показує вкладка Profiler у React DevTools, і як за нею відрізнити «повільний рендер» від «зайвого рендеру»?',
+          answer: 'Profiler фіксує кожен коміт: тривалість рендеру кожного компонента та причину його ре-рендеру (зміна props/state/hooks/батько-компонент). «Повільний рендер» — компонент рендериться довго, бо всередині важкі обчислення; «зайвий рендер» — компонент рендериться швидко, але <em>занадто часто</em>, хоча його вихід не змінюється. Це дві різні проблеми з різними рішеннями (мемоізація обчислень vs мемоізація компонента/props).',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// useTransition — для ДІЙ (функцій)\nconst [isPending, startTransition] = useTransition();\nstartTransition(() => {\n  setFiltered(items.filter(i => i.includes(q)));\n});\n// Urgent: сам input оновлюється відразу; Non-urgent: важкий filter — deferred, isPending=true\n\n// useDeferredValue — для ЗНАЧЕНЬ\nconst [query, setQuery] = useState('');\nconst deferredQuery = useDeferredValue(query);\n// deferredQuery оновлюється, коли React має час; query — миттєво\n<SearchResults query={deferredQuery} />"
+          question: `Як швидко перевірити гіпотезу "цей компонент ре-рендериться забагато" без Profiler?`,
+          answer: `"Highlight updates when components render" у Components tab — візуальна рамка на кожен рендер.`,
         },
         {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> Вибір: є функція, яку викликаєш сам (сеттер) → <code>useTransition</code>. Є готове значення (проп ззовні) → <code>useDeferredValue</code>.</p></div>"
+          question: `Що показує "Why did this render?"`,
+          answer: `точну причину конкретного ре-рендеру: зміна props, зміна хука, чи просто ре-рендер батька.`,
         },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Повний патерн: миттєвий інпут + низькопріоритетний важкий список\nfunction Search({ allItems }: { allItems: Item[] }) {\n  const [query, setQuery] = useState('');\n  const [isPending, startTransition] = useTransition();\n  function onChange(e: React.ChangeEvent<HTMLInputElement>) {\n    setQuery(e.target.value);           // urgent\n    startTransition(() => {\n      setResults(filterExpensive(allItems, e.target.value)); // низькопріоритетно\n    });\n  }\n  return (\n    <>\n      <input value={query} onChange={onChange} />\n      <ul style={{ opacity: isPending ? 0.6 : 1 }}>{/* ... */}</ul>\n    </>\n  );\n}\n\n// Той самий результат без окремого state — useDeferredValue:\nfunction Search({ allItems }: { allItems: Item[] }) {\n  const [query, setQuery] = useState('');\n  const deferredQuery = useDeferredValue(query);\n  const results = useMemo(\n    () => filterExpensive(allItems, deferredQuery),\n    [allItems, deferredQuery],\n  );\n  const isStale = query !== deferredQuery;\n  return <>{/* input керується query, список — results */}</>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Чому це не дебаунс <span class=\"tag tag-key\">KEY</span></h3>\n<p>Дебаунс <em>відкладає</em> роботу на фіксований таймер — чекаєш умовні 300 мс, навіть якщо процесор вільний. Transition роботу <strong>не відкладає</strong>: React починає рендер одразу, але з правом перервати, щойно прилетить урочніше оновлення. На швидкій машині список оновиться майже миттєво, на повільній — плавно деградує, без магічної константи.</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <code>startTransition</code> має містити <strong>синхронний</strong> <code>setState</code>. <code>await</code> усередині «розриває» transition. Для async-роботи в React 19 <code>useTransition</code> приймає async-функцію (Actions). Transition не робить <code>filterExpensive</code>/fetch швидшим — лише знижує пріоритет рендеру результату.</p></div>"
-        }
       ],
-      "interviewQuestions": [
+      blocks: [
         {
-          "question": "Яку UX-проблему вирішує <code>useTransition</code> і чим відрізняється від дебаунсу?",
-          "answer": "Позначає оновлення стану як <strong>низькопріоритетне</strong>: React рендерить його у фоні, не блокуючи термінові оновлення, і перериває незавершений рендер новішим. На відміну від дебаунсу (просто <em>відкладає</em> на таймер), transition дозволяє терміновим оновленням «обганяти» перерваний рендер миттєво, без штучної затримки."
+          kind: 'paragraph',
+          html: `<h3 class="topic">Дві вкладки, дві мети <span class="tag tag-key">KEY</span></h3>
+  <p>Розширення браузера додає дві панелі: <strong>⚛️ Components</strong> — інспекція дерева й даних; <strong>⚛️ Profiler</strong> — вимірювання продуктивності в часі (вже згадувалась вище). Разом вони покривають і "що зараз у стані/пропах", і "чому щось повільне".</p>
+  <h3 class="topic">Вкладка Components</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Фіча</th><th>Навіщо</th></tr>
+      <tr><td>Дерево компонентів</td><td>Клік на вузол → праворуч видно <code>props</code>, <code>state</code>, і — окремо — список хуків у порядку виклику (з їхніми поточними значеннями)</td></tr>
+      <tr><td>Inline-редагування</td><td>Можна змінити значення props/state прямо в панелі й одразу побачити результат — без правки коду</td></tr>
+      <tr><td>🔍 Search</td><td>Пошук компонента за іменем у великому дереві</td></tr>
+      <tr><td>"Highlight updates when components render"</td><td>Налаштування (⚙️) — обводить компонент кольоровою рамкою на кожен реальний ре-рендер прямо на сторінці. Найшвидший спосіб візуально побачити зайві ре-рендери без відкриття Profiler</td></tr>
+      <tr><td><code>$r</code> у консолі браузера</td><td>Після кліку на компонент у DevTools — <code>$r</code> у Console дає доступ до його instance (props/state) прямо з JS-консолі</td></tr>
+      <tr><td>Іконка ⚛️ джерела</td><td>Показує, який файл/компонент "власник" (owner) вузла — швидко знайти, де в коді він рендериться</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Сеньйорський воркфлоу: Components + Profiler разом</h3>
+  <div class="grid2">
+    <div class="card"><h4>1. Виявити</h4><p>Увімкни "Highlight updates" → взаємодій зі сторінкою → візуально помітно, який компонент "блимає" частіше за очікуване.</p></div>
+    <div class="card blue"><h4>2. Виміряти</h4><p>Profiler → Record → повтори взаємодію → Stop → Flamegraph/Ranked показують точну тривалість кожного рендеру.</p></div>
+    <div class="card yellow"><h4>3. Діагностувати</h4><p>Клік на компонент у Flamegraph → "Why did this render?" (увімкнено в ⚙️) — точна причина: <code>props changed</code>, <code>hooks changed</code>, <code>parent rendered</code>.</p></div>
+    <div class="card green"><h4>4. Виправити й перевірити</h4><p><code>memo</code>/стабілізація референсу/віртуалізація (Block 3) → знову Profile → порівняй тривалість до/після, а не "здається швидше".</p></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Interactions-трекінг у Profiler (запис конкретної взаємодії, а не всієї сесії) дає чистіший вимір — записуй одну дію (клік, ввід), а не хвилину довільного скролу.</span></div>
+  `,
+        },
+      ],
+    },
+    /* ============================= BLOCK 4 — STATE MANAGEMENT ============================= */
+    {
+      id: 'state-boundaries',
+      title: '🧭 Межі стану та Context',
+      interviewQuestions: [
+        {
+          question: 'Як визначити правильний рівень дерева компонентів, на якому має жити конкретний шматок стану («межі стану»)?',
+          answer: 'Правило — стан піднімається лише настільки високо, наскільки потрібно спільному предку компонентів, яким він реально потрібен (lifting state up), і не вище — інакше кожна зміна тригерить ре-рендер усього піддерева нижче. Якщо стан потрібен глибоко вкладеним компонентам без проміжного використання — це кандидат на Context або зовнішній стор, а не проп-дрилінг через кожен рівень.',
         },
         {
-          "question": "Коли <code>useDeferredValue</code> замість <code>useTransition</code>?",
-          "answer": "<code>useTransition</code> — коли ти <strong>ініціюєш</strong> оновлення (керуєш setState). <code>useDeferredValue</code> — коли значення приходить <strong>ззовні</strong> (проп, контекст) і ти не керуєш моментом зміни, напр. важкий список результатів, де інпут має лишатись чутливим."
-        }
-      ]
+          question: 'Чому надмірне використання React Context для часто змінюваного стану вважається антипатерном?',
+          answer: 'Кожна зміна значення в <code>Context.Provider</code> ре-рендерить <strong>усі</strong> компоненти-споживачі (<code>useContext</code>), незалежно від того, яку частину значення вони реально використовують — Context не має вбудованої селективної підписки. Для часто змінюваного або великого стану це створює каскад зайвих ре-рендерів; краще підходить стор із селекторами (Zustand, Redux) або розбиття на кілька дрібніших контекстів.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Де живе стан <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Тип стану</th><th>Приклад</th><th>Інструмент</th></tr>
+      <tr><td><strong>Локальний</strong></td><td>відкрито/закрито dropdown, значення інпуту</td><td><code>useState</code> / <code>useReducer</code></td></tr>
+      <tr><td><strong>Серверний</strong></td><td>список юзерів, дані з API</td><td>TanStack Query (кеш, а не "стан")</td></tr>
+      <tr><td><strong>UI / клієнтський глобальний</strong></td><td>тема, стан кошика, sidebar collapsed</td><td>Zustand / Context</td></tr>
+      <tr><td><strong>URL</strong></td><td>фільтри, пагінація, вкладка</td><td><code>useSearchParams</code> — переживає перезавантаження, шариться лінком</td></tr>
+    </table>
+  </div>
+  <p>Найчастіша архітектурна помилка: тримати серверні дані в <code>useState</code>+<code>useEffect</code> (втрачаєш кеш/дедуплікацію/інвалідацію) або тримати URL-стан у <code>useState</code> (втрачаєш share-by-link і back-button).</p>
+  <h3 class="topic">Context API — коли достатньо, коли ні <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="grid2">
+    <div class="card green"><h4>✅ Годиться</h4><p>Рідкісні оновлення: тема, локаль, авторизований юзер, feature flags. Дерево споживачів не надто велике.</p></div>
+    <div class="card red"><h4>❌ Не годиться</h4><p>Часті оновлення (позиція курсора, стан форми, реалтайм-дані) — <strong>будь-яка</strong> зміна value ре-рендерить <strong>УСІХ</strong> споживачів контексту, навіть тих, кому потрібна лише незмінна частина.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Пастка: один Context на все = зайві ре-рендери
+const AppContext = createContext<{ user: User; theme: Theme } | null>(null);
+// зміна theme ре-рендерить усіх, кому потрібен лише user
+
+// Фікс: розбити на кілька контекстів за частотою зміни
+const UserContext = createContext<User | null>(null);
+const ThemeContext = createContext<Theme>('dark');
+
+// + useMemo на value, інакше новий об'єкт-обгортка щорендеру
+// провайдера "зраджує" memo-компоненти нижче:
+const value = useMemo(() => ({ user, theme }), [user, theme]);
+<AppContext.Provider value={value}>{children}</AppContext.Provider>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Окремо значення, окремо диспетчер</h3>
+  <p>Розбий не лише за частотою, а й на <strong>state-контекст</strong> і <strong>dispatch-контекст</strong>. <code>dispatch</code> зі <code>useReducer</code> стабільний назавжди — компоненти, яким потрібен лише він (кнопки-дії), тоді не ре-рендеряться при зміні самого стану.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// "Локальний Redux" — useReducer + два контексти
+const CartStateContext = createContext<CartState | null>(null);
+const CartDispatchContext = createContext<React.Dispatch<CartAction> | null>(null);
+
+function CartProvider({ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = useReducer(cartReducer, initialCart);
+  return (
+    <CartStateContext value={state}>
+      <CartDispatchContext value={dispatch}>{children}</CartDispatchContext>
+    </CartStateContext>
+  );
+}
+
+// Кнопка "додати" читає лише dispatch → не ре-рендериться на зміну кошика
+function AddButton({ id }: { id: string }) {
+  const dispatch = use(CartDispatchContext)!;
+  return <button onClick={() => dispatch({ type: 'add', id })}>+</button>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span>Коли контекст перестає бути інструментом: багато різних шматків стану, потрібна селективна підписка на поле, часті оновлення з великим деревом споживачів — це вже стор із селекторами (розділ «🐻 Zustand»), а не набір контекстів.</span></div>`,
+        },
+      ],
     },
     {
-      "id": "hooks-custom",
-      "title": "🧵 Custom Hooks",
-      "blocks": [
+      id: 'state-redux',
+      title: '🔴 Redux — архітектура та middleware',
+      interviewQuestions: [
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Custom Hooks <span class=\"tag tag-key\">KEY</span></h3>\n<p>Функція, що починається з <code>use</code>, може викликати інші хуки всередині — і підпорядковується правилам хуків. Виносить <strong>логіку</strong> (стан, ефекти, підписки), а не UI — компонент лишається &quot;тупим&quot; (тонкий шар рендеру).</p>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>Префікс <code>use</code> — не стиль, а вимога.</strong> Саме за ним <code>eslint-plugin-react-hooks</code> розпізнає функцію як хук. Без префікса лінтер не перевірить порядок викликів усередині.</p></div>"
+          question: 'У чому суть трьох принципів Redux (single source of truth, state is read-only, зміни лише через pure reducers), і чому reducer обов\'язково має бути чистою функцією?',
+          answer: 'Один store на весь застосунок дає єдине джерело правди для дебагу й серіалізації; стан ніколи не мутується напряму, а замінюється новим об\'єктом через reducer — це вмикає time-travel debugging (можна відкотитись до будь-якого попереднього стану) і предиктивність (однаковий action + стан завжди дають однаковий результат). Reducer має бути <strong>чистою</strong> функцією (без side-effects, без мутацій вхідного стану, без <code>Math.random()</code>/<code>Date.now()</code> всередині) — інакше ламається порівняння через референс (<code>===</code>), на якому тримається memoization у <code>useSelector</code>/<code>React.memo</code>, і компоненти або не ре-рендеряться, коли треба, або ре-рендеряться зайве.',
         },
         {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// useDebouncedValue\nfunction useDebouncedValue<T>(value: T, ms = 300) {\n  const [debounced, setDebounced] = useState(value);\n  useEffect(() => {\n    const id = setTimeout(() => setDebounced(value), ms);\n    return () => clearTimeout(id);\n  }, [value, ms]);\n  return debounced;\n}\n\n// useObservable (RxJS у хуку)\nfunction useObservable<T>(source$: Observable<T>, initial: T) {\n  const [value, setValue] = useState(initial);\n  useEffect(() => {\n    const sub = source$.subscribe(setValue);\n    return () => sub.unsubscribe();  // cleanup — обовʼязково!\n  }, [source$]);\n  return value;\n}\n\n// usePrevious\nfunction usePrevious<T>(value: T) {\n  const ref = useRef<T>();\n  useEffect(() => { ref.current = value; });  // записується ПІСЛЯ рендеру\n  return ref.current;   // \"значення з минулого рендеру\"\n}\n\n// useLocalStorage\nfunction useLocalStorage<T>(key: string, initial: T) {\n  const [value, setValue] = useState<T>(() => {\n    if (typeof window === 'undefined') return initial; // SSR guard!\n    const saved = localStorage.getItem(key);\n    return saved ? JSON.parse(saved) : initial;\n  });\n  useEffect(() => { localStorage.setItem(key, JSON.stringify(value)); }, [key, value]);\n  return [value, setValue] as const;\n}\n\n// useOnClickOutside\nfunction useOnClickOutside(ref: RefObject<HTMLElement>, handler: () => void) {\n  useEffect(() => {\n    const listener = (e: MouseEvent) => {\n      if (!ref.current?.contains(e.target as Node)) handler();\n    };\n    document.addEventListener('mousedown', listener);\n    return () => document.removeEventListener('mousedown', listener); // без cleanup — memory leak\n  }, [ref, handler]);\n}\n\n// useMediaQuery — через useSyncExternalStore (коректно під concurrent)\nfunction useMediaQuery(query: string) {\n  return useSyncExternalStore(\n    onChange => {\n      const mql = matchMedia(query);\n      mql.addEventListener('change', onChange);\n      return () => mql.removeEventListener('change', onChange);\n    },\n    () => matchMedia(query).matches   // getSnapshot\n  );\n}"
+          question: 'Навіщо Redux взагалі потрібен middleware, якщо store і так підтримує dispatch?',
+          answer: 'Reducer зобов\'язаний лишатись синхронним і чистим, тож у нього не можна засунути виклик API. Middleware — це "прошарок" між <code>dispatch(action)</code> і reducer, який перехоплює action <em>до</em> того, як він туди дійде: там і виконуються side-effects (HTTP-запит, логування, аналітика), а в reducer передається вже звичайний plain-object action із готовими даними. Без middleware у store можна dispatch-нути лише plain object — не функцію і не Promise, тому thunk/saga в принципі не спрацювали б.',
         },
         {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Плюси й мінуси</h3>\n<ul class=\"list\">\n<li><strong>✅ Плюси:</strong> перевикористання логіки без обгортки в дереві (на відміну від HOC); тестується ізольовано (<code>renderHook</code>); композиція — hook може викликати інші hooks.</li>\n<li><strong>❌ Мінуси / edge cases:</strong> <strong>stale closures</strong> всередині хука (та сама проблема, захована на рівень абстракції глибше); <strong>нестабільний референс, що повертається</strong> — якщо хук повертає новий обʼєкт/масив/функцію щовиклику, кожен споживач отримує &quot;змінений&quot; проп щорендеру — ламає <code>memo</code>/dep-array.</li>\n</ul>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Custom hook — не про &quot;перевикористання UI&quot; (для цього компоненти), а про <strong>перевикористання stateful-логіки</strong>. Кожен виклик хука в різних компонентах створює <em>ізольований</em> стан.</p></div>"
-        }
+          question: 'Чим redux-saga принципово відрізняється від redux-thunk у підході до асинхронності?',
+          answer: 'Thunk — action creator повертає <strong>функцію</strong>, яка отримує <code>dispatch</code>/<code>getState</code> і імперативно керує async-логікою через <code>async</code>/<code>await</code> чи <code>.then()</code>, кожен thunk живе незалежно. Saga працює через <strong>generator-функції</strong> як окремий "watcher"-процес поруч зі store: замість того щоб виконувати ефект напряму, saga <em>описує</em> його декларативним об\'єктом-ефектом (<code>call</code>, <code>put</code>, <code>takeLatest</code>) — це дає вбудоване скасування запитів, оркестрацію кількох потоків (<code>race</code>, <code>all</code>) і легше тестування (перевіряєш, який ефект-об\'єкт згенеровано, не мокаючи реальний fetch).',
+        },
+        {
+          question: 'Коли в реальному проєкті обирають redux-saga замість redux-thunk?',
+          answer: 'Saga виправдана, коли потрібна оркестрація складних async-сценаріїв: автоскасування застарілого запиту при повторному вводі (<code>takeLatest</code>), debounce/throttle на action, узгодження кількох паралельних запитів (<code>all</code>/<code>race</code>), довготривалі процеси на кшталт WebSocket-підписок, retry з бекоффом. Якщо логіка — просто "дій → запит → dispatch результату", thunk простіший і достатній; ціна saga — крутіша крива входу (generators, ефекти-дескриптори замість звичайних промісів).',
+        },
+        {
+          question: 'Що таке паттерн ducks для структурування Redux-проєкту і чим він відрізняється від класичної структури actions/reducers/types по окремих папках?',
+          answer: 'Класична структура групує файли за <em>технічною роллю</em> — усі типи action в одній папці, усі reducers в іншій, тому для однієї фічі доводиться стрибати між 3+ файлами. Ducks — це структурування за <em>фічею</em>: типи action, action creators і reducer однієї фічі живуть в одному файлі, який експортує reducer за замовчуванням. Redux Toolkit фактично зробив ducks офіційним підходом — <code>createSlice</code> генерує action creators, action types і reducer з одного опису в одному файлі.',
+        },
+        {
+          question: 'Чому «класичний» Redux зі switch-reducer\'ами вважають застарілим стилем і що конкретно дає Redux Toolkit?',
+          answer: 'RTK — <strong>офіційно рекомендований</strong> спосіб писати Redux. Він прибирає boilerplate: <code>createSlice</code> генерує action creators + action types + reducer з одного опису; <strong>Immer</strong> під капотом дозволяє писати "мутуючий" код (<code>state.items.push(x)</code>), який насправді робить immutable-оновлення; <code>configureStore</code> дає розумні дефолти (Redux DevTools, thunk, перевірки на випадкові мутації та несеріалізовний стан); <code>createAsyncThunk</code> формалізує async (генерує <code>pending</code>/<code>fulfilled</code>/<code>rejected</code>); <code>RTK Query</code> — вбудований data-fetching/caching. Концепції ті самі — просто без ручної церемонії.',
+        },
+        {
+          question: 'Чому в сучасному підході Redux не має тримати server state, і що використовувати замість?',
+          answer: 'Server state — це асинхронний кеш чужих даних: йому потрібні refetch, інвалідація, дедуплікація запитів, stale-while-revalidate, retry. Redux цього "з коробки" не робить — довелося б писати thunks + reducers + селектори руками і все одно вручну керувати свіжістю. <strong>TanStack Query</strong> або <strong>RTK Query</strong> дають це декларативно. Redux/RTK лишається для складного синхронного <strong>client/UI state</strong>, що шариться між несуміжними частинами застосунку. Розрізнення server vs client state — сильний сигнал seniority і причина, чому "чистий" Redux рідше беруть для серверних даних.',
+        },
       ],
-      "interviewQuestions": [
-        {
-          "question": "За яким принципом виносити логіку у custom hook?",
-          "answer": "Коли stateful-логіка (підписка, таймер, fetch, синхронізація) <strong>повторюється в кількох компонентах</strong> або достатньо самодостатня, щоб тестувати й іменувати окремо. Якщо логіка одноразова й тісно повʼязана з рендером — виносити заради «чистоти» це зайва абстракція."
-        },
-        {
-          "question": "Чи custom hook створює ізольований стан для кожного компонента?",
-          "answer": "Так. Кожен виклик у різних компонентах (або інстансах) отримує <strong>власну, незалежну</strong> копію стану — хук просто викликає <code>useState</code>/<code>useEffect</code> у контексті поточного fiber-рендеру; спільного сховища немає (на відміну від синглтон-стору)."
-        }
-      ]
-    },
-    {
-      "id": "lifecycle-class-vs-functional",
-      "title": "🏛️ Class vs Functional",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<p>Фази життя, події, cleanup і StrictMode — розділ «🔄 Життєвий цикл» вище. Тут лише <strong>історична довідка</strong>: класові компоненти сьогодні не пишуть (виняток — Error Boundary), але легасі-код з ними ще трапляється.</p>\n<h3 class=\"topic\">Класовий lifecycle → хук <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Класовий метод</th>\n<th>Хук-еквівалент</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>constructor</code> (ініціалізація state)</td>\n<td><code>useState(initial)</code> / <code>useState(() =&gt; initial)</code></td>\n</tr>\n<tr>\n<td><code>render</code></td>\n<td>тіло функціонального компонента (так само чисте)</td>\n</tr>\n<tr>\n<td><code>componentDidMount</code></td>\n<td><code>useEffect(fn, [])</code></td>\n</tr>\n<tr>\n<td><code>componentDidUpdate</code></td>\n<td><code>useEffect(fn, [dep])</code></td>\n</tr>\n<tr>\n<td><code>componentWillUnmount</code></td>\n<td>return-функція з <code>useEffect</code></td>\n</tr>\n<tr>\n<td><code>shouldComponentUpdate</code></td>\n<td><code>React.memo</code></td>\n</tr>\n<tr>\n<td><code>this.state</code> з кількох полів</td>\n<td>кілька <code>useState</code> або один <code>useReducer</code></td>\n</tr>\n<tr>\n<td><code>componentDidCatch</code> / <code>getDerivedStateFromError</code></td>\n<td>— хука немає; Error Boundary лишається класовим</td>\n</tr>\n</tbody>\n</table></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Те, для чого в класі були constructor + componentDidMount +\n// componentDidUpdate(prevProps) з ручним звірянням prevProps.userId:\nfunction UserProfile({ userId }: Props) {\n  const [user, setUser] = useState<User | null>(null);\n  useEffect(() => {\n    const controller = new AbortController();\n    fetchUser(userId, controller.signal).then(setUser);\n    return () => controller.abort();      // <- componentWillUnmount\n  }, [userId]);                            // <- mount + update на зміну userId\n  return <div>{user?.name}</div>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> Головна перевага — <code>componentDidMount</code>/<code>componentDidUpdate</code> часто дублювали той самий код (логіку «зробити X при mount і при зміні Y» писали двічі). Один <code>useEffect(fn, [dep])</code> покриває обидва випадки.</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чому один <code>useEffect(fn, [dep])</code> кращий за пару lifecycle-методів?",
-          "answer": "Логіку «зробити X при першому рендері і при зміні <code>dep</code>» в класі писали <strong>двічі</strong> (<code>componentDidMount</code> + <code>componentDidUpdate</code> з ручним звірянням <code>prevProps</code>). Один <code>useEffect(fn, [dep])</code> покриває обидва декларативно, без дублювання й без ризику нескінченного циклу."
-        },
-        {
-          "question": "Що з lifecycle досі не має хук-еквівалента?",
-          "answer": "<code>componentDidCatch</code>/<code>getDerivedStateFromError</code> — Error Boundary. Ловити помилки рендеру піддерева можна лише класом (або <code>react-error-boundary</code>); хука немає."
-        },
-        {
-          "question": "Навіщо знати класовий API, якщо нові компоненти на ньому не пишуть?",
-          "answer": "Щоб читати легасі-код і розуміти співрозмовника. Весь класовий lifecycle зводиться до короткої мапи на хуки; нового коду на класах не пишуть — виняток лише Error Boundary."
-        }
-      ]
-    },
-    {
-      "id": "performance-deep-dive",
-      "title": "🚀 Performance Deep Dive",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<p><code>React.memo</code>, референсна стабільність і покроковий каскад ре-рендеру — розділ «🧠 Мемоізація» (Block 2). Тут — <strong>як виміряти</strong> й окремі техніки: профілювання, code splitting, віртуалізація, Core Web Vitals.</p>\n<h3 class=\"topic\">Профілювання — React DevTools Profiler <span class=\"tag tag-key\">KEY</span></h3>\n<p>Вкладка <strong>Profiler</strong>: запиши взаємодію → <strong>Flamegraph</strong> показує, які компоненти рендерились і скільки коштувало; <strong>Ranked</strong> сортує за тривалістю. Клік на компонент → <strong>&quot;Why did this render?&quot;</strong> (увімкнути в налаштуваннях) називає причину: hook changed, props changed, parent rendered.</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Робочий процес: спершу <strong>профілюй</strong>, потім оптимізуй. <code>useMemo</code>/<code>memo</code> навмання без вимірювання — передчасна оптимізація.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Code splitting — React.lazy + Suspense\nconst Settings = React.lazy(() => import('./Settings'));\nfunction App() {\n  return (\n    <Suspense fallback={<Spinner />}>\n      {showSettings && <Settings />}   {/* JS-чанк вантажиться лише тут */}\n    </Suspense>\n  );\n}\n\n// List virtualization — react-window: рендеримо тільки видимі рядки\nimport { FixedSizeList } from 'react-window';\nfunction BigList({ items }: { items: Item[] }) {\n  return (\n    <FixedSizeList height={600} width=\"100%\" itemCount={items.length} itemSize={40}>\n      {({ index, style }) => <div style={style}>{items[index].title}</div>}\n    </FixedSizeList>\n  );\n}\n// 10 000 <div> у DOM vs ~20 видимих — критично для довгих списків/таблиць"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Core Web Vitals</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Метрика</th>\n<th>Що міряє</th>\n<th>Типовий винуватець</th>\n<th>Що робить frontend</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>LCP</strong></td>\n<td>Час до відмальовки найбільшого елементу</td>\n<td>Важке hero-зображення, повільний сервер, render-blocking JS</td>\n<td><code>next/image</code> priority, преконект, code splitting, SSR/SSG замість CSR</td>\n</tr>\n<tr>\n<td><strong>CLS</strong></td>\n<td>Візуальна &quot;стрибучість&quot; макету</td>\n<td>Зображення/реклама без розмірів, шрифт FOUT</td>\n<td><code>width/height</code> на медіа, <code>next/font</code>, skeleton замість пустого блоку</td>\n</tr>\n<tr>\n<td><strong>INP</strong></td>\n<td>Затримка відгуку на взаємодію (замінив FID)</td>\n<td>Важкі синхронні обробники, великий JS bundle, довгі рендери</td>\n<td><code>useTransition</code>, дебаунс, розбиття важкої роботи, memo/virtualization</td>\n</tr>\n</tbody>\n</table></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чим знайти реальну причину зайвих ре-рендерів, а не гадати?",
-          "answer": "React DevTools Profiler з «Highlight updates» покаже, які компоненти й чому ре-рендерились (порівняння props/state/hooks); для прода — <code>&lt;Profiler&gt;</code> API з <code>onRender</code>. Гадати за симптомами — помилка джуна; сеньйор спершу вимірює."
-        },
-        {
-          "question": "Коли <code>React.lazy</code> + <code>Suspense</code> дає виграш, а коли плодить waterfall?",
-          "answer": "Виграш — коли відкладений код <strong>важкий і не потрібен на першому екрані</strong> (окремі маршрути, модалки, важкі залежності). Шкода — коли дробиш те, що майже завжди потрібне одразу: браузер робить окремі послідовні запити (waterfall). Межу став на кордонах навігації/взаємодії, не «на кожен компонент»."
-        },
-        {
-          "question": "Коли virtualization справді потрібна?",
-          "answer": "Коли в DOM одночасно сотні–тисячі вузлів (довгі списки/таблиці). Для 20–50 елементів <code>react-window</code> — зайва складність (втрата пошуку по сторінці, складніший a11y, «стрибки»), що не окупається."
-        }
-      ]
-    },
-    {
-      "id": "react-devtools",
-      "title": "🔍 React DevTools як Senior",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Дві вкладки, дві мети <span class=\"tag tag-key\">KEY</span></h3>\n<p>Розширення додає дві панелі: <strong>⚛️ Components</strong> — інспекція дерева й даних; <strong>⚛️ Profiler</strong> — вимірювання продуктивності в часі. Разом покривають &quot;що зараз у стані/пропах&quot; і &quot;чому щось повільне&quot;.</p>\n<h3 class=\"topic\">Вкладка Components</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Фіча</th>\n<th>Навіщо</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Дерево компонентів</td>\n<td>Клік на вузол → <code>props</code>, <code>state</code>, список хуків у порядку виклику (з поточними значеннями)</td>\n</tr>\n<tr>\n<td>Inline-редагування</td>\n<td>Змінити props/state прямо в панелі й одразу побачити результат</td>\n</tr>\n<tr>\n<td>🔍 Search</td>\n<td>Пошук компонента за іменем</td>\n</tr>\n<tr>\n<td>&quot;Highlight updates when components render&quot;</td>\n<td>⚙️ — обводить компонент рамкою на кожен ре-рендер. Найшвидший спосіб побачити зайві ре-рендери без Profiler</td>\n</tr>\n<tr>\n<td><code>$r</code> у консолі</td>\n<td>Після кліку на компонент — <code>$r</code> у Console дає доступ до його instance</td>\n</tr>\n<tr>\n<td>Іконка ⚛️ джерела</td>\n<td>Показує файл/компонент-власник (owner) вузла</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Сеньйорський воркфлоу: Components + Profiler разом</h3>\n<ol>\n<li><strong>Виявити</strong> — &quot;Highlight updates&quot; → взаємодій → видно, який компонент &quot;блимає&quot; частіше за очікуване.</li>\n<li><strong>Виміряти</strong> — Profiler → Record → повтори взаємодію → Stop → Flamegraph/Ranked показують тривалість.</li>\n<li><strong>Діагностувати</strong> — клік на компонент у Flamegraph → &quot;Why did this render?&quot; — причина: <code>props changed</code>/<code>hooks changed</code>/<code>parent rendered</code>.</li>\n<li><strong>Виправити й перевірити</strong> — <code>memo</code>/стабілізація референсу/віртуалізація → знову Profile → порівняй до/після, а не &quot;здається швидше&quot;.</li>\n</ol>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Interactions-трекінг у Profiler (запис конкретної взаємодії, а не всієї сесії) дає чистіший вимір.</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Що показує Profiler, і як відрізнити «повільний рендер» від «зайвого»?",
-          "answer": "Profiler фіксує кожен коміт: тривалість рендеру кожного компонента + причину ре-рендеру. «Повільний рендер» — компонент рендериться довго (важкі обчислення); «зайвий» — рендериться швидко, але <em>занадто часто</em>, хоча вихід не змінюється. Різні проблеми з різними рішеннями (мемоізація обчислень vs компонента/props)."
-        },
-        {
-          "question": "Як швидко перевірити «цей компонент ре-рендериться забагато» без Profiler?",
-          "answer": "&quot;Highlight updates when components render&quot; у Components — візуальна рамка на кожен рендер."
-        },
-        {
-          "question": "Що показує &quot;Why did this render?&quot;",
-          "answer": "Точну причину конкретного ре-рендеру: зміна props, зміна хука, чи просто ре-рендер батька."
-        }
-      ]
-    },
-    {
-      "id": "state-boundaries",
-      "title": "🧭 Межі стану та Context",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Де живе стан <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Тип стану</th>\n<th>Приклад</th>\n<th>Інструмент</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Локальний</strong></td>\n<td>відкрито/закрито dropdown, значення інпуту</td>\n<td><code>useState</code> / <code>useReducer</code></td>\n</tr>\n<tr>\n<td><strong>Серверний</strong></td>\n<td>список юзерів, дані з API</td>\n<td>TanStack Query (кеш, а не &quot;стан&quot;)</td>\n</tr>\n<tr>\n<td><strong>UI / клієнтський глобальний</strong></td>\n<td>тема, стан кошика, sidebar collapsed</td>\n<td>Zustand / Context</td>\n</tr>\n<tr>\n<td><strong>URL</strong></td>\n<td>фільтри, пагінація, вкладка</td>\n<td><code>useSearchParams</code> — переживає перезавантаження, шариться лінком</td>\n</tr>\n</tbody>\n</table></div>\n<p>Найчастіша помилка: тримати серверні дані в <code>useState</code>+<code>useEffect</code> (втрачаєш кеш/дедуплікацію/інвалідацію) або URL-стан у <code>useState</code> (втрачаєш share-by-link і back-button).</p>\n<h3 class=\"topic\">Context API — коли достатньо, коли ні <span class=\"tag tag-pit\">PITFALL</span></h3>\n<ul class=\"list\">\n<li><strong>✅ Годиться:</strong> рідкісні оновлення — тема, локаль, авторизований юзер, feature flags. Дерево споживачів не надто велике.</li>\n<li><strong>❌ Не годиться:</strong> часті оновлення (позиція курсора, стан форми, реалтайм) — <strong>будь-яка</strong> зміна value ре-рендерить <strong>УСІХ</strong> споживачів, навіть тих, кому потрібна незмінна частина.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Пастка: один Context на все = зайві ре-рендери\nconst AppContext = createContext<{ user: User; theme: Theme } | null>(null);\n// зміна theme ре-рендерить усіх, кому потрібен лише user\n\n// Фікс: розбити на кілька контекстів за частотою зміни\nconst UserContext = createContext<User | null>(null);\nconst ThemeContext = createContext<Theme>('dark');\n\n// + useMemo на value, інакше новий об'єкт-обгортка щорендеру \"зраджує\" memo:\nconst value = useMemo(() => ({ user, theme }), [user, theme]);\n<AppContext.Provider value={value}>{children}</AppContext.Provider>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Окремо значення, окремо диспетчер</h3>\n<p>Розбий не лише за частотою, а й на <strong>state-контекст</strong> і <strong>dispatch-контекст</strong>. <code>dispatch</code> зі <code>useReducer</code> стабільний назавжди — компоненти, яким потрібен лише він (кнопки-дії), не ре-рендеряться при зміні стану.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// \"Локальний Redux\" — useReducer + два контексти\nconst CartStateContext = createContext<CartState | null>(null);\nconst CartDispatchContext = createContext<React.Dispatch<CartAction> | null>(null);\n\nfunction CartProvider({ children }: { children: React.ReactNode }) {\n  const [state, dispatch] = useReducer(cartReducer, initialCart);\n  return (\n    <CartStateContext value={state}>\n      <CartDispatchContext value={dispatch}>{children}</CartDispatchContext>\n    </CartStateContext>\n  );\n}\n\n// Кнопка \"додати\" читає лише dispatch → не ре-рендериться на зміну кошика\nfunction AddButton({ id }: { id: string }) {\n  const dispatch = use(CartDispatchContext)!;\n  return <button onClick={() => dispatch({ type: 'add', id })}>+</button>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Коли контекст перестає бути інструментом: багато шматків стану, потрібна селективна підписка на поле, часті оновлення з великим деревом споживачів — це вже стор із селекторами (розділ «🐻 Zustand»).</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Як визначити рівень дерева, на якому має жити стан («межі стану»)?",
-          "answer": "Стан піднімається лише настільки високо, наскільки потрібно спільному предку компонентів, яким він реально потрібен (lifting state up), і не вище — інакше кожна зміна тригерить ре-рендер усього піддерева. Якщо стан потрібен глибоко вкладеним компонентам без проміжного використання — це кандидат на Context/зовнішній стор, а не проп-дрилінг."
-        },
-        {
-          "question": "Чому надмірний Context для часто змінюваного стану — антипатерн?",
-          "answer": "Кожна зміна значення в <code>Provider</code> ре-рендерить <strong>усі</strong> компоненти-споживачі незалежно від того, яку частину вони використовують — Context не має селективної підписки. Для частого/великого стану це каскад зайвих ре-рендерів; краще стор із селекторами (Zustand, Redux) або розбиття на дрібніші контексти."
-        }
-      ]
-    },
-    {
-      "id": "state-redux",
-      "title": "🔴 Redux — архітектура та middleware",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Redux — три принципи <span class=\"tag tag-key\">KEY</span></h3>\n<ol>\n<li><strong>Single source of truth</strong> — увесь стан застосунку в одному об'єкті (<code>store</code>). Спрощує дебаг, серіалізацію, SSR-гідратацію.</li>\n<li><strong>State is read-only</strong> — єдиний спосіб змінити стан — <code>dispatch(action)</code>, plain-об'єкт із полем <code>type</code>. Ніхто не мутує стан напряму.</li>\n<li><strong>Зміни — лише через pure reducers</strong> — <code>(state, action) =&gt; newState</code>: чиста функція, не мутує <code>state</code>, повертає новий об'єкт.</li>\n</ol>\n<h3 class=\"topic\">Односторонній потік даних</h3>\n<p><code>UI подія → dispatch(action) → middleware (опційно) → reducer → новий state → підписники (useSelector) ре-рендеряться</code>. Цей цикл — причина, чому Redux DevTools вміють time-travel debugging.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// Vanilla Redux — reducer, actions, store (без Toolkit, щоб побачити фундамент)\ntype CounterAction =\n  | { type: 'counter/increment' }\n  | { type: 'counter/decrement' }\n  | { type: 'counter/addBy'; payload: number };\n\nfunction counterReducer(state = { value: 0 }, action: CounterAction) {\n  switch (action.type) {\n    case 'counter/increment': return { value: state.value + 1 };\n    case 'counter/decrement': return { value: state.value - 1 };\n    case 'counter/addBy':     return { value: state.value + action.payload };\n    default: return state; // невідомий action — повернути state як є\n  }\n}\n\nimport { createStore } from 'redux';\nconst store = createStore(counterReducer);\nstore.subscribe(() => console.log(store.getState()));\nstore.dispatch({ type: 'counter/increment' }); // { value: 1 }"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Підключення до React — useSelector / useDispatch</h3>\n<p>Сучасний спосіб (React-Redux 7.1+) — хуки замість HOC <code>connect</code>. <code>useSelector</code> підписує компонент на зріз стану (ре-рендер лише якщо результат селектора змінився за <code>===</code>), <code>useDispatch</code> повертає <code>dispatch</code>.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { Provider } from 'react-redux';\n<Provider store={store}><App /></Provider>\n\nimport { useSelector, useDispatch } from 'react-redux';\nfunction Counter() {\n  const value = useSelector((state: RootState) => state.counter.value);\n  const dispatch = useDispatch();\n  return (\n    <button onClick={() => dispatch({ type: 'counter/increment' })}>{value}</button>\n  );\n}\n// вузький селектор — ре-рендер лише при зміні value (та сама ідея, що й у Zustand)"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Middleware — де живе асинхронність <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>Reducer синхронний і чистий — у ньому не можна викликати API. Middleware перехоплює action між <code>dispatch</code> і reducer, тому саме там виконують side-effect <em>перед</em> тим, як у reducer прийде готовий plain-object action.</p>\n<ul class=\"list\">\n<li><strong>redux-thunk</strong> — action creator повертає <strong>функцію</strong> <code>(dispatch, getState) =&gt; {...}</code>. Імперативний async/await. Простий, вбудований у RTK за замовчуванням.</li>\n<li><strong>redux-saga</strong> — окремий generator-процес, що &quot;слухає&quot; actions і <em>декларативно описує</em> ефекти (<code>call</code>, <code>put</code>, <code>takeLatest</code>). Складніший, але дає скасування, оркестрацію, легше тестування.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// redux-thunk — асинхронний action creator\nfunction fetchUser(id: number) {\n  return async (dispatch: AppDispatch, getState: () => RootState) => {\n    dispatch({ type: 'user/loading' });\n    try {\n      const res = await fetch(`/api/users/${id}`);\n      dispatch({ type: 'user/loaded', payload: await res.json() });\n    } catch (err) {\n      dispatch({ type: 'user/error', payload: String(err) });\n    }\n  };\n}\n// dispatch(fetchUser(1)) — thunk middleware розпізнає функцію (не plain object) і викликає її\n\n// redux-saga — той самий сценарій декларативно\nimport { call, put, takeLatest } from 'redux-saga/effects';\nfunction* fetchUserSaga(action: { type: string; payload: number }) {\n  try {\n    yield put({ type: 'user/loading' });\n    const user = yield call(fetch, `/api/users/${action.payload}`);\n    yield put({ type: 'user/loaded', payload: yield call([user, 'json']) });\n  } catch (err) {\n    yield put({ type: 'user/error', payload: String(err) });\n  }\n}\nfunction* rootSaga() {\n  // takeLatest автоматично скасовує попередній fetchUserSaga — цього немає у thunk\n  yield takeLatest('user/fetch', fetchUserSaga);\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Структурування проєкту — ducks vs Redux Toolkit</h3>\n<p><strong>Класична структура</strong> (Redux ≤3): окремі папки <code>actions/</code>, <code>reducers/</code>, <code>types/</code> — для однієї фічі стрибаєш між файлами. <strong>Ducks-паттерн</strong>: типи, action creators і reducer однієї фічі — в одному файлі. <strong>Redux Toolkit</strong> зробив ducks стандартом: <code>createSlice</code> генерує все з одного опису.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "src/features/\n  counter/\n    counterSlice.ts   ← actions + reducer + types в одному файлі (ducks)\n  user/\n    userSlice.ts\n    userSaga.ts        ← якщо фіча має складну async-оркестрацію"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Redux Toolkit — сучасний стандарт <span class=\"tag tag-key\">KEY</span></h3>\n<p>&quot;Класичний&quot; Redux зі switch-reducer'ами і ручними action creators — <strong>застарілий стиль</strong>. Сьогодні пишуть на <strong>Redux Toolkit (RTK)</strong> — офіційно рекомендований спосіб:</p>\n<ul class=\"list\">\n<li><strong>createSlice</strong> — генерує reducer + actions автоматично з одного опису (ducks як стандарт).</li>\n<li><strong>Immer під капотом</strong> — пишеш &quot;мутуючий&quot; код, виходить immutable-оновлення.</li>\n<li><strong>configureStore</strong> — DevTools, thunk, перевірки на мутації/несеріалізовність з коробки.</li>\n<li><strong>createAsyncThunk</strong> — формалізує thunk (генерує <code>pending</code>/<code>fulfilled</code>/<code>rejected</code>).</li>\n<li><strong>RTK Query</strong> — вбудований data-fetching/caching (конкурент TanStack Query); здебільшого <em>усуває потребу</em> писати thunks для server state.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// RTK — той самий counter без boilerplate\nimport { createSlice, configureStore } from '@reduxjs/toolkit';\n\nconst counterSlice = createSlice({\n  name: 'counter',\n  initialState: { value: 0 },\n  reducers: {\n    increment: (state) => { state.value += 1; },        // Immer → immutable\n    addBy: (state, action: { payload: number }) => { state.value += action.payload; },\n  },\n});\n\nexport const { increment, addBy } = counterSlice.actions; // автогенеровані\nconst store = configureStore({ reducer: { counter: counterSlice.reducer } });"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Server state vs client state <span class=\"tag tag-key\">KEY</span></h3>\n<p>Сильний сигнал seniority — розрізняти два типи стану і не тримати серверний у Redux:</p>\n<ul class=\"list\">\n<li><strong>Server state</strong> — асинхронний кеш чужих даних: refetch, інвалідація, дедуплікація, retry → <strong>TanStack Query / RTK Query</strong>.</li>\n<li><strong>Client / UI state</strong> — синхронний, &quot;власний&quot;: фільтри, візард, крос-компонентні взаємодії → <strong>Redux/RTK / Zustand / Context</strong>.</li>\n</ul>\n<h3 class=\"topic\">Коли Redux НЕ потрібен</h3>\n<ul class=\"list\">\n<li>Стан переважно <strong>server state</strong> → TanStack Query / RTK Query.</li>\n<li>Простий локальний стан → <code>useState</code> / <code>useReducer</code> + Context.</li>\n<li>Малий/середній застосунок без складних крос-компонентних взаємодій.</li>\n</ul>\n<p><strong>Бери Redux/RTK</strong>, коли: складний client state між багатьма несуміжними частинами UI; потрібна відстежуваність змін (time-travel, аудит); велика команда з вимогою суворої передбачуваності.</p>\n<h3 class=\"topic\">Redux vs альтернативи</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Рішення</th>\n<th>Тип стану</th>\n<th>Boilerplate</th>\n<th>Коли</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Redux Toolkit</td>\n<td>client (складний)</td>\n<td>середній</td>\n<td>велике SPA, аудит змін</td>\n</tr>\n<tr>\n<td>Zustand</td>\n<td>client</td>\n<td>мінімальний</td>\n<td>легша альтернатива, менше церемоній</td>\n</tr>\n<tr>\n<td>Context + useReducer</td>\n<td>локальний/середній</td>\n<td>малий</td>\n<td>без зовнішньої бібліотеки</td>\n</tr>\n<tr>\n<td>TanStack Query</td>\n<td>server</td>\n<td>малий</td>\n<td>fetch/cache/sync з бекендом</td>\n</tr>\n<tr>\n<td>Jotai / Recoil</td>\n<td>atomic</td>\n<td>малий</td>\n<td>дрібнозернистий реактивний стан</td>\n</tr>\n</tbody>\n</table></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Суть трьох принципів Redux, і чому reducer має бути чистою функцією?",
-          "answer": "Один store — єдине джерело правди для дебагу/серіалізації; стан не мутується напряму, а замінюється новим об'єктом через reducer — це вмикає time-travel і предиктивність. Reducer має бути <strong>чистим</strong> (без side-effects, мутацій, <code>Math.random()</code>/<code>Date.now()</code>) — інакше ламається порівняння через референс (<code>===</code>), на якому тримається memoization у <code>useSelector</code>/<code>React.memo</code>."
-        },
-        {
-          "question": "Навіщо middleware, якщо store і так підтримує dispatch?",
-          "answer": "Reducer має лишатись синхронним і чистим — API туди не засунеш. Middleware — прошарок між <code>dispatch(action)</code> і reducer, що перехоплює action <em>до</em> нього: там side-effects (HTTP, логування), а в reducer іде готовий plain-object. Без middleware у store можна dispatch-нути лише plain object — не функцію/Promise."
-        },
-        {
-          "question": "Чим redux-saga відрізняється від redux-thunk?",
-          "answer": "Thunk — action creator повертає <strong>функцію</strong> з <code>dispatch</code>/<code>getState</code>, імперативний async/await, кожен незалежний. Saga — <strong>generator</strong>-«watcher» поруч зі store: <em>описує</em> ефект декларативним об'єктом (<code>call</code>, <code>put</code>, <code>takeLatest</code>), що дає вбудоване скасування, оркестрацію (<code>race</code>/<code>all</code>) і легше тестування (перевіряєш ефект-об'єкт без моків)."
-        },
-        {
-          "question": "Коли обирають saga замість thunk?",
-          "answer": "Коли потрібна оркестрація складних async-сценаріїв: автоскасування (<code>takeLatest</code>), debounce/throttle на action, узгодження паралельних запитів, WebSocket-підписки, retry з бекоффом. Якщо логіка «дій → запит → dispatch» — thunk простіший; ціна saga — крутіша крива входу."
-        },
-        {
-          "question": "Що таке ducks і чим відрізняється від класичної структури?",
-          "answer": "Класична групує файли за <em>роллю</em> (усі типи в одній папці, reducers в іншій) — для однієї фічі стрибаєш між 3+ файлами. Ducks — за <em>фічею</em>: типи, action creators і reducer однієї фічі в одному файлі. RTK зробив ducks офіційним: <code>createSlice</code> генерує все з одного опису."
-        },
-        {
-          "question": "Чому «класичний» Redux застарілий і що дає RTK?",
-          "answer": "RTK — <strong>офіційно рекомендований</strong> спосіб. Прибирає boilerplate: <code>createSlice</code> (actions + types + reducer з опису), <strong>Immer</strong> (пишеш &quot;мутуючий&quot; код → immutable), <code>configureStore</code> (DevTools/thunk/перевірки), <code>createAsyncThunk</code> (async), <code>RTK Query</code> (fetch/caching). Концепції ті самі — без ручної церемонії."
-        },
-        {
-          "question": "Чому Redux не має тримати server state і що використовувати?",
-          "answer": "Server state — асинхронний кеш чужих даних: потрібні refetch, інвалідація, дедуплікація, stale-while-revalidate, retry. Redux цього «з коробки» не робить — довелось би писати thunks + reducers + селектори руками. <strong>TanStack Query</strong>/<strong>RTK Query</strong> дають це декларативно. Redux/RTK лишається для складного синхронного <strong>client/UI state</strong>."
-        }
-      ]
-    },
-    {
-      "id": "state-zustand",
-      "title": "🐻 Zustand",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Що це <span class=\"tag tag-key\">KEY</span></h3>\n<p><strong>Zustand</strong> — мінімалістичний state-manager (~1 КБ). Один store через <code>create()</code>, компоненти читають <em>зрізи</em> через хук-селектор (<code>useStore(s =&gt; s.x)</code>). Під капотом — <code>useSyncExternalStore</code>, тому store живе <strong>поза React-деревом</strong> і не потребує <code>Provider</code>.</p>\n<p>За позицією — між «тільки Context» і «повний Redux»: менше boilerplate, ніж у Redux, і гранулярніші підписки, ніж у Context.</p>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>Коли брати:</strong> глобальний <em>клієнтський</em> стан, який ділять далекі компоненти й для якого Context ре-рендерить забагато — тема, кошик, авторизація, крос-компонентний UI-стан. <strong>Не</strong> для серверного кешу — це TanStack Query.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Базовий store\nimport { create } from 'zustand';\ninterface BearState { bears: number; addBear: () => void; reset: () => void; }\nexport const useBearStore = create<BearState>()((set) => ({\n  bears: 0,\n  addBear: () => set(state => ({ bears: state.bears + 1 })),\n  reset: () => set({ bears: 0 }),\n}));"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Selectors — уникай зайвих ре-рендерів <span class=\"tag tag-key\">KEY</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ Ре-рендер при БУДЬ-ЯКІЙ зміні store\nconst store = useBearStore();\nconst bears = store.bears;\n\n// ✅ Ре-рендер тільки при зміні bears\nconst bears = useBearStore(state => state.bears);\n\n// Кілька полів — useShallow\nimport { useShallow } from 'zustand/react/shallow';\nconst { bears, fish } = useBearStore(useShallow(\n  state => ({ bears: state.bears, fish: state.fish })\n));"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Zustand vs Context <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><strong>❌ Context для часто змінних даних:</strong> кожна зміна = ре-рендер ВСІХ споживачів.</li>\n<li><strong>✅ Zustand (або Jotai/Recoil):</strong> гранулярні selectors поза React-деревом. Ре-рендер лише якщо вибрана частина state справді змінилась.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Slices pattern — великий store, розбитий на частини\nexport const createUserSlice = (set) => ({ user: null, setUser: (user) => set({ user }) });\nexport const useStore = create()((...args) => ({\n  ...createUserSlice(...args),\n  ...createCartSlice(...args),\n}));\n\n// Middleware\nimport { devtools, persist, immer } from 'zustand/middleware';\nconst useStore = create(\n  devtools(              // Redux DevTools\n    persist(              // localStorage\n      immer((set) => ({   // мутабельні апдейти під капотом — immutable назовні\n        items: [],\n        addItem: (item) => set(state => { state.items.push(item) }),\n      })),\n      { name: 'my-store' }\n    )\n  )\n);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">partialize — обирай, що зберігати в localStorage <span class=\"tag tag-key\">KEY</span></h3>\n<p>Мідлвар <code>persist</code> за замовчуванням серіалізує <strong>увесь</strong> store. <code>partialize</code> звужує до вибраних полів — не персисти токени/секрети чи ефемерний UI-стан.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const useCartStore = create(\n  persist(\n    (set, get) => ({\n      items: [],\n      ui: { isDrawerOpen: false }, // ефемерний UI-стан — не варто персистити\n      addItem: (item) => set(state => ({ items: [...state.items, item] })),\n    }),\n    {\n      name: 'cart-storage',\n      partialize: (state) => ({ items: state.items }), // тільки items у localStorage\n      // ⚠️ ніколи не персисти токени/паролі/PII без явного шифрування\n    }\n  )\n);\n\n// getState()/setState() — доступ до store ПОЗА React-деревом\nexport function getCartTotal() {\n  const items = useCartStore.getState().items; // без хука, без ре-рендеру\n  return items.reduce((sum, i) => sum + i.price, 0);\n}\n\n// підписка поза React (напр. аналітика на кожну зміну)\nuseCartStore.subscribe((state) => {\n  analytics.track('cart_changed', { count: state.items.length });\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Redux Toolkit — контраст <span class=\"tag tag-key\">KEY</span></h3>\n<p>RTK — офіційний, «opinionated» спосіб писати Redux (<code>createSlice</code> генерує actions+reducer, <code>configureStore</code> підключає DevTools і middleware) — повний приклад у розділі «🔴 Redux» вище. На контраст із Zustand він дає те, чого Zustand навмисно не нав'язує: сувору структуру actions/reducers і потужний time-travel debugging, а RTK Query — вбудований кеш серверного стану поверх того самого store. Zustand же виграє мінімалізмом і гранулярними селекторами без <code>Provider</code>.</p>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чим підхід Zustand до підписки відрізняється від Context і чому вирішує зайві ре-рендери?",
-          "answer": "Zustand використовує <code>useSyncExternalStore</code> із селекторами: компонент підписується на <em>конкретний зріз</em> (<code>useStore(s =&gt; s.user)</code>) і ре-рендериться лише коли саме він змінюється (<code>Object.is</code>), тоді як Context ре-рендерить усіх споживачів на будь-яку зміну value незалежно від того, яка частина їм потрібна."
-        },
-        {
-          "question": "Недоліки Zustand порівняно з Redux у великому додатку?",
-          "answer": "Менш «structured out of the box» — немає нативного DevTools time-travel, строгих конвенцій щодо actions/reducers (хоч є мідлвари). У великих командах це ризик неузгоджених патернів, тоді як Redux нав'язує єдиний передбачуваний спосіб мутації через reducers."
-        },
-        {
-          "question": "Навіщо <code>partialize</code> у persist?",
-          "answer": "Без нього в localStorage потрапляє весь store, включно з ефемерним UI-станом чи чутливими даними. <code>partialize</code> звужує серіалізацію до явно перелічених полів."
-        },
-        {
-          "question": "Як звернутись до Zustand-стору поза React?",
-          "answer": "<code>useBearStore.getState()</code>/<code>.setState()</code> читають/оновлюють без хука й підписки — корисно в утилітах чи обробниках поза компонентами, де немає render-циклу."
-        }
-      ]
-    },
-    {
-      "id": "state-tanstack-query",
-      "title": "🔄 TanStack Query",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Філософія: Server State ≠ Client State <span class=\"tag tag-key\">KEY</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ Anti-pattern (useEffect + useState)\nuseEffect(() => {\n  setLoading(true);\n  fetch('/api/users').then(r => r.json()).then(setUsers).catch(setError).finally(() => setLoading(false));\n}, []);\n// немає кешу, дедуплікації, інвалідації, retry, refetch-on-focus\n\n// ✅ useQuery\nconst { data, isLoading, error, refetch } = useQuery({\n  queryKey: ['users'],\n  queryFn: () => fetchUsers(),\n  staleTime: 5 * 60 * 1000,  // 5 хв\n  gcTime: 10 * 60 * 1000,   // раніше cacheTime\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">useMutation + Optimistic Updates <span class=\"tag tag-key\">KEY</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const mutation = useMutation({\n  mutationFn: (todo: Todo) => createTodo(todo),\n  onMutate: async (newTodo) => {\n    await queryClient.cancelQueries({ queryKey: ['todos'] });\n    const previous = queryClient.getQueryData(['todos']);\n    queryClient.setQueryData(['todos'], old => [...old, newTodo]);  // optimistic!\n    return { previous };\n  },\n  onError: (err, newTodo, context) => {\n    queryClient.setQueryData(['todos'], context.previous);  // rollback\n  },\n  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] })\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">queryKey — ієрархія</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "queryKey: ['users']                          // список\nqueryKey: ['users', userId]                   // один юзер\nqueryKey: ['users', userId, 'posts']          // пости юзера\nqueryKey: ['users', { page, filter, sort }]   // з параметрами\n// Invalidate по префіксу — усі \"users\"-запити разом:\nqueryClient.invalidateQueries({ queryKey: ['users'] });"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Корисні опції</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Опція</th>\n<th>Default</th>\n<th>Що робить</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>staleTime</code></td>\n<td>0</td>\n<td>Час до &quot;застарівання&quot;. 0 = refetch при фокусі/mount</td>\n</tr>\n<tr>\n<td><code>gcTime</code></td>\n<td>5 хв</td>\n<td>Час до видалення з кешу після відписки останнього спостерігача</td>\n</tr>\n<tr>\n<td><code>retry</code></td>\n<td>3</td>\n<td>К-сть retry при помилці</td>\n</tr>\n<tr>\n<td><code>refetchOnWindowFocus</code></td>\n<td>true</td>\n<td>Refetch при поверненні на вкладку</td>\n</tr>\n<tr>\n<td><code>enabled</code></td>\n<td>true</td>\n<td>false = не виконувати (залежні запити)</td>\n</tr>\n<tr>\n<td><code>select</code></td>\n<td>—</td>\n<td>Трансформація data перед поверненням</td>\n</tr>\n<tr>\n<td><code>placeholderData</code></td>\n<td>—</td>\n<td>Дані-заглушка (keepPreviousData — без &quot;миготіння&quot; при пагінації)</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">isLoading vs isFetching <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><strong>isLoading</strong> — <code>true</code> лише під час <strong>першого</strong> запиту, коли в кеші немає даних — доречний повний skeleton/спінер.</li>\n<li><strong>isFetching</strong> — <code>true</code> при <strong>БУДЬ-ЯКОМУ</strong> запиті, включно з тихим фоновим refetch — старі дані вже показані, доречний лише невеликий індикатор &quot;оновлюється&quot;.</li>\n</ul>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чому TanStack Query — «server state manager», а не data-fetching інструмент?",
-          "answer": "Server state належить джерелу поза застосунком, асинхронний, може застаріти без відома клієнта, поділяється між компонентами. Query бере на себе кешування, дедуплікацію, фонове оновлення (refetch on focus/reconnect), інвалідацію, retry — проблеми, яких немає у client state (useState), де дані завжди «свіжі»."
-        },
-        {
-          "question": "Як Query вирішує waterfall і race condition при швидкій зміні параметрів?",
-          "answer": "Кешування за <code>queryKey</code> дозволяє паралельно ініціювати незалежні запити замість послідовних <code>await</code>. Race condition вирішується автоматично: бібліотека ігнорує відповідь застарілого запиту, якщо <code>queryKey</code> вже змінився — знімає ручне відстеження «чи запит ще актуальний»."
-        },
-        {
-          "question": "Чим кеш Query відрізняється від Redux/Zustand стору?",
-          "answer": "Це не клієнтський стан, а кеш серверних даних зі своїм життєвим циклом (stale/fresh, invalidate, refetch) — тримати серверні дані у Zustand означає вручну реалізовувати те, що Query дає з коробки."
-        },
-        {
-          "question": "Що робить <code>staleTime: 0</code> за замовчуванням?",
-          "answer": "Кожен новий mount/фокус вікна тригерить background refetch, навіть якщо дані в кеші є — UI показує кешовані одразу, потім оновлює."
-        },
-        {
-          "question": "Чим <code>isLoading</code> відрізняється від <code>isFetching</code> і яку помилку робить розробник?",
-          "answer": "<code>isLoading</code> — true лише коли для <code>queryKey</code> ще немає кешу (перший запит). <code>isFetching</code> — true при будь-якому запиті, включно з тихими фоновими. Помилка — прив'язати повноекранний спінер до <code>isFetching</code>: він блимає навіть коли дані на екрані."
-        }
-      ]
-    },
-    {
-      "id": "state-rxjs",
-      "title": "🌊 RxJS у React",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Коли потоки кращі за useEffect <span class=\"tag tag-key\">KEY</span></h3>\n<p>Для одноразового fetch — <code>useEffect</code>/TanStack Query достатньо. RxJS виправдовує себе, коли є <strong>кілька джерел подій у часі</strong>, які треба комбінувати, дебаунсити, скасовувати, перемикати: presence-статуси, debounced search з відміною попереднього запиту, WebSocket-потоки, drag&amp;drop.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Debounced search з автоматичною відміною застарілого запиту\nconst search$ = new Subject<string>();\nconst results$ = search$.pipe(\n  debounceTime(300),\n  distinctUntilChanged(),\n  switchMap(query => query ? searchApi(query) : of([])),\n  // switchMap сам скасовує попередній HTTP-запит при новому query —\n  // те, що вручну довелось би робити через AbortController у useEffect\n);\nconst results = useObservable(results$, []);   // через useObservable custom hook\n<input onChange={e => search$.next(e.target.value)} />"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Observable vs Promise</h3>\n<p>Observable — потік подій у часі, ліниво (не починає до підписки), може видати 0+ значень. Promise — одне значення, запускається одразу.</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Feature</th>\n<th>Observable</th>\n<th>Promise</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Lazy/Eager</td>\n<td>Lazy (subscribe запускає)</td>\n<td>Eager (виконується одразу)</td>\n</tr>\n<tr>\n<td>Single/Multiple</td>\n<td>Багато значень</td>\n<td>Одне значення</td>\n</tr>\n<tr>\n<td>Cancellation</td>\n<td>unsubscribe()</td>\n<td>Нема нативної підтримки</td>\n</tr>\n<tr>\n<td>Sync/Async</td>\n<td>І те, і те</td>\n<td>Завжди async</td>\n</tr>\n<tr>\n<td>Оператори</td>\n<td>Багата екосистема</td>\n<td>then/catch — обмежено</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Hot vs Cold + share()</h3>\n<p>Cold Observable — кожен підписник отримує власний потік (нові HTTP-запити). Hot Observable — один потік для всіх. <code>share()</code> перетворює Cold на Hot — щоб уникнути дублювання запитів.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const cold$ = interval(1000); // кожен subscribe рестартує лічильник\ncold$.subscribe(v => console.log('A', v)); // A: 0, 1, 2...\ncold$.subscribe(v => console.log('B', v)); // B: 0, 1, 2... (окремо)\n\nconst hot$ = fromEvent(button, 'click');    // одне виконання, всі ділять\nhot$.subscribe(() => console.log('A'));\nhot$.subscribe(() => console.log('B'));\n\nconst shared$ = interval(1000).pipe(share()); // cold → hot (Multicast)"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Flattening Operators — Decision Matrix <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Оператор</th>\n<th>Поведінка</th>\n<th>Use Case</th>\n<th>Приклад</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>switchMap</td>\n<td>Скасовує попередній, емітить найновіший</td>\n<td>Пошук, автокомпліт, зміна маршруту</td>\n<td>input → API search</td>\n</tr>\n<tr>\n<td>mergeMap</td>\n<td>Паралельні внутрішні Observable</td>\n<td>Завантаження файлів, конкурентні запити</td>\n<td>items → паралельні POST</td>\n</tr>\n<tr>\n<td>concatMap</td>\n<td>Черга (по одному)</td>\n<td>Послідовні операції, важливий порядок</td>\n<td>черга form-submit</td>\n</tr>\n<tr>\n<td>exhaustMap</td>\n<td>Ігнорує нове, поки виконується</td>\n<td>Кнопка логіну (double-submit)</td>\n<td>click → POST (ігнор кліків під час запиту)</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Subject Variants</h3>\n<p>Subject — Observable+Observer одночасно. BehaviorSubject зберігає останнє значення. ReplaySubject буферизує N значень. AsyncSubject видає лише останнє при завершенні.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const subject = new Subject<string>();\nsubject.next('hello');\nsubject.subscribe(v => console.log(v)); // пізній підписник: нічого (hot)\n\nconst behavior = new BehaviorSubject('initial');\nbehavior.next('new');\nbehavior.subscribe(v => console.log(v)); // 'new' (пізній отримує останнє)\n\nconst replay = new ReplaySubject(3);\nreplay.next(1); replay.next(2); replay.next(3); replay.next(4);\nreplay.subscribe(v => console.log(v)); // 2, 3, 4 (останні 3)\n\nconst asyncSubj = new AsyncSubject();\nasyncSubj.next(1); asyncSubj.next(2); asyncSubj.complete();\nasyncSubj.subscribe(v => console.log(v)); // 2"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Оператори — що робить кожен <span class=\"tag tag-key\">KEY</span></h3>\n<p>Довідник найуживаніших. Flattening (<code>switchMap</code>/<code>mergeMap</code>/<code>concatMap</code>/<code>exhaustMap</code>) — вище.</p>\n<p><strong>Creation:</strong> <code>of(a,b)</code> (значення по черзі, тоді complete), <code>from(arr|promise|iterable)</code>, <code>fromEvent(el,'click')</code> (hot), <code>interval(ms)</code>/<code>timer(delay,period)</code>, <code>EMPTY</code> (одразу complete), <code>throwError(() =&gt; err)</code>, <code>defer(fn)</code> (ліниво на кожну підписку).</p>\n<p><strong>Transformation:</strong> <code>map(fn)</code>, <code>scan(fn,seed)</code> (як reduce, емітить проміжний акумулятор), <code>reduce(fn,seed)</code> (ОДИН результат при complete), <code>toArray()</code>.</p>\n<p><strong>Filtering:</strong> <code>filter(pred)</code>, <code>take(n)</code>/<code>first()</code>/<code>last()</code>, <code>takeUntil(notifier$)</code> (класична відписка), <code>skip(n)</code>, <code>debounceTime(ms)</code>, <code>throttleTime(ms)</code>, <code>distinctUntilChanged()</code>.</p>\n<p><strong>Combination:</strong> <code>combineLatest([a$,b$])</code> (останні всіх на будь-яку зміну), <code>forkJoin([a$,b$])</code> (останні лише коли ВСІ complete, як Promise.all), <code>merge(a$,b$)</code> (паралельно), <code>concat(a$,b$)</code> (послідовно), <code>zip(a$,b$)</code> (парує за індексом), <code>withLatestFrom(b$)</code>, <code>startWith(v)</code>.</p>\n<p><strong>Utility &amp; Multicasting:</strong> <code>tap(fn)</code> (side-effect/лог), <code>delay(ms)</code>, <code>finalize(fn)</code> (при complete АБО error), <code>timeout(ms)</code>, <code>share()</code>/<code>shareReplay(n)</code> (cold → hot; shareReplay кешує n останніх).</p>\n<h3 class=\"topic\">Error Handling — catchError, retry, throwError <span class=\"tag tag-key\">KEY</span></h3>\n<p>У потоці помилка — <em>термінальна</em> подія: після <code>error</code> Observable завершується. <code>catchError</code> перехоплює й дає відновитись.</p>\n<ul class=\"list\">\n<li><strong>catchError МУСИТЬ повернути Observable</strong> — стає продовженням потоку: <code>of(fallback)</code>, <code>EMPTY</code> (тихо завершити), <code>throwError(() =&gt; err)</code> (перекинути далі).</li>\n<li><strong>Місце важливе.</strong> <code>catchError</code> <em>всередині</em> <code>switchMap</code> ловить помилку лише внутрішнього запиту — зовнішній потік живе далі. <code>catchError</code> <em>в кінці</em> pipe — після нього весь потік мертвий.</li>\n<li><strong>retry</strong> перепідписується при помилці: <code>retry(3)</code> або <code>retry({ count, delay })</code> для backoff.</li>\n<li><strong>finalize</strong> спрацьовує і на complete, і на error — для <code>loading = false</code>.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { of, EMPTY, throwError, timer } from 'rxjs';\nimport { catchError, retry, switchMap, finalize } from 'rxjs/operators';\n\n// 1) Відновлення значенням — потік живе далі\nfetchUser().pipe(catchError(err => { console.error(err); return of(GUEST_USER); }));\n\n// 2) Тихо проковтнути → EMPTY\nsource$.pipe(catchError(() => EMPTY));\n\n// 3) Перекинути далі (обгорнути помилку)\nsource$.pipe(catchError(err => throwError(() => new AppError('load failed', err))));\n\n// 4) Місце catchError: ВСЕРЕДИНІ switchMap — search$ не «вмирає»\nsearch$.pipe(switchMap(q => searchApi(q).pipe(catchError(() => of([])))));\n// ❌ catchError у кінці pipe — перша помилка вбила б увесь search$\n\n// 5) Retry з backoff + гарантований cleanup\nfetchData().pipe(\n  retry({ count: 3, delay: (_err, i) => timer(2 ** i * 500) }), // 0.5s, 1s, 2s\n  catchError(() => of(null)),\n  finalize(() => setLoading(false))\n);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">forkJoin замість Promise.all <span class=\"tag tag-key\">KEY</span></h3>\n<p><code>forkJoin({ a: a$, b: b$ })</code> чекає, поки <em>всі</em> джерела завершаться (<code>complete</code>), і одноразово емітить останні значення — як <code>Promise.all</code>.</p>\n<ul class=\"list\">\n<li><strong>Promise.all</strong> — приймає масив Promise. Один reject → весь одразу reject.</li>\n<li><strong>forkJoin</strong> — приймає масив/об'єкт Observable. Джерело, що НЕ завершується (<code>interval()</code> без <code>take</code>, <code>BehaviorSubject</code>), «підвішує» forkJoin назавжди.</li>\n</ul>\n<div class=\"alert bad\"><span class=\"icon\">❌</span><p> <strong>Типова пастка:</strong> <code>forkJoin</code> із <code>BehaviorSubject</code>/нескінченним потоком ніколи не емітить. Додай <code>take(1)</code>, або візьми <code>combineLatest</code>, якщо потрібні поточні значення без очікування complete.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "forkJoin({ profile: getProfile(), settings: getSettings(), perms: getPermissions() })\n  .subscribe(({ profile, settings, perms }) => { /* усі три готові одночасно */ });\n\n// ❌ Пастка: джерело без complete підвішує forkJoin\nforkJoin({ user: userSubject /* BehaviorSubject — ніколи не complete! */, data: getData() })\n  .subscribe(() => {}); // ніколи не спрацює\n// ✅ Фікс — гарантувати complete\nforkJoin({ user: userSubject.pipe(take(1)), data: getData() }).subscribe(() => {});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> Правило: один запит, залежний від пропу/id → <code>useEffect</code>/Query. Потік подій у часі з комбінуванням/скасуванням/дебаунсом → RxJS у custom hook.</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Навіщо RxJS у React, якщо є Promises/async-await?",
-          "answer": "RxJS моделює <strong>потоки подій у часі</strong> (кліки, WebSocket, ввід), а не одноразові значення. Оператори (<code>debounceTime</code>, <code>switchMap</code>, <code>combineLatest</code>) декларативно комбінують/скасовують/трансформують послідовності — задачі, які на <code>async/await</code> вимагали б ручного керування таймерами й прапорцями."
-        },
-        {
-          "question": "Як інтегрувати Observable з рендер-циклом без витоків підписки?",
-          "answer": "Підписку створюють у <code>useEffect</code> і повертають <code>unsubscribe()</code> як cleanup, інакше при розмонтуванні підписка живе далі. Для конвертації в React-стан часто беруть <code>useSyncExternalStore</code> замість <code>useState</code>+<code>useEffect</code> (коректно під concurrent)."
-        },
-        {
-          "question": "Чим <code>switchMap</code> відрізняється від <code>mergeMap</code>/<code>concatMap</code> і чому це причина race condition?",
-          "answer": "<code>switchMap</code> скасовує попередній внутрішній потік при новому значенні — ідеально для пошуку-по-вводу. <code>mergeMap</code> — всі паралельно без скасування, <code>concatMap</code> — послідовно. <code>mergeMap</code> замість <code>switchMap</code> для запитів, залежних від останнього вводу, може дати застарілу відповідь <em>після</em> свіжої."
-        },
-        {
-          "question": "Чим Observable відрізняється від Promise?",
-          "answer": "Observable — лінивий (не починає до підписки), 0+ значень з часом, скасовується через <code>unsubscribe()</code>. Promise — жадібний (виконується одразу), рівно одне значення, нативно не скасовується."
-        },
-        {
-          "question": "Що має повертати <code>catchError</code> і чому місце в pipe критичне?",
-          "answer": "МУСИТЬ повернути Observable — продовження потоку: <code>of(fallback)</code>, <code>EMPTY</code>, <code>throwError</code>. Всередині <code>switchMap</code> ловить помилку лише внутрішнього запиту (зовнішній живе), у кінці pipe — після нього весь потік мертвий."
-        },
-        {
-          "question": "Чим Hot Observable відрізняється від Cold і як <code>share()</code> пов'язаний?",
-          "answer": "Cold запускає власне виконання на кожну підписку (HTTP-запити) — два підписники = два виконання. Hot — одне спільне виконання (події, <code>fromEvent</code>). <code>share()</code> перетворює cold на hot, щоб уникнути дублювання роботи."
-        },
-        {
-          "question": "Чим BehaviorSubject відрізняється від Subject?",
-          "answer": "Subject нічого не памʼятає — пізній підписник отримує лише майбутні емісії. BehaviorSubject зберігає останнє значення (потребує початкового) і одразу видає його новому підписнику — природно для поточного стану (авторизований юзер, тема)."
-        }
-      ]
-    },
-    {
-      "id": "patterns",
-      "title": "🧩 Patterns",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Composition over inheritance <span class=\"tag tag-key\">KEY</span></h3>\n<p>React не має класичного наслідування компонентів — і не має бути. Замість &quot;Button extends BaseButton&quot; — компонент приймає <code>children</code> або спеціалізовані пропи-слоти. <strong>Compound components</strong> — набір компонентів, що діляться неявним станом через Context.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Compound components — спільний стан через Context, гнучкий склад ззовні\nconst TabsContext = createContext<{ active: string; setActive: (id: string) => void } | null>(null);\nfunction Tabs({ defaultTab, children }: { defaultTab: string; children: React.ReactNode }) {\n  const [active, setActive] = useState(defaultTab);\n  return <TabsContext.Provider value={{ active, setActive }}>{children}</TabsContext.Provider>;\n}\nTabs.Tab = function Tab({ id, children }: { id: string; children: React.ReactNode }) {\n  const ctx = useContext(TabsContext)!;\n  return <button onClick={() => ctx.setActive(id)} data-active={ctx.active === id}>{children}</button>;\n};\n// <Tabs defaultTab=\"a\"><Tabs.Tab id=\"a\">A</Tabs.Tab><Tabs.Tab id=\"b\">B</Tabs.Tab></Tabs>\n// споживач сам вирішує порядок/кількість табів"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Слоти через пропи-<code>ReactNode</code> <span class=\"tag tag-key\">KEY</span></h3>\n<p>Коли компонент має кілька «дірок» (хедер, футер, панель), не тулиш усе в <code>children</code> — приймаєш кілька пропів <code>React.ReactNode</code>.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Page({ header, sidebar, children }: {\n  header: React.ReactNode; sidebar: React.ReactNode; children: React.ReactNode;\n}) {\n  return (\n    <div className=\"layout\">\n      <header>{header}</header>\n      <aside>{sidebar}</aside>\n      <main>{children}</main>\n    </div>\n  );\n}\n// <Page header={<Logo />} sidebar={<Nav />}><Article /></Page>\n\n// ❌ Анти-патерн: React.cloneElement, щоб \"доштовхнути\" пропи в children — крихко.\n// ✅ Замість цього — Context (compound components) або render-prop через children:\nfunction Toggle({ children }: { children: (on: boolean, toggle: () => void) => React.ReactNode }) {\n  const [on, setOn] = useState(false);\n  return <>{children(on, () => setOn(v => !v))}</>;\n}\n\n// Provider-компонент — інкапсулює createContext + стан в одному місці\nfunction ThemeProvider({ children }: { children: React.ReactNode }) {\n  const [theme, setTheme] = useState<'light' | 'dark'>('light');\n  const value = useMemo(() => ({ theme, setTheme }), [theme]);\n  return <ThemeContext value={value}>{children}</ThemeContext>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Легасі-патерни — одним абзацом</h3>\n<p><strong>HOC</strong> (<code>withAuth(Component)</code>) і <strong>render props</strong> вирішували «перевикористати логіку без наслідування» до хуків. Custom hooks замінили ~95% застосувань — та сама логіка без обгортки в дереві й без «wrapper hell». <strong>Container / Presentational</strong>: логіку тепер виносять у custom hook. У новому коді не пишуться — лише читаються в легасі.</p>\n<p><strong>Controlled vs Uncontrolled inputs</strong> — окремий розділ нижче.</p>\n<h3 class=\"topic\">Error Boundary <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>Єдиний випадок, де досі потрібен клас: хука-еквівалента <code>getDerivedStateFromError</code> немає. На практиці беруть <code>react-error-boundary</code>. Ловить помилки рендеру піддерева <strong>нижче себе</strong> — не ловить помилки в обробниках подій, асинхронному коді чи самому Error Boundary.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { ErrorBoundary } from 'react-error-boundary';\n<ErrorBoundary fallback={<ErrorPage />} onError={(error, info) => logToSentry(error, info)}>\n  <RiskyWidget />\n</ErrorBoundary>\n// ⚠️ НЕ ловить: помилки в onClick/onChange (try/catch там), async (fetch .catch()), SSR."
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Уникай boolean-prop proliferation <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>Коли компонент накопичує незалежні boolean/enum-пропи (<code>size</code>, <code>variant</code>, <code>outlined</code>, <code>rounded</code>, <code>disabled</code>...), кількість комбінацій росте експоненційно — багато з них ніхто не тестував. Композиція (окремі компоненти або явний <code>variant</code>-union) звужує API до підтримуваних варіантів.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ Стос boolean-пропів\n<Button size=\"lg\" variant=\"primary\" outlined rounded disabled={isLoading} />\n// outlined + variant=\"primary\" + rounded — валідна комбінація? компонент мусить розрулювати всі\n\n// ✅ Композиція / явний variant\n<PrimaryButton size=\"lg\" disabled={isLoading}>Save</PrimaryButton>\ntype ButtonVariant = 'primary-outlined-rounded' | 'primary-solid' | 'ghost';\n<Button variant=\"primary-outlined-rounded\" />  // неможливо скласти \"битий\" варіант"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чим Compound Components відрізняються від композиції через children, і коли обрати?",
-          "answer": "Compound Components (<code>&lt;Tabs&gt;&lt;Tabs.List&gt;&lt;Tabs.Panel&gt;</code>) діляться неявним станом через Context, зберігаючи гнучкий API без десятків props. Виправдані для UI-«сімей», де набір/порядок дітей варіюється (акордеони, таби, меню), зайві для простих самодостатніх компонентів."
-        },
-        {
-          "question": "Чим Render Props відрізняється від custom hooks і чому хуки їх витіснили?",
-          "answer": "Render Props передає функцію-рендерер як prop (<code>&lt;DataProvider render={data =&gt; ...}&gt;</code>), додаючи рівень вкладеності («wrapper hell» при комбінуванні). Custom hooks дають ту саму логіку без обгортки в дереві — просто виклик функції, тому Render Props сьогодні рідко (legacy/бібліотеки до-хукової епохи)."
-        },
-        {
-          "question": "Чому немає хука для Error Boundary?",
-          "answer": "Потребує lifecycle-методів (<code>getDerivedStateFromError</code>), яких у функціональній моделі немає — рендер компонента не може &quot;зловити&quot; помилку самого себе."
-        },
-        {
-          "question": "Чому 'boolean-prop proliferation' — антипатерн?",
-          "answer": "Кожен новий незалежний boolean/enum-проп множить кількість комбінацій, які компонент теоретично має обробити, хоча підтримується мала підмножина. Композиція або явний <code>variant</code>-union звужують API до валідних, протестованих станів."
-        },
-        {
-          "question": "Коли іменовані слоти-пропи замість <code>children</code>, і чому <code>cloneElement</code> поганий?",
-          "answer": "Слоти-пропи <code>React.ReactNode</code> — коли кілька незалежних «дірок» (children довелося б розбирати за позицією/типом). <code>cloneElement</code> крихкий (залежить від форми дитини), погано типізується, ламається при обгортанні у фрагмент. Для спільного стану — Context, для параметризованого рендеру — render-prop."
-        }
-      ]
-    },
-    {
-      "id": "forms-controlled-uncontrolled",
-      "title": "📝 Controlled vs Uncontrolled Inputs",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Дві моделі — хто &quot;володіє&quot; значенням <span class=\"tag tag-key\">KEY</span></h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Controlled\nconst [value, setValue] = useState('');\n<input value={value} onChange={e => setValue(e.target.value)} />\n\n// Uncontrolled\nconst ref = useRef<HTMLInputElement>(null);\n<input ref={ref} defaultValue=\"\" />\n// читаєш при потребі: ref.current.value"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">React DOM vs браузерний DOM — хто насправді керує <span class=\"tag tag-pit\">PITFALL</span></h3>\n<ul class=\"list\">\n<li><strong>Controlled — React &quot;перемагає&quot; браузер щорендеру:</strong> DOM-вузол МАЄ власну <code>value</code>, але React на кожному рендері <strong>примусово перезаписує</strong> її зі стану. Те, що на екрані, — завжди відображення React-стану.</li>\n<li><strong>Uncontrolled — браузер лишається джерелом правди:</strong> React ставить <code>defaultValue</code> раз при mount і після цього <strong>ніколи не чіпає</strong> стан вузла. React дізнається значення лише через <code>ref.current.value</code>.</li>\n</ul>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Тому controlled input ніколи не &quot;розсинхронізується&quot; з React-станом, навіть при швидкому наборі — немає окремого &quot;браузерного&quot; значення, з яким можна розійтись.</p></div>\n<h3 class=\"topic\"><code>ref</code> для uncontrolled-полів</h3>\n<p><code>useRef</code> детально — розділ &quot;🎯 useRef&quot;. Тут форм-специфічний патерн: або окремий ref на кожне поле, або <strong>один ref на весь <code>&lt;form&gt;</code></strong> і читання всіх полів через <code>FormData</code> замість ref-на-кожен-інпут.</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <code>input[type=&quot;file&quot;]</code> — принципово <strong>завжди uncontrolled</strong>. З безпеки браузер не дозволяє JS програмно встановлювати значення файлового інпуту — тільки читання через <code>ref</code>/<code>FormData</code>.</p></div>\n<h3 class=\"topic\">Порівняння й вердикт <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th></th>\n<th>Controlled</th>\n<th>Uncontrolled</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Ре-рендер на кожен keystroke</td>\n<td>Так</td>\n<td>Ні</td>\n</tr>\n<tr>\n<td>Валідація/маска в реальному часі</td>\n<td>Природно</td>\n<td>Складніше (слухати input вручну)</td>\n</tr>\n<tr>\n<td>Умовний UI (submit disabled, лічильник)</td>\n<td>Тривіально</td>\n<td>Потрібен окремий слухач</td>\n</tr>\n<tr>\n<td>Продуктивність на великих формах (50+)</td>\n<td>Погіршується</td>\n<td>Не залежить від кількості полів</td>\n</tr>\n<tr>\n<td><code>input[type=&quot;file&quot;]</code></td>\n<td>❌ Неможливо</td>\n<td>✅ Єдиний варіант</td>\n</tr>\n<tr>\n<td>Типова бібліотека</td>\n<td>Ручний useState / Formik (легасі)</td>\n<td>react-hook-form</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>Вердикт:</strong> маленька форма (1-5 полів) з живою валідацією/умовним UI → controlled. Велика форма, форма з файлами, або продуктивність під питанням → uncontrolled (найчастіше — react-hook-form), а не ручні refs на кожне поле.</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Різниця між controlled і uncontrolled input, трейд-оффи на великій формі?",
-          "answer": "Controlled — значення керується React-станом (<code>value</code>+<code>onChange</code>), кожне натискання = ре-рендер; повний контроль (валідація/форматування на льоту), але при десятках полів впливає на продуктивність. Uncontrolled — значення в DOM, читається через <code>ref</code> за потреби; менше ре-рендерів, але складніша live-валідація."
-        },
-        {
-          "question": "Чому React Hook Form віддає перевагу uncontrolled?",
-          "answer": "Уникає ре-рендеру форми на кожне натискання в кожному полі — RHF підписує поля через <code>ref</code> і керує валідацією поза render-циклом, синхронізуючи в React лише за потреби (сабміт, помилка). Суттєвий виграш на великих формах."
-        },
-        {
-          "question": "Чому controlled input ніколи не &quot;відстає&quot; від вводу?",
-          "answer": "React перезаписує DOM-значення власним станом щорендеру — немає окремого браузерного значення, з яким можна розійтись."
-        },
-        {
-          "question": "Чому <code>input[type=&quot;file&quot;]</code> не можна зробити controlled?",
-          "answer": "Безпека браузера: JS не може програмно підставити довільний файл у value файлового інпуту."
-        }
-      ]
-    },
-    {
-      "id": "forms-formdata-native",
-      "title": "📋 Форми: збір даних, валідація, бібліотеки",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<p>Робота з даними форми — три рівні, кожен наступний потрібен лише коли попереднього не вистачає:</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Рівень</th>\n<th>Інструмент</th>\n<th>Достатньо для</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Збір значень</td>\n<td>нативний <code>FormData</code> / <code>&lt;form action&gt;</code> (React 19)</td>\n<td>будь-яка форма — заміна <code>useState</code> на кожне поле</td>\n</tr>\n<tr>\n<td>Перевірка</td>\n<td>HTML5-атрибути + Constraint Validation API + Zod</td>\n<td>1–10 полів, проста крос-польова логіка</td>\n</tr>\n<tr>\n<td>Керування станом форми</td>\n<td>react-hook-form / TanStack Form</td>\n<td>десятки полів, динамічні масиви, складна умовна валідація</td>\n</tr>\n</tbody>\n</table></div>\n<p>Хто «володіє» значенням (controlled vs uncontrolled, <code>input[type=file]</code>) — розділ «Controlled vs Uncontrolled Inputs» вище.</p>\n<h3 class=\"topic\">FormData — нативний збір значень <span class=\"tag tag-key\">KEY</span></h3>\n<p><code>FormData</code> — вбудований у браузер обʼєкт, що збирає значення <strong>усіх</strong> названих (<code>name=&quot;...&quot;</code>) полів за один виклик — заміна ref-на-кожен-інпут.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function ContactForm() {\n  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {\n    e.preventDefault();\n    const data = new FormData(e.currentTarget);   // ref не потрібен — форма з події\n    data.get('email');              // одне значення: string | File | null\n    data.getAll('interests');       // масив — для checkbox-груп з тим самим name\n    data.get('avatar') as File;     // файл із <input type=\"file\">\n    Object.fromEntries(data);       // { email: '...', name: '...' } — плейн-обʼєкт\n  }\n  return (\n    <form onSubmit={handleSubmit}>\n      <input name=\"email\" type=\"email\" />\n      <input name=\"avatar\" type=\"file\" />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">React 19 Actions — <code>&lt;form action={'{'}fn{'}'}&gt;</code></h3>\n<p>У React 19 форма приймає <strong>функцію</strong> в <code>action</code> — вона отримує зібраний <code>FormData</code>, форма скидається після успіху, а робота може виконуватись на сервері (Server Action). Той самий <code>FormData</code> є в <code>action</code> React Router; деталі — розділ «React 19».</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "async function updateName(formData: FormData) {\n  'use server';                                  // Server Action (Next.js App Router)\n  await db.user.update({ name: formData.get('name') });\n}\nfunction ProfileForm() {\n  const [state, action, isPending] = useActionState(updateName, null);\n  return (\n    <form action={action}>\n      <input name=\"name\" />\n      <SubmitButton />\n    </form>\n  );\n}\nfunction SubmitButton() {\n  const { pending } = useFormStatus();            // стан найближчої <form> — без пропсів\n  return <button disabled={pending}>{pending ? 'Збереження…' : 'Зберегти'}</button>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Нативна HTML5-валідація <span class=\"tag tag-key\">KEY</span></h3>\n<p>Атрибути <code>required</code>, <code>pattern</code>, <code>min</code>/<code>max</code>, <code>type=&quot;email&quot;</code> — браузер валідує без JS. Constraint Validation API дає програмний доступ: <code>input.checkValidity()</code> (bool, без UI), <code>input.reportValidity()</code> (нативна підказка), <code>input.setCustomValidity('текст')</code> (власне повідомлення).</p>\n<h3 class=\"topic\">Коли валідувати — три стратегії</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Момент</th>\n<th>UX</th>\n<th>Коли доречно</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>onChange</code></td>\n<td>Миттєвий фідбек, може дратувати посеред вводу</td>\n<td>Індикатори сили пароля, лічильник символів</td>\n</tr>\n<tr>\n<td><code>onBlur</code></td>\n<td>Валідація при виході з поля — не заважає</td>\n<td>Найпоширеніший баланс для текстових полів</td>\n</tr>\n<tr>\n<td><code>onSubmit</code></td>\n<td>Усе одразу в момент сабміту</td>\n<td>Прості форми, або фінальна перевірка поверх onBlur</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Error state і фокус на невалідному полі <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>Стан помилок тримай <strong>окремо</strong> від значень полів (<code>{ fieldName: message }</code>) й оновлюй лише змінений запис — інакше форма «сіпається». Після невдалого сабміту — фокус на перше невалідне поле й ARIA-звʼязок помилки з інпутом.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function useFormErrors() {\n  const [errors, setErrors] = useState<Record<string, string>>({});\n  const fieldRefs = useRef<Record<string, HTMLInputElement | null>>({});\n  function validate(data: Record<string, string>) {\n    const next: Record<string, string> = {};\n    if (!data.email) next.email = 'Обовʼязкове поле';\n    setErrors(next);\n    const firstInvalid = Object.keys(next)[0];\n    if (firstInvalid) fieldRefs.current[firstInvalid]?.focus(); // ⚠️ a11y — легко забути\n    return Object.keys(next).length === 0;\n  }\n  return { errors, fieldRefs, validate };\n}\n\n<input name=\"email\" ref={el => { fieldRefs.current.email = el; }}\n  aria-invalid={!!errors.email}\n  aria-describedby={errors.email ? 'email-error' : undefined} />\n{errors.email && <span id=\"email-error\" role=\"alert\">{errors.email}</span>}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Фокус на перше невалідне поле й <code>aria-invalid</code>/<code>aria-describedby</code> — не косметика, а a11y-поведінка: користувачі screen reader/клавіатури інакше не дізнаються, де помилка.</p></div>\n<h3 class=\"topic\">Zod — одна схема на клієнт і сервер <span class=\"tag tag-key\">KEY</span></h3>\n<p>Ключове правило безпеки: клієнтська валідація — лише для UX, серверна — обовʼязкова завжди. Щоб не писати правила двічі — <strong>одна Zod-схема</strong> в окремому файлі, який імпортують і компонент, і Server Action / API-роут.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// signupSchema.ts — імпортується І в компонент, І в API-роут / Server Action\nimport { z } from 'zod';\nexport const signupSchema = z.object({\n  email: z.string().email('Невалідний email'),\n  age: z.coerce.number().min(18, 'Мінімум 18 років'),  // coerce — FormData дає рядки\n});\nexport type SignupInput = z.infer<typeof signupSchema>;  // тип зі схеми, без дублювання\n\n// будь-де (клієнт або сервер):\nconst parsed = signupSchema.safeParse(Object.fromEntries(formData));\nif (!parsed.success) {\n  parsed.error.flatten().fieldErrors;   // { email: ['Невалідний email'], ... }\n} else {\n  parsed.data;                          // типізовано як SignupInput\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Бібліотеки — коли ручного вже мало</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Підхід</th>\n<th>Модель</th>\n<th>Статус</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Vanilla <code>useState</code> / <code>FormData</code></td>\n<td>Controlled по полю / нативний збір</td>\n<td>Ок для 1–3 полів, росте боляче</td>\n</tr>\n<tr>\n<td><strong>react-hook-form</strong></td>\n<td>Uncontrolled (refs) + Zod</td>\n<td>✅ Актуальний стандарт для будь-чого складнішого</td>\n</tr>\n<tr>\n<td>Formik</td>\n<td>Controlled, обгортка над useState</td>\n<td>Легасі — витіснений RHF через продуктивність</td>\n</tr>\n<tr>\n<td>TanStack Form</td>\n<td>Type-safe, framework-agnostic ядро</td>\n<td>Новіший гравець, зростає, поки не домінує</td>\n</tr>\n</tbody>\n</table></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { useForm } from 'react-hook-form';\nimport { zodResolver } from '@hookform/resolvers/zod';\nimport { signupSchema } from './signupSchema';   // та сама схема, що й на сервері\n\nfunction SignupForm() {\n  const { register, handleSubmit, formState: { errors } } = useForm({\n    resolver: zodResolver(signupSchema),  // валідація — схемою, не вручну\n  });\n  return (\n    <form onSubmit={handleSubmit(data => submit(data))}>\n      <input {...register('email')} />       {/* register = ref + name під капотом */}\n      {errors.email && <span>{errors.email.message}</span>}\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}\n// register() повертає { name, ref, onChange, onBlur } — uncontrolled, мінімум ре-рендерів"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>Вердикт:</strong> проста форма (1–5 полів) → нативний <code>FormData</code> + Zod, без бібліотеки. Складніше за 2–3 поля, з файлами/динамічними полями/потребою в продуктивності → <strong>react-hook-form + Zod</strong>: одна схема (перевикористовна на бекенді), продуктивність не деградує, TS-типи зі схеми.</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Де робити валідацію — клієнт, сервер, обидва?",
-          "answer": "Клієнтська — для UX (миттєвий фідбек), але <strong>ніколи не джерело істини для безпеки</strong> (клієнт можна обійти прямим запитом). Серверна обовʼязкова завжди — єдиний надійний барʼєр. Дублювати ключові правила на обох рівнях, ідеально через спільну Zod-схему."
-        },
-        {
-          "question": "Переваги нативного <code>FormData</code> над <code>useState</code> на кожне поле?",
-          "answer": "Збирає всі значення одним викликом без окремого <code>useState</code>/<code>onChange</code> на кожне поле — менше boilerplate і ре-рендерів. У зв'язці з React 19 Actions (<code>&lt;form action={fn}&gt;</code>) FormData передає дані у Server Action без ручної серіалізації."
-        },
-        {
-          "question": "Як показати помилки, щоб форма не «сіпалась»?",
-          "answer": "Стан помилок окремо від значень (<code>{ fieldName: message }</code>), оновлювати лише змінений запис. Бібліотеки (RHF) ізолюють ре-рендер поля через підписку по імені, тому помилка в одному інпуті не ре-рендерить усю форму й не збиває фокус."
-        },
-        {
-          "question": "Коли нативний підхід замість бібліотеки?",
-          "answer": "Для простих форм (1-3 поля, без складної крос-польової валідації чи динамічних масивів) — залежність бібліотеки не окупається. Для десятків полів, вкладених масивів, складної умовної валідації — бібліотека економить більше, ніж коштує."
-        }
-      ]
-    },
-    {
-      "id": "react-router",
-      "title": "🧭 React Router",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Що це і навіщо <span class=\"tag tag-key\">KEY</span></h3>\n<p>React сам по собі не має роутера (конкретний наслідок &quot;бібліотека, а не фреймворк&quot;). React Router — де-факто стандартна бібліотека для клієнтського роутингу в SPA: зіставляє URL з деревом компонентів, синхронізує адресний рядок і навігацію без повного перезавантаження.</p>\n<h3 class=\"topic\">Який роутер обрати <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><strong>Декларативний API (легасі):</strong> <code>&lt;BrowserRouter&gt;</code> + <code>&lt;Routes&gt;</code>/<code>&lt;Route&gt;</code> у JSX. Досі працює, але без вбудованого <code>loader</code>/<code>action</code> — дані тягнеш вручну через <code>useEffect</code>.</li>\n<li><strong>Data Router API — актуальний стандарт ✅:</strong> <code>createBrowserRouter([...])</code> + <code>&lt;RouterProvider&gt;</code>. Конфіг маршрутів — масив обʼєктів, що розблоковує <code>loader</code>/<code>action</code>/<code>errorElement</code>. Рекомендований з v6.4+, стандарт і в v7 (після злиття з Remix).</li>\n</ul>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Функція</th>\n<th>Коли обирати</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>createBrowserRouter</code></td>\n<td>Стандартний вибір для браузерного SPA — HTML5 History API, чисті URL</td>\n</tr>\n<tr>\n<td><code>createHashRouter</code></td>\n<td>Той самий API, URL виду <code>/#/path</code> — коли сервер не налаштований на SPA-фолбек</td>\n</tr>\n<tr>\n<td><code>createMemoryRouter</code></td>\n<td>Без адресного рядка, історія в памʼяті. Для тестів і не-браузерних середовищ</td>\n</tr>\n<tr>\n<td><code>createStaticRouter</code> / <code>createStaticHandler</code></td>\n<td>Серверна пара для SSR React Router поза Next.js</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Основні концепції</h3>\n<ul class=\"list\">\n<li><strong><code>&lt;Link&gt;</code> / <code>&lt;NavLink&gt;</code></strong> — клієнтська навігація без перезавантаження (перехоплює клік, оновлює History API). <code>NavLink</code> — плюс автоматичний <code>className</code>/<code>style</code> для активного маршруту.</li>\n<li><strong><code>&lt;Outlet&gt;</code></strong> — місце в layout-роуті, куди рендериться <strong>дочірній</strong> зматчений маршрут — основа вкладеного роутингу (спільний layout не перемонтовується).</li>\n<li><strong><code>useNavigate</code></strong> — програмна навігація (<code>navigate('/success')</code>).</li>\n<li><strong><code>useParams</code> / <code>useLocation</code></strong> — динамічні сегменти (<code>/users/:id</code> → <code>{ id }</code>); поточний шлях/query/hash.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const router = createBrowserRouter([\n  {\n    path: '/',\n    element: <Layout />,          // спільний UI (nav, sidebar)\n    children: [\n      { index: true, element: <Home /> },\n      { path: 'users/:id', element: <UserProfile /> }, // :id — динамічний сегмент\n    ],\n  },\n]);\n\nfunction Layout() {\n  return (\n    <>\n      <nav><NavLink to=\"/\">Home</NavLink></nav>\n      <Outlet />   {/* сюди рендериться Home АБО UserProfile залежно від URL */}\n    </>\n  );\n}\nfunction UserProfile() {\n  const { id } = useParams();    // '42' з /users/42\n  return <div>User #{id}</div>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">loader — дані через роутер <span class=\"tag tag-key\">KEY</span></h3>\n<p>Функція <code>loader</code> на роуті виконується <strong>до</strong> рендеру компонента — дані готові в момент першого рендеру, замість &quot;змонтувався → useEffect → fetch → спінер&quot;. Читаються через <code>useLoaderData()</code>.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const router = createBrowserRouter([\n  {\n    path: 'users/:id',\n    element: <UserProfile />,\n    loader: async ({ params }) => {\n      const res = await fetch(`/api/users/${params.id}`);\n      if (!res.ok) throw new Response('Not Found', { status: 404 }); // → errorElement\n      return res.json();\n    },\n  },\n]);\nfunction UserProfile() {\n  const user = useLoaderData();   // дані вже тут, без useEffect і спінера на mount\n  return <div>{user.name}</div>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> <code>loader</code> ≠ TanStack Query — <code>loader</code> вирішує &quot;коли завантажити&quot; (до рендеру, паралельно з code-splitting), Query — &quot;як кешувати/інвалідувати/дедуплікувати&quot;. Часто разом: <code>loader</code> &quot;прогріває&quot; Query-кеш.</p></div>\n<h3 class=\"topic\">action — мутації через роутер <span class=\"tag tag-key\">KEY</span></h3>\n<p>Компонент <code>&lt;Form&gt;</code> (з react-router) сабмітить дані на <code>action</code> роуту замість ручного <code>onSubmit</code>+<code>preventDefault</code>+<code>fetch</code>. Progressive enhancement — форма працює навіть без JS.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const router = createBrowserRouter([\n  {\n    path: 'users/:id/edit',\n    element: <EditUser />,\n    action: async ({ request, params }) => {\n      const formData = await request.formData();\n      await fetch(`/api/users/${params.id}`, { method: 'PATCH', body: formData });\n      return redirect(`/users/${params.id}`);  // навігація прямо з action\n    },\n  },\n]);\nfunction EditUser() {\n  const errors = useActionData();  // результат action (напр. помилки валідації)\n  return (\n    <Form method=\"post\">\n      <input name=\"name\" />\n      {errors?.name && <span>{errors.name}</span>}\n      <button type=\"submit\">Save</button>\n    </Form>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <code>action</code>/<code>loader</code> React Router — не те саме, що React 19 <code>useActionState</code>/Actions. Та сама ідея (форма → серверна дія → результат), різні шари: React Router — бібліотека роутингу з власною data-моделлю; React 19 Actions — вбудовані в React core.</p></div>\n<h3 class=\"topic\">React Router vs Next.js App Router — коли що</h3>\n<ul class=\"list\">\n<li><strong>React Router</strong> — чистий SPA, клієнтський роутинг, сам обираєш data-layer. Гнучкіше, але кешування/SSR/бандлінг збираєш сам.</li>\n<li><strong>Next.js App Router</strong> — файлова маршрутизація, RSC, кешування й SSR &quot;з коробки&quot; — менше рішень, але й менше гнучкості поза конвенціями.</li>\n</ul>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чим декларативний React Router відрізняється від File-based роутингу Next.js?",
-          "answer": "React Router будує маршрути з JSX-дерева <code>&lt;Route&gt;</code> (або об'єктної конфігурації) — повний програмний контроль (умовні/вкладені маршрути), ціна — гнучкість замість конвенції. File-based Next.js виводить маршрути з файлової структури — швидше зорієнтуватись, менше boilerplate, але менш гнучко для нетипових сценаріїв."
-        },
-        {
-          "question": "Як React Router реалізує lazy-loading маршрутів і чому це важливо?",
-          "answer": "Через <code>React.lazy()</code> + <code>&lt;Suspense&gt;</code> (або вбудований <code>lazy</code>-loader у Data Router) код кожного маршруту виноситься в окремий чанк, завантажується лише при переході. Без цього весь JS усіх сторінок — в одному початковому бандлі, що збільшує TTI."
-        }
-      ]
-    },
-    {
-      "id": "server-communication-auth",
-      "title": "🌐 Fetch, axios та автентифікація на клієнті",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">fetch — пастка з &quot;успішними&quot; помилками <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p><code>fetch</code> потрапляє в <code>catch</code> лише при мережевому збої — HTTP 404/500 це для нього &quot;успішна&quot; відповідь, яку треба перевірити через <code>response.ok</code> (<code>true</code> для 200-299).</p>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// fetch + AbortController — скасування застарілого запиту\nasync function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {\n  const res = await fetch(url, { signal });\n  if (!res.ok) {\n    throw new Error(`HTTP ${res.status}: ${res.statusText}`); // fetch САМ не кидає на 404/500\n  }\n  return res.json();\n}\n\nfunction useSearch(query: string) {\n  const [results, setResults] = useState<Item[]>([]);\n  useEffect(() => {\n    const controller = new AbortController();\n    fetchJson<Item[]>(`/api/search?q=${query}`, controller.signal)\n      .then(setResults)\n      .catch((err) => { if (err.name !== 'AbortError') console.error(err); });\n    return () => controller.abort(); // cleanup: новий query → скасувати попередній\n  }, [query]);\n  return results;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">axios — навіщо поверх fetch <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><strong>fetch (нативний):</strong> 0 залежностей; не кидає на 4xx/5xx (треба <code>response.ok</code>); ручна серіалізація JSON; скасування через <code>AbortController</code>.</li>\n<li><strong>axios:</strong> reject на будь-якому статусі поза 2xx (простий <code>try/catch</code>); автоматична серіалізація JSON; <strong>interceptors</strong> (централізовані request/response хуки); вбудоване скасування, таймаути.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "typescript",
-          "code": "// axios interceptors — підстановка токена й обробка 401 в одному місці\nimport axios from 'axios';\nconst api = axios.create({ baseURL: '/api' });\n\napi.interceptors.request.use((config) => {\n  const token = getAccessToken();\n  if (token) config.headers.Authorization = `Bearer ${token}`;\n  return config;\n});\n\napi.interceptors.response.use(\n  (res) => res,\n  async (error) => {\n    if (error.response?.status === 401) {\n      await refreshAccessToken();      // одна спроба оновити токен...\n      return api.request(error.config); // ...і повторити оригінальний запит\n    }\n    return Promise.reject(error);\n  },\n);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Автентифікація на клієнті — де зберігати токен <span class=\"tag tag-pit\">PITFALL</span></h3>\n<ul class=\"list\">\n<li><strong>⚠️ localStorage</strong> — доступний з будь-якого JS → вразливий до <strong>XSS</strong> (вкрадений скрипт читає токен). Простий, але для чутливих токенів — ризик.</li>\n<li><strong>✅ HttpOnly cookie</strong> — недоступний з JS (XSS не прочитає). Але автоматично летить із кожним запитом на домен → вразливий до <strong>CSRF</strong>, тому потрібні <code>SameSite=Strict/Lax</code> + CSRF-токен.</li>\n</ul>\n<p>Практичний компроміс: короткоживучий <strong>access token</strong> у пам'яті (React-стан/модуль-змінна) + довгоживучий <strong>refresh token</strong> у HttpOnly-cookie для тихого оновлення.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Protected route — редірект ДО рендеру приватного контенту, без \"спалаху\"\nfunction RequireAuth({ children }: { children: React.ReactNode }) {\n  const { user, isLoading } = useAuth();\n  const location = useLocation();\n  if (isLoading) return <Spinner />; // ще не знаємо статус — нічого не рендеримо\n  if (!user) {\n    return <Navigate to=\"/login\" state={{ from: location }} replace />; // replace: без зайвого history\n  }\n  return children;\n}\n// Приватний <Dashboard> взагалі НЕ монтується, поки перевірка не пройшла —\n// на відміну від \"відрендерити й редіректнути в useEffect\", де контент промайне"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чому &quot;fetch не кидає на 404/500&quot; — пастка, і чим axios інакше?",
-          "answer": "<code>fetch</code> резолвить проміс для <strong>будь-якої</strong> відповіді сервера (навіть 404/500); помилкою вважає лише мережевий збій. Перевіряти через <code>response.ok</code>. axios автоматично кидає (reject) для статусу поза 2xx, тобто <code>try/catch</code> навколо axios ловить HTTP-помилки без ручної перевірки."
-        },
-        {
-          "question": "Навіщо AbortController з fetch і типова помилка?",
-          "answer": "Дозволяє скасувати in-flight запит (<code>abort()</code>) — критично в <code>useEffect</code> з частими залежностями (пошук, зміна параметра), інакше застарілі відповіді приходять <em>після</em> свіжих і перезаписують стан. Типова помилка — не повертати cleanup з <code>abort()</code>, через що компонент після демонтажу викликає <code>setState</code> на неактуальний результат."
-        },
-        {
-          "question": "Чим interceptor axios відрізняється від ручної обгортки fetch?",
-          "answer": "Реєструється <strong>один раз</strong> глобально й застосовується до <strong>кожного</strong> запиту/відповіді — зручно централізувати токен, логування, 401. З голим <code>fetch</code> немає перехоплення — доводиться писати обгортку (<code>apiFetch</code>) навколо кожного виклику або патчити глобальний <code>fetch</code>."
-        },
-        {
-          "question": "Чому JWT у localStorage ризиковано і як HttpOnly-cookie вирішує (і яку проблему створює)?",
-          "answer": "localStorage доступний з будь-якого JS — XSS може прочитати токен. HttpOnly-cookie <strong>недоступний з JS</strong> (лише браузер додає його). Натомість cookie летить із <strong>кожним</strong> запитом на домен, включно з ініційованими сторонньою сторінкою — це CSRF, від якого захищаються <code>SameSite=Strict/Lax</code> + CSRF-токен."
-        },
-        {
-          "question": "Як реалізувати protected route без &quot;спалаху&quot; приватного контенту?",
-          "answer": "Обгортковий компонент (<code>RequireAuth</code>) перевіряє автентифікацію <em>до</em> рендеру дочірнього маршруту через <code>&lt;Navigate to=&quot;/login&quot; /&gt;</code> замість умовного рендеру всередині сторінки — React Router не монтує приватний компонент, поки перевірка не завершена. Помилка — відрендерити приватну сторінку й лише в <code>useEffect</code> редіректнути (контент промайне в DOM)."
-        }
-      ]
-    },
-    {
-      "id": "nextjs-render-models",
-      "title": "🖥️ Next.js: рендер-моделі",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">CSR / SSR / SSG / ISR <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Mode</th>\n<th>Коли рендериться HTML</th>\n<th>Коли доречно</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>CSR</strong></td>\n<td>У браузері, після завантаження JS</td>\n<td>Дашборди, інтерактивні частини за автентифікацією</td>\n</tr>\n<tr>\n<td><strong>SSR</strong></td>\n<td>На сервері, на кожен запит</td>\n<td>Персоналізовані сторінки, дані, що часто міняються</td>\n</tr>\n<tr>\n<td><strong>SSG</strong></td>\n<td>На сервері, під час білда, один раз</td>\n<td>Blog posts, marketing pages — контент майже не міняється</td>\n</tr>\n<tr>\n<td><strong>ISR</strong></td>\n<td>Як SSG, але перегенерується у фоні через <code>revalidate</code></td>\n<td>Новини, каталог товарів — часто, але не real-time</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">RSC — не те саме, що SSR <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>SSR — <strong>коли</strong> рендериться HTML (сервер vs браузер) — про час і місце. RSC (React Server Components) — <strong>де живе компонент</strong>: Server Component ніколи не потрапляє в JS-бандл клієнта, його код і залежності виконуються лише на сервері й не гідруються. SSR-компонент — звичайний Client Component, просто його <em>перший</em> рендер відбувся на сервері для HTML, а потім він гідрується.</p>\n<h3 class=\"topic\">Serialization через &quot;use client&quot; межу <span class=\"tag tag-key\">KEY</span></h3>\n<p>Пропи із Server Component у Client Component серіалізуються (як JSON) — <strong>не можна</strong> передати функції, класи, <code>Date</code>, Symbol. Виняток: сам <code>children</code> (JSX-дерево) можна — Server Component може лишатись &quot;невидимим&quot; деревом усередині Client Component через children.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// app/page.tsx — Server Component\nexport default function Page() {\n  return (\n    <>\n      <Header />                                    {/* Відразу */}\n      <Suspense fallback={<DashboardSkeleton />}>\n        <SlowDashboard />                          {/* Стрімиться окремо */}\n      </Suspense>\n    </>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Hydration mismatch:</strong> якщо серверний і клієнтський рендер відрізняються (<code>Date.now()</code>, <code>window</code>, <code>Math.random()</code> у рендері) — React лається. Фікс: <code>suppressHydrationWarning</code> на вузлі або перенести browser-only контент у <code>useEffect</code>.</p></div>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Bundle leak:</strong> <code>&quot;use client&quot;</code> на &quot;корені&quot; фічі тягне у клієнтський бандл усі дочірні модулі-імпорти. Client Component отримує Server Component лише через <code>children</code>-проп, ніколи через прямий <code>import</code>.</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Різниця між SSR, SSG, ISR, CSR — коли кожну?",
-          "answer": "CSR — рендеринг у браузері, найгірший для SEO/першого фарбування, для приватних дашбордів. SSR — HTML на сервері на кожен запит, для персоналізованого/часто змінного. SSG — HTML раз під час білду, макс швидкість, для майже незмінного (маркетинг). ISR — SSG з фоновим ревалідейшном (<code>revalidate</code>), компроміс швидкості й свіжості."
-        },
-        {
-          "question": "Що таке RSC і чим принципово відрізняються від SSR?",
-          "answer": "SSR виконує рендер на сервері для <em>початкового</em> HTML, але код все одно потрапляє в клієнтський бандл для гідратації. RSC — компоненти, які виконуються <strong>виключно на сервері</strong> й ніколи не потрапляють у клієнтський JS: їхній код і залежності не завантажуються браузером — суттєве зменшення бандла для неінтерактивних частин."
-        },
-        {
-          "question": "SSR і RSC — одне й те саме?",
-          "answer": "Ні: SSR — коли рендериться HTML; RSC — де взагалі виконується компонент (сервер, ніколи не в бандлі клієнта)."
-        },
-        {
-          "question": "Чому не можна передати onClick з Server у Client Component?",
-          "answer": "Пропи серіалізуються, функції не серіалізуються — сервер не може отримати посилання на клієнтську функцію."
-        }
-      ]
-    },
-    {
-      "id": "nextjs-app-router",
-      "title": "▲ Next.js App Router",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Server vs Client Components <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th></th>\n<th>Server Component</th>\n<th>Client Component</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Default</strong></td>\n<td>✅ Так</td>\n<td>❌ Потрібен 'use client'</td>\n</tr>\n<tr>\n<td><strong>async/await у тілі</strong></td>\n<td>✅</td>\n<td>❌</td>\n</tr>\n<tr>\n<td><strong>useState/useEffect</strong></td>\n<td>❌</td>\n<td>✅</td>\n</tr>\n<tr>\n<td><strong>Event handlers</strong></td>\n<td>❌</td>\n<td>✅</td>\n</tr>\n<tr>\n<td><strong>DB/FS доступ напряму</strong></td>\n<td>✅</td>\n<td>❌</td>\n</tr>\n<tr>\n<td><strong>Йде в JS bundle</strong></td>\n<td>❌ (не йде!)</td>\n<td>✅</td>\n</tr>\n<tr>\n<td><strong>Browser APIs</strong></td>\n<td>❌</td>\n<td>✅</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">File conventions</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "app/\n  layout.tsx        ← спільний layout (persistent)\n  page.tsx          ← UI роуту\n  loading.tsx       ← Suspense fallback\n  error.tsx         ← error boundary ('use client'!)\n  not-found.tsx     ← 404\n  route.ts          ← API Route Handler\n  template.tsx      ← ре-маунт при навігації (vs layout)"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Server Actions\n'use server';\nexport async function deletePost(id: string) {\n  const session = await getSession();\n  if (!session) throw new Error('Unauthorized');\n  await db.post.delete({ where: { id } });\n  revalidatePath('/posts');\n}\n// ⚠️ ЗАВЖДИ перевіряй права всередині Server Action — це публічний HTTP-ендпоінт."
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Динамічні сегменти <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Папка</th>\n<th>URL, що матчить</th>\n<th><code>params</code></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>app/users/[id]/page.tsx</code></td>\n<td><code>/users/42</code></td>\n<td><code>{'{'} id: '42' {'}'}</code></td>\n</tr>\n<tr>\n<td><code>app/docs/[...slug]/page.tsx</code></td>\n<td><code>/docs/a/b/c</code> (1+)</td>\n<td><code>{'{'} slug: ['a','b','c'] {'}'}</code></td>\n</tr>\n<tr>\n<td><code>app/docs/[[...slug]]/page.tsx</code></td>\n<td><code>/docs</code> теж (0+)</td>\n<td><code>{'{'} slug: undefined {'}'}</code> для <code>/docs</code></td>\n</tr>\n<tr>\n<td><code>app/(marketing)/about/page.tsx</code></td>\n<td><code>/about</code> — <code>(marketing)</code> НЕ в URL</td>\n<td>Route group — лише для організації файлів/layout</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Навігація: <code>next/link</code> і клієнтські хуки</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import Link from 'next/link';\n<Link href=\"/users/42\">Профіль</Link>\n// клієнтська навігація без full reload + автоматичний prefetch у viewport\n\n'use client';\nimport { useRouter, usePathname, useSearchParams } from 'next/navigation';\nconst router = useRouter();       // router.push('/x'), router.refresh()\nconst pathname = usePathname();    // '/users/42'\nconst params = useSearchParams();  // ?tab=posts → params.get('tab')"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<div class=\"alert good\"><span class=\"icon\">✅</span><p> У Server Component (<code>page.tsx</code> за замовчуванням) <code>params</code>/<code>searchParams</code> приходять як <strong>пропи</strong> — <code>useRouter</code>/<code>usePathname</code> непотрібні й недоступні. Клієнтські хуки — лише для Client Components.</p></div>\n<p>Просунуті/рідкісні конвенції — parallel routes (<code>@slot</code>) та intercepting routes (<code>(.)folder</code>, модалка з власним URL) — за межами типового Senior-інтерв'ю, знати про існування достатньо.</p>\n<h3 class=\"topic\">Route Handlers</h3>\n<p><code>route.ts</code> у будь-якій папці <code>app/</code> — повноцінний API-ендпоінт (<code>GET</code>/<code>POST</code>/... іменовані експорти), співіснує з <code>page.tsx</code> у тій самій папці лише якщо різні сегменти шляху.</p>\n<h3 class=\"topic\">Caching layers — найзаплутаніша тема Next <span class=\"tag tag-pit\">PITFALL</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Кеш</th>\n<th>Де</th>\n<th>Що кешує</th>\n<th>Як інвалідувати</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Request Memoization</strong></td>\n<td>Сервер, час одного рендеру</td>\n<td>Дедуплікація однакових <code>fetch</code> у дереві</td>\n<td>Сам минає після рендеру</td>\n</tr>\n<tr>\n<td><strong>Data Cache</strong></td>\n<td>Сервер, персистентний</td>\n<td>Результат <code>fetch</code> між запитами/деплоями</td>\n<td><code>revalidatePath/Tag</code>, <code>fetch(..., { next: { revalidate } })</code></td>\n</tr>\n<tr>\n<td><strong>Full Route Cache</strong></td>\n<td>Сервер, persist</td>\n<td>HTML+RSC payload статичних роутів</td>\n<td>Ребілд, або динамічний роут (opt-out)</td>\n</tr>\n<tr>\n<td><strong>Router Cache</strong></td>\n<td>Клієнт, in-memory</td>\n<td>RSC payload відвіданих роутів для back/forward</td>\n<td>Хард-рефреш, <code>router.refresh()</code></td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">React.cache() та Next.js after() <span class=\"tag tag-new\">Next.js 15</span></h3>\n<ul class=\"list\">\n<li><strong>React.cache()</strong> — Next.js автоматично дедуплікує однакові <code>fetch</code> у межах рендеру (Request Memoization). Але довільна async-робота (прямий запит до БД, ORM) такого не отримує. <code>cache()</code> обгортає функцію так, щоб повторні виклики з тими самими аргументами в межах рендеру поверталися з одного результату.</li>\n<li><strong>after()</strong> — планує роботу, що виконається <strong>після</strong> відправлення відповіді (логування, аналітика, інвалідація) — не затримує відповідь.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { cache } from 'react';\nimport { after } from 'next/server';\n\nconst getUser = cache(async (id: string) => db.user.findUnique({ where: { id } }));\n// getUser('42') викликаний 5 разів у дереві за один рендер → запит до БД лише раз\n\nexport async function updateProfileAction(formData: FormData) {\n  'use server';\n  await db.profile.update(/* ... */);\n  after(() => {                        // ПІСЛЯ того, як відповідь пішла користувачу\n    logAnalyticsEvent('profile_updated');\n    revalidateSearchIndex();\n  });\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Уникнення waterfall-запитів <span class=\"tag tag-pit\">PITFALL</span></h3>\n<p>У Server Component послідовний <code>await</code> легко стає прихованою проблемою: кожен наступний запит стартує лише після попереднього, хоча вони незалежні.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ Waterfall — послідовно (~400ms)\nasync function Page() {\n  const user = await getUser();     // 200ms\n  const posts = await getPosts();    // +200ms, хоча не залежить від user\n}\n\n// ✅ Паралельно — Promise.all (~200ms)\nasync function Page() {\n  const [user, posts] = await Promise.all([getUser(), getPosts()]);\n}\n\n// Частина залежить, частина ні — \"start early, await late\":\nasync function Page() {\n  const postsPromise = getPosts();     // стартував одразу, ще НЕ await\n  const user = await getUser();       // паралельно з postsPromise\n  const posts = await postsPromise;    // вже майже готовий\n}"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чим App Router відрізняється від Pages Router окрім файлової структури?",
-          "answer": "App Router — на RSC за замовчуванням (серверні, доки не <code>'use client'</code>), вкладені layouts зі збереженням стану, паралельні/перехоплюючі маршрути, стрімінг через Suspense на рівні сегментів. Pages Router — усі компоненти клієнтські за замовчуванням, рендер-модель на рівні сторінки (<code>getServerSideProps</code>/<code>getStaticProps</code>), без гранулярного стрімінгу."
-        },
-        {
-          "question": "Що означає <code>'use client'</code> — чи весь піддерево більше не рендериться на сервері?",
-          "answer": "Позначає межу — усе, що <em>імпортується</em> з файлу, стає частиною клієнтського бандла й гідратується. Але це не відмова від SSR: клієнтський компонент усе одно рендериться на сервері раз для початкового HTML, потім гідрується. «Client» стосується бандлінгу й інтерактивності, а не відсутності серверного рендеру."
-        },
-        {
-          "question": "Що заважає забути перевірити авторизацію в Server Action?",
-          "answer": "Нічого, це відповідальність розробника — Action виглядає як звичайна функція, але викликається з клієнта як ендпоінт."
-        },
-        {
-          "question": "4 рівні кешування Next.js.",
-          "answer": "Request Memoization / Data Cache / Full Route Cache / Router Cache — сервер vs клієнт, per-request vs persistent."
-        },
-        {
-          "question": "Навіщо React.cache(), якщо Next.js вже дедуплікує fetch?",
-          "answer": "<code>fetch</code> дедуплікується завдяки внутрішньому патчу Next.js. Будь-яка інша async-робота (прямий запит до БД через ORM, сторонній SDK) патчу не має. <code>React.cache()</code> дає той самий per-request дедуп <em>вручну</em> для довільної async-функції."
-        },
-        {
-          "question": "Чим Promise.all рятує від waterfall у Server Component і коли незастосовна?",
-          "answer": "Послідовні <code>await</code> для незалежних джерел змушують кожен запит чекати попередній. <code>Promise.all</code> стартує обидва одразу. Незастосовно, якщо другий запит реально залежить від значення першого — тоді waterfall неминучий за дизайном."
-        }
-      ]
-    },
-    {
-      "id": "react-19-future",
-      "title": "✨ React 19 / майбутнє",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">React 19 — нове <span class=\"tag tag-new\">React 19</span></h3>\n<h3 class=\"topic\"><code>use()</code> — читання Promise / Context під час рендеру</h3>\n<p>Не хук: можна викликати умовно, в циклі, після early return. Читає <code>Promise</code> (suspend до resolve, найближчий <code>&lt;Suspense&gt;</code> показує fallback, помилку ловить Error Boundary) або <code>Context</code>.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Comments({ commentsPromise }: { commentsPromise: Promise<Comment[]> }) {\n  const comments = use(commentsPromise);   // suspends до resolve — без useState для loading\n  return <ul>{comments.map(c => <li key={c.id}>{c.text}</li>)}</ul>;\n}\nfunction Toolbar() {\n  if (isHidden) return null;               // useContext() тут кинув би помилку\n  const theme = use(ThemeContext);         // use() можна після early return\n  return <div className={theme} />;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\"><code>useActionState</code> — форма + pending + помилка в одному хуку</h3>\n<p>Обгортає async-функцію (Server Action чи звичайну). Форма працює навіть без JS через нативний <code>&lt;form action&gt;</code>.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "async function updateName(prev: State, formData: FormData): Promise<State> {\n  const error = await saveName(formData.get('name'));\n  return error ? { error } : { ok: true };\n}\nfunction Form() {\n  const [state, formAction, isPending] = useActionState(updateName, {});\n  return (\n    <form action={formAction}>\n      <input name=\"name\" />\n      <button disabled={isPending}>Save</button>\n      {state.error && <p>{state.error}</p>}\n    </form>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\"><code>useOptimistic</code> — миттєве UI до відповіді сервера</h3>\n<p>Показує очікуваний результат одразу; при помилці React сам відкочує до реального стану.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function Todos({ todos }: { todos: Todo[] }) {\n  const [optimistic, addOptimistic] = useOptimistic(\n    todos,\n    (state, newText: string) => [...state, { id: 'temp', text: newText, pending: true }],\n  );\n  async function action(formData: FormData) {\n    const text = formData.get('text') as string;\n    addOptimistic(text);               // UI оновлюється негайно\n    await saveTodo(text);              // помилка → optimistic відкотиться\n  }\n  return <form action={action}>{/* рендер optimistic */}</form>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\"><code>useFormStatus</code> — статус батьківської <code>&lt;form&gt;</code> без props-drilling</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "function SubmitButton() {\n  const { pending } = useFormStatus();  // стан <form>, всередині якої відрендерений\n  return <button disabled={pending}>{pending ? 'Збереження…' : 'Зберегти'}</button>;\n}\n// <form action={action}><SubmitButton /></form>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\"><code>ref</code> як звичайний проп + <code>&lt;Context&gt;</code> як провайдер</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// React 19: forwardRef більше не потрібен — ref просто проп\nfunction Input({ ref, ...props }: React.ComponentProps<'input'>) {\n  return <input ref={ref} {...props} />;\n}\n// <Context> сам є провайдером — <Context.Provider> тепер зайве\nconst ThemeContext = createContext<Theme>('light');\n<ThemeContext value=\"dark\">{children}</ThemeContext>   // не <ThemeContext.Provider>"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">React Compiler</h3>\n<p>Build-time інструмент, що автоматично вставляє мемоізацію (еквівалент <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code>) там, де компілятор бачить сенс — без ручного розставляння. Опційний, поступово стабілізується. <strong>Для співбесіди все одно треба розуміти ручну оптимізацію</strong> — Compiler не замінює розуміння referential stability, лише автоматизує рутину.</p>\n<h3 class=\"topic\">Next.js 15 — зміни</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Async Request APIs\n// Next 14: const { id } = params;\n// Next 15: асинхронні (готують до стрімінгової моделі)\nconst { id } = await params;\nconst cookieStore = await cookies();"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<p><strong>Дефолт кешування змінився:</strong> <code>fetch</code> та GET Route Handlers <strong>більше не кешуються за замовчуванням</strong> (раніше — force-cache). Явно вмикай через <code>cache: 'force-cache'</code>.</p>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Що таке <code>use()</code> і чим відрізняється від <code>useEffect</code> для проміс-подібних значень?",
-          "answer": "<code>use()</code> — не хук (можна умовно, в циклах) — примітив, що читає значення проміса/контексту <strong>синхронно під час рендеру</strong>, інтегруючись із Suspense: якщо проміс не резолвнувся, компонент «підвішується», найближчий <code>&lt;Suspense&gt;</code> показує fallback. На відміну від <code>useEffect</code>, не потрібен окремий стан для loading/error."
-        },
-        {
-          "question": "Чим React 19 Actions спрощують форми порівняно з <code>useState</code>+<code>try/catch</code>?",
-          "answer": "<code>useActionState</code> об'єднує стан форми, pending і помилки в один хук навколо async-функції, автоматично керуючи progressive enhancement (форма працює без JS). <code>useOptimistic</code> показує очікуваний результат до підтвердження й автоматично відкочує при помилці — без ручного «оптимістичний vs підтверджений»."
-        },
-        {
-          "question": "Чим use() відрізняється від await у Server Component?",
-          "answer": "use() можна викликати умовно і в Client Components (для Context/переданого Promise); await у Server Component — ні для Client."
-        },
-        {
-          "question": "React Compiler означає &quot;більше не треба знати useMemo&quot;?",
-          "answer": "Ні — для співбесіди й дебагу edge-case'ів розуміння ручної мемоізації лишається обов'язковим."
-        },
-        {
-          "question": "Навіщо <code>useFormStatus</code>, якщо <code>useActionState</code> вже повертає <code>isPending</code>?",
-          "answer": "<code>useActionState</code> дає <code>isPending</code> у компоненті, що <strong>оголошує</strong> екшен. <code>useFormStatus</code> читає стан найближчої батьківської <code>&lt;form&gt;</code> зсередини будь-якого дочірнього компонента — кнопка/спінер дізнається про pending без props-drilling. Обмеження: хук має бути в компоненті <em>всередині</em> <code>&lt;form&gt;</code>."
-        },
-        {
-          "question": "Що змінилось з <code>forwardRef</code> у React 19?",
-          "answer": "<code>ref</code> став звичайним пропом (<code>function Input({ ref }) {…}</code> замість <code>forwardRef</code>). <code>forwardRef</code> ще працює для сумісності, але не потрібен. Так само <code>&lt;Context&gt;</code> рендериться напряму як провайдер, без <code>&lt;Context.Provider&gt;</code>."
-        }
-      ]
-    },
-    {
-      "id": "view-transitions",
-      "title": "🎬 View Transitions API",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Компонент &lt;ViewTransition&gt; <span class=\"tag tag-new\">React 19.2+</span></h3>\n<p>Раніше плавні переходи вимагали ручного <code>document.startViewTransition()</code> і синхронізації з React-рендером. Компонент <code>&lt;ViewTransition&gt;</code> з <code>react</code> робить це декларативно: обгортаєш вміст, React сам призначає <code>view-transition-name</code> і викликає браузерний API — <strong>ти ніколи не звертаєшся до <code>startViewTransition()</code> напряму</strong>.</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Правило розміщення:</strong> <code>&lt;ViewTransition&gt;</code> має бути <em>найзовнішнішою</em> обгорткою — з'являтися в DOM раніше за будь-який інший вузол свого піддерева, — щоб enter/exit спрацювали.</p></div>\n<h3 class=\"topic\">4 тригери анімації <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Тригер</th>\n<th>Коли</th>\n<th>Приклад</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>enter</code></td>\n<td>Вузол вперше вставлено в DOM</td>\n<td>Новий елемент списку</td>\n</tr>\n<tr>\n<td><code>exit</code></td>\n<td>Вузол вперше видалено з DOM</td>\n<td>Toast закрився</td>\n</tr>\n<tr>\n<td><code>update</code></td>\n<td>Мутація всередині або зсув сусідів (reflow)</td>\n<td>Розмір/позиція картки змінились</td>\n</tr>\n<tr>\n<td><code>share</code></td>\n<td>Іменований VT демонтується, і VT з тим самим <code>name</code> монтується в тому самому переході</td>\n<td>Мініатюра → фото (морфінг)</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Активують перехід лише <code>startTransition</code>, <code>useDeferredValue</code> та розкриття <code>&lt;Suspense&gt;</code>-межі. Звичайний <code>setState</code> оновлює DOM миттєво, без анімації.</p></div>\n<h3 class=\"topic\">Чек-лист розпізнавання патерна <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Патерн</th>\n<th>Сигнал</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Shared element</strong></td>\n<td>&quot;Той самий об'єкт іде глибше&quot; — однаковий <code>name</code> на елементі, що демонтується, і на тому, що монтується</td>\n</tr>\n<tr>\n<td><strong>Suspense reveal</strong></td>\n<td>&quot;Дані завантажились&quot; — контент виходить із fallback</td>\n</tr>\n<tr>\n<td><strong>List identity</strong></td>\n<td>&quot;Ті самі елементи переставились&quot; — стабільний <code>key</code> на кожному айтемі</td>\n</tr>\n<tr>\n<td><strong>State change</strong></td>\n<td>&quot;Щось з'явилось/зникло&quot; — прості enter/exit без спільного <code>name</code></td>\n</tr>\n<tr>\n<td><strong>Route change</strong></td>\n<td>Перехід на рівні цілої сторінки</td>\n</tr>\n</tbody>\n</table></div>\n<h3 class=\"topic\">Стилізація через CSS pseudo-elements</h3>\n<p>Браузер робить знімки &quot;до&quot; і &quot;після&quot; і монтує їх як псевдоелементи, які стилізуються звичайним CSS/<code>@keyframes</code>:</p>\n<ul class=\"list\">\n<li><code>::view-transition-old(name)</code> — знімок &quot;до&quot;</li>\n<li><code>::view-transition-new(name)</code> — знімок &quot;після&quot;</li>\n<li><code>::view-transition-group(name)</code> — контейнер, що анімує позицію/розмір</li>\n<li><code>::view-transition-image-pair(name)</code> — пара old+new разом (crossfade)</li>\n</ul>\n<h3 class=\"topic\">Next.js та доступність</h3>\n<p>У Next.js потрібен прапорець <code>experimental.viewTransition</code>; проп <code>transitionTypes</code> на <code>next/link</code>/<code>useRouter().push()</code> дозволяє позначити тип переходу (<code>&quot;forward&quot;</code> vs <code>&quot;back&quot;</code>).</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Завжди супроводжуй анімації <code>@media (prefers-reduced-motion: reduce)</code> — для частини користувачів анімації переходів мають бути вимкнені чи спрощені.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { unstable_ViewTransition as ViewTransition } from 'react';\n\nfunction PhotoGrid({ photos }: { photos: Photo[] }) {\n  return (\n    <div className=\"grid\">\n      {photos.map(photo => (\n        // спільний name → морфінг у деталі при переході на /photo/[id]\n        <ViewTransition key={photo.id} name={`photo-${photo.id}`}>\n          <Link href={`/photo/${photo.id}`}>\n            <img src={photo.thumbUrl} alt={photo.title} />\n          </Link>\n        </ViewTransition>\n      ))}\n    </div>\n  );\n}\nfunction PhotoDetail({ photo }: { photo: Photo }) {\n  return (\n    <ViewTransition name={`photo-${photo.id}`}>  {/* той самий name — \"той самий об'єкт\" */}\n      <img src={photo.fullUrl} alt={photo.title} />\n    </ViewTransition>\n  );\n}"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Що робить <code>&lt;ViewTransition&gt;</code> і чим відрізняється від ручного <code>startViewTransition()</code>?",
-          "answer": "Декларативна обгортка: React сам призначає <code>view-transition-name</code> і викликає <code>startViewTransition()</code> під капотом у потрібний момент, синхронізуючи анімацію зі станом. Ручний виклик — імперативний API, який треба координувати самому (легко розсинхронізувати знімок &quot;до&quot; з оновленням DOM)."
-        },
-        {
-          "question": "Чому <code>&lt;ViewTransition&gt;</code>, вкладений у звичайний <code>&lt;div&gt;</code>, може не анімуватися?",
-          "answer": "Правило розміщення: має бути найзовнішнішою обгорткою, щоб зафіксувати enter/exit. Якщо вкладений у <code>&lt;div&gt;</code>, яка сама не входить/виходить із DOM, React не бачить структурної зміни на потрібному рівні."
-        },
-        {
-          "question": "Які тригери (enter/exit/update/share) активуються звичайним setState?",
-          "answer": "Жоден — потрібні <code>startTransition</code>, <code>useDeferredValue</code> або розкриття Suspense-межі. Лише тоді React обгортає DOM-мутацію у <code>startViewTransition()</code>."
-        },
-        {
-          "question": "Що таке &quot;shared element transition&quot; і як React визначає &quot;один і той самий&quot; елемент?",
-          "answer": "Спільне ім'я (<code>name</code>) на двох <code>&lt;ViewTransition&gt;</code>, з яких один демонтується, а інший монтується в одному переході — React трактує це як морфінг &quot;того самого об'єкта&quot; (мініатюра → фото), а не окремі enter+exit."
-        }
-      ]
-    },
-    {
-      "id": "testing-react-components",
-      "title": "🧪 Тестування React-компонентів",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Тестуй поведінку, а не імплементацію <span class=\"tag tag-key\">KEY</span></h3>\n<p>Філософія сучасного тестування (Kent C. Dodds): <em>«чим більше твої тести нагадують те, як софтом користуються насправді, тим більше впевненості вони дають»</em>. Тестуй <strong>behavior</strong> — що бачить і робить користувач, — а не <strong>implementation details</strong> (внутрішній стан, назви методів, кількість ре-рендерів).</p>\n<ul class=\"list\">\n<li><strong>❌ Implementation details</strong> — ламається при рефакторингу без зміни поведінки. Enzyme заохочував саме це (<code>.state()</code>, <code>.instance()</code>, <code>shallow</code>).</li>\n<li><strong>✅ Behavior</strong> — переживає рефакторинг (клас → хуки). Знайти по ролі/тексту, клікнути, перевірити, що на екрані.</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// ❌ Implementation details — ламається при рефакторингу\nexpect(wrapper.state('isOpen')).toBe(true);\n// ✅ Behavior — виживає рефакторинг\nawait user.click(screen.getByRole('button', { name: /open menu/i }));\nexpect(screen.getByRole('menu')).toBeVisible();"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Testing Trophy — не піраміда</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Шар</th>\n<th>Обсяг</th>\n<th>Чим</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Static</td>\n<td>база</td>\n<td>TypeScript, ESLint</td>\n</tr>\n<tr>\n<td>Unit</td>\n<td>помірно</td>\n<td>утиліти, хуки, reducer'и</td>\n</tr>\n<tr>\n<td><strong>Integration</strong></td>\n<td><strong>більшість</strong></td>\n<td>рендер компонента з реальними дітьми, взаємодія, перевірка результату (RTL)</td>\n</tr>\n<tr>\n<td>E2E</td>\n<td>мало</td>\n<td>Playwright — критичні flow у реальному браузері</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Найбільше впевненості на одиницю зусиль дають <strong>integration-тести</strong> — основна маса тестів фронту.</p></div>\n<h3 class=\"topic\">Стек (2026)</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Інструмент</th>\n<th>Роль</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Vitest</strong></td>\n<td>Test runner — швидший за Jest, нативний ESM, ділить конфіг з Vite</td>\n</tr>\n<tr>\n<td><strong>Jest</strong></td>\n<td>Test runner — досі поширений (Next legacy, CRA)</td>\n</tr>\n<tr>\n<td><strong>React Testing Library</strong></td>\n<td>Рендер + запити до DOM</td>\n</tr>\n<tr>\n<td><code>@testing-library/user-event</code></td>\n<td>Симуляція взаємодії (краще за <code>fireEvent</code>)</td>\n</tr>\n<tr>\n<td><code>@testing-library/jest-dom</code></td>\n<td>Matchers: <code>toBeInTheDocument</code>, <code>toBeVisible</code></td>\n</tr>\n<tr>\n<td><strong>MSW</strong></td>\n<td>Мокання мережі на рівні network</td>\n</tr>\n<tr>\n<td><strong>Playwright</strong></td>\n<td>E2E у реальному браузері</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <strong>Enzyme мертвий</strong> — немає підтримки React 18+. Behavior-testing через RTL — стандарт.</p></div>\n<h3 class=\"topic\">Queries: getBy / queryBy / findBy <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Варіант</th>\n<th>Якщо елемента нема</th>\n<th>Async</th>\n<th>Use case</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>getBy…</code></td>\n<td>кидає error</td>\n<td>ні</td>\n<td>елемент має бути зараз</td>\n</tr>\n<tr>\n<td><code>queryBy…</code></td>\n<td>повертає <code>null</code></td>\n<td>ні</td>\n<td>перевірка <strong>відсутності</strong></td>\n</tr>\n<tr>\n<td><code>findBy…</code></td>\n<td>кидає error (після таймауту)</td>\n<td>так</td>\n<td>елемент з'явиться async</td>\n</tr>\n</tbody>\n</table></div>\n<p><strong>Порядок пріоритету</strong> (сигнал seniority): <code>getByRole</code> → <code>getByLabelText</code> → <code>getByPlaceholderText</code> → <code>getByText</code> → … → <code>getByTestId</code> (останній resort).</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const btn = screen.getByRole('button', { name: /submit/i });   // є зараз\nexpect(screen.queryByText('Error')).not.toBeInTheDocument();    // відсутність\nconst item = await screen.findByText('Loaded');                 // async поява"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">userEvent &gt; fireEvent</h3>\n<p><code>fireEvent.change(input, …)</code> диспатчить <em>одну</em> синтетичну подію. <code>userEvent</code> імітує реальну послідовність (<code>focus → keydown → input → keyup</code>, pointer-події на клік) — ловить баги, яких одна подія не покаже. <code>userEvent</code> v14+ асинхронний.</p>\n<div class=\"alert\"><span class=\"icon\">🧭</span><p> <strong>AAA-патерн:</strong> Arrange (<code>render</code> + <code>userEvent.setup()</code>) → Act (взаємодія) → Assert (перевірка DOM).</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { render, screen } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\n\ntest('показує помилку при невалідному email', async () => {\n  const user = userEvent.setup();            // Arrange\n  render(<SignupForm />);\n  await user.type(screen.getByLabelText(/email/i), 'not-an-email');  // Act\n  await user.click(screen.getByRole('button', { name: /submit/i }));\n  // Assert: findBy — асинхронний, чекає появи помилки\n  expect(await screen.findByText(/невалідний email/i)).toBeInTheDocument();\n  expect(screen.queryByText(/успішно/i)).not.toBeInTheDocument();  // queryBy — відсутність\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Async + мережа через MSW</h3>\n<p>Не мокай <code>fetch</code> вручну — перехоплюй на рівні мережі. Компонент виконує <strong>справжній</strong> запит, підміняється лише транспорт, тому тестується весь шлях. Той самий mock працює в тестах, Storybook і dev — на відміну від <code>jest.mock('axios')</code>.</p>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <code>afterEach(() =&gt; server.resetHandlers())</code> — обов'язково: скидає per-test оверайди, інакше тести течуть один в одного.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { http, HttpResponse } from 'msw';\nimport { setupServer } from 'msw/node';\n\nconst server = setupServer(\n  http.get('/api/users/:id', ({ params }) => HttpResponse.json({ id: params.id, name: 'Ada' })),\n);\nbeforeAll(() => server.listen());\nafterEach(() => server.resetHandlers());   // ізоляція тестів!\nafterAll(() => server.close());\n\ntest('рендерить користувача після завантаження', async () => {\n  render(<UserProfile userId=\"1\" />);\n  expect(await screen.findByText('Ada')).toBeInTheDocument();\n});\ntest('показує помилку при 500', async () => {\n  server.use(http.get('/api/users/:id', () => new HttpResponse(null, { status: 500 })));\n  render(<UserProfile userId=\"1\" />);\n  expect(await screen.findByText(/щось пішло не так/i)).toBeInTheDocument();\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">waitFor / findBy / act</h3>\n<ul class=\"list\">\n<li><code>await screen.findByText('Done')</code> — чекаєш появу елемента</li>\n<li><code>await waitFor(() =&gt; expect(mockFn).toHaveBeenCalled())</code> — довільна умова</li>\n<li><code>await waitForElementToBeRemoved(() =&gt; screen.queryByText(/loading/i))</code> — зникнення</li>\n</ul>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> Warning <code>&quot;not wrapped in act(...)&quot;</code> майже завжди = <strong>забув <code>await</code></strong> на async-оновленні стану. RTL авто-обгортає <code>render</code> і <code>userEvent</code>.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { renderHook, act, waitFor } from '@testing-library/react';\n\ntest('useCounter збільшує значення', () => {\n  const { result } = renderHook(() => useCounter(0));\n  act(() => result.current.increment());  // act потрібен явно поза event-handler\n  expect(result.current.count).toBe(1);\n});\ntest('useFetch завантажує дані', async () => {\n  const { result } = renderHook(() => useFetch('/api/data'));\n  expect(result.current.status).toBe('loading');\n  await waitFor(() => expect(result.current.status).toBe('success'));\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Провайдери: custom render wrapper</h3>\n<p>Реальні компоненти залежать від context/router/store. Senior-патерн — власний <code>render</code>, що загортає UI в провайдери з тестовими налаштуваннями (<code>retry: false</code> у QueryClient, <code>MemoryRouter</code>).</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// test-utils.tsx\nfunction customRender(ui: React.ReactElement, { route = '/', ...options } = {}) {\n  const queryClient = new QueryClient({\n    defaultOptions: { queries: { retry: false } },  // не ретраїти в тестах!\n  });\n  const Wrapper = ({ children }: { children: React.ReactNode }) => (\n    <QueryClientProvider client={queryClient}>\n      <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>\n    </QueryClientProvider>\n  );\n  return render(ui, { wrapper: Wrapper, ...options });\n}\nexport * from '@testing-library/react';\nexport { customRender as render };  // тести імпортують render звідси"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Антипатерни — що НЕ тестувати</h3>\n<ul class=\"list\">\n<li><strong>Implementation details</strong> — state, назви функцій, кількість ре-рендерів</li>\n<li><strong>Сторонні бібліотеки</strong> — не тестуй, що React Router навігує; тестуй, що <em>твій</em> код реагує</li>\n<li><strong>Дитячі компоненти</strong> — зазвичай не мокай (це integration); мокай лише важке/зовнішнє (карти, чарти, платіжні iframe) через <code>vi.mock()</code></li>\n<li><strong>Великі snapshot-тести</strong> — нічого не ловлять; точково для малих виводів</li>\n<li><code>container.querySelector('.class')</code> — прив'язка до CSS крихка, юзай role/text</li>\n<li><strong>Coverage-driven</strong> — 100% coverage ≠ якість</li>\n</ul>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>a11y:</strong> <code>getByRole</code> вже змушує писати доступний markup; додатково — <code>jest-axe</code>: <code>expect(await axe(container)).toHaveNoViolations()</code>.</p></div>\n<div class=\"alert\"><span class=\"icon\">⏱️</span><p> <strong>Debounce/throttle:</strong> <code>vi.useFakeTimers()</code> + <code>vi.advanceTimersByTime(300)</code>; з <code>userEvent</code> v14 — <code>setup({ advanceTimers: vi.advanceTimersByTime })</code>, наприкінці <code>vi.useRealTimers()</code>.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { axe } from 'jest-axe';\n\ntest('немає порушень доступності', async () => {\n  const { container } = render(<SignupForm />);\n  expect(await axe(container)).toHaveNoViolations();\n});\ntest('debounce: запит іде один раз після паузи', async () => {\n  vi.useFakeTimers();\n  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });\n  render(<Search />);\n  await user.type(screen.getByRole('searchbox'), 'react');\n  vi.advanceTimersByTime(300);\n  expect(fetchSpy).toHaveBeenCalledTimes(1);\n  vi.useRealTimers();\n});"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чому RTL свідомо не дає доступу до внутрішнього стану (на відміну від Enzyme)?",
-          "answer": "Філософія: &quot;чим більше тести нагадують реальне використання, тим більше впевненості&quot;. Тест, що читає <code>state</code> чи викликає приватний метод, лишається зеленим навіть при повному переписуванні реалізації — це тест <em>деталей реалізації</em>, а не поведінки. RTL надає лише API, доступний користувачу."
-        },
-        {
-          "question": "Різниця між <code>getBy</code>, <code>queryBy</code>, <code>findBy</code>?",
-          "answer": "<code>getBy*</code> — синхронний, кидає помилку одразу (елемент має бути зараз). <code>queryBy*</code> — синхронний, повертає <code>null</code> (єдиний спосіб перевірити <strong>відсутність</strong>). <code>findBy*</code> — асинхронний, ретраїть до таймауту (елемент з'явиться після async-дії)."
-        },
-        {
-          "question": "Чому <code>userEvent</code> кращий за <code>fireEvent</code>?",
-          "answer": "<code>fireEvent</code> диспатчить <em>одну</em> сиру подію. <code>userEvent</code> імітує <strong>повний ланцюг</strong> реальної взаємодії (<code>keydown→keypress→input→keyup</code> на ввід; <code>pointerdown→mousedown→focus→mouseup→click</code>), плюс перевіряє видимість/disabled — ловить баги, які <code>fireEvent</code> пропускає. v14+ асинхронний (<code>await</code>)."
-        },
-        {
-          "question": "Як тестувати кастомний хук без JSX?",
-          "answer": "Через <code>renderHook</code> — монтує хук у мінімальному тестовому компоненті й повертає <code>result.current</code> + <code>rerender</code>/<code>act</code>. Зміни стану всередині хука треба обгортати в <code>act()</code>, інакше React попереджає й DOM може не синхронізуватись."
-        },
-        {
-          "question": "Чим MSW відрізняється від <code>jest.mock('./api')</code>?",
-          "answer": "<code>jest.mock</code> підміняє JS-модуль — компонент викликає мок-функцію; тест перевіряє лише виклик з правильними аргументами. MSW перехоплює запит на мережевому рівні — компонент виконує <strong>реальний</strong> <code>fetch</code>, підміняється лише мережа, тому тестується весь шлях (URL, заголовки, статус) як у проді."
-        }
-      ]
-    },
-    {
-      "id": "i18n-localization",
-      "title": "🌐 Локалізація (i18n) React-застосунку",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">i18n · l10n · locale — три різні речі <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><strong>i18n (internationalization)</strong> — <em>підготовка</em> коду: винесення рядків, плюрал-правила, формати дат/чисел, RTL. Раз, розробником.</li>\n<li><strong>l10n (localization)</strong> — <em>власне переклад</em> під locale (uk-UA, en-US). Робота перекладачів.</li>\n<li><strong>locale</strong> — мова + регіон: <code>en-US</code> ≠ <code>en-GB</code> (формат дати, валюта, розділювачі тисяч).</li>\n</ul>\n<div class=\"alert\"><span class=\"icon\">💡</span><p> Сигнал seniority — розуміти, що i18n це <strong>не просто словник рядків</strong>, а плюрал-правила, формати, напрямок тексту, SEO і code-splitting перекладів.</p></div>\n<h3 class=\"topic\">Вибір бібліотеки</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Бібліотека</th>\n<th>Коли обирати</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>react-i18next</strong> (+ i18next)</td>\n<td>Дефолт для SPA/CSR. Найбагатша екосистема: detection, backend-loading, namespaces</td>\n</tr>\n<tr>\n<td><strong>react-intl</strong> (FormatJS)</td>\n<td>Суворі ICU-повідомлення, enterprise</td>\n</tr>\n<tr>\n<td><strong>next-intl</strong> / <strong>next-i18next</strong></td>\n<td>Next.js: App Router → <code>next-intl</code>, Pages Router → <code>next-i18next</code></td>\n</tr>\n<tr>\n<td><strong>Lingui</strong></td>\n<td>Компіляція повідомлень, менший рантайм, DX з макросами</td>\n</tr>\n<tr>\n<td>Нативний <code>Intl</code> API</td>\n<td>Форматування дат/чисел/множини <em>без</em> бібліотеки</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> Дефолт: <strong>react-i18next</strong> для SPA, <strong>next-intl</strong> для Next.js App Router.</p></div>\n<h3 class=\"topic\">Структура перекладів + namespaces</h3>\n<p><strong>Namespaces</strong> (<code>common</code>, <code>auth</code>, <code>checkout</code>) — розбивка словника на модулі: логічна структура + можливість вантажити лише потрібний файл. Прямий аналог feature-based модулів.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "json",
-          "code": "// src/locales/en/common.json — вкладені ключі та плюрал-форми\n{\n  \"greeting\": \"Hello, {{name}}!\",\n  \"cart\": {\n    \"empty\": \"Your cart is empty\",\n    \"items_one\": \"{{count}} item\",\n    \"items_other\": \"{{count}} items\"\n  }\n}"
-        },
-        {
-          "kind": "code",
-          "language": "js",
-          "code": "// i18n.js — ініціалізація react-i18next\nimport i18n from 'i18next';\nimport { initReactI18next } from 'react-i18next';\nimport LanguageDetector from 'i18next-browser-languagedetector';\nimport HttpBackend from 'i18next-http-backend';\n\ni18n\n  .use(HttpBackend)        // lazy-load JSON по мережі\n  .use(LanguageDetector)   // визначити мову: localStorage -> navigator -> ...\n  .use(initReactI18next)\n  .init({\n    fallbackLng: 'en',\n    supportedLngs: ['en', 'uk'],\n    ns: ['common', 'auth'],\n    defaultNS: 'common',\n    interpolation: { escapeValue: false }, // React вже екранує XSS\n    backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },\n  });\nexport default i18n;"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Використання в компоненті + перемикання мови\nimport { useTranslation } from 'react-i18next';\nfunction Header() {\n  const { t, i18n } = useTranslation('common');\n  return (\n    <header>\n      <h1>{t('greeting', { name: 'Roman' })}</h1>\n      <button onClick={() => i18n.changeLanguage('uk')}>UA</button>\n      <button onClick={() => i18n.changeLanguage('en')}>EN</button>\n    </header>\n  );\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Плюралізація — не пиши власну логіку <span class=\"tag tag-key\">KEY</span></h3>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> <code>count === 1 ? 'item' : 'items'</code> ламається для мов зі складними правилами: українська/польська/російська мають <strong>3 форми</strong>, арабська — 6.</p></div>\n<p>i18next обирає форму за <strong>CLDR plural rules</strong> через нативний <code>Intl.PluralRules</code> — за суфіксами ключів <code>_one</code>/<code>_few</code>/<code>_many</code>/<code>_other</code>.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "json",
-          "code": "{\n  \"en\": { \"items_one\": \"{{count}} item\", \"items_other\": \"{{count}} items\" },\n  \"uk\": {\n    \"items_one\": \"{{count}} товар\",\n    \"items_few\": \"{{count}} товари\",\n    \"items_many\": \"{{count}} товарів\"\n  }\n}"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "t('items', { count: 1 }); // \"1 товар\"\nt('items', { count: 3 }); // \"3 товари\"\nt('items', { count: 5 }); // \"5 товарів\""
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">&lt;Trans&gt; — JSX усередині перекладу</h3>\n<p>Як перекласти <code>&quot;Click &lt;a&gt;here&lt;/a&gt; to continue&quot;</code> не розриваючи рядок (що ламає порядок слів)? <code>&lt;Trans&gt;</code> лишає розмітку в JSX, а переклад містить лише <strong>індекси</strong> дочірніх елементів.</p>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// JSX\n<Trans i18nKey=\"terms\">\n  I accept the <a href=\"/terms\">terms and conditions</a>\n</Trans>\n// uk/common.json → { \"terms\": \"Я приймаю <1>умови та положення</1>\" }"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Формати дат, чисел, валют — через <code>Intl</code>, не хардкод</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "js",
-          "code": "new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'EUR' }).format(1234.5); // \"1 234,50 €\"\nnew Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(new Date());            // \"August 30, 2026\"\nnew Intl.RelativeTimeFormat('uk', { numeric: 'auto' }).format(-1, 'day');              // \"вчора\"\n\n// i18next прокидує ці опції через formatParams:\nt('price', { val: 1234.5, formatParams: { val: { style: 'currency', currency: 'EUR' } } });"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">RTL — арабська, іврит</h3>\n<p>Два кроки: (1) виставити напрямок на <code>&lt;html&gt;</code> при зміні мови, (2) писати CSS через <strong>logical properties</strong> — тоді layout дзеркалиться сам.</p>\n<div class=\"alert\"><span class=\"icon\">🧭</span><p> <code>margin-inline-start</code> замість <code>margin-left</code>, <code>padding-inline-end</code> замість <code>padding-right</code>, <code>text-align: start</code> замість <code>left</code>.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "useEffect(() => {\n  document.dir = i18n.dir(); // 'ltr' | 'rtl' — i18next знає напрямок locale\n}, [i18n.language]);"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Продуктивність: lazy-load перекладів</h3>\n<ul class=\"list\">\n<li><strong>HttpBackend</strong> вантажить JSON по потребі (<code>loadPath</code>)</li>\n<li><strong>Namespace on demand:</strong> <code>useTranslation('checkout')</code> завантажить <code>checkout.json</code> лише коли компонент відрендериться</li>\n<li><strong>Code splitting:</strong> у головний бандл не потрапляє жоден переклад, лише активна locale</li>\n</ul>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "const { t, ready } = useTranslation('checkout');\nif (!ready) return <Spinner />;  // namespace ще вантажиться"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Next.js специфіка + SEO <span class=\"tag tag-key\">KEY</span></h3>\n<p><strong>App Router (<code>next-intl</code>):</strong> locale у сегменті шляху (<code>/uk/about</code>), <code>middleware.ts</code> для detection/редіректу, переклади резолвляться на сервері в Server Components → у HTML <em>до</em> гідрації.</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>SEO must-have</th>\n<th>Навіщо</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>&lt;html lang={locale}&gt;</code></td>\n<td>Пошуковик і screen reader знають мову сторінки</td>\n</tr>\n<tr>\n<td><code>hreflang</code> alternate-теги</td>\n<td>Google показує правильну мовну версію</td>\n</tr>\n<tr>\n<td>Локалізовані URL (<code>/uk/...</code>)</td>\n<td>Кожна мова — окремий індексований URL; <strong>не</strong> query-параметр</td>\n</tr>\n</tbody>\n</table></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// app/[locale]/page.tsx — переклад на сервері\nimport { useTranslations } from 'next-intl';\nexport default function Page() {\n  const t = useTranslations('common');\n  return <h1>{t('greeting', { name: 'Roman' })}</h1>;\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">TypeScript: типобезпечні ключі</h3>"
-        },
-        {
-          "kind": "code",
-          "language": "ts",
-          "code": "// i18next.d.ts — t('wrong.key') дає помилку компіляції + автокомпліт\nimport 'i18next';\nimport common from './locales/en/common.json';\ndeclare module 'i18next' {\n  interface CustomTypeOptions {\n    defaultNS: 'common';\n    resources: { common: typeof common };\n  }\n}"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Процес і тулінг</h3>\n<ul class=\"list\">\n<li><strong>Не редагуй переклади вручну в проді</strong> — TMS: Lokalise, Crowdin, Phrase</li>\n<li><strong>Структуровані ключі</strong> (<code>cart.empty</code>), а не англійський текст як ID</li>\n<li><code>i18next-parser</code> витягує ключі з коду → знаходить пропущені й невикористані (lint)</li>\n<li><strong>Fallback chain:</strong> <code>uk → en → ключ</code>. Ніколи не показуй сирий ключ у проді</li>\n</ul>\n<div class=\"alert warn\"><span class=\"icon\">⚠️</span><p> У тестах <strong>не мокай <code>t</code> як <code>key =&gt; key</code></strong> — це ховає баги інтерполяції та плюралів. Використовуй реальний instance з мінімальним тестовим словником.</p></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "import { I18nextProvider } from 'react-i18next';\nimport i18n from './test-i18n';\ni18n.init({ lng: 'en', resources: { en: { common: { greeting: 'Hi {{name}}' } } } });\n\ntest('вітає користувача на активній мові', () => {\n  render(<I18nextProvider i18n={i18n}><Header /></I18nextProvider>);\n  expect(screen.getByText('Hi Roman')).toBeInTheDocument();\n});"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Різниця між i18n, l10n і locale, і чому <code>en-US ≠ en-GB</code>?",
-          "answer": "<strong>i18n</strong> — підготовка коду (винесення рядків, плюрали, формати, RTL), раз розробником. <strong>l10n</strong> — власне переклад під locale, робота перекладачів. <strong>locale</strong> — мова + регіон: <code>en-US</code>/<code>en-GB</code> мають різний формат дати, валюту, розділювачі. Форматувати треба за повною locale."
-        },
-        {
-          "question": "Чому <code>count === 1 ? &quot;item&quot; : &quot;items&quot;</code> — баг і як правильно?",
-          "answer": "Припускає 2 форми, але українська/польська/російська мають <strong>3</strong> (one/few/many), арабська — 6. Правильно — CLDR plural rules через <code>Intl.PluralRules</code>: i18next обирає форму за суфіксом ключа (<code>_one</code>/<code>_few</code>/<code>_many</code>/<code>_other</code>) за <code>count</code> і locale."
-        },
-        {
-          "question": "Як вставити посилання всередину перекладеного речення, не розриваючи рядок?",
-          "answer": "Компонент <code>&lt;Trans&gt;</code>: розмітка лишається в JSX, переклад містить лише <strong>індекси</strong> дочірніх елементів (<code>&lt;1&gt;текст&lt;/1&gt;</code>). Перекладач редагує суцільний рядок з плейсхолдерами, розробник не конкатенує (що ламає порядок слів)."
-        },
-        {
-          "question": "Чому не можна заімпортувати всі словники всіх мов і як це вирішують?",
-          "answer": "Кожна мова + namespace = кілобайти в бандлі; 10 мов × 5 модулів роздують first load. Рішення: <strong>lazy-load</strong> — <code>i18next-http-backend</code> вантажить по потребі; <code>useTranslation(&quot;checkout&quot;)</code> підтягує лише при рендері; у головний бандл — лише активна locale."
-        },
-        {
-          "question": "Чому для Next.js локалізовані URL + переклад на сервері кращі за client-side?",
-          "answer": "Переклад у Server Components у <strong>HTML до гідрації</strong> — пошуковик і користувач без JS бачать перекладене одразу (client-only i18n віддає порожні ключі в SSR-HTML). Локалізований URL — окрема індексована сторінка на мову (на відміну від <code>?lang=uk</code>, який Google ігнорує). Плюс <code>&lt;html lang&gt;</code> і <code>hreflang</code>."
-        }
-      ]
-    },
-    {
-      "id": "react-native-ecosystem",
-      "title": "📱 React Native та поза-браузерні рендерери",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">React Native — той самий React, інший рендерер <span class=\"tag tag-key\">KEY</span></h3>\n<p>Компонентна модель, JSX, хуки, реконсиляція — ідентичні React DOM. Відмінність — <strong>куди</strong> React рендерить дерево: замість DOM-вузлів React Native промальовує справжні нативні UI-компоненти iOS/Android через власний рендерер.</p>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th></th>\n<th>React DOM</th>\n<th>React Native</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Що рендериться</td>\n<td>DOM-вузли (<code>div</code>, <code>span</code>)</td>\n<td>Нативні UI-компоненти (<code>UIView</code>/<code>android.view</code>)</td>\n</tr>\n<tr>\n<td>Розмітка</td>\n<td><code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;button&gt;</code></td>\n<td><code>&lt;View&gt;</code>, <code>&lt;Text&gt;</code>, <code>&lt;Pressable&gt;</code></td>\n</tr>\n<tr>\n<td>Стилі</td>\n<td>CSS / CSS-in-JS / Tailwind</td>\n<td><code>StyleSheet</code> — підмножина Flexbox, без CSS-каскаду</td>\n</tr>\n<tr>\n<td>Навігація</td>\n<td>React Router / Next.js</td>\n<td>React Navigation (свій стек екранів, не History API)</td>\n</tr>\n</tbody>\n</table></div>"
-        },
-        {
-          "kind": "code",
-          "language": "tsx",
-          "code": "// Той самий компонентний код — інші теги замість DOM-елементів\nimport { View, Text, Pressable, StyleSheet } from 'react-native';\nfunction Counter() {\n  const [count, setCount] = useState(0); // useState — той самий хук\n  return (\n    <View style={styles.container}>\n      <Text style={styles.label}>{count}</Text>\n      <Pressable onPress={() => setCount(c => c + 1)}>\n        <Text>+1</Text>\n      </Pressable>\n    </View>\n  );\n}\nconst styles = StyleSheet.create({\n  container: { flexDirection: 'row', alignItems: 'center', gap: 8 },\n  label: { fontSize: 18, fontWeight: 'bold' },\n});"
-        },
-        {
-          "kind": "paragraph",
-          "html": "<h3 class=\"topic\">Expo — стандартний старт для React Native</h3>\n<p><strong>Expo</strong> — набір інструментів над React Native (CLI, готові нативні модулі, OTA-оновлення без ре-білду, збірка в хмарі), що прибирає потребу одразу возитись з Xcode/Android Studio. Типова відправна точка для нового RN-проєкту; &quot;eject&quot; у голий RN CLI лишається опцією, коли потрібен нативний модуль поза екосистемою Expo.</p>\n<div class=\"alert\"><span class=\"icon\">📜</span><p> <strong>Історична довідка — React VR:</strong> експериментальний фреймворк Meta (2017) для WebVR/3D — офіційно припинено (поглинений React 360, який теж не розвивається). Сьогодні для VR/3D у вебі — <code>react-three-fiber</code> (React-рендерер поверх Three.js). Питання про React VR зазвичай перевіряє знання, що технологія застаріла.</p></div>\n<ul class=\"list\">\n<li><a href=\"/react-native\">📱 React Native — повний курс</a> — Expo vs bare workflow, Flexbox-стилі, навігація, нативні API та дозволи, Hermes і продуктивність списків, тестування (Detox/Maestro) та деплой через EAS.</li>\n</ul>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Що React Native &quot;перевикористовує&quot; від React, а що інше?",
-          "answer": "Перевикористовується <strong>модель компонентів</strong> — JSX, <code>props</code>/<code>state</code>, хуки, реконсиляція/Fiber — ідентично. Інше — <strong>рендерер</strong>: замість DOM-вузлів рендерить нативні UI-компоненти (<code>&lt;View&gt;</code> → <code>UIView</code>/<code>android.view.View</code>), замість CSS — Flexbox через <code>StyleSheet</code>. React — &quot;мова опису дерева UI й моделі оновлень&quot;, а куди воно промальовується — питання рендерера."
-        },
-        {
-          "question": "Що таке &quot;New Architecture&quot; (Fabric + TurboModules) і яку проблему моста вона вирішує?",
-          "answer": "Стара архітектура спілкувалась між JS і нативним UI через асинхронний <strong>bridge</strong> (JSON-серіалізація) — затримка й &quot;бутилкове горлечко&quot; для UI високої частоти (жести, анімації, скрол). Fabric і TurboModules переходять на <strong>JSI (JavaScript Interface)</strong> — прямі синхронні виклики без серіалізації, що прибирає затримку й дозволяє JS напряму тримати посилання на нативні об'єкти."
-        }
-      ]
-    },
-    {
-      "id": "career-growth",
-      "title": "🧭 Після основ: кар'єрний шлях React-розробника",
-      "blocks": [
-        {
-          "kind": "paragraph",
-          "html": "<p>Знання React — лише половина. Друга — вміти <strong>показати</strong> це знання й розвивати системно.</p>\n<h3 class=\"topic\">Дорожня карта навичок <span class=\"tag tag-key\">KEY</span></h3>\n<ul class=\"list\">\n<li><strong>Junior → Middle:</strong> TypeScript без <code>any</code>, хуки й кастомні хуки, форми + валідація (RHF + Zod), роутинг, робота з API (TanStack Query), базові тести (RTL), Git-флоу з PR і code review.</li>\n<li><strong>Middle → Senior:</strong> внутрішня модель рендеру й продуктивність (Profiler, мемоізація за вимірами), архітектура стану, Next.js App Router і RSC, a11y, безпека (XSS, зберігання токенів), CI/CD, System Design фронтенду, менторинг.</li>\n</ul>\n<h3 class=\"topic\">Портфоліо, яке читають</h3>\n<ul class=\"list\">\n<li><strong>1–2 доведені до кінця проєкти</strong> замість десяти туторіальних клонів: задеплоєні, з README (що, навіщо, стек, як запустити, скриншот) і осмисленою історією комітів.</li>\n<li>Показуй <strong>рішення</strong>, а не лише UI: чому обрано такий state-менеджер, як оброблено помилки/завантаження, які тести.</li>\n<li>Внесок в open source (навіть документація/баг) і технічні нотатки/статті — сигнал, що ти вмієш пояснювати.</li>\n</ul>\n<h3 class=\"topic\">Підготовка до співбесіди</h3>\n<div class=\"table-wrap\"><table>\n<thead>\n<tr>\n<th>Етап</th>\n<th>Що перевіряють</th>\n<th>Як готуватись</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Теорія JS/React</td>\n<td>Closures, event loop, реконсиляція, хуки, стан</td>\n<td>Розділи «Теорія» + попапи «Питання на співбесіді»</td>\n</tr>\n<tr>\n<td>Live coding</td>\n<td>Компонент або кастомний хук за 30–45 хв, алгоритми</td>\n<td>Практичні задачі та LeetCode; проговорюй міркування вголос</td>\n</tr>\n<tr>\n<td>System Design</td>\n<td>Архітектура фронтенду: стан, кешування, рендер-модель, API</td>\n<td>Розділ «Архітектура», починай з вимог і обмежень</td>\n</tr>\n<tr>\n<td>Behavioral</td>\n<td>Командна робота, конфлікти, помилки, відповідальність</td>\n<td>3–5 історій у форматі STAR заздалегідь</td>\n</tr>\n</tbody>\n</table></div>\n<div class=\"alert good\"><span class=\"icon\">✅</span><p> <strong>Порада:</strong> після кожної співбесіди записуй питання, на яких «плавав», і закривай їх до наступної — найшвидший цикл зворотного зв'язку.</p></div>"
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "Чим middle React-розробник відрізняється від senior, окрім років?",
-          "answer": "Middle <strong>впевнено реалізує фічу</strong> в існуючій архітектурі (хуки, стан, роутинг, тести). Senior <strong>відповідає за рішення</strong>: обирає межі стану (server vs client, що в URL), бачить ціну абстракції наперед, пояснює <em>чому</em> компонент ре-рендериться і як виміряти (Profiler), помічає ризики (race conditions, a11y, безпека) і розвантажує команду (code review, документація, менторинг). Хороша відповідь — з конкретним прикладом."
-        },
-        {
-          "question": "Як тримаєшся в курсі змін React і що тягнеш у прод?",
-          "answer": "Первинні джерела: <code>react.dev/blog</code>, RFC-репозиторій, changelog Next.js. Нову можливість спершу пробую в pet-проєкті/ізольованій гілці, дивлюсь на <strong>стабільність API, підтримку екосистеми</strong> і на те, яку <em>реальну</em> проблему вона знімає. У прод — поступово, за feature-flag, з метриками до/після. «Нове» саме по собі не аргумент."
-        },
-        {
-          "question": "Розкажи про технічне рішення, про яке пізніше пошкодував.",
-          "answer": "Перевіряє <strong>рефлексію</strong>. Структура (STAR): контекст → яке рішення і чому здавалось правильним → як проявилась проблема (метрика/баги/швидкість) → як виправив → який висновок. Погана відповідь — «таких не було» чи звинувачення інших; хороша — чесний trade-off (напр. передчасна універсальна абстракція, що обросла boolean-пропсами)."
-        }
-      ]
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Redux — три принципи <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>1. Single source of truth</h4><p>Увесь стан застосунку — в одному об'єкті (<code>store</code>). Спрощує дебаг, серіалізацію, SSR-гідратацію.</p></div>
+    <div class="card"><h4>2. State is read-only</h4><p>Єдиний спосіб змінити стан — <code>dispatch(action)</code>, plain-об'єкт із полем <code>type</code>. Ніхто не мутує стан напряму.</p></div>
+  </div>
+  <div class="card" style="margin-top:8px"><h4>3. Зміни — лише через pure reducers</h4><p><code>(state, action) => newState</code> — чиста функція: не мутує <code>state</code>, а повертає новий об'єкт; однакові вхідні дані завжди дають однаковий результат.</p></div>
+  <h3 class="topic">Односторонній потік даних</h3>
+  <p><code>UI подія → dispatch(action) → middleware (опційно) → reducer → новий state → підписники (useSelector) ре-рендеряться</code>. Цей цикл — причина, чому Redux DevTools вміють time-travel debugging: кожен крок — знімок стану + action, що його спричинив.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'Vanilla Redux — reducer, actions, store (без Toolkit, щоб побачити фундамент)',
+          code: `// actions.ts
+type CounterAction =
+  | { type: 'counter/increment' }
+  | { type: 'counter/decrement' }
+  | { type: 'counter/addBy'; payload: number };
+
+// reducer.ts — чиста функція: не мутує state, повертає новий об'єкт
+function counterReducer(state = { value: 0 }, action: CounterAction) {
+  switch (action.type) {
+    case 'counter/increment':
+      return { value: state.value + 1 };
+    case 'counter/decrement':
+      return { value: state.value - 1 };
+    case 'counter/addBy':
+      return { value: state.value + action.payload };
+    default:
+      return state; // невідомий action — повернути state як є
+  }
+}
+
+// store.ts
+import { createStore } from 'redux';
+const store = createStore(counterReducer);
+
+store.subscribe(() => console.log(store.getState()));
+store.dispatch({ type: 'counter/increment' }); // { value: 1 }`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Підключення до React — useSelector / useDispatch</h3>
+  <p>Сучасний спосіб (з React-Redux 7.1+) — хуки замість HOC <code>connect(mapStateToProps, mapDispatchToProps)</code>. <code>useSelector</code> підписує компонент на зріз стану (ре-рендер лише якщо результат селектора змінився за <code>===</code>), <code>useDispatch</code> повертає функцію <code>dispatch</code>.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// main.tsx
+import { Provider } from 'react-redux';
+<Provider store={store}><App /></Provider>
+
+// Counter.tsx
+import { useSelector, useDispatch } from 'react-redux';
+
+function Counter() {
+  const value = useSelector((state: RootState) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <button onClick={() => dispatch({ type: 'counter/increment' })}>
+      {value}
+    </button>
+  );
+}
+// useSelector з "вузьким" селектором — ре-рендер лише при зміні value,
+// а не при будь-якій зміні всього store (та сама ідея, що й у Zustand-селекторах)`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Middleware — де живе асинхронність <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Reducer синхронний і чистий — у ньому не можна викликати API. Middleware перехоплює action між <code>dispatch</code> і reducer, тому саме там можна виконати побічний ефект <em>перед</em> тим, як у reducer прийде готовий plain-object action.</p>
+  <div class="grid2">
+    <div class="card green"><h4>redux-thunk</h4><p>Action creator повертає <strong>функцію</strong> <code>(dispatch, getState) =&gt; {'{'}...{'}'}</code>. Імперативний код на async/await. Простий, мінімум boilerplate, вбудований у Redux Toolkit за замовчуванням.</p></div>
+    <div class="card"><h4>redux-saga</h4><p>Окремий generator-процес, що "слухає" actions і <em>декларативно описує</em> ефекти (<code>call</code>, <code>put</code>, <code>takeLatest</code>). Складніший, але дає скасування, оркестрацію, легше тестування без моків.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'redux-thunk — асинхронний action creator',
+          code: `// userActions.ts
+function fetchUser(id: number) {
+  return async (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch({ type: 'user/loading' });
+    try {
+      const res = await fetch(\`/api/users/\${id}\`);
+      const user = await res.json();
+      dispatch({ type: 'user/loaded', payload: user });
+    } catch (err) {
+      dispatch({ type: 'user/error', payload: String(err) });
     }
-  ]
+  };
+}
+
+// Компонент: dispatch(fetchUser(1)) — thunk middleware розпізнає,
+// що це функція (не plain object), і викликає її замість передачі в reducer`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'redux-saga — той самий сценарій декларативно',
+          code: `import { call, put, takeLatest } from 'redux-saga/effects';
+
+function* fetchUserSaga(action: { type: string; payload: number }) {
+  try {
+    yield put({ type: 'user/loading' });
+    const user = yield call(fetch, \`/api/users/\${action.payload}\`);
+    yield put({ type: 'user/loaded', payload: yield call([user, 'json']) });
+  } catch (err) {
+    yield put({ type: 'user/error', payload: String(err) });
+  }
+}
+
+function* rootSaga() {
+  // takeLatest автоматично скасовує попередній fetchUserSaga,
+  // якщо новий 'user/fetch' прилетів раніше, ніж завершився попередній —
+  // цього немає "з коробки" у thunk-варіанті
+  yield takeLatest('user/fetch', fetchUserSaga);
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Структурування проєкту — ducks vs Redux Toolkit</h3>
+  <p><strong>Класична структура</strong> (Redux ≤3): окремі папки <code>actions/</code>, <code>reducers/</code>, <code>types/</code> — для однієї фічі стрибаєш між файлами. <strong>Ducks-паттерн</strong>: типи, action creators і reducer однієї фічі — в одному файлі. <strong>Redux Toolkit</strong> зробив ducks офіційним стандартом: <code>createSlice</code> генерує все з одного опису (детальний приклад RTK — у розділі Zustand нижче, як контраст підходів до стору).</p>
+  <pre>src/features/
+  counter/
+    counterSlice.ts   ← actions + reducer + types в одному файлі (ducks)
+  user/
+    userSlice.ts
+    userSaga.ts        ← якщо фіча має складну async-оркестрацію</pre>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Redux Toolkit — сучасний стандарт <span class="tag tag-key">KEY</span></h3>
+  <p>"Класичний" Redux зі switch-reducer'ами і ручними action creators — <strong>застарілий стиль</strong>. Сьогодні пишуть на <strong>Redux Toolkit (RTK)</strong> — офіційно рекомендований спосіб. Що дає:</p>
+  <div class="grid2">
+    <div class="card green"><h4>createSlice</h4><p>Генерує reducer + actions автоматично з одного опису (ducks як стандарт).</p></div>
+    <div class="card green"><h4>Immer під капотом</h4><p>Пишеш "мутуючий" код — виходить immutable-оновлення.</p></div>
+    <div class="card"><h4>configureStore</h4><p>DevTools, thunk, перевірки на мутації/несеріалізовність — з коробки.</p></div>
+    <div class="card"><h4>createAsyncThunk</h4><p>Формалізує thunk — генерує <code>pending</code>/<code>fulfilled</code>/<code>rejected</code>.</p></div>
+  </div>
+  <p><strong>RTK Query</strong> — вбудований data-fetching/caching (конкурент TanStack Query); здебільшого <em>усуває потребу</em> писати thunks для server state.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'RTK — той самий counter без boilerplate',
+          code: `import { createSlice, configureStore } from '@reduxjs/toolkit';
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => { state.value += 1; },        // Immer → immutable
+    addBy: (state, action: { payload: number }) => { state.value += action.payload; },
+  },
+});
+
+export const { increment, addBy } = counterSlice.actions; // автогенеровані
+const store = configureStore({ reducer: { counter: counterSlice.reducer } });`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Server state vs client state <span class="tag tag-key">KEY</span></h3>
+  <p>Сильний сигнал seniority — розрізняти два типи стану і не тримати серверний у Redux:</p>
+  <div class="grid2">
+    <div class="card"><h4>Server state</h4><p>Асинхронний кеш чужих даних: refetch, інвалідація, дедуплікація, retry → <strong>TanStack Query / RTK Query</strong>.</p></div>
+    <div class="card"><h4>Client / UI state</h4><p>Синхронний, "власний": фільтри, візард, крос-компонентні взаємодії → <strong>Redux/RTK / Zustand / Context</strong>.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Коли Redux НЕ потрібен</h3>
+  <ul class="list">
+    <li>Стан переважно <strong>server state</strong> → TanStack Query / RTK Query.</li>
+    <li>Простий локальний стан → <code>useState</code> / <code>useReducer</code> + Context.</li>
+    <li>Малий/середній застосунок без складних крос-компонентних взаємодій.</li>
+  </ul>
+  <p><strong>Бери Redux/RTK</strong>, коли: складний client state між багатьма несуміжними частинами UI; потрібна відстежуваність змін (time-travel, аудит); велика команда, де важлива сувора передбачуваність.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Redux vs альтернативи</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Рішення</th><th>Тип стану</th><th>Boilerplate</th><th>Коли</th></tr>
+      <tr><td>Redux Toolkit</td><td>client (складний)</td><td>середній</td><td>велике SPA, аудит змін</td></tr>
+      <tr><td>Zustand</td><td>client</td><td>мінімальний</td><td>легша альтернатива, менше церемоній</td></tr>
+      <tr><td>Context + useReducer</td><td>локальний/середній</td><td>малий</td><td>без зовнішньої бібліотеки</td></tr>
+      <tr><td>TanStack Query</td><td>server</td><td>малий</td><td>fetch/cache/sync з бекендом</td></tr>
+      <tr><td>Jotai / Recoil</td><td>atomic</td><td>малий</td><td>дрібнозернистий реактивний стан</td></tr>
+    </table>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'state-zustand',
+      title: '🐻 Zustand',
+      interviewQuestions: [
+        {
+          question: 'Чим підхід Zustand до підписки на стан принципово відрізняється від React Context і чому це вирішує проблему зайвих ре-рендерів?',
+          answer: 'Zustand використовує <code>useSyncExternalStore</code> із селекторами: компонент підписується на <em>конкретний зріз</em> стану (<code>useStore(s => s.user)</code>) і ре-рендериться лише коли саме цей зріз змінюється (порівняння через <code>Object.is</code> за замовчуванням), тоді як Context ре-рендерить усіх споживачів на будь-яку зміну значення провайдера незалежно від того, яка частина їм потрібна.',
+        },
+        {
+          question: 'Які недоліки чи компроміси Zustand порівняно з Redux у великому продуктовому додатку?',
+          answer: 'Zustand менш «structured out of the box» — немає нативного DevTools time-travel, middleware-екосистеми чи строгих конвенцій щодо actions/reducers (хоч є мідлвари, що це додають). У великих командах це може призвести до неузгоджених патернів роботи зі стором між різними частинами кодової бази, тоді як Redux нав\'язує єдиний, передбачуваний спосіб мутації стану через reducers.',
+        },
+        {
+          question: `Навіщо потрібен partialize у persist-мідлварі Zustand?`,
+          answer: `Без <code>partialize</code> у localStorage потрапляє весь store, включно з ефемерним UI-станом чи потенційно чутливими даними. <code>partialize</code> звужує серіалізацію до явно перелічених полів — свідомий вибір, що саме переживає перезавантаження сторінки.`,
+        },
+        {
+          question: `Як звернутись до Zustand-стору поза React-компонентом, і навіщо це буває потрібно?`,
+          answer: `<code>useBearStore.getState()</code>/<code>.setState()</code> читають і оновлюють store без хука і без підписки на ре-рендер — корисно у звичайних утилітах чи обробниках поза компонентами, де немає React render-циклу, але потрібен доступ до поточного стану.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що це <span class="tag tag-key">KEY</span></h3>
+  <p><strong>Zustand</strong> — мінімалістичний state-manager (~1&nbsp;КБ). Один store створюється через <code>create()</code>, компоненти читають <em>зрізи</em> стану через хук-селектор (<code>useStore(s =&gt; s.x)</code>). Під капотом — <code>useSyncExternalStore</code> (розділ «📋 Повний каталог хуків»), тому store живе <strong>поза React-деревом</strong> і не потребує <code>Provider</code>.</p>
+  <p>За позицією — між «тільки Context» і «повний Redux»: помітно менше boilerplate, ніж у Redux, і гранулярніші підписки, ніж у Context (немає ре-рендеру всіх споживачів на будь-яку зміну).</p>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Коли брати:</strong> глобальний <em>клієнтський</em> стан, який ділять далекі компоненти й для якого Context ре-рендерить забагато — тема, кошик, авторизація, крос-компонентний UI-стан. <strong>Не</strong> для серверного кешу (дані з API) — це TanStack Query (розділ нижче).</span></div>
+  <h3 class="topic">Базовий store</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { create } from 'zustand';
+
+interface BearState {
+  bears: number;
+  addBear: () => void;
+  reset: () => void;
+}
+
+export const useBearStore = create<BearState>()((set) => ({
+  bears: 0,
+  addBear: () => set(state => ({ bears: state.bears + 1 })),
+  reset: () => set({ bears: 0 }),
+}));`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Selectors — уникай зайвих ре-рендерів <span class="tag tag-key">KEY</span></h3><div class="grid2">
+    <pre><span class="cmt">// ❌ Ре-рендер при БУДЬ-ЯКІЙ зміні store</span>
+<span class="kw">const</span> store = <span class="fn">useBearStore</span>();
+<span class="kw">const</span> bears = store.bears;</pre>
+    <pre><span class="cmt">// ✅ Ре-рендер тільки при зміні bears</span>
+<span class="kw">const</span> bears = <span class="fn">useBearStore</span>(state =&gt; state.bears);
+
+<span class="cmt">// Кілька полів — useShallow</span>
+<span class="kw">import</span> { useShallow } <span class="kw">from</span> <span class="str">'zustand/react/shallow'</span>;
+<span class="kw">const</span> { bears, fish } = <span class="fn">useBearStore</span>(<span class="fn">useShallow</span>(
+  state =&gt; ({ bears: state.bears, fish: state.fish })
+));</pre>
+  </div>
+  <h3 class="topic">Zustand vs Context <span class="tag tag-key">KEY</span></h3><div class="grid2">
+    <div class="card red"><h4>❌ Context для часто змінних даних</h4><p>Кожна зміна = ре-рендер ВСІХ споживачів, навіть якщо вони не використовують змінену частину.</p></div>
+    <div class="card green"><h4>✅ Zustand (або Jotai/Recoil)</h4><p>Гранулярні selectors поза React-деревом рендерингу контексту. Ре-рендер тільки якщо вибрана частина state справді змінилась.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Slices pattern — великий store, розбитий на частини
+// userSlice.ts
+export const createUserSlice = (set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+});
+// store.ts
+export const useStore = create()((...args) => ({
+  ...createUserSlice(...args),
+  ...createCartSlice(...args),
+}));
+
+// Middleware
+import { devtools, persist, immer } from 'zustand/middleware';
+const useStore = create(
+  devtools(              // Redux DevTools
+    persist(              // localStorage
+      immer((set) => ({   // мутабельні апдейти під капотом — immutable назовні
+        items: [],
+        addItem: (item) => set(state => { state.items.push(item) }),
+      })),
+      { name: 'my-store' }
+    )
+  )
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">partialize — обирай, що зберігати в localStorage <span class="tag tag-key">KEY</span></h3>
+  <p>Мідлвар <code>persist</code> за замовчуванням серіалізує <strong>увесь</strong> store. <code>partialize</code> звужує це до вибраних полів — не персисти токени/секрети чи ефемерний UI-стан.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const useCartStore = create(
+  persist(
+    (set, get) => ({
+      items: [],
+      ui: { isDrawerOpen: false }, // ефемерний UI-стан — не варто персистити
+      addItem: (item) => set(state => ({ items: [...state.items, item] })),
+    }),
+    {
+      name: 'cart-storage',
+      partialize: (state) => ({ items: state.items }), // тільки items у localStorage
+      // ⚠️ ніколи не персисти токени/паролі/PII без явного шифрування
+    }
+  )
+);
+
+// getState()/setState() — доступ до store ПОЗА React-деревом
+// (утиліти, non-component код, обробники поза компонентами)
+export function getCartTotal() {
+  const items = useCartStore.getState().items; // без хука, без ре-рендеру
+  return items.reduce((sum, i) => sum + i.price, 0);
+}
+
+// підписка поза React (напр. аналітика на кожну зміну)
+useCartStore.subscribe((state) => {
+  analytics.track('cart_changed', { count: state.items.length });
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Redux Toolkit — контраст <span class="tag tag-key">KEY</span></h3>
+  <p>RTK — офіційний, «opinionated» спосіб писати Redux: <code>createSlice</code> генерує action creators і reducer з одного опису, <code>configureStore</code> підключає DevTools і корисні middleware з коробки. Дає те, чого Zustand навмисно не нав'язує — сувору структуру actions/reducers і потужний time-travel debugging.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { createSlice, configureStore } from '@reduxjs/toolkit';
+
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState: { items: [] as CartItem[] },
+  reducers: {
+    addItem: (state, action) => {
+      state.items.push(action.payload); // immer під капотом — можна "мутувати"
+    },
+    removeItem: (state, action) => {
+      state.items = state.items.filter(i => i.id !== action.payload);
+    },
+  },
+});
+
+export const { addItem, removeItem } = cartSlice.actions;
+export const store = configureStore({
+  reducer: { cart: cartSlice.reducer },
+});
+
+// RTK Query — аналог TanStack Query для серверного стану, з тим самим store
+// createApi({ endpoints: (builder) => ({ getUsers: builder.query(...) }) })`,
+        },
+      ],
+    },
+    {
+      id: 'state-tanstack-query',
+      title: '🔄 TanStack Query',
+      interviewQuestions: [
+        {
+          question: 'Чому TanStack Query називають «server state manager», а не звичайним data-fetching інструментом, і чим server state відрізняється від client state?',
+          answer: 'Server state належить джерелу поза застосунком, асинхронний, може застаріти без відома клієнта і поділяється між кількома компонентами/вкладками. TanStack Query бере на себе кешування, дедуплікацію одночасних запитів, фонове оновлення (refetch on focus/reconnect), інвалідацію та retry — тобто вирішує проблеми, яких немає у звичайного client state (useState), де дані завжди «свіжі», бо ти сам ними керуєш.',
+        },
+        {
+          question: 'Як TanStack Query вирішує проблему «водоспаду запитів» (waterfall) і гонки застарілих даних (race condition) при швидкій зміні параметрів запиту?',
+          answer: 'Кешування за <code>queryKey</code> дозволяє паралельно ініціювати незалежні запити замість послідовних <code>await</code>-ланцюжків. Race condition при швидкій зміні параметрів (наприклад, пошуковий інпут) вирішується автоматично: бібліотека ігнорує відповідь застарілого запиту, якщо <code>queryKey</code> вже змінився і стартував новий запит — це знімає з розробника ручне відстеження «чи цей запит ще актуальний».',
+        },
+        {
+          question: `Чим кеш TanStack Query відрізняється від Redux/Zustand стору?`,
+          answer: `це не клієнтський стан, а кеш серверних даних зі своїм життєвим циклом (stale/fresh, invalidate, refetch) — тримати серверні дані у Zustand означає вручну реалізовувати те, що Query дає з коробки.`,
+        },
+        {
+          question: `Що робить staleTime: 0 за замовчуванням?`,
+          answer: `кожен новий mount/фокус вікна триггерить background refetch, навіть якщо дані в кеші є — UI показує кешовані одразу, потім оновлює.`,
+        },
+        {
+          question: `Чим isLoading відрізняється від isFetching у useQuery, і яку UI-помилку робить розробник, якщо їх плутає?`,
+          answer: `<code>isLoading</code> — true лише коли для цього <code>queryKey</code> ще немає жодних кешованих даних (перший запит). <code>isFetching</code> — true при будь-якому запиті, включно з тихими фоновими refetch, коли застарілі дані вже показані. Типова помилка — прив'язати повноекранний спінер до <code>isFetching</code>: він тоді блимає навіть коли дані вже на екрані.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Філософія: Server State ≠ Client State <span class="tag tag-key">KEY</span></h3><div class="grid2">
+    <div class="card red"><h4>❌ Anti-pattern (useEffect + useState)</h4>
+      <pre style="font-size:10.5px"><span class="fn">useEffect</span>(() =&gt; {
+  <span class="fn">setLoading</span>(<span class="kw">true</span>);
+  <span class="fn">fetch</span>(<span class="str">'/api/users'</span>)
+    .<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>())
+    .<span class="fn">then</span>(setUsers)
+    .<span class="fn">catch</span>(setError)
+    .<span class="fn">finally</span>(() =&gt; <span class="fn">setLoading</span>(<span class="kw">false</span>));
+}, []);
+<span class="cmt">// немає кешу, дедуплікації, інвалідації, retry, refetch-on-focus</span></pre>
+    </div>
+    <div class="card green"><h4>✅ useQuery</h4>
+      <pre style="font-size:10.5px"><span class="kw">const</span> { data, isLoading, error, refetch } = <span class="fn">useQuery</span>({
+  queryKey: [<span class="str">'users'</span>],
+  queryFn: () =&gt; <span class="fn">fetchUsers</span>(),
+  staleTime: <span class="num">5</span> * <span class="num">60</span> * <span class="num">1000</span>,  <span class="cmt">// 5 хв</span>
+  gcTime: <span class="num">10</span> * <span class="num">60</span> * <span class="num">1000</span>,   <span class="cmt">// раніше cacheTime</span>
+});</pre>
+    </div>
+  </div>
+  <h3 class="topic">useMutation + Optimistic Updates <span class="tag tag-key">KEY</span></h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const mutation = useMutation({
+  mutationFn: (todo: Todo) => createTodo(todo),
+  onMutate: async (newTodo) => {
+    await queryClient.cancelQueries({ queryKey: ['todos'] });
+    const previous = queryClient.getQueryData(['todos']);
+    queryClient.setQueryData(['todos'], old => [...old, newTodo]);  // optimistic!
+    return { previous };
+  },
+  onError: (err, newTodo, context) => {
+    queryClient.setQueryData(['todos'], context.previous);  // rollback
+  },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">queryKey — ієрархія</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `queryKey: ['users']                          // список
+queryKey: ['users', userId]                   // один юзер
+queryKey: ['users', userId, 'posts']          // пости юзера
+queryKey: ['users', { page, filter, sort }]   // з параметрами
+
+// Invalidate по префіксу — усі "users"-запити разом:
+queryClient.invalidateQueries({ queryKey: ['users'] });`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Корисні опції</h3><div class="table-wrap">
+    <table>
+      <tr><th>Опція</th><th>Default</th><th>Що робить</th></tr>
+      <tr><td><code>staleTime</code></td><td>0</td><td>Час до "застарівання". 0 = refetch при фокусі/mount</td></tr>
+      <tr><td><code>gcTime</code></td><td>5 хв</td><td>Час до видалення з кешу після відписки останнього спостерігача</td></tr>
+      <tr><td><code>retry</code></td><td>3</td><td>К-сть retry при помилці</td></tr>
+      <tr><td><code>refetchOnWindowFocus</code></td><td>true</td><td>Refetch при поверненні на вкладку</td></tr>
+      <tr><td><code>enabled</code></td><td>true</td><td>false = не виконувати (чекати на умову — залежні запити)</td></tr>
+      <tr><td><code>select</code></td><td>—</td><td>Трансформація data перед поверненням у компонент</td></tr>
+      <tr><td><code>placeholderData</code></td><td>—</td><td>Дані-заглушка поки завантажується (keepPreviousData — без "миготіння" при пагінації)</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">isLoading vs isFetching <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card red"><h4>isLoading</h4><p><code>true</code> лише під час <strong>першого</strong> запиту, коли в кеші взагалі немає даних — саме тоді доречний повний skeleton/спінер на місці контенту.</p></div>
+    <div class="card green"><h4>isFetching</h4><p><code>true</code> при <strong>БУДЬ-ЯКОМУ</strong> запиті, включно з тихим фоновим refetch (focus, reconnect, invalidate) — старі/кешовані дані вже показані, тому доречний лише невеликий індикатор "оновлюється", а не повноекранний спінер.</p></div>
+  </div>
+  `,
+        },
+      ],
+    },
+    {
+      id: 'state-rxjs',
+      title: '🌊 RxJS у React',
+      interviewQuestions: [
+        {
+          question: 'Навіщо взагалі використовувати RxJS у React, якщо є Promises/async-await?',
+          answer: 'RxJS моделює <strong>потоки подій у часі</strong> (кліки, WebSocket-повідомлення, введення тексту), а не одноразові асинхронні значення, як Promise. Оператори (<code>debounceTime</code>, <code>switchMap</code>, <code>combineLatest</code>) дають декларативний спосіб комбінувати, скасовувати й трансформувати послідовності подій — задачі, які на голому <code>async/await</code> вимагали б ручного керування таймерами й прапорцями скасування.',
+        },
+        {
+          question: 'Як правильно інтегрувати RxJS Observable зі стандартним React-рендер-циклом, щоб уникнути витоків підписки?',
+          answer: 'Підписку створюють у <code>useEffect</code> і обов\'язково повертають функцію <code>unsubscribe()</code> як cleanup — інакше при розмонтуванні компонента підписка продовжить жити й намагатись оновити стан вже неіснуючого компонента. Для конвертації потоку в React-сумісний стан часто використовують <code>useSyncExternalStore</code> замість ручного <code>useState</code> + <code>useEffect</code>, щоб коректно працювати з concurrent-рендерингом.',
+        },
+        {
+          question: 'Чим <code>switchMap</code> відрізняється від <code>mergeMap</code>/<code>concatMap</code>, і чому вибір неправильного оператора — типова причина race condition у продакшні?',
+          answer: '<code>switchMap</code> скасовує попередній внутрішній потік при появі нового значення з джерела — ідеально для пошуку-по-вводу, де потрібна лише остання відповідь. <code>mergeMap</code> запускає всі внутрішні потоки паралельно без скасування, <code>concatMap</code> — послідовно, чекаючи завершення попереднього. Використання <code>mergeMap</code> замість <code>switchMap</code> для запитів, що залежать від останнього вводу користувача, може призвести до того, що застаріла відповідь прийде <em>після</em> свіжої й перезапише її.',
+        },
+        {
+          question: 'Чим Observable принципово відрізняється від Promise?',
+          answer: 'Observable — лінивий (не починає роботу до підписки) і може видати 0 і більше значень з часом; скасовується через <code>unsubscribe()</code>. Promise — жадібний (виконується одразу після створення), завжди рівно одне значення, нативно не скасовується.',
+        },
+        {
+          question: 'Що має повертати <code>catchError</code>, і чому місце, де він стоїть у <code>pipe</code>, критично важливе?',
+          answer: '<code>catchError</code> МУСИТЬ повернути Observable — він стає продовженням потоку після помилки: <code>of(fallback)</code> (відновитись значенням), <code>EMPTY</code> (тихо завершити) або <code>throwError(() => err)</code> (перекинути далі). Місце має значення: <code>catchError</code> <em>всередині</em> <code>switchMap</code> ловить помилку лише внутрішнього запиту — зовнішній потік (напр. поле пошуку) живе далі; <code>catchError</code> <em>в кінці</em> pipe ловить будь-що, але після нього весь потік мертвий.',
+        },
+        {
+          question: 'Чим Hot Observable відрізняється від Cold, і як <code>share()</code> пов\'язаний з цим?',
+          answer: 'Cold Observable запускає власне виконання на кожну підписку (типово для HTTP-запитів через <code>interval()</code>-подібні джерела) — два підписники отримують два незалежні виконання. Hot Observable — одне спільне виконання, яке всі підписники ділять (типово для подій, напр. <code>fromEvent</code>). <code>share()</code> перетворює cold-джерело на hot, щоб кілька підписників не спричиняли дублювання роботи (наприклад, дублікати HTTP-запитів).',
+        },
+        {
+          question: 'Чим BehaviorSubject відрізняється від звичайного Subject?',
+          answer: 'Звичайний Subject нічого не памʼятає — пізній підписник отримує лише майбутні емісії. BehaviorSubject завжди зберігає останнє значення (потребує початкового значення при створенні) і одразу видає його новому підписнику — тому природно підходить для представлення поточного стану (напр. авторизований користувач, тема).',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Коли потоки кращі за useEffect <span class="tag tag-key">KEY</span></h3>
+  <p>Для одноразового fetch — <code>useEffect</code>/TanStack Query достатньо. RxJS виправдовує себе, коли є <strong>кілька джерел подій у часі</strong>, які треба комбінувати, дебаунсити, скасовувати, перемикати: presence-статуси, debounced search з відміною попереднього запиту, WebSocket-потоки, drag&amp;drop-жести.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Debounced search з автоматичною відміною застарілого запиту
+const search$ = new Subject<string>();
+
+const results$ = search$.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(query => query ? searchApi(query) : of([])),
+  // switchMap сам скасовує попередній HTTP-запит при новому query —
+  // те, що вручну довелось би робити через AbortController у useEffect
+);
+
+// у компоненті — через useObservable custom hook (Block 2)
+const results = useObservable(results$, []);
+<input onChange={e => search$.next(e.target.value)} />`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Observable vs Promise</h3>
+  <p>Observable — потік подій у часі, ліниво (не починає до підписки), може видати 0+ значень. Promise — одне значення, запускається одразу.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Feature</th><th>Observable</th><th>Promise</th></tr>
+      <tr><td>Lazy/Eager</td><td>Lazy (subscribe запускає)</td><td>Eager (виконується одразу)</td></tr>
+      <tr><td>Single/Multiple</td><td>Багато значень</td><td>Одне значення</td></tr>
+      <tr><td>Cancellation</td><td>unsubscribe()</td><td>Нема нативної підтримки</td></tr>
+      <tr><td>Sync/Async</td><td>І те, і те</td><td>Завжди async</td></tr>
+      <tr><td>Оператори</td><td>Багата екосистема</td><td>then/catch — обмежено</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Hot vs Cold + share()</h3>
+  <p>Cold Observable — кожен підписник отримує власний потік (нові HTTP-запити). Hot Observable — один потік для всіх підписників. <code>share()</code> перетворює Cold на Hot — щоб уникнути дублювання запитів.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Cold Observable — кожен subscribe запускає власне виконання
+const cold$ = interval(1000); // кожен subscribe рестартує лічильник
+
+cold$.subscribe(v => console.log('A', v)); // A: 0, 1, 2...
+cold$.subscribe(v => console.log('B', v)); // B: 0, 1, 2... (окремо)
+
+// Hot Observable — одне виконання, всі підписники ділять його
+const hot$ = fromEvent(button, 'click');
+hot$.subscribe(() => console.log('A')); // обидва бачать той самий клік
+hot$.subscribe(() => console.log('B'));
+
+// Перетворити cold на hot
+const shared$ = interval(1000).pipe(share()); // Multicast`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Flattening Operators — Decision Matrix <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Оператор</th><th>Поведінка</th><th>Use Case</th><th>Приклад</th></tr>
+      <tr><td>switchMap</td><td>Скасовує попередній, емітить найновіший внутрішній</td><td>Пошук, автокомпліт, зміна маршруту</td><td>input → API search</td></tr>
+      <tr><td>mergeMap</td><td>Паралельні внутрішні Observable</td><td>Завантаження файлів, конкурентні запити</td><td>items → паралельні POST</td></tr>
+      <tr><td>concatMap</td><td>Черга (по одному)</td><td>Послідовні операції, важливий порядок</td><td>черга form-submit</td></tr>
+      <tr><td>exhaustMap</td><td>Ігнорує нове, поки виконується</td><td>Кнопка логіну (запобігти double-submit)</td><td>click → POST (ігнорувати кліки під час запиту)</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Subject Variants</h3>
+  <p>Subject — Observable+Observer одночасно. BehaviorSubject зберігає останнє значення. ReplaySubject буферизує N значень. AsyncSubject видає лише останнє при завершенні.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Subject — розсилає всім підписникам
+const subject = new Subject<string>();
+subject.next('hello');
+subject.subscribe(v => console.log(v)); // пізній підписник: нічого (hot)
+
+// BehaviorSubject — пам'ятає останнє значення
+const behavior = new BehaviorSubject('initial');
+behavior.next('new');
+behavior.subscribe(v => console.log(v)); // 'new' (пізній підписник отримує останнє)
+
+// ReplaySubject — відтворює N значень
+const replay = new ReplaySubject(3);
+replay.next(1); replay.next(2); replay.next(3); replay.next(4);
+replay.subscribe(v => console.log(v)); // 2, 3, 4 (останні 3)
+
+// AsyncSubject — лише останнє значення при complete
+const asyncSubj = new AsyncSubject();
+asyncSubj.next(1); asyncSubj.next(2); asyncSubj.complete();
+asyncSubj.subscribe(v => console.log(v)); // 2`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Оператори — що робить кожен <span class="tag tag-key">KEY</span></h3>
+  <p>Довідник найуживаніших операторів. Деталі flattening (<code>switchMap</code>/<code>mergeMap</code>/<code>concatMap</code>/<code>exhaustMap</code>) — вище.</p>
+  <p><strong>Creation — створюють Observable:</strong></p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Оператор</th><th>Що робить</th></tr>
+      <tr><td><code>of(a, b)</code></td><td>Емітить передані значення по черзі, тоді complete</td></tr>
+      <tr><td><code>from(arr | promise | iterable)</code></td><td>Перетворює масив/Promise/ітерабельне на потік</td></tr>
+      <tr><td><code>fromEvent(el, 'click')</code></td><td>Потік DOM-подій (hot)</td></tr>
+      <tr><td><code>interval(ms)</code> / <code>timer(delay, period)</code></td><td>Числа за таймером; timer — із затримкою старту</td></tr>
+      <tr><td><code>EMPTY</code></td><td>Одразу complete без жодного значення</td></tr>
+      <tr><td><code>throwError(() => err)</code></td><td>Потік, що одразу падає з помилкою</td></tr>
+      <tr><td><code>defer(fn)</code></td><td>Створює Observable ліниво — на кожну підписку заново</td></tr>
+    </table>
+  </div>
+  <p><strong>Transformation — змінюють значення:</strong></p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Оператор</th><th>Що робить</th></tr>
+      <tr><td><code>map(fn)</code></td><td>Трансформує кожне значення</td></tr>
+      <tr><td><code>scan(fn, seed)</code></td><td>Як reduce, але емітить проміжний акумулятор на кожному кроці</td></tr>
+      <tr><td><code>reduce(fn, seed)</code></td><td>Акумулює й емітить ОДИН результат при complete</td></tr>
+      <tr><td><code>toArray()</code></td><td>Збирає всі значення в масив (при complete)</td></tr>
+    </table>
+  </div>
+  <p><strong>Filtering — пропускають/відкидають:</strong></p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Оператор</th><th>Що робить</th></tr>
+      <tr><td><code>filter(pred)</code></td><td>Пропускає лише ті, що проходять умову</td></tr>
+      <tr><td><code>take(n)</code> / <code>first()</code> / <code>last()</code></td><td>Перші n / перше / останнє, тоді complete</td></tr>
+      <tr><td><code>takeUntil(notifier$)</code></td><td>Емітить, доки notifier не спрацює (класична відписка)</td></tr>
+      <tr><td><code>skip(n)</code></td><td>Пропускає перші n значень</td></tr>
+      <tr><td><code>debounceTime(ms)</code></td><td>Емітить лише після паузи (search-input)</td></tr>
+      <tr><td><code>throttleTime(ms)</code></td><td>Не частіше, ніж раз на ms</td></tr>
+      <tr><td><code>distinctUntilChanged()</code></td><td>Ігнорує підряд однакові значення</td></tr>
+    </table>
+  </div>
+  <p><strong>Combination — комбінують кілька потоків:</strong></p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Оператор</th><th>Що робить</th></tr>
+      <tr><td><code>combineLatest([a$, b$])</code></td><td>Останні значення всіх — на будь-яку зміну</td></tr>
+      <tr><td><code>forkJoin([a$, b$])</code></td><td>Останні значення, але лише коли ВСІ complete (як Promise.all)</td></tr>
+      <tr><td><code>merge(a$, b$)</code></td><td>Зливає потоки паралельно, у порядку надходження</td></tr>
+      <tr><td><code>concat(a$, b$)</code></td><td>Послідовно: b$ лише після complete a$</td></tr>
+      <tr><td><code>zip(a$, b$)</code></td><td>Парує значення за індексом</td></tr>
+      <tr><td><code>withLatestFrom(b$)</code></td><td>На кожен a$ додає ПОТОЧНЕ b$</td></tr>
+      <tr><td><code>startWith(v)</code></td><td>Емітить v першим, до решти</td></tr>
+    </table>
+  </div>
+  <p><strong>Utility & Multicasting:</strong></p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Оператор</th><th>Що робить</th></tr>
+      <tr><td><code>tap(fn)</code></td><td>Side-effect (лог, дебаг) — не змінює значення</td></tr>
+      <tr><td><code>delay(ms)</code></td><td>Затримує всі емісії</td></tr>
+      <tr><td><code>finalize(fn)</code></td><td>Викликається при complete АБО error (cleanup, spinner off)</td></tr>
+      <tr><td><code>timeout(ms)</code></td><td>Падає з помилкою, якщо немає емісії за ms</td></tr>
+      <tr><td><code>share()</code> / <code>shareReplay(n)</code></td><td>cold → hot; shareReplay кешує n останніх для нових підписників</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Error Handling — catchError, retry, throwError <span class="tag tag-key">KEY</span></h3>
+  <p>У потоці помилка — <em>термінальна</em> подія: після <code>error</code> Observable завершується й більше нічого не емітить. <code>catchError</code> перехоплює її й дає відновитись.</p>
+  <ul class="list">
+    <li><strong>catchError МУСИТЬ повернути Observable</strong> — він стає продовженням потоку після помилки. Варіанти: <code>of(fallback)</code> (відновитись значенням), <code>EMPTY</code> (тихо завершити), <code>throwError(() => err)</code> (перекинути далі).</li>
+    <li><strong>Місце важливе.</strong> <code>catchError</code> <em>всередині</em> <code>switchMap</code> ловить помилку лише внутрішнього запиту — зовнішній потік (поле пошуку) живе далі. <code>catchError</code> <em>в кінці</em> pipe ловить будь-що, але після нього весь потік мертвий.</li>
+    <li><strong>retry</strong> перепідписується на джерело при помилці: <code>retry(3)</code> або <code>retry({ count, delay })</code> для backoff.</li>
+    <li><strong>finalize</strong> спрацьовує і на complete, і на error — ідеально для <code>loading = false</code>.</li>
+    <li>У фреймворках з вбудованим HTTP-клієнтом (напр. Angular <code>HttpClient</code>) помилка часто обгортається у свій тип — остання лінія оборони тоді глобальний error-handler або interceptor.</li>
+  </ul>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { of, EMPTY, throwError, timer } from 'rxjs';
+import { catchError, retry, switchMap, finalize } from 'rxjs/operators';
+
+// 1) Відновлення значенням — потік живе далі
+fetchUser().pipe(
+  catchError(err => {
+    console.error(err);
+    return of(GUEST_USER); // ✅ fallback; тип має збігатися з потоком
+  })
+);
+
+// 2) Тихо проковтнути (нічого не емітити) → EMPTY
+source$.pipe(catchError(() => EMPTY));
+
+// 3) Перекинути далі (обгорнути помилку)
+source$.pipe(
+  catchError(err => throwError(() => new AppError('load failed', err)))
+);
+
+// 4) Місце catchError: ВСЕРЕДИНІ switchMap — search$ не «вмирає»
+search$.pipe(
+  switchMap(q =>
+    searchApi(q).pipe(
+      catchError(() => of([])) // помилка запиту → порожній результат, стрім живий
+    )
+  )
+);
+// ❌ Якби catchError стояв у кінці pipe — перша помилка вбила б увесь search$
+
+// 5) Retry з backoff + гарантований cleanup
+fetchData().pipe(
+  retry({ count: 3, delay: (_err, i) => timer(2 ** i * 500) }), // 0.5s, 1s, 2s
+  catchError(() => of(null)),
+  finalize(() => setLoading(false)) // і на успіх, і на помилку
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">forkJoin замість Promise.all <span class="tag tag-key">KEY</span></h3>
+  <p><code>forkJoin({ a: a$, b: b$ })</code> чекає, поки <em>всі</em> джерела завершаться (<code>complete</code>), і одноразово емітить останні значення кожного — так само, як <code>Promise.all([a, b])</code> чекає всі проміси.</p>
+  <div class="grid2">
+    <div class="card blue"><h4>Promise.all</h4><p>Приймає масив Promise. Один reject → весь <code>Promise.all</code> одразу reject.</p></div>
+    <div class="card purple"><h4>forkJoin</h4><p>Приймає масив/об'єкт Observable. Джерело, що НЕ завершується (напр. <code>interval()</code> без <code>take</code>, або <code>BehaviorSubject</code>), «підвішує» forkJoin назавжди — complete критичний.</p></div>
+  </div>
+  <div class="alert alert-bad"><strong>Типова пастка:</strong> <code>forkJoin</code> із <code>BehaviorSubject</code>/нескінченним потоком ніколи не емітить, бо той ніколи не complete. Додай <code>take(1)</code> до такого джерела, або візьми <code>combineLatest</code>, якщо потрібні саме поточні значення без очікування complete.</div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// forkJoin — паралельно, чекає ВСІХ, як Promise.all
+forkJoin({
+  profile: getProfile(),
+  settings: getSettings(),
+  perms: getPermissions(),
+}).subscribe(({ profile, settings, perms }) => {
+  // усі три готові одночасно
+});
+
+// Еквівалент на Promise.all
+const [profile, settings, perms] = await Promise.all([
+  fetch('/api/profile').then(r => r.json()),
+  fetch('/api/settings').then(r => r.json()),
+  fetch('/api/permissions').then(r => r.json()),
+]);
+
+// ❌ Пастка: джерело без complete підвішує forkJoin
+forkJoin({
+  user: userSubject,        // BehaviorSubject — ніколи не complete!
+  data: getData(),
+}).subscribe(() => {}); // ніколи не спрацює
+
+// ✅ Фікс — гарантувати complete
+forkJoin({
+  user: userSubject.pipe(take(1)),
+  data: getData(),
+}).subscribe(() => {});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">✅</span><span>Правило вибору: один асинхронний запит, залежний від пропу/id → <code>useEffect</code>/Query. Потік подій у часі з комбінуванням/скасуванням/дебаунсом → RxJS у custom hook.</span></div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 5 — PATTERNS ============================= */
+    {
+      id: 'patterns',
+      title: '🧩 Patterns',
+      interviewQuestions: [
+        {
+          question: 'Чим Compound Components відрізняються від звичайної композиції через children, і коли варто обрати саме цей патерн?',
+          answer: 'Compound Components (наприклад, <code>&lt;Tabs&gt;&lt;Tabs.List&gt;&lt;Tabs.Panel&gt;</code>) діляться неявним станом через Context між батьківським та дочірніми компонентами, зберігаючи гнучкий, декларативний API без передачі десятків props вручну. Патерн виправданий для UI-«сімей» компонентів, де порядок/набір дочірніх елементів варіюється (акордеони, таби, меню), але є зайвим для простих, самодостатніх компонентів.',
+        },
+        {
+          question: 'Чим Render Props відрізняється від сучасного підходу через custom hooks для повторного використання логіки, і чому хуки здебільшого витіснили цей патерн?',
+          answer: 'Render Props передає функцію-рендерер як prop (<code>&lt;DataProvider render={data =&gt; ...}&gt;</code>), щоб надати доступ до внутрішнього стану провайдера — але це додає рівень вкладеності в дереві компонентів («wrapper hell» при комбінуванні кількох). Custom hooks дають ту саму повторно використовувану логіку без обгортки в дереві — просто виклик функції всередині компонента, тому Render Props сьогодні застосовують рідко, переважно в legacy-коді або бібліотеках із до-хукової епохи.',
+        },
+        {
+          question: `Чому немає хука для Error Boundary?`,
+          answer: `потребує lifecycle-методів рендер-фази (getDerivedStateFromError), яких у функціональній моделі хуків немає — рендер компонента не може "зловити" помилку самого себе.`,
+        },
+        {
+          question: `Чому 'boolean-prop proliferation' вважають антипатерном компонентного API?`,
+          answer: `Кожен новий незалежний boolean/enum-проп подвоює (або більше) кількість комбінацій, які компонент теоретично повинен коректно обробити, хоча реально підтримується лише невелика підмножина. Композиція (окремі спеціалізовані компоненти) або явний <code>variant</code>-union звужують API до дійсно валідних, протестованих станів.`,
+        },
+        {
+          question: `Коли обрати іменовані слоти-пропи (<code>header</code>, <code>sidebar</code>) замість одного <code>children</code>, і чому <code>React.cloneElement</code> — поганий вибір для передачі даних дітям?`,
+          answer: `Слоти-пропи типу <code>React.ReactNode</code> потрібні, коли в компоненті кілька незалежних «дірок» для вмісту — <code>children</code> тоді довелося б розбирати за позицією або типом. <code>cloneElement</code>, щоб «доштовхнути» пропи в <code>children</code>, крихкий (залежить від точної форми дитини), погано типізується і ламається при обгортанні дитини у фрагмент/іншій компонент. Для спільного стану — Context (compound components), для параметризованого рендеру — render-prop через <code>children</code>-функцію.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Composition over inheritance <span class="tag tag-key">KEY</span></h3>
+  <p>React не має класичного механізму наслідування компонентів — і не має бути. Замість "Button extends BaseButton" — компонент приймає <code>children</code> або спеціалізовані пропи-слоти. <strong>Compound components</strong> — набір компонентів, що діляться неявним станом через Context, і разом утворюють один "віджет".</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Compound components — спільний стан через Context, гнучкий склад ззовні
+const TabsContext = createContext<{ active: string; setActive: (id: string) => void } | null>(null);
+
+function Tabs({ defaultTab, children }: { defaultTab: string; children: React.ReactNode }) {
+  const [active, setActive] = useState(defaultTab);
+  return <TabsContext.Provider value={{ active, setActive }}>{children}</TabsContext.Provider>;
+}
+Tabs.Tab = function Tab({ id, children }: { id: string; children: React.ReactNode }) {
+  const ctx = useContext(TabsContext)!;
+  return <button onClick={() => ctx.setActive(id)} data-active={ctx.active === id}>{children}</button>;
+};
+// <Tabs defaultTab="a"><Tabs.Tab id="a">A</Tabs.Tab><Tabs.Tab id="b">B</Tabs.Tab></Tabs>
+// споживач сам вирішує порядок/кількість табів — компонент не "знає" про них наперед`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Слоти через пропи-<code>ReactNode</code> <span class="tag tag-key">KEY</span></h3>
+  <p>Коли компонент має кілька «дірок» для вмісту (хедер, футер, бічна панель), не тулиш усе в <code>children</code> — приймаєш кілька пропів типу <code>React.ReactNode</code>. Споживач передає готовий JSX, компонент лише розставляє його в розмітці.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Слоти — кілька іменованих "дірок" замість одного children
+function Page({ header, sidebar, children }: {
+  header: React.ReactNode; sidebar: React.ReactNode; children: React.ReactNode;
+}) {
+  return (
+    <div className="layout">
+      <header>{header}</header>
+      <aside>{sidebar}</aside>
+      <main>{children}</main>
+    </div>
+  );
+}
+// <Page header={<Logo />} sidebar={<Nav />}><Article /></Page>
+
+// ❌ Анти-патерн: React.cloneElement, щоб "доштовхнути" пропи в children —
+//    крихко (залежить від форми дитини), погано типізується.
+// ✅ Замість цього — Context (compound components вище) або render-prop через children:
+function Toggle({ children }: { children: (on: boolean, toggle: () => void) => React.ReactNode }) {
+  const [on, setOn] = useState(false);
+  return <>{children(on, () => setOn(v => !v))}</>;
+}
+
+// Provider-компонент як патерн — інкапсулює createContext + стан в одному місці
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const value = useMemo(() => ({ theme, setTheme }), [theme]);
+  return <ThemeContext value={value}>{children}</ThemeContext>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Легасі-патерни — одним абзацом</h3>
+  <p><strong>HOC</strong> (<code>withAuth(Component)</code>) і <strong>render props</strong> вирішували «перевикористати логіку без наслідування» до хуків. Custom hooks замінили ~95% застосувань — та сама логіка без обгортки в дереві й без «wrapper hell». <strong>Container / Presentational</strong>: логіку тепер виносять у custom hook, а не в окремий компонент-обгортку. У новому коді не пишуться — лише читаються в легасі.</p>
+  <p><strong>Controlled vs Uncontrolled inputs</strong> — окремий детальний розділ "Controlled vs Uncontrolled Inputs" нижче (хто насправді володіє значенням, ref, FormData, verdict).</p>
+  <h3 class="topic">Error Boundary <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Єдиний випадок, де досі потрібен клас: хука-еквівалента <code>getDerivedStateFromError</code> немає. На практиці беруть <code>react-error-boundary</code>. Ловить помилки рендеру піддерева <strong>нижче себе</strong> — не ловить помилки в обробниках подій, асинхронному коді чи самому Error Boundary.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { ErrorBoundary } from 'react-error-boundary';
+
+<ErrorBoundary
+  fallback={<ErrorPage />}
+  onError={(error, info) => logToSentry(error, info)}
+>
+  <RiskyWidget />
+</ErrorBoundary>
+
+// ⚠️ НЕ ловить: помилки в onClick/onChange (звичайний try/catch там),
+// помилки в асинхронному коді (fetch .catch()), SSR-помилки.`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Уникай boolean-prop proliferation <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Коли компонент накопичує дедалі більше незалежних boolean/enum-пропів (<code>size</code>, <code>variant</code>, <code>outlined</code>, <code>rounded</code>, <code>disabled</code>...), кількість можливих комбінацій росте експоненційно — багато з них ніхто не тестував і не мав на увазі як валідний стан. Композиція (окремі компоненти або явний <code>variant</code>-union замість стосу boolean'ів) звужує API до дійсно підтримуваних варіантів.</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Стос boolean-пропів</h4>
+      <pre><span class="jsx">&lt;Button</span>
+  size=<span class="str">"lg"</span>
+  variant=<span class="str">"primary"</span>
+  outlined
+  rounded
+  disabled={isLoading}
+<span class="jsx">/&gt;</span>
+<span class="cmt">// outlined + variant="primary" + rounded — валідна комбінація?</span>
+<span class="cmt">// компонент всередині мусить розрулювати всі перестановки</span></pre>
+    </div>
+    <div class="card green"><h4>✅ Композиція / явний variant</h4>
+      <pre><span class="jsx">&lt;PrimaryButton</span> size=<span class="str">"lg"</span> disabled={isLoading}<span class="jsx">&gt;</span>
+  Save
+<span class="jsx">&lt;/PrimaryButton&gt;</span>
+
+<span class="cmt">// або — union замість boolean-стосу</span>
+<span class="kw">type</span> ButtonVariant = <span class="str">'primary-outlined-rounded'</span> | <span class="str">'primary-solid'</span> | <span class="str">'ghost'</span>;
+<span class="jsx">&lt;Button</span> variant=<span class="str">"primary-outlined-rounded"</span> <span class="jsx">/&gt;</span>
+<span class="cmt">// набір валідних станів явно перелічений — неможливо скласти "битий" варіант</span></pre>
+    </div>
+  </div>`,
+        },
+      ],
+    },
+    {
+      id: 'forms-controlled-uncontrolled',
+      title: '📝 Controlled vs Uncontrolled Inputs',
+      interviewQuestions: [
+        {
+          question: 'У чому різниця між controlled і uncontrolled input, і які трейд-оффи має кожен підхід у формі з великою кількістю полів?',
+          answer: 'Controlled input — значення повністю керується React-станом (<code>value</code> + <code>onChange</code>), кожне натискання клавіші тригерить ре-рендер; це дає повний контроль (валідація на льоту, форматування), але при десятках полів у одному компоненті може вплинути на продуктивність. Uncontrolled input зберігає значення в самому DOM, читається через <code>ref</code> лише за потреби (наприклад, при сабміті) — менше ре-рендерів, але складніше реалізувати live-валідацію.',
+        },
+        {
+          question: 'Чому бібліотеки на кшталт React Hook Form віддають перевагу uncontrolled-підходу за замовчуванням?',
+          answer: 'Uncontrolled-підхід уникає ре-рендеру батьківського компонента форми на кожне натискання клавіші в кожному полі — React Hook Form підписує поля через <code>ref</code> і керує валідацією/станом поза React-рендер-циклом, синхронізуючи назад у React лише коли це реально потрібно (сабміт, показ помилки). Це дає суттєвий виграш у продуктивності на великих формах порівняно з повністю controlled-підходом.',
+        },
+        {
+          question: `Чому controlled input ніколи не "відстає" від того, що друкує користувач?`,
+          answer: `React перезаписує DOM-значення власним станом щорендеру — немає окремого "справжнього" браузерного значення, з яким можна розійтись.`,
+        },
+        {
+          question: `Чому input[type="file"] не можна зробити controlled?`,
+          answer: `безпека браузера: JS не може програмно підставити довільний файл у value файлового інпуту.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Дві моделі — хто "володіє" значенням <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>Controlled</h4><pre style="font-size:10.5px"><span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(<span class="str">''</span>);
+<span class="jsx">&lt;input</span>
+  value={value}
+  onChange={e =&gt; <span class="fn">setValue</span>(e.target.value)}
+<span class="jsx">/&gt;</span></pre></div>
+    <div class="card blue"><h4>Uncontrolled</h4><pre style="font-size:10.5px"><span class="kw">const</span> ref = <span class="fn">useRef</span>&lt;HTMLInputElement&gt;(<span class="kw">null</span>);
+<span class="jsx">&lt;input</span>
+  ref={ref}
+  defaultValue=<span class="str">""</span>
+<span class="jsx">/&gt;</span>
+<span class="cmt">// читаєш при потребі: ref.current.value</span></pre></div>
+  </div>
+  <h3 class="topic">React DOM vs браузерний DOM — хто насправді керує <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Це не просто "два стилі коду" — різна модель контролю над самим DOM-вузлом:</p>
+  <div class="grid2">
+    <div class="card red"><h4>Controlled — React "перемагає" браузер щорендеру</h4><p>DOM-вузол <code>&lt;input&gt;</code> технічно МАЄ власну внутрішню властивість <code>value</code> (як у будь-якого браузерного інпуту) — але React на кожному рендері <strong>примусово перезаписує</strong> її значенням зі стану. Вузол не має "власної памʼяті" в очах React: те, що показано на екрані, — завжди відображення React-стану, а не те, що "надрукував" браузер сам по собі.</p></div>
+    <div class="card green"><h4>Uncontrolled — браузер лишається джерелом правди</h4><p>React ставить <code>defaultValue</code> лише один раз при mount і після цього <strong>ніколи не чіпає</strong> внутрішній стан DOM-вузла. Все, що вводить користувач, — суто браузерна поведінка; React дізнається про значення, лише коли явно запитає його через <code>ref.current.value</code>.</p></div>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Саме тому controlled input ніколи не "розсинхронізується" з React-станом, навіть при швидкому наборі тексту — немає окремого "браузерного" значення, з яким можна розійтись, бо React щорендеру перезаписує DOM-вузол своїм значенням наново.</span></div>
+  <h3 class="topic"><code>ref</code> для uncontrolled-полів</h3>
+  <p><code>useRef</code> сам по собі детально розібраний у розділі "🎯 useRef — детально" — тут важливий саме форм-специфічний патерн: або окремий ref на кожне поле, або <strong>один ref на весь <code>&lt;form&gt;</code></strong> і читання всіх полів разом через <code>FormData</code> (наступний розділ) замість ref-на-кожен-інпут.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>input[type="file"]</code> — принципово <strong>завжди uncontrolled</strong>. З міркувань безпеки браузер не дозволяє JS програмно встановлювати значення файлового інпуту (не можна "підсунути" довільний файл з диску користувача через <code>value</code>) — тільки читання через <code>ref</code>/<code>FormData</code>.</span></div>
+  <h3 class="topic">Порівняння й вердикт <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>Controlled</th><th>Uncontrolled</th></tr>
+      <tr><td>Ре-рендер на кожен keystroke</td><td>Так</td><td>Ні</td></tr>
+      <tr><td>Валідація/маска в реальному часі</td><td>Природно</td><td>Складніше (слухати input-подію вручну)</td></tr>
+      <tr><td>Умовний UI (submit disabled, лічильник символів)</td><td>Тривіально — значення вже в стані</td><td>Потрібен окремий слухач</td></tr>
+      <tr><td>Продуктивність на великих формах (50+ полів)</td><td>Погіршується — кожен інпут ре-рендерить форму</td><td>Не залежить від кількості полів</td></tr>
+      <tr><td><code>input[type="file"]</code></td><td>❌ Неможливо (браузерне обмеження)</td><td>✅ Єдиний варіант</td></tr>
+      <tr><td>Типова бібліотека</td><td>Ручний useState або Formik (легасі)</td><td>react-hook-form</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Вердикт:</strong> маленька форма (1-5 полів) з живою валідацією/умовним UI → controlled, просто й достатньо. Велика форма, форма з файлами, або продуктивність під питанням → uncontrolled (найчастіше — через react-hook-form, розділ "📋 Форми: збір даних, валідація, бібліотеки" нижче), а не ручні refs на кожне поле.</span></div>
+  `,
+        },
+      ],
+    },
+    {
+      id: 'forms-formdata-native',
+      title: '📋 Форми: збір даних, валідація, бібліотеки',
+      interviewQuestions: [
+        {
+          question: 'Де правильно робити валідацію форми — на клієнті, на сервері, чи обидва, і чому?',
+          answer: 'Клієнтська валідація — для UX (миттєвий фідбек, менше зайвих запитів), але <strong>ніколи не є джерелом істини для безпеки</strong>, бо клієнтський код можна обійти (прямий запит до API). Серверна валідація обов\'язкова завжди — це єдиний надійний бар\'єр. Правильна практика — дублювати ключові правила на обох рівнях, ідеально через спільну схему (Zod), яку імпортують і клієнт, і сервер.',
+        },
+        {
+          question: 'Які переваги дає нативний <code>FormData</code> API порівняно з ручним збором значень із controlled-полів через <code>useState</code> для кожного поля?',
+          answer: '<code>FormData</code> збирає всі значення форми одним викликом (<code>new FormData(formElement)</code>) без потреби заводити окремий <code>useState</code> і <code>onChange</code>-обробник на кожне поле, зменшуючи boilerplate і кількість ре-рендерів. У зв\'язці з React 19 Actions (<code>&lt;form action={fn}&gt;</code>) FormData стає нативним способом передати дані форми у Server Action без ручної серіалізації.',
+        },
+        {
+          question: 'Як показати помилки валідації користувачу так, щоб форма не «сіпалась» (не втрачала фокус/значення полів) при кожному ре-рендері?',
+          answer: 'Стан помилок варто зберігати окремо від значень полів (наприклад, <code>errors</code> у форматі <code>{ fieldName: message }</code>) і оновлювати лише той запис, що змінився, а не пересобирати весь об\'єкт форми. Бібліотеки на кшталт React Hook Form ізолюють ре-рендер конкретного поля через підписку по імені поля, тому помилка в одному інпуті не викликає ре-рендер усієї форми і не збиває фокус користувача.',
+        },
+        {
+          question: 'Коли варто обрати нативний підхід до форм (<code>useState</code> + <code>FormData</code>) замість бібліотеки (React Hook Form, Formik)?',
+          answer: 'Нативний підхід виправданий для простих форм (1-3 поля, без складної крос-польової валідації чи динамічних масивів полів) — додаткова залежність і абстракція бібліотеки там не окупається. Для форм із десятками полів, вкладеними масивами, складною умовною валідацією чи потребою в продуктивності на великому масштабі бібліотека економить значно більше часу, ніж коштує її вивчення.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Робота з даними форми — три рівні, кожен наступний потрібен лише коли попереднього не вистачає:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Рівень</th><th>Інструмент</th><th>Достатньо для</th></tr>
+      <tr><td>Збір значень</td><td>нативний <code>FormData</code> / <code>&lt;form action&gt;</code> (React 19)</td><td>будь-яка форма — заміна <code>useState</code> на кожне поле</td></tr>
+      <tr><td>Перевірка</td><td>HTML5-атрибути + Constraint Validation API + своя схема (Zod)</td><td>1–10 полів, проста крос-польова логіка</td></tr>
+      <tr><td>Керування станом форми</td><td>react-hook-form / TanStack Form</td><td>десятки полів, динамічні масиви, складна умовна валідація</td></tr>
+    </table>
+  </div>
+  <p style="font-size:12.5px;opacity:.75">Хто «володіє» значенням поля (controlled vs uncontrolled, <code>input[type=file]</code>) — окремий розділ «Controlled vs Uncontrolled Inputs» вище.</p>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">FormData — нативний збір значень <span class="tag tag-key">KEY</span></h3>
+  <p><code>FormData</code> — вбудований у браузер обʼєкт (не React-специфічний), що збирає значення <strong>усіх</strong> названих (<code>name="..."</code>) полів форми за один виклик — заміна ref-на-кожен-інпут для uncontrolled-форм.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function ContactForm() {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);   // ref не потрібен — форма з події
+
+    data.get('email');              // одне значення: string | File | null
+    data.getAll('interests');       // масив — для checkbox-груп з тим самим name
+    data.get('avatar') as File;     // файл із <input type="file">
+    Object.fromEntries(data);       // { email: '...', name: '...' } — плейн-обʼєкт
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input name="email" type="email" />
+      <input name="avatar" type="file" />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React 19 Actions — <code>&lt;form action={'{'}fn{'}'}&gt;</code></h3>
+  <p>У React 19 форма приймає <strong>функцію</strong> в <code>action</code> — вона отримує зібраний <code>FormData</code> першим аргументом, форма скидається після успіху, а робота може виконуватись прямо на сервері (Server Action). Той самий <code>FormData</code> вже зустрічався в <code>action</code> React Router (розділ «React Router» вище); деталі — розділ «React 19 / майбутнє».</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `async function updateName(formData: FormData) {
+  'use server';                                  // Server Action (Next.js App Router)
+  await db.user.update({ name: formData.get('name') });
+}
+
+function ProfileForm() {
+  const [state, action, isPending] = useActionState(updateName, null);
+  return (
+    <form action={action}>
+      <input name="name" />
+      <SubmitButton />
+    </form>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();            // стан найближчої <form> — без пропсів
+  return <button disabled={pending}>{pending ? 'Збереження…' : 'Зберегти'}</button>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Нативна HTML5-валідація <span class="tag tag-key">KEY</span></h3>
+  <p>Атрибути <code>required</code>, <code>pattern</code>, <code>min</code>/<code>max</code>, <code>type="email"</code> — браузер валідує безкоштовно, без жодного JS. Constraint Validation API дає програмний доступ: <code>input.checkValidity()</code> (bool, без UI), <code>input.reportValidity()</code> (показує нативну підказку браузера), <code>input.setCustomValidity('текст')</code> (власне повідомлення замість дефолтного).</p>
+  <h3 class="topic">Коли валідувати — три стратегії</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Момент</th><th>UX</th><th>Коли доречно</th></tr>
+      <tr><td><code>onChange</code></td><td>Миттєвий фідбек, але може дратувати посеред вводу ("email invalid" ще до того, як дописав)</td><td>Індикатори сили пароля, лічильник символів</td></tr>
+      <tr><td><code>onBlur</code></td><td>Валідація при виході з поля — не заважає під час вводу</td><td>Найпоширеніший баланс для текстових полів</td></tr>
+      <tr><td><code>onSubmit</code></td><td>Усе одразу в момент сабміту</td><td>Прості форми, або як фінальна перевірка поверх onBlur</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Error state і фокус на невалідному полі <span class="tag tag-pit">PITFALL</span></h3>
+  <p>Стан помилок тримай <strong>окремо</strong> від значень полів (<code>{ '{' } fieldName: message { '}' }</code>) й оновлюй лише змінений запис — інакше форма пересобирається й «сіпається». Після невдалого сабміту — фокус на перше невалідне поле й ARIA-звʼязок помилки з інпутом.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function useFormErrors() {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const fieldRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  function validate(data: Record<string, string>) {
+    const next: Record<string, string> = {};
+    if (!data.email) next.email = 'Обовʼязкове поле';
+    setErrors(next);
+
+    const firstInvalid = Object.keys(next)[0];
+    if (firstInvalid) fieldRefs.current[firstInvalid]?.focus(); // ⚠️ a11y — легко забути
+    return Object.keys(next).length === 0;
+  }
+  return { errors, fieldRefs, validate };
+}
+
+// розмітка поля з помилкою:
+<input
+  name="email"
+  ref={el => { fieldRefs.current.email = el; }}
+  aria-invalid={!!errors.email}
+  aria-describedby={errors.email ? 'email-error' : undefined}
+/>
+{errors.email && <span id="email-error" role="alert">{errors.email}</span>}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span>Перенесення фокуса на перше невалідне поле й <code>aria-invalid</code>/<code>aria-describedby</code> — не косметика, а очікувана a11y-поведінка: користувачі screen reader / клавіатурної навігації інакше не дізнаються, де саме помилка. Легко забути, бо форма «технічно працює» й без цього.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Zod — одна схема на клієнт і сервер <span class="tag tag-key">KEY</span></h3>
+  <p>Ключове правило безпеки: клієнтська валідація — лише для UX, серверна — обовʼязкова завжди. Щоб не писати правила двічі — <strong>одна Zod-схема</strong> в окремому файлі, який імпортують і компонент, і Server Action / API-роут.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// signupSchema.ts — імпортується І в компонент, І в API-роут / Server Action
+import { z } from 'zod';
+
+export const signupSchema = z.object({
+  email: z.string().email('Невалідний email'),
+  age: z.coerce.number().min(18, 'Мінімум 18 років'),  // coerce — FormData дає рядки
+});
+export type SignupInput = z.infer<typeof signupSchema>;  // тип зі схеми, без дублювання
+
+// будь-де (клієнт або сервер):
+const parsed = signupSchema.safeParse(Object.fromEntries(formData));
+if (!parsed.success) {
+  parsed.error.flatten().fieldErrors;   // { email: ['Невалідний email'], ... }
+} else {
+  parsed.data;                          // типізовано як SignupInput
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Бібліотеки — коли ручного вже мало</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Підхід</th><th>Модель</th><th>Статус</th></tr>
+      <tr><td>Vanilla <code>useState</code> / <code>FormData</code></td><td>Controlled по полю / нативний збір</td><td>Ок для 1–3 полів, росте боляче</td></tr>
+      <tr><td><strong>react-hook-form</strong></td><td>Uncontrolled (refs) + Zod для схем</td><td>✅ Актуальний стандарт для будь-чого складнішого за тривіальну форму</td></tr>
+      <tr><td>Formik</td><td>Controlled, обгортка над useState</td><td>Легасі — здебільшого витіснений react-hook-form через продуктивність</td></tr>
+      <tr><td>TanStack Form</td><td>Type-safe, framework-agnostic ядро</td><td>Новіший гравець, зростає, поки не домінує</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signupSchema } from './signupSchema';   // та сама схема, що й на сервері
+
+function SignupForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(signupSchema),  // валідація — схемою, не вручну
+  });
+
+  return (
+    <form onSubmit={handleSubmit(data => submit(data))}>
+      <input {...register('email')} />       {/* register = ref + name під капотом */}
+      {errors.email && <span>{errors.email.message}</span>}
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+// register() повертає { name, ref, onChange, onBlur } — під капотом uncontrolled,
+// мінімум ре-рендерів навіть на формі з 50+ полями`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">✅</span><span><strong>Вердикт:</strong> проста форма (1–5 полів) → нативний <code>FormData</code> + Zod-схема, без бібліотеки. Форма серйозніше за 2–3 поля, з файлами, динамічними полями чи потребою в продуктивності → <strong>react-hook-form + Zod</strong>: одна схема (перевикористовна на бекенді), продуктивність не деградує з кількістю полів, TS-типи виводяться зі схеми автоматично.</span></div>`,
+        },
+      ],
+    },
+    {
+      id: 'react-router',
+      title: '🧭 React Router',
+      interviewQuestions: [
+        {
+          question: 'Чим декларативний підхід React Router (<code>&lt;Route&gt;</code> у JSX) відрізняється від File-based роутингу в Next.js, і які в кожного плюси?',
+          answer: 'React Router будує маршрути з JSX-дерева <code>&lt;Route&gt;</code>-компонентів (або об\'єктної конфігурації), що дає повний програмний контроль над структурою (умовні маршрути, вкладеність, кастомна логіка) — ціна цього гнучкість замість конвенції. File-based роутинг Next.js виводить маршрути з файлової структури — швидше зорієнтуватись новачку, менше boilerplate, але менш гнучко для нетипових/динамічних сценаріїв маршрутизації.',
+        },
+        {
+          question: 'Як React Router реалізує lazy-loading маршрутів, і чому це важливо для продуктивності великого SPA?',
+          answer: 'Через <code>React.lazy()</code> + <code>&lt;Suspense&gt;</code> (або вбудований <code>lazy</code>-loader у Data Router API) код кожного маршруту виноситься в окремий чанк і завантажується лише коли користувач реально на нього переходить. Без цього весь JS усіх сторінок додатку потрапляє в один початковий бандл, що суттєво збільшує час до інтерактивності (TTI) при першому завантаженні.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Що це і навіщо <span class="tag tag-key">KEY</span></h3>
+  <p>React сам по собі не має роутера (розділ "Бібліотека чи фреймворк?" вище — конкретний наслідок цього факту). React Router — де-факто стандартна стороння бібліотека для клієнтського роутингу в SPA: зіставляє URL з деревом компонентів, синхронізує адресний рядок і навігацію без повного перезавантаження сторінки.</p>
+  <h3 class="topic">Який роутер обрати — варіанти й актуальність <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card red"><h4>Декларативний API (легасі)</h4><p><code>&lt;BrowserRouter&gt;</code> + <code>&lt;Routes&gt;</code>/<code>&lt;Route&gt;</code> у JSX. Досі працює, багато старого коду на ньому — але без вбудованого <code>loader</code>/<code>action</code>, дані все одно тягнеш вручну через <code>useEffect</code>.</p></div>
+    <div class="card green"><h4>Data Router API — актуальний стандарт ✅</h4><p><code>createBrowserRouter([...])</code> + <code>&lt;RouterProvider&gt;</code>. Конфіг маршрутів — масив обʼєктів, а не JSX-дерево — розблоковує <code>loader</code>/<code>action</code>/<code>errorElement</code> на рівні кожного роуту. Рекомендований підхід з React Router v6.4+, стандартна форма і в v7 (після злиття з Remix).</p></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Функція</th><th>Коли обирати</th></tr>
+      <tr><td><code>createBrowserRouter</code></td><td>Стандартний вибір для будь-якого браузерного SPA — HTML5 History API, чисті URL</td></tr>
+      <tr><td><code>createHashRouter</code></td><td>Той самий Data Router API, але URL виду <code>/#/path</code> — коли сервер не налаштований на SPA-фолбек (статичний хостинг без rewrite-правил)</td></tr>
+      <tr><td><code>createMemoryRouter</code></td><td>Без адресного рядка взагалі, історія — в памʼяті. Для тестів (Jest/Vitest) і не-браузерних середовищ</td></tr>
+      <tr><td><code>createStaticRouter</code> / <code>createStaticHandler</code></td><td>Серверна пара для SSR React Router поза Next.js — фреймворк-агностичний SSR-сетап</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Основні концепції</h3>
+  <div class="grid2">
+    <div class="card"><h4><code>&lt;Link&gt;</code> / <code>&lt;NavLink&gt;</code></h4><p>Клієнтська навігація без перезавантаження сторінки (перехоплює клік, оновлює History API). <code>NavLink</code> — те саме, плюс автоматичний <code>className</code>/<code>style</code> для активного маршруту.</p></div>
+    <div class="card blue"><h4><code>&lt;Outlet&gt;</code></h4><p>Місце в батьківському (layout) роуті, куди рендериться <strong>дочірній</strong> зматчений маршрут — основа вкладеного роутингу: спільний layout (nav, sidebar) не перемонтовується при навігації між дочірніми сторінками.</p></div>
+    <div class="card green"><h4><code>useNavigate</code></h4><p>Програмна навігація (після сабміту форми, редірект після успіху) — <code>const navigate = useNavigate(); navigate('/success')</code>.</p></div>
+    <div class="card yellow"><h4><code>useParams</code> / <code>useLocation</code></h4><p><code>useParams()</code> — значення динамічних сегментів (<code>/users/:id</code> → <code>{'{'} id {'}'}</code>). <code>useLocation()</code> — поточний шлях/query/hash як обʼєкт.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,          // спільний UI (nav, sidebar)
+    children: [
+      { index: true, element: <Home /> },
+      { path: 'users/:id', element: <UserProfile /> }, // :id — динамічний сегмент
+    ],
+  },
+]);
+
+function Layout() {
+  return (
+    <>
+      <nav><NavLink to="/">Home</NavLink></nav>
+      <Outlet />   {/* сюди рендериться Home АБО UserProfile залежно від URL */}
+    </>
+  );
+}
+
+function UserProfile() {
+  const { id } = useParams();    // '42' з /users/42
+  return <div>User #{id}</div>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">loader — дані через роутер <span class="tag tag-key">KEY</span></h3>
+  <p>Функція <code>loader</code> на роуті виконується <strong>до</strong> рендеру компонента — дані вже готові в момент першого рендеру, замість класичного "змонтувався → useEffect → fetch → спінер". Читаються через <code>useLoaderData()</code>.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const router = createBrowserRouter([
+  {
+    path: 'users/:id',
+    element: <UserProfile />,
+    loader: async ({ params }) => {
+      const res = await fetch(\`/api/users/\${params.id}\`);
+      if (!res.ok) throw new Response('Not Found', { status: 404 }); // → errorElement
+      return res.json();
+    },
+  },
+]);
+
+function UserProfile() {
+  const user = useLoaderData();   // дані вже тут, без useEffect і спінера на mount
+  return <div>{user.name}</div>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert good"><span class="icon">✅</span><span><code>loader</code> ≠ TanStack Query (розділ "TanStack Query" вище) — <code>loader</code> вирішує "коли завантажити" (до рендеру роуту, паралельно з code-splitting), Query вирішує "як кешувати/інвалідувати/дедуплікувати" довготривалі серверні дані. Часто використовують разом: <code>loader</code> лише "прогріває" Query-кеш і повертає проміс.</span></div>
+  <h3 class="topic">action — мутації через роутер <span class="tag tag-key">KEY</span></h3>
+  <p>Компонент <code>&lt;Form&gt;</code> (з react-router, не звичайний HTML-<code>&lt;form&gt;</code>) сабмітить дані на <code>action</code> роуту замість ручного <code>onSubmit</code>+<code>preventDefault</code>+<code>fetch</code>. Progressive enhancement — форма технічно працює навіть без JS (справжній HTTP-сабміт), React Router перехоплює клієнтськи, коли JS довантажився.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `const router = createBrowserRouter([
+  {
+    path: 'users/:id/edit',
+    element: <EditUser />,
+    action: async ({ request, params }) => {
+      const formData = await request.formData();
+      await fetch(\`/api/users/\${params.id}\`, { method: 'PATCH', body: formData });
+      return redirect(\`/users/\${params.id}\`);  // навігація прямо з action
+    },
+  },
+]);
+
+function EditUser() {
+  const errors = useActionData();  // результат action (напр. помилки валідації)
+  return (
+    <Form method="post">
+      <input name="name" />
+      {errors?.name && <span>{errors.name}</span>}
+      <button type="submit">Save</button>
+    </Form>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span><code>action</code>/<code>loader</code> React Router — не те саме, що React 19 <code>useActionState</code>/Actions (розділ "React 19 / майбутнє" вище). Та сама ідея (форма → серверна дія → результат), але різні шари: React Router — бібліотека роутингу з власною data-моделлю; React 19 Actions — вбудовані в React core, не привʼязані до конкретного роутера.</span></div>
+  <h3 class="topic">React Router vs Next.js App Router — коли що</h3>
+  <div class="grid2">
+    <div class="card blue"><h4>React Router</h4><p>Чистий SPA, клієнтський роутинг, сам обираєш data-layer (Query/loader/RTK Query). Гнучкіше, але кешування/SSR/бандлінг — окремі рішення, які треба зібрати самому.</p></div>
+    <div class="card green"><h4>Next.js App Router</h4><p>Файлова маршрутизація, RSC, кешування й SSR "з коробки" (розділ "Next.js App Router" нижче) — менше рішень приймати самому, але й менше гнучкості поза межами конвенцій фреймворку.</p></div>
+  </div>`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 5.5 — СЕРВЕРНА ВЗАЄМОДІЯ ТА AUTH ============================= */
+    {
+      id: 'server-communication-auth',
+      title: '🌐 Fetch, axios та автентифікація на клієнті',
+      interviewQuestions: [
+        {
+          question: 'Чому "fetch не кидає помилку на HTTP 404/500" — типова пастка, і чим тут axios принципово поводиться інакше?',
+          answer: '<code>fetch</code> резолвить проміс (не потрапляє в <code>catch</code>) для <strong>будь-якої</strong> відповіді, яку сервер взагалі відповів, — навіть 404 чи 500. Помилковим <code>fetch</code> вважає лише мережевий збій (немає з\'єднання, CORS-блок). Перевіряти успіх треба вручну через <code>response.ok</code>. axios, навпаки, автоматично кидає (reject) для будь-якого статусу поза діапазоном 2xx, тобто <code>try/catch</code> навколо axios-запиту й справді ловить HTTP-помилки без ручної перевірки.',
+        },
+        {
+          question: 'Навіщо потрібен AbortController у парі з fetch, і яка типова помилка з ним пов\'язана в React-компонентах?',
+          answer: '<code>AbortController</code> дозволяє скасувати in-flight запит (<code>controller.abort()</code>) — критично у <code>useEffect</code> з залежностями, що часто змінюються (пошук по мірі вводу, зміна параметра), інакше застарілі відповіді можуть прийти <em>після</em> свіжих і перезаписати актуальний стан ("race condition" застарілих запитів). Типова помилка — не повертати cleanup-функцію з <code>useEffect</code>, яка викликає <code>abort()</code>, через що компонент після демонтажу все одно намагається викликати <code>setState</code> на результат запиту, що вже неактуальний.',
+        },
+        {
+          question: 'Чим інтерцептор axios (<code>interceptors.request/response</code>) відрізняється від того, як доводиться руками обгортати кожен виклик fetch для однакової задачі (напр. підстановка Authorization-заголовка)?',
+          answer: 'Інтерцептор axios реєструється <strong>один раз</strong> глобально на інстансі й автоматично застосовується до <strong>кожного</strong> запиту/відповіді через цей інстанс — зручно централізувати підстановку токена, логування, редірект на 401. З голим <code>fetch</code> немає вбудованого механізму перехоплення: доводиться самому писати обгортку-функцію (<code>apiFetch</code>) навколо кожного виклику або патчити глобальний <code>fetch</code>, що менш прозоро й легше забути застосувати в новому місці коду.',
+        },
+        {
+          question: 'Чому зберігати JWT у <code>localStorage</code> вважають ризикованим, і як HttpOnly-cookie вирішує цю проблему — і яку нову проблему створює натомість?',
+          answer: '<code>localStorage</code> доступний з будь-якого JS-коду на сторінці — тому будь-яка успішна XSS-атака (впроваджений сторонній скрипт) може прочитати токен і вкрасти сесію. <code>HttpOnly</code>-cookie взагалі <strong>недоступний з JavaScript</strong> (тільки браузер автоматично додає його до запитів), тому XSS не може його прочитати. Натомість cookie автоматично прикріплюється до <strong>кожного</strong> запиту на цей домен, включно з тими, що ініціює стороння сторінка (форма/скрипт на іншому сайті) — це відкриває CSRF, від якого захищаються окремо: <code>SameSite=Strict/Lax</code> + CSRF-токен.',
+        },
+        {
+          question: 'Як правильно реалізувати захищений маршрут (protected route) у React Router, щоб неавторизований користувач не побачив навіть миттєвий "спалах" приватного контенту?',
+          answer: 'Обгортковий компонент (напр. <code>RequireAuth</code>) перевіряє стан автентифікації <em>до</em> рендеру дочірнього маршруту через <code>&lt;Navigate to="/login" /&gt;</code> замість умовного рендеру всередині сторінки — так React Router взагалі не монтує приватний компонент, поки перевірка не завершена. Типова помилка — спершу відрендерити приватну сторінку і лише в <code>useEffect</code> перевірити токен і зробити редірект: між першим рендером і спрацюванням ефекту приватний контент встигає промайнути в DOM.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">fetch — пастка з "успішними" помилками <span class="tag tag-pit">PITFALL</span></h3>
+  <p><code>fetch</code> потрапляє в <code>catch</code> лише при мережевому збої — HTTP 404/500 це для нього "успішна" відповідь, яку треба перевірити вручну через <code>response.ok</code> (<code>true</code> для статусів 200-299).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'fetch + AbortController — скасування застарілого запиту в React',
+          code: `async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
+  const res = await fetch(url, { signal });
+  if (!res.ok) {
+    // fetch САМ не кидає помилку на 404/500 — перевіряємо вручну
+    throw new Error(\`HTTP \${res.status}: \${res.statusText}\`);
+  }
+  return res.json();
+}
+
+function useSearch(query: string) {
+  const [results, setResults] = useState<Item[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchJson<Item[]>(\`/api/search?q=\${query}\`, controller.signal)
+      .then(setResults)
+      .catch((err) => {
+        if (err.name !== 'AbortError') console.error(err); // ігноруємо власне скасування
+      });
+
+    return () => controller.abort(); // cleanup: новий query → скасувати попередній запит
+  }, [query]);
+
+  return results;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">axios — навіщо в проєктах поверх fetch <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card"><h4>fetch (нативний)</h4><ul><li>0 залежностей, стандарт браузера</li><li>не кидає помилку на 4xx/5xx — треба <code>response.ok</code></li><li>ручна серіалізація JSON (<code>.json()</code>) і заголовків</li><li>скасування через <code>AbortController</code> — окремий API</li></ul></div>
+    <div class="card green"><h4>axios (бібліотека)</h4><ul><li>reject на будь-якому статусі поза 2xx — простий <code>try/catch</code></li><li>автоматична серіалізація JSON обидва боки</li><li><strong>interceptors</strong> — централізовані request/response хуки</li><li>вбудоване скасування (<code>AbortController</code> як опція), таймаути</li></ul></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'typescript',
+          caption: 'axios interceptors — підстановка токена й обробка 401 в одному місці',
+          code: `import axios from 'axios';
+
+const api = axios.create({ baseURL: '/api' });
+
+// Request interceptor — виконується перед КОЖНИМ запитом через цей інстанс
+api.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) config.headers.Authorization = \`Bearer \${token}\`;
+  return config;
+});
+
+// Response interceptor — централізована реакція на 401 (протух токен)
+api.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    if (error.response?.status === 401) {
+      await refreshAccessToken(); // одна спроба оновити токен...
+      return api.request(error.config); // ...і повторити оригінальний запит
+    }
+    return Promise.reject(error);
+  },
+);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Автентифікація на клієнті — де зберігати токен <span class="tag tag-pit">PITFALL</span></h3>
+  <div class="grid2">
+    <div class="card red"><h4>⚠️ localStorage</h4><p>Доступний з будь-якого JS на сторінці → вразливий до <strong>XSS</strong> (вкрадений скрипт читає токен). Простий у використанні, але для чутливих токенів — ризик.</p></div>
+    <div class="card green"><h4>✅ HttpOnly cookie</h4><p>Недоступний з JS — XSS не може прочитати. Але автоматично летить із кожним запитом на домен → вразливий до <strong>CSRF</strong>, тому потрібні <code>SameSite=Strict/Lax</code> + CSRF-токен.</p></div>
+  </div>
+  <p>Практичний компроміс у продакшн-застосунках: короткоживучий <strong>access token</strong> у пам'яті (React-стан/модуль-змінна, зникає при перезавантаженні) + довгоживучий <strong>refresh token</strong> у HttpOnly-cookie для тихого оновлення access token.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Protected route — редірект ДО рендеру приватного контенту, без "спалаху"',
+          code: `function RequireAuth({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const location = useLocation();
+
+  if (isLoading) return <Spinner />; // ще не знаємо статус — нічого не рендеримо
+  if (!user) {
+    // replace: true — щоб /login не додавав зайвий запис в history (back не веде назад у приват)
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  return children;
+}
+
+// <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+// Приватний <Dashboard> взагалі НЕ монтується, поки перевірка не пройшла —
+// на відміну від "відрендерити й редіректнути в useEffect", де контент встигає промайнути`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 6 — NEXT.JS RENDER MODELS ============================= */
+    {
+      id: 'nextjs-render-models',
+      title: '🖥️ Next.js: рендер-моделі',
+      interviewQuestions: [
+        {
+          question: 'Поясни різницю між SSR, SSG, ISR і CSR — коли обрати кожну модель?',
+          answer: 'CSR — весь рендеринг у браузері, найгірший для SEO/першого фарбування, підходить для приватних дашбордів. SSR — HTML генерується на сервері на кожен запит, підходить для персоналізованого/часто змінного контенту. SSG — HTML генерується один раз під час білду, максимальна швидкість, для контенту що майже не змінюється (маркетингові сторінки). ISR — SSG з періодичним фоновим ревалідейшном (<code>revalidate</code>), компроміс: швидкість статики + свіжість без повного ребілду.',
+        },
+        {
+          question: 'Що таке React Server Components і чим вони принципово відрізняються від SSR, який існував і до RSC?',
+          answer: 'SSR лише виконує рендер на сервері для <em>початкового</em> HTML, після чого весь код все одно потрапляє в клієнтський бандл для гідратації. RSC — компоненти, які виконуються <strong>виключно на сервері</strong> й ніколи не потрапляють у клієнтський JS-бандл: їхній код (і залежності) взагалі не завантажується браузером, що дає суттєве зменшення розміру бандла для частин UI, яким не потрібна інтерактивність.',
+        },
+        {
+          question: `SSR і RSC — це одне й те саме?`,
+          answer: `ні: SSR — коли рендериться HTML; RSC — де взагалі виконується компонент (сервер, ніколи не в бандлі клієнта).`,
+        },
+        {
+          question: `Чому не можна передати onClick з Server у Client Component як проп у зворотньому напрямку (Client`,
+          answer: `Server)? → пропи серіалізуються, функції не серіалізуються — сервер не може отримати посилання на клієнтську функцію.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">CSR / SSR / SSG / ISR <span class="tag tag-key">KEY</span></h3><div class="table-wrap">
+    <table>
+      <tr><th>Mode</th><th>Коли рендериться HTML</th><th>Коли доречно</th></tr>
+      <tr><td><strong>CSR</strong></td><td>У браузері, після завантаження JS</td><td>Дашборди, інтерактивні частини за автентифікацією</td></tr>
+      <tr><td><strong>SSR</strong></td><td>На сервері, на кожен запит</td><td>Персоналізовані сторінки, дані, що часто міняються</td></tr>
+      <tr><td><strong>SSG</strong></td><td>На сервері, під час білда, один раз</td><td>Blog posts, marketing pages — контент майже не міняється</td></tr>
+      <tr><td><strong>ISR</strong></td><td>Як SSG, але перегенерується у фоні через <code>revalidate</code></td><td>Новини, каталог товарів — часто, але не real-time</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">RSC — не те саме, що SSR <span class="tag tag-pit">PITFALL</span></h3>
+  <p>SSR — <strong>коли</strong> рендериться HTML (на сервері vs у браузері) — про час і місце. RSC (React Server Components) — <strong>де живе компонент</strong> взагалі: Server Component ніколи не потрапляє в JS-бандл клієнта, його код і залежності виконуються лише на сервері й ніколи не гідруються. SSR-компонент — це звичайний Client Component, просто його <em>перший</em> рендер відбувся на сервері для HTML, а потім він гідрується і живе в браузері.</p>
+  <h3 class="topic">Serialization через "use client" межу <span class="tag tag-key">KEY</span></h3>
+  <p>Пропи, що йдуть із Server Component у Client Component, серіалізуються (як JSON) — <strong>не можна</strong> передати функції, класи, <code>Date</code>-об'єкти напряму, Symbol. Виняток: сам <code>children</code> (JSX-дерево) можна передати — Server Component може лишатись "невидимим" деревом усередині Client Component через children.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// app/page.tsx — Server Component
+export default function Page() {
+  return (
+    <>
+      <Header />                                    {/* Відразу */}
+      <Suspense fallback={<DashboardSkeleton />}>
+        <SlowDashboard />                          {/* Стрімиться окремо */}
+      </Suspense>
+    </>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<div class="alert warn"><span class="icon">⚠️</span><span><strong>Hydration mismatch:</strong> якщо серверний і клієнтський рендер відрізняються (<code>Date.now()</code>, <code>window</code>, <code>Math.random()</code> у рендері) — React лається на mismatch. Фікс: <code>suppressHydrationWarning</code> на конкретному вузлі або перенести browser-only контент у <code>useEffect</code>.</span></div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Bundle leak:</strong> <code>"use client"</code> на "корені" фічі тягне за собою у клієнтський бандл усі дочірні модулі-імпорти. Client Component може отримати Server Component лише через <code>children</code>-проп, ніколи через прямий <code>import</code>.</span></div>
+  `,
+        },
+      ],
+    },
+    /* ============================= BLOCK 7 — NEXT.JS APP ROUTER ============================= */
+    {
+      id: 'nextjs-app-router',
+      title: '▲ Next.js App Router',
+      interviewQuestions: [
+        {
+          question: 'Чим App Router принципово відрізняється від Pages Router окрім файлової структури?',
+          answer: 'App Router будується на React Server Components за замовчуванням (компоненти серверні, доки явно не позначені <code>\'use client\'</code>), підтримує вкладені layouts зі збереженням стану між навігаціями, паралельні та перехоплюючі маршрути (<code>@slot</code>, <code>(.)segment</code>), та стрімінг через Suspense на рівні сегментів маршруту. Pages Router — усі компоненти клієнтські за замовчуванням, рендер-модель обирається на рівні цілої сторінки (<code>getServerSideProps</code>/<code>getStaticProps</code>), без гранулярного стрімінгу.',
+        },
+        {
+          question: 'Що означає директива <code>\'use client\'</code>, і чи означає вона, що весь піддерево під нею більше не рендериться на сервері?',
+          answer: '<code>\'use client\'</code> позначає межу — усе, що <em>імпортується</em> з цього файлу, стає частиною клієнтського бандла і гідратується в браузері. Але це не означає повну відмову від серверного рендерингу: клієнтський компонент все одно рендериться на сервері один раз для генерації початкового HTML (SSR), а потім гідратується на клієнті — «client component» стосується бандлінгу й інтерактивності, а не відсутності серверного рендеру взагалі.',
+        },
+        {
+          question: `Що заважає забути перевірити авторизацію в Server Action?`,
+          answer: `нічого, це відповідальність розробника — Action виглядає як звичайна функція, але викликається з клієнта як ендпоінт.`,
+        },
+        {
+          question: `4 рівні кешування Next.js — назви й різницю`,
+          answer: `Request Memoization / Data Cache / Full Route Cache / Router Cache, сервер vs клієнт, per-request vs persistent.`,
+        },
+        {
+          question: `Навіщо React.cache() потрібен окремо, якщо Next.js вже автоматично дедуплікує fetch?`,
+          answer: `<code>fetch</code> дедуплікується автоматично лише завдяки внутрішньому патчу Next.js (Request Memoization). Будь-яка інша асинхронна робота — прямий запит до БД через ORM, виклик стороннього SDK — такого патчу не має. <code>React.cache()</code> дає той самий per-request дедуп <em>вручну</em> для довільної async-функції: повторні виклики з однаковими аргументами в межах одного рендер-проходу повертають закешований результат.`,
+        },
+        {
+          question: `Чим Promise.all-паралелізація рятує від waterfall-запитів у Server Component, і коли вона незастосовна?`,
+          answer: `Послідовні <code>await</code> для незалежних джерел даних змушують кожен наступний запит чекати завершення попереднього, хоча вони могли б виконуватись одночасно. <code>Promise.all</code> стартує обидва одразу й чекає обидва результати паралельно. Незастосовно, якщо другий запит реально залежить від значення першого — тоді waterfall неминучий за дизайном.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Server vs Client Components <span class="tag tag-key">KEY</span></h3><div class="table-wrap">
+    <table>
+      <tr><th></th><th>Server Component</th><th>Client Component</th></tr>
+      <tr><td><strong>Default</strong></td><td>✅ Так</td><td>❌ Потрібен 'use client'</td></tr>
+      <tr><td><strong>async/await у тілі</strong></td><td>✅</td><td>❌</td></tr>
+      <tr><td><strong>useState/useEffect</strong></td><td>❌</td><td>✅</td></tr>
+      <tr><td><strong>Event handlers</strong></td><td>❌</td><td>✅</td></tr>
+      <tr><td><strong>DB/FS доступ напряму</strong></td><td>✅</td><td>❌</td></tr>
+      <tr><td><strong>Йде в JS bundle</strong></td><td>❌ (не йде!)</td><td>✅</td></tr>
+      <tr><td><strong>Browser APIs</strong></td><td>❌</td><td>✅</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">File conventions</h3><div class="grid2">
+    <div class="card"><h4>app/ structure</h4>
+      <pre style="font-size:10.5px">app/
+  layout.tsx        <span class="cmt">← спільний layout (persistent)</span>
+  page.tsx          <span class="cmt">← UI роуту</span>
+  loading.tsx       <span class="cmt">← Suspense fallback</span>
+  error.tsx         <span class="cmt">← error boundary ('use client'!)</span>
+  not-found.tsx     <span class="cmt">← 404</span>
+  route.ts          <span class="cmt">← API Route Handler</span>
+  template.tsx      <span class="cmt">← ре-маунт при навігації (vs layout)</span></pre>
+    </div>
+    <div class="card blue"><h4>Server Actions</h4>
+      <pre style="font-size:10.5px"><span class="str">'use server'</span>;
+
+<span class="kw">export async function</span> <span class="fn">deletePost</span>(id: <span class="type">string</span>) {
+  <span class="kw">const</span> session = <span class="kw">await</span> <span class="fn">getSession</span>();
+  <span class="kw">if</span> (!session) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Unauthorized'</span>);
+  <span class="kw">await</span> db.post.<span class="fn">delete</span>({ where: { id } });
+  <span class="fn">revalidatePath</span>(<span class="str">'/posts'</span>);
+}
+<span class="cmt">// ⚠️ ЗАВЖДИ перевіряй права всередині Server Action —</span>
+<span class="cmt">// це, по суті, публічний HTTP-ендпоінт з зручним синтаксисом.</span></pre>
+    </div>
+  </div>
+  <h3 class="topic">Динамічні сегменти <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Папка</th><th>URL, що матчить</th><th><code>params</code></th></tr>
+      <tr><td><code>app/users/[id]/page.tsx</code></td><td><code>/users/42</code></td><td><code>{'{'} id: '42' {'}'}</code></td></tr>
+      <tr><td><code>app/docs/[...slug]/page.tsx</code></td><td><code>/docs/a/b/c</code> (1+ сегментів)</td><td><code>{'{'} slug: ['a','b','c'] {'}'}</code></td></tr>
+      <tr><td><code>app/docs/[[...slug]]/page.tsx</code></td><td><code>/docs</code> теж матчить (0+ сегментів)</td><td><code>{'{'} slug: undefined {'}'}</code> для <code>/docs</code></td></tr>
+      <tr><td><code>app/(marketing)/about/page.tsx</code></td><td><code>/about</code> — <code>(marketing)</code> НЕ потрапляє в URL</td><td>Route group — лише для організації файлів/layout, не для URL-сегментів</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Навігація: <code>next/link</code> і клієнтські хуки</h3>
+  <div class="grid2">
+    <pre><span class="kw">import</span> Link <span class="kw">from</span> <span class="str">'next/link'</span>;
+
+<span class="jsx">&lt;Link</span> href=<span class="str">"/users/42"</span><span class="jsx">&gt;</span>Профіль<span class="jsx">&lt;/Link&gt;</span>
+<span class="cmt">// клієнтська навігація без full reload +</span>
+<span class="cmt">// автоматичний prefetch роуту, щойно лінк у viewport —</span>
+<span class="cmt">// на відміну від звичайного &lt;a&gt;, який просто перезавантажить сторінку</span></pre>
+    <pre><span class="str">'use client'</span>;
+<span class="kw">import</span> { useRouter, usePathname, useSearchParams } <span class="kw">from</span> <span class="str">'next/navigation'</span>;
+
+<span class="kw">const</span> router = <span class="fn">useRouter</span>();     <span class="cmt">// router.push('/x'), router.refresh()</span>
+<span class="kw">const</span> pathname = <span class="fn">usePathname</span>();  <span class="cmt">// '/users/42'</span>
+<span class="kw">const</span> params = <span class="fn">useSearchParams</span>(); <span class="cmt">// ?tab=posts → params.get('tab')</span></pre>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>У Server Component (<code>page.tsx</code> за замовчуванням, таблиця вище) <code>params</code>/<code>searchParams</code> приходять як звичайні <strong>пропи</strong> функції — <code>useRouter</code>/<code>usePathname</code> непотрібні й недоступні. Клієнтські хуки навігації — лише для Client Components, де потрібна програмна навігація чи реакція на зміну URL у реальному часі.</span></div>
+  <p style="font-size:12.5px;opacity:.75">Просунуті/рідкісні конвенції — parallel routes (<code>@slot</code>, кілька незалежних піддерев в одному layout) та intercepting routes (<code>(.)folder</code>, показ роуту "поверх" поточного, напр. модалка з власним URL) — за межами типового Senior-інтерв'ю, знати про існування достатньо.</p>
+  <h3 class="topic">Route Handlers</h3>
+  <p><code>route.ts</code> у будь-якій папці <code>app/</code> — повноцінний API-ендпоінт (<code>GET</code>/<code>POST</code>/... іменовані експорти), співіснує з <code>page.tsx</code> у тій самій папці лише якщо різні сегменти шляху.</p>
+  <h3 class="topic">Caching layers — найзаплутаніша тема Next <span class="tag tag-pit">PITFALL</span></h3><div class="table-wrap">
+    <table>
+      <tr><th>Кеш</th><th>Де</th><th>Що кешує</th><th>Як інвалідувати</th></tr>
+      <tr><td><strong>Request Memoization</strong></td><td>Сервер, час одного рендеру</td><td>Дедуплікація однакових <code>fetch</code> у дереві компонентів</td><td>Сам минає після рендеру</td></tr>
+      <tr><td><strong>Data Cache</strong></td><td>Сервер, персистентний</td><td>Результат <code>fetch</code> між запитами/деплоями</td><td><code>revalidatePath/Tag</code>, <code>fetch(..., {'{'} next: {'{'} revalidate {'}'} {'}'})</code></td></tr>
+      <tr><td><strong>Full Route Cache</strong></td><td>Сервер, persist</td><td>Згенерований HTML+RSC payload статичних роутів</td><td>Ребілд, або динамічний роут (opt-out)</td></tr>
+      <tr><td><strong>Router Cache</strong></td><td>Клієнт, in-memory</td><td>RSC payload відвіданих роутів для миттєвої back/forward навігації</td><td>Хард-рефреш, <code>router.refresh()</code></td></tr>
+    </table>
+  </div>
+  <h3 class="topic">React.cache() та Next.js after() <span class="tag tag-new">Next.js 15</span></h3>
+  <div class="grid2">
+    <div class="card blue"><h4>React.cache()</h4>
+      <p>Next.js автоматично дедуплікує однакові виклики <code>fetch</code> у межах одного рендеру (Request Memoization з таблиці вище). Але довільна асинхронна робота — прямий запит до БД, виклик ORM — такої дедуплікації не отримує. <code>cache()</code> обгортає функцію так, щоб повторні виклики з тими самими аргументами в межах одного рендер-проходу поверталися з одного результату, а не викликали роботу заново.</p>
+    </div>
+    <div class="card purple"><h4>after()</h4>
+      <p>Планує роботу, яка виконається <strong>після</strong> того, як відповідь вже пішла користувачу — логування, аналітика, інвалідація кешу. На відміну від звичайного <code>await</code> у Server Action чи Route Handler, ця робота більше не затримує відповідь користувачу.</p>
+    </div>
+  </div>
+  <pre><span class="kw">import</span> { cache } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { after } <span class="kw">from</span> <span class="str">'next/server'</span>;
+
+<span class="cmt">// React.cache() — дедуплікація ДОВІЛЬНОЇ async-роботи, не лише fetch</span>
+<span class="kw">const</span> getUser = <span class="fn">cache</span>(<span class="kw">async</span> (id: <span class="type">string</span>) =&gt; {
+  <span class="kw">return</span> db.user.<span class="fn">findUnique</span>({ where: { id } });
+});
+<span class="cmt">// getUser('42') викликаний 5 разів у дереві компонентів за один рендер</span>
+<span class="cmt">// → запит до БД піде лише один раз</span>
+
+<span class="kw">export async function</span> <span class="fn">updateProfileAction</span>(formData: FormData) {
+  <span class="str">'use server'</span>;
+  <span class="kw">await</span> db.profile.<span class="fn">update</span>(<span class="cmt">/* ... */</span>);
+
+  <span class="cmt">// after() — виконається ПІСЛЯ того, як відповідь вже пішла користувачу</span>
+  <span class="fn">after</span>(() =&gt; {
+    <span class="fn">logAnalyticsEvent</span>(<span class="str">'profile_updated'</span>);
+    <span class="fn">revalidateSearchIndex</span>();
+  });
+}</pre>
+  <h3 class="topic">Уникнення waterfall-запитів <span class="tag tag-pit">PITFALL</span></h3>
+  <p>У Server Component можна писати послідовний <code>await</code> як у звичайному async-коді — і це легко перетворюється на приховану проблему: кожен наступний запит стартує лише після завершення попереднього, хоча вони не залежать один від одного.</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Waterfall — послідовно</h4>
+      <pre><span class="kw">async function</span> <span class="fn">Page</span>() {
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">getUser</span>();     <span class="cmt">// 200ms</span>
+  <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">getPosts</span>();    <span class="cmt">// +200ms</span>
+  <span class="cmt">// разом ~400ms, хоча posts не залежить від user</span>
+}</pre>
+    </div>
+    <div class="card green"><h4>✅ Паралельно — Promise.all</h4>
+      <pre><span class="kw">async function</span> <span class="fn">Page</span>() {
+  <span class="kw">const</span> [user, posts] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    <span class="fn">getUser</span>(),
+    <span class="fn">getPosts</span>(),
+  ]);
+  <span class="cmt">// разом ~200ms — обидва запити стартують одночасно</span>
+}</pre>
+    </div>
+  </div>
+  <p><strong>Частина запитів залежить, частина ні</strong> — стартуй проміс одразу, а <code>await</code> став пізніше ("start early, await late"):</p>
+  <pre><span class="kw">async function</span> <span class="fn">Page</span>() {
+  <span class="kw">const</span> postsPromise = <span class="fn">getPosts</span>();     <span class="cmt">// стартував одразу, ще НЕ await</span>
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">getUser</span>();       <span class="cmt">// виконується паралельно з postsPromise</span>
+  <span class="kw">const</span> posts = <span class="kw">await</span> postsPromise;    <span class="cmt">// вже майже готовий, чекаємо мінімально</span>
+}</pre>
+  `,
+        },
+      ],
+    },
+    /* ============================= BLOCK 8 — REACT 19 / FUTURE ============================= */
+    {
+      id: 'react-19-future',
+      title: '✨ React 19 / майбутнє',
+      interviewQuestions: [
+        {
+          question: 'Що таке <code>use()</code> у React 19, і чим він відрізняється від хуків на кшталт <code>useEffect</code> для роботи з проміс-подібними значеннями?',
+          answer: '<code>use()</code> — не хук у класичному розумінні (можна викликати умовно, в циклах) — це примітив, що читає значення проміса чи контексту <strong>синхронно під час рендеру</strong>, інтегруючись із Suspense: якщо проміс ще не резолвнувся, компонент «підвішується», і найближчий <code>&lt;Suspense&gt;</code> показує fallback. На відміну від <code>useEffect</code>, тут не потрібен окремий стан для loading/error — це бере на себе Suspense/Error Boundary.',
+        },
+        {
+          question: 'Чим React 19 Actions (<code>useActionState</code>, <code>useOptimistic</code>) спрощують роботу з формами порівняно з ручним керуванням через <code>useState</code> + <code>try/catch</code>?',
+          answer: '<code>useActionState</code> об\'єднує стан форми, статус pending і обробку помилок в один хук навколо async-функції (Server Action чи звичайної), автоматично керуючи прогресивним посиленням (форма працює навіть без JS через нативний <code>action</code>). <code>useOptimistic</code> дозволяє миттєво показати очікуваний результат мутації до підтвердження сервером і автоматично відкотити його при помилці — без ручного дублювання стану «оптимістичний vs підтверджений».',
+        },
+        {
+          question: `Чим use() відрізняється від await у Server Component?`,
+          answer: `use() можна викликати умовно і в Client Components (для Context/переданого Promise), await у Server Component — ні для Client.`,
+        },
+        {
+          question: `React Compiler означає "більше не треба знати useMemo"?`,
+          answer: `ні — для співбесіди й для дебагу edge-case'ів розуміння ручної мемоізації лишається обов'язковим.`,
+        },
+        {
+          question: 'Навіщо <code>useFormStatus</code>, якщо <code>useActionState</code> вже повертає <code>isPending</code>?',
+          answer: '<code>useActionState</code> дає <code>isPending</code> у тому компоненті, що <strong>оголошує</strong> екшен. <code>useFormStatus</code> читає стан найближчої батьківської <code>&lt;form&gt;</code> зсередини будь-якого дочірнього компонента — тобто кнопка чи спінер у власному файлі дізнається про pending без props-drilling. Обмеження: хук має викликатись у компоненті, відрендереному <em>всередині</em> <code>&lt;form&gt;</code>, а не в тому, що її рендерить.',
+        },
+        {
+          question: 'Що змінилось з <code>forwardRef</code> у React 19?',
+          answer: '<code>ref</code> став звичайним пропом функціонального компонента — <code>function Input({ ref }) {…}</code> замість <code>forwardRef((props, ref) => …)</code>. <code>forwardRef</code> ще працює для сумісності, але в новому коді не потрібен. Так само <code>&lt;Context&gt;</code> тепер можна рендерити напряму як провайдер, без <code>&lt;Context.Provider&gt;</code>.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React 19 — нове <span class="tag tag-new">React 19</span></h3>
+  <p>Кожна фіча — окремо, з мінімальним прикладом.</p>
+  <h3 class="topic"><code>use()</code> — читання Promise / Context під час рендеру</h3>
+  <p>Не хук: можна викликати умовно, в циклі, після early return. Читає <code>Promise</code> (suspend до resolve, найближчий <code>&lt;Suspense&gt;</code> показує fallback, помилку ловить Error Boundary) або <code>Context</code>.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Comments({ commentsPromise }: { commentsPromise: Promise<Comment[]> }) {
+  const comments = use(commentsPromise);   // suspends до resolve — без useState для loading
+  return <ul>{comments.map(c => <li key={c.id}>{c.text}</li>)}</ul>;
+}
+
+function Toolbar() {
+  if (isHidden) return null;               // useContext() тут кинув би помилку
+  const theme = use(ThemeContext);         // use() можна після early return
+  return <div className={theme} />;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>useActionState</code> — форма + pending + помилка в одному хуку</h3>
+  <p>Обгортає async-функцію (Server Action чи звичайну). Форма працює навіть без JS через нативний <code>&lt;form action&gt;</code>.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `async function updateName(prev: State, formData: FormData): Promise<State> {
+  const error = await saveName(formData.get('name'));
+  return error ? { error } : { ok: true };
+}
+
+function Form() {
+  const [state, formAction, isPending] = useActionState(updateName, {});
+  return (
+    <form action={formAction}>
+      <input name="name" />
+      <button disabled={isPending}>Save</button>
+      {state.error && <p>{state.error}</p>}
+    </form>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>useOptimistic</code> — миттєве UI до відповіді сервера</h3>
+  <p>Показує очікуваний результат одразу; при помилці екшену React сам відкочує до реального стану — без ручного «оптимістичний vs підтверджений».</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `function Todos({ todos }: { todos: Todo[] }) {
+  const [optimistic, addOptimistic] = useOptimistic(
+    todos,
+    (state, newText: string) => [...state, { id: 'temp', text: newText, pending: true }],
+  );
+  async function action(formData: FormData) {
+    const text = formData.get('text') as string;
+    addOptimistic(text);               // UI оновлюється негайно
+    await saveTodo(text);              // помилка → optimistic відкотиться
+  }
+  return <form action={action}>{/* рендер optimistic */}</form>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>useFormStatus</code> — статус батьківської <code>&lt;form&gt;</code> без props-drilling</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// Компонент кнопки читає стан форми, всередині якої він відрендерений —
+// не отримуючи isPending пропом через кілька рівнів.
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>{pending ? 'Збереження…' : 'Зберегти'}</button>;
+}
+// <form action={action}><SubmitButton /></form>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic"><code>ref</code> як звичайний проп + <code>&lt;Context&gt;</code> як провайдер</h3>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// React 19: forwardRef більше не потрібен — ref просто проп
+function Input({ ref, ...props }: React.ComponentProps<'input'>) {
+  return <input ref={ref} {...props} />;
+}
+
+// <Context> сам є провайдером — <Context.Provider> тепер зайве
+const ThemeContext = createContext<Theme>('light');
+<ThemeContext value="dark">{children}</ThemeContext>   // не <ThemeContext.Provider>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React Compiler</h3>
+  <p>Build-time інструмент, що автоматично вставляє мемоізацію (еквівалент <code>useMemo</code>/<code>useCallback</code>/<code>React.memo</code>) там, де компілятор бачить сенс — без ручного розставляння. Опційний, поступово стабілізується. <strong>Для співбесіди все одно треба розуміти ручну оптимізацію</strong> (Block 3) — Compiler не замінює розуміння referential stability, лише автоматизує рутину.</p>
+  <h3 class="topic">Next.js 15 — зміни</h3>
+  <div class="grid2">
+    <div class="card"><h4>Async Request APIs</h4><pre style="font-size:10.5px"><span class="cmt">// Next 14: синхронні</span>
+<span class="kw">const</span> { id } = params;
+<span class="cmt">// Next 15: асинхронні (готують до майбутньої</span>
+<span class="cmt">// стрімінгової моделі рендерингу)</span>
+<span class="kw">const</span> { id } = <span class="kw">await</span> params;
+<span class="kw">const</span> cookieStore = <span class="kw">await</span> <span class="fn">cookies</span>();</pre></div>
+    <div class="card yellow"><h4>Дефолт кешування змінився</h4><p><code>fetch</code> та GET Route Handlers <strong>більше не кешуються за замовчуванням</strong> (раніше — force-cache). Явно вмикай через <code>cache: 'force-cache'</code> там, де кешування дійсно потрібне.</p></div>
+  </div>
+  `,
+        },
+      ],
+    },
+    {
+      id: 'view-transitions',
+      title: '🎬 View Transitions API',
+      interviewQuestions: [
+        {
+          question: `Що робить компонент <ViewTransition> з react, і чим він відрізняється від виклику document.startViewTransition() вручну?`,
+          answer: `<code>&lt;ViewTransition&gt;</code> — декларативна обгортка: React сам призначає елементам всередині <code>view-transition-name</code> і викликає <code>startViewTransition()</code> під капотом у потрібний момент рендеру, синхронізуючи анімацію зі станом React. Ручний виклик <code>startViewTransition()</code> — імперативний браузерний API, який треба координувати самостійно з циклом рендеру (легко розсинхронізувати знімок "до" з фактичним оновленням DOM).`,
+        },
+        {
+          question: `Чому <ViewTransition>, вкладений усередину звичайного <div>, може не анімуватися при вході/виході?`,
+          answer: `Правило розміщення: <code>&lt;ViewTransition&gt;</code> має бути найзовнішнішою обгorткою — з'являтися в DOM раніше за будь-який інший вузол свого піддерева, — щоб зафіксувати enter/exit. Якщо він вкладений усередину <code>&lt;div&gt;</code>, яка сама не входить/виходить із DOM, React не бачить структурної зміни на потрібному рівні, і перехід не спрацьовує.`,
+        },
+        {
+          question: `Які з 4 тригерів анімації (enter/exit/update/share) активуються звичайним setState?`,
+          answer: `Жоден — View Transitions потребують, щоб оновлення відбулось через <code>startTransition</code>, <code>useDeferredValue</code> або розкриття Suspense-межі. Лише тоді React обгортає DOM-мутацію у <code>startViewTransition()</code>, і спрацьовує один із чотирьох тригерів: <code>enter</code>, <code>exit</code>, <code>update</code> (мутація/зсув сусідів) чи <code>share</code> (той самий <code>name</code> демонтується і монтується в одному переході — морфінг).`,
+        },
+        {
+          question: `Що таке "shared element transition", і як React визначає, що два <ViewTransition> — це "один і той самий" елемент?`,
+          answer: `Спільне ім'я (<code>name</code>) на двох <code>&lt;ViewTransition&gt;</code>, з яких один демонтується, а інший монтується в межах одного переходу — React трактує це як морфінг "того самого об'єкта" (наприклад, мініатюра в гріді → фото на сторінці деталей), а не як окремі enter+exit.`,
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Компонент &lt;ViewTransition&gt; <span class="tag tag-new">React 19.2+</span></h3>
+  <p>Раніше плавні переходи між станами UI вимагали ручного виклику браузерного <code>document.startViewTransition()</code> і акуратної синхронізації з React-рендером. Компонент <code>&lt;ViewTransition&gt;</code> з <code>react</code> робить це декларативно: обгортаєш вміст, а React сам призначає йому <code>view-transition-name</code> і викликає браузерний API в потрібний момент — <strong>ти ніколи не звертаєшся до <code>startViewTransition()</code> напряму</strong>.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Правило розміщення:</strong> <code>&lt;ViewTransition&gt;</code> має бути <em>найзовнішнішою</em> обгorткою — з'являтися в DOM раніше за будь-який інший вузол свого піддерева, — щоб enter/exit спрацювали. Обгортання його всередину звичайного <code>&lt;div&gt;</code>, яка сама не монтується/демонтується, ламає це правило.</span></div>
+  <h3 class="topic">4 тригери анімації <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Тригер</th><th>Коли</th><th>Приклад</th></tr>
+      <tr><td><code>enter</code></td><td>Вузол вперше вставлено в DOM</td><td>Новий елемент списку з'явився</td></tr>
+      <tr><td><code>exit</code></td><td>Вузол вперше видалено з DOM</td><td>Toast закрився, елемент видалено</td></tr>
+      <tr><td><code>update</code></td><td>Мутація всередині або зсув сусідів (reflow)</td><td>Розмір/позиція картки змінились</td></tr>
+      <tr><td><code>share</code></td><td>Іменований VT демонтується, і VT з тим самим <code>name</code> монтується в тому самому переході</td><td>Мініатюра → фото на сторінці деталей (морфінг)</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Активують перехід лише <code>startTransition</code>, <code>useDeferredValue</code> та розкриття <code>&lt;Suspense&gt;</code>-межі. Звичайний <code>setState</code> оновлює DOM миттєво, без анімації.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Чек-лист розпізнавання патерна <span class="tag tag-key">KEY</span></h3>
+  <p>Перш ніж писати CSS, визнач, який із 5 патернів перед тобою — це визначає, чи потрібне спільне <code>name</code>, чи достатньо enter/exit:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Патерн</th><th>Сигнал</th></tr>
+      <tr><td><strong>Shared element</strong></td><td>"Той самий об'єкт іде глибше" — однаковий <code>name</code> на елементі, що демонтується, і на тому, що монтується</td></tr>
+      <tr><td><strong>Suspense reveal</strong></td><td>"Дані завантажились" — контент, що виходить із fallback</td></tr>
+      <tr><td><strong>List identity</strong></td><td>"Ті самі елементи переставились" — стабільний <code>key</code> на кожному айтемі списку</td></tr>
+      <tr><td><strong>State change</strong></td><td>"Щось з'явилось/зникло" — прості enter/exit без спільного <code>name</code></td></tr>
+      <tr><td><strong>Route change</strong></td><td>Перехід на рівні цілої сторінки</td></tr>
+    </table>
+  </div>
+  <h3 class="topic">Стилізація через CSS pseudo-elements</h3>
+  <p>Браузер робить знімки "до" і "після" і монтує їх як псевдоелементи, які стилізуються звичайним CSS/<code>@keyframes</code>:</p>
+  <ul>
+    <li><code>::view-transition-old(name)</code> — знімок стану "до"</li>
+    <li><code>::view-transition-new(name)</code> — знімок стану "після"</li>
+    <li><code>::view-transition-group(name)</code> — контейнер, що анімує позицію/розмір</li>
+    <li><code>::view-transition-image-pair(name)</code> — пара old+new разом (crossfade)</li>
+  </ul>
+  <h3 class="topic">Next.js та доступність</h3>
+  <p>У Next.js потрібен прапорець <code>experimental.viewTransition</code> у <code>next.config.js</code>; проп <code>transitionTypes</code> на <code>next/link</code>/<code>useRouter().push()</code> дозволяє позначити тип переходу (напр. <code>"forward"</code> vs <code>"back"</code>) і по-різному стилізувати напрямок навігації.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Завжди супроводжуй анімації <code>@media (prefers-reduced-motion: reduce)</code> — для частини користувачів анімації переходів мають бути вимкнені чи спрощені.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { unstable_ViewTransition as ViewTransition } from 'react';
+
+function PhotoGrid({ photos }: { photos: Photo[] }) {
+  return (
+    <div className="grid">
+      {photos.map(photo => (
+        // спільний name → морфінг у деталі при переході на /photo/[id]
+        <ViewTransition key={photo.id} name={\`photo-\${photo.id}\`}>
+          <Link href={\`/photo/\${photo.id}\`}>
+            <img src={photo.thumbUrl} alt={photo.title} />
+          </Link>
+        </ViewTransition>
+      ))}
+    </div>
+  );
+}
+
+function PhotoDetail({ photo }: { photo: Photo }) {
+  return (
+    // той самий name на іншій сторінці — React бачить це як "той самий об'єкт"
+    <ViewTransition name={\`photo-\${photo.id}\`}>
+      <img src={photo.fullUrl} alt={photo.title} />
+    </ViewTransition>
+  );
+}`,
+        },
+      ],
+    },
+    /* ============================= BLOCK 7 — ТЕСТУВАННЯ ТА ЕКОСИСТЕМА ============================= */
+    {
+      id: 'testing-react-components',
+      title: '🧪 Тестування React-компонентів',
+      interviewQuestions: [
+        {
+          question: 'Чому React Testing Library свідомо не дає доступу до внутрішнього стану компонента чи його інстансу (на відміну від старого Enzyme з <code>shallow</code>/<code>.state()</code>)?',
+          answer: 'Філософія RTL — "чим більше твої тести нагадують те, як застосунок використовує користувач, тим більше впевненості вони дають". Тест, що читає внутрішній <code>state</code> чи викликає приватний метод напряму, лишається зеленим навіть якщо повністю переписати реалізацію компонента (з класу на хуки, змінити назву стейта) — це тест <em>деталей реалізації</em>, а не поведінки. RTL надає лише API, доступний і користувачу: знайти текст/роль на екрані, клікнути, ввести текст, перевірити, що з\'явилось на екрані.',
+        },
+        {
+          question: 'У чому різниця між <code>getBy</code>, <code>queryBy</code> і <code>findBy</code> у RTL, і коли використовувати кожен?',
+          answer: '<code>getBy*</code> — синхронний пошук, кидає помилку одразу, якщо елемент не знайдено (для перевірки "елемент має бути на екрані вже зараз"). <code>queryBy*</code> — синхронний, повертає <code>null</code>, якщо не знайдено, замість помилки — єдиний правильний спосіб перевірити <strong>відсутність</strong> елемента (<code>expect(queryByText(...)).not.toBeInTheDocument()</code>; <code>getBy</code> тут би одразу впав з помилкою). <code>findBy*</code> — асинхронний (повертає проміс, ретраїть до таймауту) — для елементів, що з\'являються <em>після</em> асинхронної дії (запит, <code>setTimeout</code>).',
+        },
+        {
+          question: 'Чому <code>userEvent</code> кращий за <code>fireEvent</code> за замовчуванням?',
+          answer: '<code>fireEvent</code> диспатчить <em>одну</em> сиру DOM-подію (напр. <code>change</code>). <code>userEvent</code> імітує <strong>повний ланцюг</strong>, який породжує реальна взаємодія: на ввід літери — <code>keydown → keypress → input → keyup</code>, на клік — <code>pointerdown → mousedown → focus → mouseup → click</code>, плюс перевіряє, чи елемент видимий і не <code>disabled</code>. Тому <code>userEvent</code> ловить баги, які <code>fireEvent</code> пропускає (напр. обробник висить на <code>keydown</code>, а не на <code>change</code>). <code>userEvent</code> v14+ асинхронний — кожну дію треба <code>await</code>.',
+        },
+        {
+          question: 'Як правильно тестувати кастомний хук, якщо в ньому немає JSX для рендеру?',
+          answer: 'Через <code>renderHook</code> з <code>@testing-library/react</code> — він монтує хук у мінімальному тестовому компоненті-обгортці й повертає <code>result.current</code> (поточне значення, яке повернув хук) та <code>rerender</code>/<code>act</code> для симуляції оновлень. Зміни стану всередині хука (виклик функції, що робить <code>setState</code>) треба обгортати в <code>act()</code>, інакше React попереджає, що оновлення відбулось поза контрольованим тестовим середовищем, і DOM може не встигнути синхронізуватись до наступної перевірки.',
+        },
+        {
+          question: 'Чим підхід MSW (Mock Service Worker) до тестування запитів у компонентах відрізняється від <code>jest.mock(\'./api\')</code>?',
+          answer: '<code>jest.mock</code> підміняє сам JS-модуль з функцією запиту — компонент викликає вже не справжній <code>fetch</code>/<code>axios</code>, а мок-функцію; тест перевіряє лише те, що модуль викликаний з правильними аргументами. MSW перехоплює запит на мережевому рівні (сервіс-воркер чи Node-інтерсептор) — компонент виконує <strong>реальний</strong> <code>fetch</code>, і лише мережевий рівень підміняється, тому тестується весь шлях (серіалізація URL, заголовки, обробка помилкового статусу) так само, як у продакшні, а не лише "чи викликана функція".',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Тестуй поведінку, а не імплементацію <span class="tag tag-key">KEY</span></h3>
+  <p>Головна філософія сучасного тестування React (Kent C. Dodds): <em>«чим більше твої тести нагадують те, як софтом користуються насправді, тим більше впевненості вони дають»</em>. Тестуй <strong>behavior</strong> — що бачить і робить користувач, — а не <strong>implementation details</strong>: внутрішній стан, назви методів, кількість ре-рендерів.</p>
+  <div class="grid2">
+    <div class="card red"><h4>❌ Implementation details</h4><p>Ламається при рефакторингу без зміни поведінки. Enzyme заохочував саме це (<code>.state()</code>, <code>.instance()</code>, <code>shallow</code>) → крихкі тести.</p></div>
+    <div class="card green"><h4>✅ Behavior</h4><p>Переживає рефакторинг (клас → хуки, перейменування стейта). Знайти по ролі/тексту, клікнути, перевірити, що на екрані.</p></div>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Той самий сценарій: деталь реалізації проти поведінки',
+          code: `// ❌ Implementation details — ламається при рефакторингу
+expect(wrapper.state('isOpen')).toBe(true);
+
+// ✅ Behavior — виживає рефакторинг
+await user.click(screen.getByRole('button', { name: /open menu/i }));
+expect(screen.getByRole('menu')).toBeVisible();`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Testing Trophy — не піраміда</h3>
+  <p>Для фронтенду актуальніша модель за піраміду — <strong>Testing Trophy</strong> Кента Доддса:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Шар</th><th>Обсяг</th><th>Чим</th></tr>
+      <tr><td>Static</td><td>база</td><td>TypeScript, ESLint</td></tr>
+      <tr><td>Unit</td><td>помірно</td><td>утиліти, хуки, reducer'и</td></tr>
+      <tr><td><strong>Integration</strong></td><td><strong>більшість</strong></td><td>рендер компонента з реальними дітьми, взаємодія, перевірка результату (RTL)</td></tr>
+      <tr><td>E2E</td><td>мало</td><td>Playwright — критичні flow у реальному браузері</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Найбільше впевненості на одиницю зусиль дають <strong>integration-тести</strong> — саме на них має припадати основна маса тестів фронту.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Стек (2026)</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Інструмент</th><th>Роль</th></tr>
+      <tr><td><strong>Vitest</strong></td><td>Test runner — сучасний стандарт, швидший за Jest, нативний ESM, ділить конфіг трансформації з Vite</td></tr>
+      <tr><td><strong>Jest</strong></td><td>Test runner — досі поширений (Next legacy, CRA)</td></tr>
+      <tr><td><strong>React Testing Library</strong></td><td>Рендер + запити до DOM</td></tr>
+      <tr><td><code>@testing-library/user-event</code></td><td>Симуляція взаємодії (краще за <code>fireEvent</code>)</td></tr>
+      <tr><td><code>@testing-library/jest-dom</code></td><td>Matchers: <code>toBeInTheDocument</code>, <code>toBeVisible</code></td></tr>
+      <tr><td><strong>MSW</strong></td><td>Мокання мережі на рівні network</td></tr>
+      <tr><td><strong>Playwright</strong></td><td>E2E у реальному браузері</td></tr>
+    </table>
+  </div>
+  <div class="alert warn"><span class="icon">⚠️</span><span><strong>Enzyme мертвий</strong> — немає підтримки React 18+. Behavior-testing через RTL — індустріальний стандарт.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Queries: getBy / queryBy / findBy <span class="tag tag-key">KEY</span></h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Варіант</th><th>Якщо елемента нема</th><th>Async</th><th>Use case</th></tr>
+      <tr><td><code>getBy…</code></td><td>кидає error</td><td>ні</td><td>елемент має бути зараз</td></tr>
+      <tr><td><code>queryBy…</code></td><td>повертає <code>null</code></td><td>ні</td><td>перевірка <strong>відсутності</strong></td></tr>
+      <tr><td><code>findBy…</code></td><td>кидає error (після таймауту)</td><td>так</td><td>елемент з'явиться async</td></tr>
+    </table>
+  </div>
+  <p><strong>Порядок пріоритету запитів</strong> (сигнал seniority): <code>getByRole</code> → <code>getByLabelText</code> → <code>getByPlaceholderText</code> → <code>getByText</code> → … → <code>getByTestId</code> (останній resort — <code>data-testid</code> невидимий користувачу).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Три варіанти запиту — коли який',
+          code: `const btn = screen.getByRole('button', { name: /submit/i });   // є зараз
+expect(screen.queryByText('Error')).not.toBeInTheDocument();    // відсутність
+const item = await screen.findByText('Loaded');                 // async поява`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">userEvent &gt; fireEvent</h3>
+  <p><code>fireEvent.change(input, …)</code> диспатчить <em>одну</em> синтетичну подію. <code>userEvent</code> імітує реальну послідовність (<code>focus → keydown → input → keyup</code> на кожну літеру, pointer-події на клік) — ловить баги, яких одна подія не покаже. <code>userEvent</code> v14+ асинхронний; за замовчуванням завжди він.</p>
+  <div class="alert"><span class="icon">🧭</span><span><strong>AAA-патерн:</strong> Arrange (<code>render</code> + <code>userEvent.setup()</code>) → Act (взаємодія) → Assert (перевірка DOM).</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Базовий приклад (AAA): рендер, взаємодія, асинхронне очікування',
+          code: `import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+test('показує помилку при невалідному email', async () => {
+  const user = userEvent.setup();            // Arrange
+  render(<SignupForm />);
+
+  await user.type(screen.getByLabelText(/email/i), 'not-an-email');  // Act
+  await user.click(screen.getByRole('button', { name: /submit/i }));
+
+  // Assert: findBy — асинхронний, чекає появи помилки після валідації
+  expect(await screen.findByText(/невалідний email/i)).toBeInTheDocument();
+  // queryBy — правильний спосіб перевірити ВІДСУТНІСТЬ елемента
+  expect(screen.queryByText(/успішно/i)).not.toBeInTheDocument();
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Async + мережа через MSW</h3>
+  <p>Не мокай <code>fetch</code> вручну — перехоплюй на рівні мережі. Компонент виконує <strong>справжній</strong> запит, підміняється лише транспорт, тому тестується весь шлях (URL, заголовки, обробка статусу). Той самий mock працює в тестах, Storybook і dev — на відміну від <code>jest.mock('axios')</code>, не прив'язаний до конкретного HTTP-клієнта.</p>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>afterEach(() =&gt; server.resetHandlers())</code> — обов'язково: скидає per-test оверайди (<code>server.use(…)</code>), інакше тести течуть один в одного.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+
+const server = setupServer(
+  http.get('/api/users/:id', ({ params }) =>
+    HttpResponse.json({ id: params.id, name: 'Ada' }),
+  ),
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());   // ізоляція тестів!
+afterAll(() => server.close());
+
+test('рендерить користувача після завантаження', async () => {
+  render(<UserProfile userId="1" />);
+  expect(await screen.findByText('Ada')).toBeInTheDocument();
+});
+
+test('показує помилку при 500', async () => {
+  server.use(
+    http.get('/api/users/:id', () => new HttpResponse(null, { status: 500 })),
+  );
+  render(<UserProfile userId="1" />);
+  expect(await screen.findByText(/щось пішло не так/i)).toBeInTheDocument();
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">waitFor / findBy / act</h3>
+  <ul>
+    <li><code>await screen.findByText('Done')</code> — чекаєш появу елемента</li>
+    <li><code>await waitFor(() =&gt; expect(mockFn).toHaveBeenCalled())</code> — довільна умова</li>
+    <li><code>await waitForElementToBeRemoved(() =&gt; screen.queryByText(/loading/i))</code> — зникнення</li>
+  </ul>
+  <div class="alert warn"><span class="icon">⚠️</span><span>Warning <code>"not wrapped in act(...)"</code> майже завжди = <strong>забув <code>await</code></strong> на async-оновленні стану (<code>findBy</code>/<code>waitFor</code>). RTL авто-обгортає <code>render</code> і <code>userEvent</code> сам.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'renderHook: синхронний і async хук; result.current — свіже значення (getter)',
+          code: `import { renderHook, act, waitFor } from '@testing-library/react';
+
+test('useCounter збільшує значення', () => {
+  const { result } = renderHook(() => useCounter(0));
+  act(() => result.current.increment());  // act потрібен явно поза event-handler
+  expect(result.current.count).toBe(1);
+});
+
+test('useFetch завантажує дані', async () => {
+  const { result } = renderHook(() => useFetch('/api/data'));
+  expect(result.current.status).toBe('loading');
+  await waitFor(() => expect(result.current.status).toBe('success'));
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Провайдери: custom render wrapper</h3>
+  <p>Реальні компоненти залежать від context / router / store. Senior-патерн — власний <code>render</code>, що загортає UI в потрібні провайдери з тестовими налаштуваннями (<code>retry: false</code> у QueryClient, <code>MemoryRouter</code> з початковим маршрутом).</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `// test-utils.tsx
+function customRender(ui: React.ReactElement, { route = '/', ...options } = {}) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },  // не ретраїти в тестах!
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+    </QueryClientProvider>
+  );
+  return render(ui, { wrapper: Wrapper, ...options });
+}
+
+export * from '@testing-library/react';
+export { customRender as render };  // тести імпортують render звідси, не з RTL`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Антипатерни — що НЕ тестувати</h3>
+  <ul>
+    <li><strong>Implementation details</strong> — state, назви функцій, кількість ре-рендерів</li>
+    <li><strong>Сторонні бібліотеки</strong> — не тестуй, що React Router навігує; тестуй, що <em>твій</em> код реагує</li>
+    <li><strong>Дитячі компоненти</strong> — зазвичай не мокай (це integration); мокай лише важке/зовнішнє (карти, чарти, платіжні iframe) через <code>vi.mock()</code></li>
+    <li><strong>Великі snapshot-тести</strong> — нічого не ловлять, усі роблять <code>--update</code>. Точково для малих виводів</li>
+    <li><code>container.querySelector('.class')</code> — прив'язка до CSS крихка, юзай role/text</li>
+    <li><strong>Coverage-driven</strong> — 100% coverage ≠ якість</li>
+  </ul>
+  <div class="alert good"><span class="icon">✅</span><span><strong>a11y:</strong> <code>getByRole</code> вже змушує писати доступний markup; додатково — <code>jest-axe</code>: <code>expect(await axe(container)).toHaveNoViolations()</code>.</span></div>
+  <div class="alert"><span class="icon">⏱️</span><span><strong>Debounce/throttle:</strong> <code>vi.useFakeTimers()</code> + <code>vi.advanceTimersByTime(300)</code>; з <code>userEvent</code> v14 — <code>setup({ advanceTimers: vi.advanceTimersByTime })</code>, наприкінці <code>vi.useRealTimers()</code>.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'a11y через jest-axe та fake timers для debounce',
+          code: `import { axe } from 'jest-axe';
+
+test('немає порушень доступності', async () => {
+  const { container } = render(<SignupForm />);
+  expect(await axe(container)).toHaveNoViolations();
+});
+
+test('debounce: запит іде один раз після паузи', async () => {
+  vi.useFakeTimers();
+  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+  render(<Search />);
+  await user.type(screen.getByRole('searchbox'), 'react');
+  vi.advanceTimersByTime(300);
+
+  expect(fetchSpy).toHaveBeenCalledTimes(1);
+  vi.useRealTimers();
+});`,
+        },
+      ],
+    },
+    {
+      id: 'i18n-localization',
+      title: '🌐 Локалізація (i18n) React-застосунку',
+      interviewQuestions: [
+        {
+          question: 'У чому різниця між <code>i18n</code>, <code>l10n</code> і <code>locale</code>, і чому <code>en-US ≠ en-GB</code>?',
+          answer: '<strong>i18n</strong> (internationalization) — <em>підготовка</em> коду: винесення рядків, підтримка плюрал-правил, форматів дат/чисел/валют, RTL. Робиться раз розробником. <strong>l10n</strong> (localization) — <em>власне переклад</em> під конкретну locale, робота перекладачів. <strong>locale</strong> — мова + регіон, а не лише мова: <code>en-US</code> і <code>en-GB</code> мають різний формат дати (<code>MM/DD</code> vs <code>DD/MM</code>), валюту ($ vs £), розділювачі тисяч. Тому форматувати треба за повною locale, а не за кодом мови.',
+        },
+        {
+          question: 'Чому <code>count === 1 ? "item" : "items"</code> — це баг, і як робити плюралізацію правильно?',
+          answer: 'Такий тернарник припускає 2 форми множини (як в англійській), але українська, польська, російська мають <strong>3 форми</strong> (one / few / many: «1 товар», «2 товари», «5 товарів»), арабська — 6. Правильно — <strong>CLDR plural rules</strong> через нативний <code>Intl.PluralRules</code>: i18next сам обирає форму за суфіксом ключа (<code>_one</code>/<code>_few</code>/<code>_many</code>/<code>_other</code>) залежно від <code>count</code> і активної locale. Власну логіку множини писати не треба ніколи.',
+        },
+        {
+          question: 'Як вставити посилання чи <code>&lt;strong&gt;</code> всередину перекладеного речення, не розриваючи рядок на шматки?',
+          answer: 'Компонент <code>&lt;Trans&gt;</code> з react-i18next: розмітка лишається в JSX, а переклад містить лише <strong>індекси</strong> дочірніх елементів (<code>&lt;1&gt;текст посилання&lt;/1&gt;</code>). i18next підставляє реальні елементи за позицією. Перекладач редагує суцільний рядок з плейсхолдерами, розробник не конкатенує <code>t("Click ") + &lt;a&gt; + t(" here")</code> (що ламає порядок слів у багатьох мовах).',
+        },
+        {
+          question: 'Чому не можна просто заімпортувати всі JSON-словники всіх мов, і як це вирішують?',
+          answer: 'Кожна мова + кожен namespace — це кілобайти в бандлі; 10 мов × 5 модулів у головному чанку роздують first load. Рішення: <strong>lazy-load</strong> — <code>i18next-http-backend</code> вантажить <code>/locales/{{lng}}/{{ns}}.json</code> по потребі; <code>useTranslation("checkout")</code> підтягує <code>checkout.json</code> лише коли компонент рендериться; у головний бандл не потрапляє жоден переклад, лише активна locale. Це частина роботи над bundle-size.',
+        },
+        {
+          question: 'Чому для Next.js локалізовані URL-сегменти (<code>/uk/about</code>) + переклад на сервері кращі за client-side перемикання?',
+          answer: 'Переклад у Server Components резолвиться на сервері й потрапляє в <strong>HTML до гідрації</strong> — пошуковик і користувач без JS бачать перекладений контент одразу (client-only i18n віддає порожні ключі в SSR-HTML). Локалізований URL — окрема індексована сторінка на мову, на відміну від <code>?lang=uk</code>, який Google ігнорує. Плюс обовʼязкові <code>&lt;html lang&gt;</code> і <code>hreflang</code> alternate-теги, щоб видача показувала правильну мовну версію.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">i18n · l10n · locale — три різні речі <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card blue"><h4>i18n — internationalization</h4><p><em>Підготовка</em> коду до перекладу: винесення рядків, плюрал-правила, формати дат/чисел, RTL. Раз, розробником.</p></div>
+    <div class="card green"><h4>l10n — localization</h4><p><em>Власне переклад</em> під конкретну locale (uk-UA, en-US). Робота перекладачів, не коду.</p></div>
+  </div>
+  <p><strong>locale</strong> — мова + регіон, не лише мова: <code>en-US</code> ≠ <code>en-GB</code> (формат дати, валюта, розділювачі тисяч).</p>
+  <div class="alert"><span class="icon">💡</span><span>Сигнал seniority — розуміти, що i18n це <strong>не просто словник рядків</strong>, а плюрал-правила, формати, напрямок тексту, SEO і code-splitting перекладів.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Вибір бібліотеки</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Бібліотека</th><th>Коли обирати</th></tr>
+      <tr><td><strong>react-i18next</strong> (+ i18next)</td><td>Дефолт для SPA/CSR. Найбагатша екосистема: language detection, backend-loading, namespaces</td></tr>
+      <tr><td><strong>react-intl</strong> (FormatJS)</td><td>Суворі ICU-повідомлення, промислове форматування; поширена в enterprise</td></tr>
+      <tr><td><strong>next-intl</strong> / <strong>next-i18next</strong></td><td>Next.js: App Router → <code>next-intl</code>, Pages Router → <code>next-i18next</code></td></tr>
+      <tr><td><strong>Lingui</strong></td><td>Компіляція повідомлень, менший рантайм, DX з макросами</td></tr>
+      <tr><td>Нативний <code>Intl</code> API</td><td>Форматування дат/чисел/множини <em>без</em> бібліотеки — вбудований у браузер</td></tr>
+    </table>
+  </div>
+  <div class="alert good"><span class="icon">✅</span><span>Дефолт: <strong>react-i18next</strong> для SPA, <strong>next-intl</strong> для Next.js App Router.</span></div>`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Структура перекладів + namespaces</h3>
+  <p><strong>Namespaces</strong> (<code>common</code>, <code>auth</code>, <code>checkout</code>) — розбивка словника на модулі: логічна структура + можливість вантажити лише потрібний файл, а не весь словник. Прямий аналог feature-based модулів.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          caption: 'src/locales/en/common.json — вкладені ключі та плюрал-форми',
+          code: `{
+  "greeting": "Hello, {{name}}!",
+  "cart": {
+    "empty": "Your cart is empty",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
+  }
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'js',
+          caption: 'i18n.js — ініціалізація react-i18next',
+          code: `import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+import HttpBackend from 'i18next-http-backend';
+
+i18n
+  .use(HttpBackend)        // lazy-load JSON по мережі
+  .use(LanguageDetector)   // визначити мову: localStorage -> navigator -> ...
+  .use(initReactI18next)
+  .init({
+    fallbackLng: 'en',
+    supportedLngs: ['en', 'uk'],
+    ns: ['common', 'auth'],
+    defaultNS: 'common',
+    interpolation: { escapeValue: false }, // React вже екранує XSS
+    backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
+  });
+
+export default i18n;`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Використання в компоненті + перемикання мови',
+          code: `import { useTranslation } from 'react-i18next';
+
+function Header() {
+  const { t, i18n } = useTranslation('common');
+
+  return (
+    <header>
+      <h1>{t('greeting', { name: 'Roman' })}</h1>
+      <button onClick={() => i18n.changeLanguage('uk')}>UA</button>
+      <button onClick={() => i18n.changeLanguage('en')}>EN</button>
+    </header>
+  );
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Плюралізація — не пиши власну логіку <span class="tag tag-key">KEY</span></h3>
+  <div class="alert warn"><span class="icon">⚠️</span><span><code>count === 1 ? 'item' : 'items'</code> ламається для мов зі складними правилами: українська, польська, російська мають <strong>3 форми</strong>, арабська — 6.</span></div>
+  <p>i18next обирає форму за <strong>CLDR plural rules</strong> через нативний <code>Intl.PluralRules</code> — за суфіксами ключів <code>_one</code> / <code>_few</code> / <code>_many</code> / <code>_other</code> залежно від <code>count</code> і активної locale.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'json',
+          caption: 'Плюрал-ключі: en (2 форми) проти uk (3 форми)',
+          code: `{
+  "en": {
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
+  },
+  "uk": {
+    "items_one": "{{count}} товар",
+    "items_few": "{{count}} товари",
+    "items_many": "{{count}} товарів"
+  }
+}`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Форму обирає i18next за CLDR — виклик однаковий',
+          code: `t('items', { count: 1 }); // "1 товар"
+t('items', { count: 3 }); // "3 товари"
+t('items', { count: 5 }); // "5 товарів"`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">&lt;Trans&gt; — JSX усередині перекладу</h3>
+  <p>Як перекласти <code>"Click &lt;a&gt;here&lt;/a&gt; to continue"</code> не розриваючи рядок на <code>t("Click ") + &lt;a&gt; + t(" here")</code> (це ламає порядок слів у багатьох мовах)? <code>&lt;Trans&gt;</code> лишає розмітку в JSX, а переклад містить лише <strong>індекси</strong> дочірніх елементів.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Індекс 1 = другий дочірній елемент (посилання)',
+          code: `// JSX
+<Trans i18nKey="terms">
+  I accept the <a href="/terms">terms and conditions</a>
+</Trans>
+
+// uk/common.json
+// { "terms": "Я приймаю <1>умови та положення</1>" }`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Формати дат, чисел, валют — через <code>Intl</code>, не хардкод</h3>
+  <p>Не хардкодь формати рядками. Нативний <code>Intl</code> знає правила кожної locale: позицію символу валюти, розділювачі, порядок компонентів дати.</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'js',
+          caption: 'Нативний Intl API + інтеграція в i18next',
+          code: `new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'EUR' })
+  .format(1234.5);                    // "1 234,50 €"
+
+new Intl.DateTimeFormat('en-US', { dateStyle: 'long' })
+  .format(new Date());               // "August 30, 2026"
+
+new Intl.RelativeTimeFormat('uk', { numeric: 'auto' })
+  .format(-1, 'day');                // "вчора"
+
+// i18next прокидує ці опції через formatParams:
+t('price', {
+  val: 1234.5,
+  formatParams: { val: { style: 'currency', currency: 'EUR' } },
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">RTL — арабська, іврит</h3>
+  <p>Два кроки: (1) виставити напрямок на <code>&lt;html&gt;</code> при зміні мови, (2) писати CSS через <strong>logical properties</strong> — тоді layout дзеркалиться сам, без окремого RTL-стайлшита.</p>
+  <div class="alert"><span class="icon">🧭</span><span><code>margin-inline-start</code> замість <code>margin-left</code>, <code>padding-inline-end</code> замість <code>padding-right</code>, <code>text-align: start</code> замість <code>left</code>.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          code: `useEffect(() => {
+  document.dir = i18n.dir(); // 'ltr' | 'rtl' — i18next знає напрямок locale
+}, [i18n.language]);`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Продуктивність: lazy-load перекладів</h3>
+  <ul>
+    <li><strong>HttpBackend</strong> вантажить JSON по потребі (<code>loadPath</code>)</li>
+    <li><strong>Namespace on demand:</strong> <code>useTranslation('checkout')</code> завантажить <code>checkout.json</code> лише коли компонент відрендериться</li>
+    <li><strong>Code splitting:</strong> у головний бандл не потрапляє жоден переклад, лише активна locale</li>
+  </ul>
+  <div class="alert"><span class="icon">💡</span><span>Переклади — часто недооцінена вага бандла. Розбивка по namespaces + lazy-load — частина роботи над bundle-size.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'ready — namespace ще вантажиться',
+          code: `const { t, ready } = useTranslation('checkout');
+if (!ready) return <Spinner />;`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Next.js специфіка + SEO <span class="tag tag-key">KEY</span></h3>
+  <p><strong>App Router (<code>next-intl</code>):</strong> locale у сегменті шляху (<code>/uk/about</code>), <code>middleware.ts</code> для detection і редіректу, переклади резолвляться на сервері в Server Components → у HTML <em>до</em> гідрації.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>SEO must-have</th><th>Навіщо</th></tr>
+      <tr><td><code>&lt;html lang={locale}&gt;</code></td><td>Пошуковик і screen reader знають мову сторінки</td></tr>
+      <tr><td><code>hreflang</code> alternate-теги</td><td>Google показує правильну мовну версію у видачі</td></tr>
+      <tr><td>Локалізовані URL (<code>/uk/...</code>)</td><td>Кожна мова — окремий індексований URL; <strong>не</strong> query-параметр</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'app/[locale]/page.tsx — переклад на сервері',
+          code: `import { useTranslations } from 'next-intl';
+
+export default function Page() {
+  const t = useTranslations('common');
+  return <h1>{t('greeting', { name: 'Roman' })}</h1>;
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">TypeScript: типобезпечні ключі</h3>
+  <p>Типізуй ключі, щоб <code>t('wrong.key')</code> давав помилку компіляції + автокомпліт по всіх наявних ключах:</p>`,
+        },
+        {
+          kind: 'code',
+          language: 'ts',
+          caption: 'i18next.d.ts',
+          code: `import 'i18next';
+import common from './locales/en/common.json';
+
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    defaultNS: 'common';
+    resources: { common: typeof common };
+  }
+}`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Процес і тулінг</h3>
+  <ul>
+    <li><strong>Не редагуй переклади вручну в проді</strong> — TMS (Translation Management System): Lokalise, Crowdin, Phrase</li>
+    <li><strong>Структуровані ключі</strong> (<code>cart.empty</code>), а не англійський текст як ID — стабільніші при зміні формулювання</li>
+    <li><code>i18next-parser</code> витягує ключі з коду → знаходить пропущені й невикористані переклади (lint)</li>
+    <li><strong>Fallback chain:</strong> <code>uk → en → ключ</code>. Ніколи не показуй сирий ключ користувачу в проді</li>
+  </ul>
+  <div class="alert warn"><span class="icon">⚠️</span><span>У тестах <strong>не мокай <code>t</code> як <code>key =&gt; key</code></strong> — це ховає баги інтерполяції та плюралів. Використовуй реальний instance з мінімальним тестовим словником.</span></div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Тест i18n — реальний instance, не мок t',
+          code: `import { I18nextProvider } from 'react-i18next';
+import i18n from './test-i18n';
+
+i18n.init({
+  lng: 'en',
+  resources: { en: { common: { greeting: 'Hi {{name}}' } } },
+});
+
+test('вітає користувача на активній мові', () => {
+  render(
+    <I18nextProvider i18n={i18n}>
+      <Header />
+    </I18nextProvider>,
+  );
+  expect(screen.getByText('Hi Roman')).toBeInTheDocument();
+});`,
+        },
+      ],
+    },
+    {
+      id: 'react-native-ecosystem',
+      title: '📱 React Native та поза-браузерні рендерери',
+      interviewQuestions: [
+        {
+          question: 'Що саме React Native "перевикористовує" від React, а що в ньому повністю інше порівняно з React DOM?',
+          answer: 'Перевикористовується <strong>модель компонентів</strong> — JSX, <code>props</code>/<code>state</code>, хуки, реконсиляція/Fiber-планувальник працюють ідентично. Повністю інше — <strong>рендерер</strong>: замість DOM-вузлів (<code>&lt;div&gt;</code>, <code>&lt;span&gt;</code>) React Native рендерить справжні нативні UI-компоненти платформи (<code>&lt;View&gt;</code> → <code>UIView</code> на iOS / <code>android.view.View</code> на Android), а замість CSS — підмножина Flexbox-стилів через <code>StyleSheet</code>. Тобто React — це "мова опису дерева інтерфейсу й моделі оновлень", а куди саме це дерево промальовується (DOM чи нативні віджети) — питання конкретного рендерера.',
+        },
+        {
+          question: 'Що таке "New Architecture" (Fabric + TurboModules) у React Native, і яку проблему старого моста (bridge) вона вирішує?',
+          answer: 'Стара архітектура спілкувалась між JS-потоком і нативним UI-потоком через асинхронний <strong>bridge</strong>, серіалізуючи виклики в JSON — це створювало затримку й "бутилкове горлечко" для UI, що вимагає високої частоти оновлень (жести, анімації, скрол). Fabric (новий рендерер) і TurboModules (нативні модулі) переходять на <strong>JSI (JavaScript Interface)</strong> — прямі синхронні виклики між JS і нативним кодом без серіалізації через міст, що прибирає затримку й дозволяє JS напряму тримати посилання на нативні об\'єкти.',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">React Native — той самий React, інший рендерер <span class="tag tag-key">KEY</span></h3>
+  <p>Компонентна модель, JSX, хуки, реконсиляція — ідентичні React DOM. Відмінність — <strong>куди</strong> React рендерить дерево: замість DOM-вузлів у браузері React Native промальовує справжні нативні UI-компоненти iOS/Android через власний рендерер.</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th></th><th>React DOM</th><th>React Native</th></tr>
+      <tr><td>Що рендериться</td><td>DOM-вузли (<code>div</code>, <code>span</code>)</td><td>Нативні UI-компоненти (<code>UIView</code>/<code>android.view</code>)</td></tr>
+      <tr><td>Розмітка</td><td><code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;button&gt;</code></td><td><code>&lt;View&gt;</code>, <code>&lt;Text&gt;</code>, <code>&lt;Pressable&gt;</code></td></tr>
+      <tr><td>Стилі</td><td>CSS / CSS-in-JS / Tailwind</td><td><code>StyleSheet</code> — підмножина Flexbox, без CSS-каскаду</td></tr>
+      <tr><td>Навігація</td><td>React Router / Next.js</td><td>React Navigation (свій стек екранів, не History API)</td></tr>
+    </table>
+  </div>`,
+        },
+        {
+          kind: 'code',
+          language: 'tsx',
+          caption: 'Той самий компонентний код — інші теги замість DOM-елементів',
+          code: `import { View, Text, Pressable, StyleSheet } from 'react-native';
+
+function Counter() {
+  const [count, setCount] = useState(0); // useState — той самий хук
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.label}>{count}</Text>
+      <Pressable onPress={() => setCount(c => c + 1)}>
+        <Text>+1</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  label: { fontSize: 18, fontWeight: 'bold' },
+});`,
+        },
+        {
+          kind: 'paragraph',
+          html: `<h3 class="topic">Expo — стандартний старт для React Native</h3>
+  <p><strong>Expo</strong> — набір інструментів і сервісів над React Native (CLI, готові нативні модулі, OTA-оновлення без ре-білду в сторі, збірка в хмарі), що прибирає потребу одразу возитись з Xcode/Android Studio. Сьогодні — типова відправна точка для нового RN-проєкту; "eject" у голий React Native CLI лишається опцією, коли потрібен нативний модуль поза екосистемою Expo.</p>
+  <div class="alert"><span class="icon">📜</span><span><strong>Історична довідка — React VR:</strong> експериментальний фреймворк Meta (2017) для рендеру React-компонентів у WebVR/3D-сценах. Проєкт офіційно припинено — поглинений напрямом <strong>React 360</strong>, який також більше не розвивається. Сьогодні для VR/3D у вебі використовують <code>react-three-fiber</code> (React-рендерер поверх Three.js) — питання про React VR на співбесіді, як правило, перевіряє саме знання, що технологія застаріла.</span></div>`,
+        },
+        {
+          kind: 'links',
+          title: 'Хочеш глибше — окремий курс',
+          items: [
+            {
+              href: '/react-native',
+              title: '📱 React Native — повний курс',
+              description:
+                'Expo vs bare workflow, Flexbox-стилі, навігація (React Navigation / Expo Router), нативні API та дозволи, Hermes і продуктивність списків, тестування (Detox/Maestro) та деплой через EAS — усе, що не влізло в цей короткий вступ.',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'career-growth',
+      title: '🧭 Після основ: кар\'єрний шлях React-розробника',
+      interviewQuestions: [
+        {
+          question: 'Чим, на твою думку, middle React-розробник відрізняється від senior — окрім кількості років?',
+          answer: 'Middle <strong>впевнено реалізує фічу</strong> в існуючій архітектурі: знає хуки, стан, роутинг, пише тести. Senior <strong>відповідає за рішення, а не лише за код</strong>: обирає межі стану (server vs client, що йде в URL), бачить ціну абстракції до того, як її введе, пояснює <em>чому</em> компонент ре-рендериться і як це виміряти (Profiler, а не здогадки), помічає ризики (race conditions, a11y, безпека токенів) і розвантажує команду — code review, документація, менторинг. Хороша відповідь спирається на конкретний приклад: «я прибрав глобальний Redux-стан на користь TanStack Query і скоротив кількість багів із застарілими даними».',
+        },
+        {
+          question: 'Як ти тримаєшся в курсі змін React і вирішуєш, що з нового варто тягнути в продакшн?',
+          answer: 'Первинні джерела: <code>react.dev/blog</code>, RFC-репозиторій, changelog Next.js — а не пересказ у соцмережах. Нову можливість (Server Components, <code>use()</code>, React Compiler) спершу пробую в pet-проєкті або ізольованій гілці, дивлюсь на <strong>стабільність API, підтримку екосистеми</strong> (роутер, state-менеджер, тест-раннер) і на те, яку <em>реальну</em> проблему команди вона знімає. У продакшн — поступово, за feature-flag або на одному маршруті, з метриками до/після. «Нове» саме по собі не аргумент.',
+        },
+        {
+          question: 'Розкажи про технічне рішення, про яке ти пізніше пошкодував. Що зробив би інакше?',
+          answer: 'Питання перевіряє <strong>рефлексію</strong>, а не бездоганність. Структура відповіді (STAR): контекст → яке рішення і чому воно тоді здавалось правильним → як проявилась проблема (метрика, баги, швидкість розробки) → що зробив для виправлення → який висновок забрав у наступні проєкти. Погана відповідь — «таких не було» або звинувачення інших; хороша — чесний trade-off, наприклад передчасна універсальна абстракція компонента, що обросла boolean-пропсами (див. «Патерни»).',
+        },
+      ],
+      blocks: [
+        {
+          kind: 'paragraph',
+          html: `<p>Знання React — лише половина. Друга половина — вміти <strong>показати</strong> це знання й розвивати його системно. Нижче — практичний план після проходження основ.</p>
+  <h3 class="topic">Дорожня карта навичок <span class="tag tag-key">KEY</span></h3>
+  <div class="grid2">
+    <div class="card green"><h4>Junior → Middle</h4><p>TypeScript без <code>any</code>, хуки й кастомні хуки, форми + валідація (react-hook-form + Zod), роутинг, робота з API (TanStack Query), базові тести (Testing Library), Git-флоу з PR і code review.</p></div>
+    <div class="card blue"><h4>Middle → Senior</h4><p>Внутрішня модель рендеру й продуктивність (Profiler, мемоізація за вимірами), архітектура стану, Next.js App Router і Server Components, a11y, безпека (XSS, зберігання токенів), CI/CD, System Design фронтенду, менторинг.</p></div>
+  </div>
+  <h3 class="topic">Портфоліо, яке читають</h3>
+  <ul>
+    <li><strong>1–2 доведені до кінця проєкти</strong> замість десяти туторіальних клонів: задеплоєні, з README (що, навіщо, стек, як запустити, скриншот) і осмисленою історією комітів.</li>
+    <li>Показуй <strong>рішення</strong>, а не лише UI: чому обрано такий state-менеджер, як оброблено помилки й завантаження, які є тести.</li>
+    <li>Внесок в open source (навіть документація чи виправлений баг) і технічні нотатки/статті — сигнал, що ти вмієш пояснювати.</li>
+  </ul>
+  <h3 class="topic">Підготовка до співбесіди</h3>
+  <table>
+    <thead><tr><th>Етап</th><th>Що перевіряють</th><th>Як готуватись</th></tr></thead>
+    <tbody>
+      <tr><td>Теорія JS/React</td><td>Closures, event loop, реконсиляція, хуки, стан</td><td>Розділи «Теорія» + попапи «Питання на співбесіді»</td></tr>
+      <tr><td>Live coding</td><td>Компонент або кастомний хук за 30–45 хв, алгоритмічна задача</td><td>Практичні задачі та LeetCode у цьому хабі; проговорюй міркування вголос</td></tr>
+      <tr><td>System Design</td><td>Архітектура фронтенду: стан, кешування, рендер-модель, API</td><td>Розділ «Архітектура», починай з вимог і обмежень</td></tr>
+      <tr><td>Behavioral</td><td>Командна робота, конфлікти, помилки, відповідальність</td><td>3–5 історій у форматі STAR, заготовлених заздалегідь</td></tr>
+    </tbody>
+  </table>
+  <div class="alert good"><span class="icon">✅</span><span><strong>Порада:</strong> після кожної співбесіди записуй питання, на яких «плавав», і закривай їх до наступної — це найшвидший цикл зворотного зв'язку.</span></div>`,
+        },
+      ],
+    },
+  ],
 }
