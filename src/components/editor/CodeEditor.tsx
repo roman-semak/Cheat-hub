@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useId } from 'react'
 import Editor, { type Monaco } from '@monaco-editor/react'
-import { ChevronDown, Terminal } from 'lucide-react'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
 import { TestResults, type TestResult } from './TestResults'
@@ -29,6 +28,7 @@ interface CodeEditorProps {
 
 type Language = 'javascript' | 'typescript'
 type EditorTab = 'editor' | 'mine'
+type OutputTab = 'console' | 'tests'
 
 function beforeMount(monaco: Monaco) {
   const tsDefaults = monaco.languages.typescript.typescriptDefaults
@@ -62,12 +62,13 @@ export function CodeEditor({
   const [results, setResults] = useState<TestResult[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<EditorTab>('editor')
-  const [consoleOpen, setConsoleOpen] = useState(false)
+  // Output below the buttons: the run's verdict by default, console on demand.
+  const [output, setOutput] = useState<OutputTab>('tests')
   const baseId = useId()
   const { data } = useUserStore()
   const solved = data.progress[problemSlug] === 'solved'
   const logCount = results?.reduce((n, r) => n + (r.logs?.length ?? 0), 0) ?? 0
-  const consolePanelId = `${baseId}-console`
+  const outputId = `${baseId}-output`
 
   const execute = useCallback(
     async (persistSubmission: boolean) => {
@@ -230,26 +231,6 @@ export function CodeEditor({
       {tab === 'editor' && (hasTests ? (
         <div className="flex gap-2">
           <Button
-            onClick={() => setConsoleOpen((v) => !v)}
-            variant="outline"
-            aria-expanded={consoleOpen}
-            aria-controls={consolePanelId}
-            title="Показати вивід console.log із останнього запуску"
-            className="inline-flex shrink-0 items-center gap-1.5"
-          >
-            <Terminal size={16} />
-            Консоль
-            {logCount > 0 && (
-              <span className="rounded-full bg-white/10 px-1.5 text-[11px] text-slate-300">
-                {logCount}
-              </span>
-            )}
-            <ChevronDown
-              size={14}
-              className={cn('transition-transform', consoleOpen && 'rotate-180')}
-            />
-          </Button>
-          <Button
             onClick={handleRun}
             disabled={isRunning}
             variant="default"
@@ -275,10 +256,54 @@ export function CodeEditor({
         </GlassPanel>
       ))}
 
-      {tab === 'editor' && consoleOpen && hasTests && (
-        <div id={consolePanelId}>
+      {tab === 'editor' && hasTests && (
+        <div className="flex flex-col gap-2">
+          <Tabs
+            idBase={outputId}
+            items={[
+              {
+                id: 'console',
+                label: (
+                  <>
+                    Console
+                    {logCount > 0 && <Count>{logCount}</Count>}
+                  </>
+                ),
+              },
+              {
+                id: 'tests',
+                label: (
+                  <>
+                    Test results
+                    {results && (
+                      <Count>
+                        {results.filter((r) => r.passed).length}/{results.length}
+                      </Count>
+                    )}
+                  </>
+                ),
+              },
+            ]}
+            active={output}
+            onChange={(id) => setOutput(id as OutputTab)}
+          />
           <GlassPanel className="overflow-hidden">
-            <ConsolePanel results={results} />
+            <div
+              role="tabpanel"
+              id={panelId(outputId, 'console')}
+              aria-labelledby={tabId(outputId, 'console')}
+              hidden={output !== 'console'}
+            >
+              <ConsolePanel results={results} />
+            </div>
+            <div
+              role="tabpanel"
+              id={panelId(outputId, 'tests')}
+              aria-labelledby={tabId(outputId, 'tests')}
+              hidden={output !== 'tests'}
+            >
+              <TestResults results={results} />
+            </div>
           </GlassPanel>
         </div>
       )}
@@ -289,7 +314,13 @@ export function CodeEditor({
         </GlassPanel>
       )}
 
-      {tab === 'editor' && results && <TestResults results={results} />}
     </div>
+  )
+}
+
+// Small count pill shared by both output tabs.
+function Count({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full bg-white/10 px-1.5 text-[11px] text-slate-300">{children}</span>
   )
 }
