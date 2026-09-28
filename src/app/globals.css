@@ -70,6 +70,47 @@
    blocks) into the Liquid Glass palette. Scoped under .cheat-prose so it never
    leaks into the rest of the app.
 --------------------------------------------------------------------------- */
+/* Problem descriptions (LeetCode markdown). The markup used `prose
+   prose-invert`, but @tailwindcss/typography isn't installed — those are no-op
+   classes, so descriptions rendered with browser defaults: no list markers and
+   a <pre> that clips instead of scrolling. Mirrors .cheat-prose, scoped so the
+   two can diverge. */
+.problem-prose {
+  @apply text-slate-200 leading-relaxed;
+  overflow-wrap: anywhere;
+}
+.problem-prose p {
+  @apply my-2 text-sm;
+}
+.problem-prose ul,
+.problem-prose ol {
+  @apply my-2 ml-5 space-y-1 text-sm;
+}
+.problem-prose ul {
+  @apply list-disc;
+}
+.problem-prose ol {
+  @apply list-decimal;
+}
+.problem-prose pre {
+  @apply custom-scrollbar my-3 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 font-mono text-[12.5px] leading-relaxed text-slate-200;
+}
+.problem-prose pre code {
+  @apply bg-transparent p-0 text-slate-200;
+}
+.problem-prose code {
+  @apply rounded bg-black/40 px-1.5 py-0.5 font-mono text-[0.85em] text-cyan-300;
+}
+.problem-prose strong {
+  @apply font-semibold text-slate-100;
+}
+.problem-prose a {
+  @apply text-indigo-300 underline underline-offset-2 hover:text-indigo-200;
+}
+.problem-prose img {
+  @apply my-3 max-w-full rounded-lg;
+}
+
 .cheat-prose {
   @apply text-slate-300 leading-relaxed;
 }

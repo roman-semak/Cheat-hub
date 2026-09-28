@@ -15,6 +15,7 @@ import {
 import { highlight } from '@/lib/cheatsheet/highlight'
 import { cn } from '@/lib/utils'
 import MarkdownIt from 'markdown-it'
+import { normalizeProblemMarkdown } from '@/lib/problemMarkdown'
 
 const md = new MarkdownIt()
 
@@ -36,8 +37,10 @@ const difficultyColors = {
 } as const
 
 function parseDescription(text: string) {
-  const examplesIndex = text.search(/Example/i)
-  const constraintsIndex = text.search(/Constraints?:/i)
+  // Match the bold marker too: splitting on the bare word left the opening
+  // `**` of `**Example 1:**` stranded at the end of the main text.
+  const examplesIndex = text.search(/\*{0,2}Example/i)
+  const constraintsIndex = text.search(/\*{0,2}Constraints?:/i)
 
   let examplesSection = ''
   let constraintsSection = ''
@@ -72,7 +75,9 @@ export function ProblemDescription({
   solution,
   approach,
 }: ProblemDescriptionProps) {
-  const { main, examples, constraints } = parseDescription(description)
+  const { main, examples, constraints } = parseDescription(
+    normalizeProblemMarkdown(description),
+  )
 
   const mainHtml = md.render(main)
   const examplesHtml = examples ? md.render(examples) : ''
@@ -101,7 +106,7 @@ export function ProblemDescription({
                     </DialogTitle>
                   </DialogHeader>
                   <div
-                    className="prose prose-invert max-w-none text-slate-200"
+                    className="problem-prose"
                     dangerouslySetInnerHTML={{ __html: editorialHtml }}
                   />
                 </DialogContent>
@@ -131,7 +136,7 @@ export function ProblemDescription({
                       <div className="min-w-0">
                         <h3 className="mb-2 text-sm font-semibold text-cyan-300">Підхід</h3>
                         <div
-                          className="prose prose-invert max-w-none text-slate-200"
+                          className="problem-prose"
                           dangerouslySetInnerHTML={{ __html: approachHtml }}
                         />
                       </div>
@@ -185,7 +190,7 @@ export function ProblemDescription({
 
       <GlassCard variant="subtle">
         <div
-          className="prose prose-invert max-w-none text-slate-200"
+          className="problem-prose"
           dangerouslySetInnerHTML={{ __html: mainHtml }}
         />
       </GlassCard>
@@ -197,7 +202,7 @@ export function ProblemDescription({
           </h2>
           <GlassCard variant="dark">
             <div
-              className="prose prose-invert max-w-none text-slate-200 space-y-4"
+              className="problem-prose space-y-4"
               dangerouslySetInnerHTML={{ __html: examplesHtml }}
             />
           </GlassCard>
@@ -211,7 +216,7 @@ export function ProblemDescription({
           </h2>
           <GlassCard variant="dark">
             <div
-              className="prose prose-invert max-w-none text-slate-200"
+              className="problem-prose"
               dangerouslySetInnerHTML={{ __html: constraintsHtml }}
             />
           </GlassCard>
