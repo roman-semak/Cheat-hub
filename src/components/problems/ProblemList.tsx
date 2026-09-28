@@ -7,11 +7,15 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { GlassCard } from '@/components/glass/GlassCard'
 import {
-  useUserStore,
   resetSolvedProblems,
   resetAttemptedProblems,
   resetProblemProgress,
 } from '@/lib/userStore'
+import {
+  DIFFICULTIES,
+  useProblemProgress,
+  type DifficultyFilter,
+} from '@/lib/problems/useProblemProgress'
 
 interface Problem {
   id: number
@@ -25,6 +29,9 @@ interface Problem {
 interface ProblemListProps {
   problems: Problem[]
   solvedSlugs: string[]
+  /** Owned by ProblemsView so the stats grid can react to it. */
+  difficulty: DifficultyFilter
+  onDifficultyChange: (difficulty: DifficultyFilter) => void
 }
 
 const difficultyColors = {
@@ -34,29 +41,24 @@ const difficultyColors = {
 } as const
 
 type SortOption = 'default' | 'a-z' | 'z-a' | 'easiest' | 'hardest'
-type DifficultyFilter = 'all' | 'easy' | 'medium' | 'hard'
 
 const HIDE_SOLVED_KEY = 'problemsHideSolved'
 
-export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
-  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('all')
+export function ProblemList({
+  problems,
+  solvedSlugs,
+  difficulty,
+  onDifficultyChange,
+}: ProblemListProps) {
   const [hideSolved, setHideSolved] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState<SortOption>('default')
 
-  // Counts for the reset buttons. `solvedSlugs` arrives as a prop but says
-  // nothing about attempts, so read progress directly — this component is
-  // already a client component.
-  const { data } = useUserStore()
-  const { solvedCount, attemptedCount } = useMemo(() => {
-    let solved = 0
-    let attempted = 0
-    for (const status of Object.values(data.progress)) {
-      if (status === 'solved') solved += 1
-      else if (status === 'attempted') attempted += 1
-    }
-    return { solvedCount: solved, attemptedCount: attempted }
-  }, [data.progress])
+  // Counts for the reset buttons come from the STORE scope, not the catalog:
+  // they include slugs no longer in the catalog, which is exactly what the
+  // reset mutators clear. The bars in ProblemsView use the catalog scope.
+  const { stored } = useProblemProgress(problems)
+  const { solved: solvedCount, attempted: attemptedCount } = stored
 
   useEffect(() => {
     try {
@@ -76,9 +78,8 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
     let result = [...problems]
 
     // Difficulty filter
-    if (difficultyFilter !== 'all') {
-      const diffMap = { easy: 'Easy', medium: 'Medium', hard: 'Hard' }
-      result = result.filter((p) => p.difficulty === diffMap[difficultyFilter])
+    if (difficulty !== 'all') {
+      result = result.filter((p) => p.difficulty === difficulty)
     }
 
     // Hide solved toggle
@@ -106,7 +107,7 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
     }
 
     return result
-  }, [problems, difficultyFilter, hideSolved, searchTerm, sortBy, solvedSet])
+  }, [problems, difficulty, hideSolved, searchTerm, sortBy, solvedSet])
 
   if (problems.length === 0) {
     return (
@@ -122,17 +123,17 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
       <div className="glass-subtle rounded-xl p-4 space-y-3">
         {/* Difficulty Filters */}
         <div className="flex flex-wrap gap-2">
-          {(['all', 'easy', 'medium', 'hard'] as DifficultyFilter[]).map((diff) => (
+          {(['all', ...DIFFICULTIES] as DifficultyFilter[]).map((level) => (
             <button
-              key={diff}
-              onClick={() => setDifficultyFilter(diff)}
+              key={level}
+              onClick={() => onDifficultyChange(level)}
               className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
-                difficultyFilter === diff
+                difficulty === level
                   ? 'glass text-slate-100'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              {diff === 'all' ? 'All' : diff.charAt(0).toUpperCase() + diff.slice(1)}
+              {level === 'all' ? 'All' : level}
             </button>
           ))}
         </div>
