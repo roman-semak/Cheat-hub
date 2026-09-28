@@ -7,6 +7,8 @@ export interface TestResult {
   expected: string
   actual?: string
   error?: string
+  /** console.* output captured while this case ran — shown in the Консоль tab. */
+  logs?: string[]
 }
 
 interface TestResultsProps {

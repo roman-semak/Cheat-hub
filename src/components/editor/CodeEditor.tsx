@@ -8,6 +8,7 @@ import { TestResults, type TestResult } from './TestResults'
 import { markSolved, markAttempted, addSubmission, saveSolution, useUserStore } from '@/lib/userStore'
 import { Tabs, panelId, tabId } from '@/components/ui/Tabs'
 import { MySolutionPanel } from './MySolutionPanel'
+import { ConsolePanel } from './ConsolePanel'
 import { cn } from '@/lib/utils'
 
 interface TestCase {
@@ -26,6 +27,7 @@ interface CodeEditorProps {
 }
 
 type Language = 'javascript' | 'typescript'
+type EditorTab = 'editor' | 'console' | 'mine'
 
 function beforeMount(monaco: Monaco) {
   const tsDefaults = monaco.languages.typescript.typescriptDefaults
@@ -58,10 +60,11 @@ export function CodeEditor({
   const [isRunning, setIsRunning] = useState(false)
   const [results, setResults] = useState<TestResult[] | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [tab, setTab] = useState<'editor' | 'mine'>('editor')
+  const [tab, setTab] = useState<EditorTab>('editor')
   const baseId = useId()
   const { data } = useUserStore()
   const solved = data.progress[problemSlug] === 'solved'
+  const logCount = results?.reduce((n, r) => n + (r.logs?.length ?? 0), 0) ?? 0
 
   const execute = useCallback(
     async (persistSubmission: boolean) => {
@@ -136,10 +139,23 @@ export function CodeEditor({
         idBase={baseId}
         items={[
           { id: 'editor', label: 'Редактор' },
+          {
+            id: 'console',
+            label: (
+              <>
+                Консоль
+                {logCount > 0 && (
+                  <span className="rounded-full bg-white/10 px-1.5 text-[11px] text-slate-300">
+                    {logCount}
+                  </span>
+                )}
+              </>
+            ),
+          },
           { id: 'mine', label: 'Мій розв’язок' },
         ]}
         active={tab}
-        onChange={(id) => setTab(id as 'editor' | 'mine')}
+        onChange={(id) => setTab(id as EditorTab)}
       >
         <div className="ml-auto flex items-center gap-2">
           <label className="text-sm font-medium text-slate-300">Language:</label>
@@ -197,6 +213,17 @@ export function CodeEditor({
           }}
         />
         </div>
+
+        {tab === 'console' && (
+          <div
+            role="tabpanel"
+            id={panelId(baseId, 'console')}
+            aria-labelledby={tabId(baseId, 'console')}
+            className="h-full"
+          >
+            <ConsolePanel results={results} />
+          </div>
+        )}
 
         {tab === 'mine' && (
           <div

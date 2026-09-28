@@ -1,4 +1,23 @@
 import vm from 'vm'
+
+type ConsoleLevel = 'log' | 'error' | 'warn' | 'info'
+
+// Bounds for captured console output: enough for real debugging, small enough
+// that `while (true) console.log(x)` can't take the page down.
+const MAX_LOG_LINES = 100
+const MAX_LOG_CHARS = 2000
+
+function formatLogArg(value: unknown): string {
+  if (typeof value === 'string') return value
+  if (value instanceof Error) return value.message
+  let text: string
+  try {
+    text = JSON.stringify(value) ?? String(value)
+  } catch {
+    text = String(value) // circular structures, BigInt, …
+  }
+  return text.length > MAX_LOG_CHARS ? `${text.slice(0, MAX_LOG_CHARS)}…` : text
+}
 import { transform } from 'sucrase'
 import {
   SANDBOX_PRELUDE,
@@ -19,6 +38,8 @@ interface RunResult {
   expected: string
   actual?: string
   error?: string
+  /** console.* output captured for this test case (see executeInVm). */
+  logs?: string[]
 }
 
 const TIMEOUT_MS = 5000
@@ -36,12 +57,14 @@ export function hasRealTestCases(testCases: TestCase[]): boolean {
 interface ExecuteResult {
   result?: string
   error?: string
+  /** Anything the solution passed to console.* during this run. */
+  logs?: string[]
 }
 
 /**
  * Runs `fnName(...args)` inside a Node `vm` sandbox. `argsJson` must be a JSON
  * array of the positional arguments. Returns the JSON-stringified return value
- * (`result`) or a one-line `error`.
+ * (`result`) or a one-line `error`, plus whatever the solution logged.
  */
 export function executeInVm(
   code: string,
@@ -66,10 +89,29 @@ ${code}
 })();
 `
 
+  // Console output used to be swallowed, which made debugging inside the editor
+  // impossible. Capture it instead, bounded on both axes so a runaway loop
+  // can't blow up the response or the browser.
+  const logs: string[] = []
+  const record = (level: ConsoleLevel) => (...args: unknown[]) => {
+    if (logs.length >= MAX_LOG_LINES) return
+    if (logs.length === MAX_LOG_LINES - 1) {
+      logs.push(`… вивід обрізано на ${MAX_LOG_LINES} рядках`)
+      return
+    }
+    const text = args.map(formatLogArg).join(' ')
+    logs.push(level === 'log' ? text : `[${level}] ${text}`)
+  }
+
   const sandbox: Record<string, unknown> = {
     __result: undefined,
     __error: undefined,
-    console: { log: () => {}, error: () => {}, warn: () => {}, info: () => {} },
+    console: {
+      log: record('log'),
+      error: record('error'),
+      warn: record('warn'),
+      info: record('info'),
+    },
   }
 
   try {
@@ -78,15 +120,18 @@ ${code}
     script.runInContext(context, { timeout: timeoutMs })
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)
-    return { error: msg.split('\n')[0] }
+    // Logs are returned even on a crash — the last line before a throw is
+    // usually the most useful thing on screen.
+    return { error: msg.split('\n')[0], logs }
   }
 
   if (sandbox.__error !== undefined) {
-    return { error: String(sandbox.__error) }
+    return { error: String(sandbox.__error), logs }
   }
 
   return {
     result: sandbox.__result === undefined ? undefined : String(sandbox.__result),
+    logs,
   }
 }
 
@@ -179,11 +224,12 @@ function runSingle(
   wrapArgs: boolean,
   testCase: TestCase,
 ): RunResult {
-  const fail = (error: string): RunResult => ({
+  const fail = (error: string, logs?: string[]): RunResult => ({
     passed: false,
     input: testCase.input,
     expected: testCase.expected,
     error,
+    logs,
   })
 
   let parsed: unknown
@@ -199,9 +245,9 @@ function runSingle(
   // `__run` takes the whole positional-args array as one parameter; a bare
   // function is spread-called. executeInVm always spreads, so wrap once.
   const argsJson = JSON.stringify(wrapArgs ? [parsed] : parsed)
-  const { result, error } = executeInVm(code, entry, argsJson)
+  const { result, error, logs } = executeInVm(code, entry, argsJson)
 
-  if (error !== undefined) return fail(error)
+  if (error !== undefined) return fail(error, logs)
 
   const actual = String(result ?? '').trim()
   const expected = testCase.expected.trim()
@@ -211,5 +257,6 @@ function runSingle(
     input: testCase.input,
     expected,
     actual,
+    logs,
   }
 }
