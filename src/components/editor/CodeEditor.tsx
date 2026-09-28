@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useId } from 'react'
 import Editor, { type Monaco } from '@monaco-editor/react'
+import { ChevronDown, Terminal } from 'lucide-react'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
 import { TestResults, type TestResult } from './TestResults'
@@ -27,7 +28,7 @@ interface CodeEditorProps {
 }
 
 type Language = 'javascript' | 'typescript'
-type EditorTab = 'editor' | 'console' | 'mine'
+type EditorTab = 'editor' | 'mine'
 
 function beforeMount(monaco: Monaco) {
   const tsDefaults = monaco.languages.typescript.typescriptDefaults
@@ -61,10 +62,12 @@ export function CodeEditor({
   const [results, setResults] = useState<TestResult[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<EditorTab>('editor')
+  const [consoleOpen, setConsoleOpen] = useState(false)
   const baseId = useId()
   const { data } = useUserStore()
   const solved = data.progress[problemSlug] === 'solved'
   const logCount = results?.reduce((n, r) => n + (r.logs?.length ?? 0), 0) ?? 0
+  const consolePanelId = `${baseId}-console`
 
   const execute = useCallback(
     async (persistSubmission: boolean) => {
@@ -134,24 +137,14 @@ export function CodeEditor({
   const handleSubmit = useCallback(() => execute(true), [execute])
 
   return (
-    <div className="space-y-4 h-full flex flex-col">
+    // The column has a fixed height from the page grid, so the console drawer
+    // and TestResults would otherwise squeeze the flex-1 editor to nothing.
+    // Give the editor a floor and let the column scroll instead.
+    <div className="custom-scrollbar flex h-full flex-col space-y-4 overflow-y-auto">
       <Tabs
         idBase={baseId}
         items={[
           { id: 'editor', label: 'Редактор' },
-          {
-            id: 'console',
-            label: (
-              <>
-                Консоль
-                {logCount > 0 && (
-                  <span className="rounded-full bg-white/10 px-1.5 text-[11px] text-slate-300">
-                    {logCount}
-                  </span>
-                )}
-              </>
-            ),
-          },
           { id: 'mine', label: 'Мій розв’язок' },
         ]}
         active={tab}
@@ -170,7 +163,7 @@ export function CodeEditor({
         </div>
       </Tabs>
 
-      <GlassPanel className="relative flex-1 overflow-hidden">
+      <GlassPanel className="relative min-h-[260px] flex-1 shrink-0 overflow-hidden">
         {/* Monaco stays mounted and is merely hidden: unmounting would keep the
             code (it lives in React state) but lose undo history and cursor. */}
         <div
@@ -214,17 +207,6 @@ export function CodeEditor({
         />
         </div>
 
-        {tab === 'console' && (
-          <div
-            role="tabpanel"
-            id={panelId(baseId, 'console')}
-            aria-labelledby={tabId(baseId, 'console')}
-            className="h-full"
-          >
-            <ConsolePanel results={results} />
-          </div>
-        )}
-
         {tab === 'mine' && (
           <div
             role="tabpanel"
@@ -248,10 +230,30 @@ export function CodeEditor({
       {tab === 'editor' && (hasTests ? (
         <div className="flex gap-2">
           <Button
+            onClick={() => setConsoleOpen((v) => !v)}
+            variant="outline"
+            aria-expanded={consoleOpen}
+            aria-controls={consolePanelId}
+            title="Показати вивід console.log із останнього запуску"
+            className="inline-flex shrink-0 items-center gap-1.5"
+          >
+            <Terminal size={16} />
+            Консоль
+            {logCount > 0 && (
+              <span className="rounded-full bg-white/10 px-1.5 text-[11px] text-slate-300">
+                {logCount}
+              </span>
+            )}
+            <ChevronDown
+              size={14}
+              className={cn('transition-transform', consoleOpen && 'rotate-180')}
+            />
+          </Button>
+          <Button
             onClick={handleRun}
             disabled={isRunning}
             variant="default"
-            className="w-full"
+            className="flex-1"
           >
             {isRunning ? 'Running...' : 'Run Code'}
           </Button>
@@ -259,7 +261,7 @@ export function CodeEditor({
             onClick={handleSubmit}
             disabled={isRunning}
             variant="secondary"
-            className="w-full"
+            className="flex-1"
           >
             Submit
           </Button>
@@ -272,6 +274,14 @@ export function CodeEditor({
           </p>
         </GlassPanel>
       ))}
+
+      {tab === 'editor' && consoleOpen && hasTests && (
+        <div id={consolePanelId}>
+          <GlassPanel className="overflow-hidden">
+            <ConsolePanel results={results} />
+          </GlassPanel>
+        </div>
+      )}
 
       {error && (
         <GlassPanel className="p-4">

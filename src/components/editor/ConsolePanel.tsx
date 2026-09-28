@@ -1,17 +1,21 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { Terminal } from 'lucide-react'
 import type { TestResult } from './TestResults'
 import { cn } from '@/lib/utils'
 
 // console.* output captured per test case by src/lib/runner.ts. Grouped by case
-// because the same line usually prints once per test, and which input produced
+// because the same line prints once per test, and knowing which input produced
 // it is the whole point when debugging.
+//
+// Lives in a drawer under the editor, so the height is bounded here rather than
+// filling its parent.
 export function ConsolePanel({ results }: { results: TestResult[] | null }) {
   if (!results) {
     return (
       <Empty>
-        Натисни <b className="text-slate-300">Run Code</b>, щоб побачити тут вивід{' '}
+        Натисни <b className="text-slate-300">Run Code</b> — тут зʼявиться вивід{' '}
         <code className="rounded bg-black/40 px-1 font-mono text-cyan-300">console.log</code> із
         твого рішення.
       </Empty>
@@ -31,8 +35,8 @@ export function ConsolePanel({ results }: { results: TestResult[] | null }) {
   }
 
   return (
-    <div className="custom-scrollbar h-full overflow-auto p-3">
-      <div className="flex flex-col gap-3">
+    <div className="custom-scrollbar max-h-64 overflow-auto">
+      <div className="flex flex-col gap-2 p-2">
         {results.map((result, i) =>
           result.logs && result.logs.length > 0 ? (
             <div key={i} className="rounded-lg border border-white/10 bg-black/30">
@@ -43,7 +47,7 @@ export function ConsolePanel({ results }: { results: TestResult[] | null }) {
                     result.passed ? 'bg-emerald-400' : 'bg-red-400',
                   )}
                 />
-                <span className="text-xs font-medium text-slate-300">Тест {i + 1}</span>
+                <span className="shrink-0 text-xs font-medium text-slate-300">Тест {i + 1}</span>
                 <span className="truncate font-mono text-[11px] text-slate-500">{result.input}</span>
               </div>
               <pre className="custom-scrollbar overflow-x-auto px-3 py-2 font-mono text-[12px] leading-relaxed">
@@ -70,13 +74,11 @@ export function ConsolePanel({ results }: { results: TestResult[] | null }) {
   )
 }
 
-function Empty({ children }: { children: React.ReactNode }) {
+function Empty({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-full items-center justify-center p-6 text-center">
-      <p className="max-w-sm text-sm text-slate-400">
-        <Terminal size={18} className="mx-auto mb-2 text-slate-500" />
-        {children}
-      </p>
-    </div>
+    <p className="flex items-start gap-2 p-3 text-sm text-slate-400">
+      <Terminal size={16} className="mt-0.5 shrink-0 text-slate-500" />
+      <span>{children}</span>
+    </p>
   )
 }
