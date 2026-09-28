@@ -1,11 +1,14 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useId } from 'react'
 import Editor, { type Monaco } from '@monaco-editor/react'
 import { GlassPanel } from '@/components/glass/GlassPanel'
 import { Button } from '@/components/ui/Button'
 import { TestResults, type TestResult } from './TestResults'
-import { markSolved, markAttempted, addSubmission } from '@/lib/userStore'
+import { markSolved, markAttempted, addSubmission, saveSolution, useUserStore } from '@/lib/userStore'
+import { Tabs, panelId, tabId } from '@/components/ui/Tabs'
+import { MySolutionPanel } from './MySolutionPanel'
+import { cn } from '@/lib/utils'
 
 interface TestCase {
   input: string
@@ -55,6 +58,10 @@ export function CodeEditor({
   const [isRunning, setIsRunning] = useState(false)
   const [results, setResults] = useState<TestResult[] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [tab, setTab] = useState<'editor' | 'mine'>('editor')
+  const baseId = useId()
+  const { data } = useUserStore()
+  const solved = data.progress[problemSlug] === 'solved'
 
   const execute = useCallback(
     async (persistSubmission: boolean) => {
@@ -100,13 +107,16 @@ export function CodeEditor({
         }
 
         if (persistSubmission) {
+          const createdAt = new Date().toISOString()
           addSubmission({
             slug: problemSlug,
             code,
             language,
             status: allPassed ? 'Accepted' : 'Wrong Answer',
-            createdAt: new Date().toISOString(),
+            createdAt,
           })
+          // Kept apart from the capped history so it can never be trimmed away.
+          if (allPassed) saveSolution(problemSlug, { code, language, createdAt })
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
@@ -122,19 +132,38 @@ export function CodeEditor({
 
   return (
     <div className="space-y-4 h-full flex flex-col">
-      <div className="flex items-center gap-2">
-        <label className="text-sm font-medium text-slate-300">Language:</label>
+      <Tabs
+        idBase={baseId}
+        items={[
+          { id: 'editor', label: 'Редактор' },
+          { id: 'mine', label: 'Мій розв’язок' },
+        ]}
+        active={tab}
+        onChange={(id) => setTab(id as 'editor' | 'mine')}
+      >
+        <div className="ml-auto flex items-center gap-2">
+          <label className="text-sm font-medium text-slate-300">Language:</label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value as Language)}
           className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-100 border border-slate-600 text-sm"
         >
-          <option value="javascript">JavaScript</option>
-          <option value="typescript">TypeScript</option>
-        </select>
-      </div>
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+          </select>
+        </div>
+      </Tabs>
 
-      <GlassPanel className="flex-1 overflow-hidden">
+      <GlassPanel className="relative flex-1 overflow-hidden">
+        {/* Monaco stays mounted and is merely hidden: unmounting would keep the
+            code (it lives in React state) but lose undo history and cursor. */}
+        <div
+          role="tabpanel"
+          id={panelId(baseId, 'editor')}
+          aria-labelledby={tabId(baseId, 'editor')}
+          hidden={tab !== 'editor'}
+          className={cn('h-full', tab !== 'editor' && 'hidden')}
+        >
         <Editor
           height="100%"
           language={language}
@@ -162,11 +191,34 @@ export function CodeEditor({
               showKeywords: true,
               showSnippets: true,
             },
+            // Required now that the editor can be hidden: without it Monaco
+            // keeps the size it had when the panel was display:none (zero).
+            automaticLayout: true,
           }}
         />
+        </div>
+
+        {tab === 'mine' && (
+          <div
+            role="tabpanel"
+            id={panelId(baseId, 'mine')}
+            aria-labelledby={tabId(baseId, 'mine')}
+            className="h-full"
+          >
+            <MySolutionPanel
+              slug={problemSlug}
+              solved={solved}
+              onRestore={(restored, lang) => {
+                setCode(restored)
+                setLanguage(lang as Language)
+                setTab('editor')
+              }}
+            />
+          </div>
+        )}
       </GlassPanel>
 
-      {hasTests ? (
+      {tab === 'editor' && (hasTests ? (
         <div className="flex gap-2">
           <Button
             onClick={handleRun}
@@ -192,7 +244,7 @@ export function CodeEditor({
             звірятися з розділом <span className="font-medium">Solution</span>.
           </p>
         </GlassPanel>
-      )}
+      ))}
 
       {error && (
         <GlassPanel className="p-4">
@@ -200,7 +252,7 @@ export function CodeEditor({
         </GlassPanel>
       )}
 
-      {results && <TestResults results={results} />}
+      {tab === 'editor' && results && <TestResults results={results} />}
     </div>
   )
 }

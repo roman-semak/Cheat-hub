@@ -2,8 +2,16 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
+import { Check, RotateCcw } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import { GlassCard } from '@/components/glass/GlassCard'
+import {
+  useUserStore,
+  resetSolvedProblems,
+  resetAttemptedProblems,
+  resetProblemProgress,
+} from '@/lib/userStore'
 
 interface Problem {
   id: number
@@ -35,6 +43,20 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
   const [hideSolved, setHideSolved] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState<SortOption>('default')
+
+  // Counts for the reset buttons. `solvedSlugs` arrives as a prop but says
+  // nothing about attempts, so read progress directly — this component is
+  // already a client component.
+  const { data } = useUserStore()
+  const { solvedCount, attemptedCount } = useMemo(() => {
+    let solved = 0
+    let attempted = 0
+    for (const status of Object.values(data.progress)) {
+      if (status === 'solved') solved += 1
+      else if (status === 'attempted') attempted += 1
+    }
+    return { solvedCount: solved, attemptedCount: attempted }
+  }, [data.progress])
 
   useEffect(() => {
     try {
@@ -117,6 +139,51 @@ export function ProblemList({ problems, solvedSlugs }: ProblemListProps) {
 
         {/* Status and Sort */}
         <div className="flex flex-wrap gap-2">
+          {solvedCount > 0 && (
+            <Button
+              onClick={() => {
+                if (confirm(`Зняти позначку «пройдено» з ${solvedCount} задач(і)? Збережені розв’язки залишаться.`)) {
+                  resetSolvedProblems()
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              title="Зняти ✓ з усіх пройдених задач (збережені розв’язки не зачіпаються)"
+              className="inline-flex items-center gap-1.5 text-emerald-300"
+            >
+              <Check size={14} /> Скинути пройдені
+            </Button>
+          )}
+          {attemptedCount > 0 && (
+            <Button
+              onClick={() => {
+                if (confirm(`Зняти позначку «спроба» з ${attemptedCount} задач(і)?`)) {
+                  resetAttemptedProblems()
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              title="Зняти • з усіх розпочатих задач"
+              className="inline-flex items-center gap-1.5 text-amber-300"
+            >
+              <span className="block h-2 w-2 rounded-full bg-amber-400" /> Скинути спроби
+            </Button>
+          )}
+          {solvedCount + attemptedCount > 0 && (
+            <Button
+              onClick={() => {
+                if (confirm('Скинути весь прогрес задач (✓ і •)? Збережені розв’язки залишаться.')) {
+                  resetProblemProgress()
+                }
+              }}
+              variant="ghost"
+              size="sm"
+              title="Пройдені й розпочаті задачі; збережені розв’язки не зачіпаються"
+              className="inline-flex items-center gap-1.5 text-red-300"
+            >
+              <RotateCcw size={14} /> Скинути все
+            </Button>
+          )}
           <button
             type="button"
             role="switch"

@@ -1,7 +1,15 @@
 'use client'
 
 import { useSyncExternalStore } from 'react'
-import { type UserData, type SubmissionRecord, type ReadState, emptyData, normalize } from './userData'
+import {
+  type UserData,
+  type SubmissionRecord,
+  type SavedSolution,
+  type ProgressStatus,
+  type ReadState,
+  emptyData,
+  normalize,
+} from './userData'
 import { downloadTextFile } from './download'
 
 export type { ProgressStatus, SubmissionRecord, QuizProgress, ReadState, UserData } from './userData'
@@ -63,11 +71,42 @@ function notify() {
   listeners.forEach((l) => l())
 }
 
-function persist(next: UserData) {
-  snapshot = next
-  if (isBrowser()) {
+// Submissions are the only unbounded thing we store, so a quota failure is
+// almost always them. Trim hard and retry once; if it still fails, keep going
+// in memory rather than throwing — persist() is on the path of EVERY store
+// write, so an uncaught error here would break cheatsheet markers, quizzes and
+// navigation, not just the problem the user was solving.
+const MAX_SUBMISSIONS = 200
+// A single pasted buffer can blow the quota on its own, and the trim-to-20
+// retry cannot help when the offender is the newest entry. ~32k chars is about
+// 800 lines — it will never fire for a real solution.
+const MAX_CODE_CHARS = 32_000
+
+// Returns what actually reached storage, which may be trimmed. The caller MUST
+// adopt it: if memory kept the oversized array, every later write would fail the
+// first setItem again and re-stringify a multi-MB blob each time — turning a
+// one-off quota hit into permanent jank on every cheatsheet scroll.
+function writeStorage(next: UserData): UserData {
+  if (!isBrowser()) return next
+  try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    return next
+  } catch {
+    /* most likely QuotaExceededError — fall through to the trimmed retry */
   }
+  const trimmed = { ...next, submissions: next.submissions.slice(0, 20) }
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed))
+  } catch {
+    /* storage unusable (quota, private mode, blocked) — in-memory only */
+  }
+  // Adopted either way, so this session stops carrying the oversized history.
+  // `solutions` is never trimmed — that is the point of keeping it separate.
+  return trimmed
+}
+
+function persist(next: UserData) {
+  snapshot = writeStorage(next)
   notify()
 }
 
@@ -77,6 +116,7 @@ function update(mutator: (draft: UserData) => UserData) {
     ...snapshot,
     progress: { ...snapshot.progress },
     submissions: [...snapshot.submissions],
+    solutions: { ...snapshot.solutions },
     quizzes: { ...snapshot.quizzes },
     readState: { ...snapshot.readState },
     seenNew: { ...snapshot.seenNew },
@@ -238,8 +278,41 @@ export function markAttempted(slug: string) {
   })
 }
 
+// Problem-progress resets. Saved solutions and submission history are NOT
+// touched: clearing progress means "I want to solve these again", not "throw
+// away my work".
+function clearProgressWhere(keep: (status: ProgressStatus) => boolean) {
+  update((d) => ({
+    ...d,
+    progress: Object.fromEntries(
+      Object.entries(d.progress).filter(([, status]) => keep(status)),
+    ),
+  }))
+}
+
+export function resetSolvedProblems() {
+  clearProgressWhere((status) => status !== 'solved')
+}
+
+export function resetAttemptedProblems() {
+  clearProgressWhere((status) => status !== 'attempted')
+}
+
+export function resetProblemProgress() {
+  update((d) => ({ ...d, progress: {} }))
+}
+
 export function addSubmission(rec: SubmissionRecord) {
-  update((d) => ({ ...d, submissions: [rec, ...d.submissions] }))
+  const entry = { ...rec, code: rec.code.slice(0, MAX_CODE_CHARS) }
+  update((d) => ({ ...d, submissions: [entry, ...d.submissions].slice(0, MAX_SUBMISSIONS) }))
+}
+
+// The reader's accepted solution for one problem. Stored apart from the capped
+// `submissions` history so it can never be trimmed away.
+export function saveSolution(slug: string, solution: SavedSolution) {
+  const code = solution.code.slice(0, MAX_CODE_CHARS)
+  if (!code.trim()) return // never replace a good solution with an empty buffer
+  update((d) => ({ ...d, solutions: { ...d.solutions, [slug]: { ...solution, code } } }))
 }
 
 // Record a quiz answer. No-op if that question was already answered (answers
